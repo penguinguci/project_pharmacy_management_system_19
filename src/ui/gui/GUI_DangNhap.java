@@ -145,18 +145,9 @@
         }
 
         public static void main(String[] args) throws Exception{
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    try {
-                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                        GUI_DangNhap frame = new GUI_DangNhap();
-                        frame.setVisible(true);
-                        ConnectDB.getInstance().connect();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            GUI_DangNhap frame = new GUI_DangNhap();
+            frame.setVisible(true);
+            ConnectDB.getInstance().connect();
         }
 
         @Override
@@ -165,24 +156,9 @@
                 String tk = text_User.getText().trim();
                 String mk = text_Password.getText().trim();
                 if (log.checkVar(tk, mk)){
-                    TaiKhoan t = log.getAcc(tk);
-                    this.setVisible(false);
-                    EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                            GUI_TrangChu frame = new GUI_TrangChu();
-                            frame.setVisible(true);
-                            ConnectDB.getInstance().connect();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    });
-                    SwingUtilities.invokeLater(() -> {
-                        GUI_TrangChu frame = new GUI_TrangChu();
-                        frame.setVisible(true);
-                    });
+                    GUI_TrangChu frame = new GUI_TrangChu();
+                    frame.setVisible(true);
+                    ConnectDB.getInstance().connect();
                 } else {
                     JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác");
                 }
