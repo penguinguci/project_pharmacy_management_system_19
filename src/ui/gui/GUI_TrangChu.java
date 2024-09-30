@@ -51,6 +51,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public Form_TimKiemNhanVien formTimKiemNhanVien;
     public Form_TimKiemThuoc formTimKiemThuoc;
 
+    public int role; //Set role cho GUI để bật tắt chức năng
     public GUI_TrangChu() {
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -466,7 +467,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
     // Sự kiện
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e){
         Object o = e.getSource();
         if (o  == btnNhanVien) {
             submenuNhanVien.setVisible(!submenuNhanVien.isVisible());
@@ -496,9 +497,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn đăng xuất?",
                     "Xác nhận đăng xuất", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                GUI_DangNhap loginFrame = new GUI_DangNhap();
-                loginFrame.setVisible(true);
-                this.dispose();
+                try {
+                    GUI_DangNhap loginFrame = new GUI_DangNhap();
+                    loginFrame.setVisible(true);
+                    this.dispose();
+                } catch (Exception e1){
+                    e1.printStackTrace();
+                }
             }
         } else if(o == btnBanThuoc) {
             centerPanel.add(formBanThuoc, "formBanThuoc");
@@ -763,7 +768,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         });
     }
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //        EventQueue.invokeLater(new Runnable() {
 //            public void run() {
 //                try {
@@ -776,10 +781,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 //                }
 //            }
 //        });
-        SwingUtilities.invokeLater(() -> {
-            GUI_TrangChu frame = new GUI_TrangChu();
-            frame.setVisible(true);
-        });
-
-    }
+//        SwingUtilities.invokeLater(() -> {
+//            GUI_TrangChu frame = new GUI_TrangChu();
+//            frame.setVisible(true);
+//        });
+//
+//    }
 }
