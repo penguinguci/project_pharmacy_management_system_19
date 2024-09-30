@@ -1,20 +1,26 @@
     package ui.gui;
 
     import connectDB.ConnectDB;
+    import dao.DangNhap_DAO;
+    import entity.TaiKhoan;
 
     import javax.swing.*;
     import javax.swing.border.AbstractBorder;
     import java.awt.*;
     import java.awt.event.ActionEvent;
     import java.awt.event.ActionListener;
+    import java.util.ArrayList;
 
-    public class GUI_DangNhap extends JFrame implements ActionListener {
+    public class GUI_DangNhap extends JFrame implements ActionListener{
         JPanel jPanel_Main, jPanel_Left, jPanel_Right;
         JTextField text_User, text_Password;
         JButton btn_Login, btn_Thoat;
         JLabel jLabel_User, jLabel_Pass, jLabel_Login, jLabel_Logo;
 
-        public GUI_DangNhap () {
+        DangNhap_DAO log;
+        ArrayList<TaiKhoan> list;
+
+        public GUI_DangNhap () throws Exception{
             super("Pharmacy Management System");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setSize(700, 500);
@@ -128,9 +134,17 @@
 
             add(tenHeThongPanel, BorderLayout.NORTH);
             add(jPanel_Main, BorderLayout.CENTER);
+
+            btn_Login.addActionListener(this);
+            btn_Thoat.addActionListener(this);
+
+            this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+            log = new DangNhap_DAO();
+            list = log.getData();
         }
 
-        public static void main(String[] args) {
+        public static void main(String[] args) throws Exception{
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
@@ -147,7 +161,35 @@
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            if(e.getSource().equals(btn_Login)){
+                String tk = text_User.getText().trim();
+                String mk = text_Password.getText().trim();
+                if (log.checkVar(tk, mk)){
+                    TaiKhoan t = log.getAcc(tk);
+                    this.setVisible(false);
+                    EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        try {
+                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                            GUI_TrangChu frame = new GUI_TrangChu();
+                            frame.setVisible(true);
+                            ConnectDB.getInstance().connect();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    });
+                    SwingUtilities.invokeLater(() -> {
+                        GUI_TrangChu frame = new GUI_TrangChu();
+                        frame.setVisible(true);
+                    });
+                } else {
+                    JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác");
+                }
+            }
+            if(e.getSource().equals(btn_Thoat)){
+                System.exit(0);
+            }
         }
 
 
