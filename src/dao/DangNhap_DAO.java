@@ -1,7 +1,6 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.NhanVien;
 import entity.TaiKhoan;
 
 import java.sql.PreparedStatement;
@@ -34,7 +33,7 @@ public class DangNhap_DAO {
 
     public boolean checkVar(String tk, String mk) {
         for(TaiKhoan x : listTK){
-            if(x.getTk().equalsIgnoreCase(tk) && x.getMk().equalsIgnoreCase(mk))
+            if(x.getTaiKhoan().equalsIgnoreCase(tk) && x.getMatKhau().equalsIgnoreCase(mk))
                 return true;
         }
         return false;
@@ -42,7 +41,7 @@ public class DangNhap_DAO {
 
     public TaiKhoan getAcc(String tk) {
         for(TaiKhoan x : listTK){
-            if(x.getTk().equalsIgnoreCase(tk))
+            if(x.getTaiKhoan().equalsIgnoreCase(tk))
                 return x;
         }
         return null;
