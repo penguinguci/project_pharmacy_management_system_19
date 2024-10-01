@@ -3,6 +3,8 @@ package entity;
 public class DanhMuc {
     private String maDanhMuc, tenDanhMuc;
 
+    public DanhMuc() {}
+
     public DanhMuc(String maDanhMuc, String tenDanhMuc) {
         this.maDanhMuc = maDanhMuc;
         this.tenDanhMuc = tenDanhMuc;

@@ -6,6 +6,8 @@ public class ChiTietKhuyenMai {
     private double tyLeKhuyenMai;
     private int soLuongToiThieu; //Mua soLuongToiThieu để được hưởng khuyến mãi
 
+    public ChiTietKhuyenMai() {}
+
     public ChiTietKhuyenMai(String maCTKM, Thuoc thuoc, double tyLeKhuyenMai, int soLuongToiThieu) {
         this.maCTKM = maCTKM;
         this.thuoc = thuoc;

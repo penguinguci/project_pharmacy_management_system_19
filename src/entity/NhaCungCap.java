@@ -8,6 +8,8 @@ public class NhaCungCap {
     private String diaChi;
     private String email;
 
+    public NhaCungCap() {}
+
     public NhaCungCap(String maNCC, String tenNCC, String diaChi, String email) {
         this.maNCC = maNCC;
         this.tenNCC = tenNCC;

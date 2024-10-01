@@ -8,6 +8,8 @@ public class DonDatThuoc {
     private NhanVien nhanVien;
     private LocalDate thoiGianDat;
 
+    public DonDatThuoc() {}
+
     public DonDatThuoc(String maDon, KhachHang khachHang, NhanVien nhanVien, LocalDate thoiGianDat) {
         this.maDon = maDon;
         this.khachHang = khachHang;
