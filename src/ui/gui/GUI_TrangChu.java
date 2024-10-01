@@ -299,10 +299,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         // Top Panel
         JPanel topPanel = new JPanel();
+
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int widthOfTopPanel = screenSize.width - menuPanel.getPreferredSize().width;
-        topPanel.setPreferredSize(new Dimension(widthOfTopPanel, 60));
+        int widthOfMainContentPanel = screenSize.width - menuPanel.getPreferredSize().width;
+//        mainContentPanel.setPreferredSize(new Dimension(widthOfMainContentPanel, screenSize.height));
+        topPanel.setPreferredSize(new Dimension(widthOfMainContentPanel, 60));
 //        topPanel.setPreferredSize(new Dimension(1300, 60));
 //        topPanel.setBackground(new Color(65, 192, 201));
 
@@ -394,8 +396,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
-
-        // Thêm centerPanel vào CENTER của mainContentPanel
         mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
 
