@@ -6,6 +6,8 @@ public class ChuongTrinhKhuyenMai {
     private String maCTKM, mota, loaiKhuyenMai;
     private LocalDate ngayBatDau, ngayKetThuc;
 
+    public ChuongTrinhKhuyenMai() {}
+
     public ChuongTrinhKhuyenMai(String maCTKM, String mota, String loaiKhuyenMai, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
         this.maCTKM = maCTKM;
         this.mota = mota;

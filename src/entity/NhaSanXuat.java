@@ -3,6 +3,8 @@ package entity;
 public class NhaSanXuat {
     private String maNhaSX, tenNhaSX, diaChi;
 
+    public NhaSanXuat() {}
+
     public NhaSanXuat(String tenNhaSX, String maNhaSX, String diaChi) {
         this.tenNhaSX = tenNhaSX;
         this.maNhaSX = maNhaSX;

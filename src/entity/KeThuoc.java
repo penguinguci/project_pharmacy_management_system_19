@@ -4,6 +4,8 @@ public class KeThuoc {
     private String maKe, tenKe;
     private NhanVien nhanVien;
 
+    public KeThuoc() {}
+
     public KeThuoc(String maKe, String tenKe, NhanVien nhanVien) {
         this.maKe = maKe;
         this.tenKe = tenKe;

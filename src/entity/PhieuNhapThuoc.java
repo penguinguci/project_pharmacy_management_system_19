@@ -8,6 +8,8 @@ public class PhieuNhapThuoc {
     private LocalDate ngayLapPhieu;
     private NhaCungCap nhaCungCap;
 
+    public PhieuNhapThuoc() {}
+
     public PhieuNhapThuoc(String maPhieuNhap, NhanVien nhanVien, LocalDate ngayLapPhieu,
                           NhaCungCap nhaCungCap) {
         this.maPhieuNhap = maPhieuNhap;

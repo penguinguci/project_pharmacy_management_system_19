@@ -8,7 +8,9 @@ public class NhanVien {
     private boolean trangThai; // true = còn làm, false = nghỉ việc
     private  int sdt;
 
-    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, int vaiTro, boolean gioiTinh, LocalDate ngaySinh,  boolean trangThai, int sdt) {
+    public NhanVien() {}
+
+    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, String vaiTro, boolean gioiTinh, LocalDate ngaySinh,  boolean trangThai, int sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
@@ -20,11 +22,10 @@ public class NhanVien {
         this.trangThai = trangThai;
         this.sdt = sdt;
     }
-    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, int vaiTro, boolean gioiTinh, LocalDate ngaySinh, boolean trangThai, int sdt) {
+    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, String vaiTro, boolean gioiTinh, LocalDate ngaySinh, boolean trangThai, int sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
-        this.email = email;
         this.diaChi = diaChi;
         setVaiTro(vaiTro);
         this.ngaySinh = ngaySinh;
@@ -77,16 +78,8 @@ public class NhanVien {
         return vaiTro;
     }
 
-    public void setVaiTro(int vaiTro) {
-        if(vaiTro == 1){
-            this.vaiTro = "Nhân viên bán thuốc";
-        } else if(vaiTro == 2){
-            this.vaiTro = "Nhân viên quản lý";
-        } else if(vaiTro == 0){
-            this.vaiTro = "Admin";
-        } else{
-            this.vaiTro = "Không xác định";
-        }
+    public void setVaiTro(String vaiTro) {
+        this.vaiTro = vaiTro;
     }
 
     public String getGioiTinh() {
@@ -94,7 +87,7 @@ public class NhanVien {
     }
 
     public void setGioiTinh(boolean gioiTinh) {
-        if(gioiTinh == false){
+        if(!gioiTinh){
             this.gioiTinh = "Nữ";
         } else {
             this.gioiTinh = "Nam";

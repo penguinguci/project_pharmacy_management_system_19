@@ -3,6 +3,8 @@ package entity;
 public class NuocSanXuat {
     private String maNuocSX, tenNuoxSX;
 
+    public NuocSanXuat() {}
+
     public NuocSanXuat(String maNuocSX, String tenNuoxSX) {
         this.maNuocSX = maNuocSX;
         this.tenNuoxSX = tenNuoxSX;

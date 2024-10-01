@@ -55,9 +55,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public GUI_TrangChu() {
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
 
         // Set logo
         ImageIcon logo = new ImageIcon("images/logo.jpg");
@@ -143,6 +140,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         // Tạo các nút menu
         btnNhanVien = createMenuButton("Nhân Viên", iconNhanVien);
+        btnNhanVien.setContentAreaFilled(false);
         btnKhachHang = createMenuButton("Khách Hàng", iconKhachHang);
         btnThuoc = createMenuButton("Thuốc", iconThuoc);
         btnNhaCungCap = createMenuButton("Nhà Cung Cấp", iconNhaCungCap);
@@ -391,7 +389,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         topPanel.add(customButtonUser);
 
         // Thêm top Panel vào mainContentPanel
-        mainContentPanel.add(topPanel, BorderLayout.SOUTH);
+        mainContentPanel.add(topPanel, BorderLayout.NORTH);
 
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
@@ -466,6 +464,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnTKThuocBanChay.addActionListener(this);
         btnTKThuocBanCham.addActionListener(this);
         btnTKThuocSapHH.addActionListener(this);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
     }
 
     // Sự kiện
@@ -621,14 +624,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         }
     }
 
-    // Khởi tạo menu
-
-    // Khởi tạo top Panel
-    private void initTopPanel() {
-        JPanel topPanel = new JPanel();
-
-    }
-
     // Hàm tạo các nút menu chính
     private JButton createMenuButton(String text, ImageIcon imageIcon) {
         Image subImage = imageIcon.getImage();
@@ -643,9 +638,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         button.setFont(new Font("Arial", Font.PLAIN, 17));
         button.setHorizontalAlignment(SwingConstants.CENTER);
         button.setBorder(new RoundedBorder(15));
-        button.setContentAreaFilled(false); // xóa nền mặc định button
+        button.setContentAreaFilled(false);
         button.setOpaque(true);
-//        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
         button.setMaximumSize(new Dimension(186, 40));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         addHoverEffect(button);
@@ -661,14 +655,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         ImageIcon scaledIconSubmenu = new ImageIcon(scaledImage);
 
         JButton button = new JButton(text, scaledIconSubmenu);
-        button.setBackground(new Color(57, 159, 165)); // Màu khác cho submenu
+        button.setBackground(new Color(57, 159, 165));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.PLAIN, 15));
         button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setBorder(new RoundedBorder(15));
-//        button.setContentAreaFilled(false); // xóa nền mặc định button
-//        button.setOpaque(true);
         button.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 10));
         button.setMaximumSize(new Dimension(186, 40));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -676,6 +668,25 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         return button;
     }
 
+    // Thêm hiệu ứng hover cho buttom
+    private void addHoverEffect(JButton button) {
+        button.addMouseListener(new MouseAdapter() {
+            Color originalBackground = button.getBackground();
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(originalBackground.darker());
+                button.repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(originalBackground);
+                button.repaint();
+
+            }
+        });
+    }
 
     // Lớp tạo viền bo tròn cho Label
     public class RoundedLabel extends JLabel {
@@ -736,7 +747,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public class RoundedBorder implements Border {
         private int radius;
 
-        RoundedBorder(int radius) {
+        public RoundedBorder(int radius) {
             this.radius = radius;
         }
 
@@ -754,25 +765,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         }
     }
 
-    // Thêm hiệu ứng hover
-    private void addHoverEffect(JButton button) {
-        button.addMouseListener(new MouseAdapter() {
-            Color originalBackground = button.getBackground();
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(originalBackground.darker());
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(originalBackground);
-            }
-        });
-    }
 
     public static void main(String[] args) {
-        GUI_TrangChu frame = new GUI_TrangChu();
-        frame.setVisible(true);
+        new GUI_TrangChu();
     }
 }

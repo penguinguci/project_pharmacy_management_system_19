@@ -2,9 +2,11 @@ package entity;
 
 public class TaiKhoan {
     private String taiKhoan, matKhau;
-    private int vaiTro; // 0 = admin, 1 = NV ban thuoc, 2 = NV quan ly
+    private String vaiTro; // 0 = admin, 1 = NV ban thuoc, 2 = NV quan ly
 
-    public TaiKhoan(String taiKhoan, String matKhau, int vaiTro) {
+    public TaiKhoan() {}
+
+    public TaiKhoan(String taiKhoan, String matKhau, String vaiTro) {
         this.taiKhoan = taiKhoan;
         this.matKhau = matKhau;
         this.vaiTro = vaiTro;
@@ -26,11 +28,11 @@ public class TaiKhoan {
         this.matKhau = matKhau;
     }
 
-    public int getVaiTro() {
+    public String getVaiTro() {
         return vaiTro;
     }
 
-    public void setVaiTro(int vaiTro) {
+    public void setVaiTro(String vaiTro) {
         this.vaiTro = vaiTro;
     }
 }
