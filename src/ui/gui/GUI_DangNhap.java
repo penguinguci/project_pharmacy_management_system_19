@@ -23,15 +23,12 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
 
     public GUI_DangNhap() throws Exception{
         super("Pharmacy Management System");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Get screen size for responsive scaling
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.42);
         int height = (int) (screenSize.height * 0.57);
         setSize(width, height);
-        setLocationRelativeTo(null);
-        setResizable(true);
 
         // Set logo
         ImageIcon logo = new ImageIcon("images/logo.jpg");
@@ -168,16 +165,16 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         btn_Login.addActionListener(this);
         btn_Thoat.addActionListener(this);
 
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(true);
+        setVisible(true);
 
         log = new DangNhap_DAO();
         list = log.getData();
     }
 
     public static void main(String[] args) throws Exception {
-        GUI_DangNhap frame = new GUI_DangNhap();
-        frame.setVisible(true);
-        ConnectDB.getInstance().connect();
+        new GUI_DangNhap();
     }
 
     @Override
@@ -186,9 +183,8 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
             String tk = text_User.getText().trim();
             String mk = new String(text_Password.getPassword()).trim();  // Handle password securely
             if (log.checkVar(tk, mk)) {
-                GUI_TrangChu frame = new GUI_TrangChu();
-                frame.setVisible(true);
-                ConnectDB.getInstance().connect();
+                this.setVisible(false);
+                new GUI_TrangChu();
             } else {
                 JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác");
             }

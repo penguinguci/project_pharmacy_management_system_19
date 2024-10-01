@@ -5,6 +5,8 @@ public class ChiTietPhieuDoiTra {
     private Thuoc thuoc;
     private String ghiChu;
 
+    public ChiTietPhieuDoiTra() {}
+
     public ChiTietPhieuDoiTra(PhieuDoiTra phieuDoiTra, Thuoc thuoc, String ghiChu) {
         this.phieuDoiTra = phieuDoiTra;
         this.thuoc = thuoc;

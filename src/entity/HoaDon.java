@@ -10,6 +10,8 @@ public class HoaDon {
     private LocalDate ngayLap;
     private boolean trangThai; // 1 = Hiện thông tin, 0 = Ẩn thông tin
 
+    public HoaDon() {}
+
     public HoaDon(String maHD, String hinhThucThanhToan, KhachHang khachHang, NhanVien nhanVien, Thue thue,
                   LocalDate ngayLap, boolean trangThai) {
         this.maHD = maHD;

@@ -13,11 +13,14 @@ public class Thuoc {
     private NhaCungCap nhaCungCap;
     private NuocSanXuat nuocSanXuat;
     private KeThuoc keThuoc;
+    private boolean trangThai;
+
+    public Thuoc(){}
 
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
                  int HSD, int soLuongCon, LocalDate ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -37,10 +40,11 @@ public class Thuoc {
         this.nhaCungCap = nhaCungCap;
         this.nuocSanXuat = nuocSanXuat;
         this.keThuoc = keThuoc;
+        this.trangThai = trangThai;
     }
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
                  int HSD, int soLuongCon, LocalDate ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -55,6 +59,7 @@ public class Thuoc {
         this.nhaCungCap = nhaCungCap;
         this.nuocSanXuat = nuocSanXuat;
         this.keThuoc = keThuoc;
+        this.trangThai = trangThai;
     }
 
     public String getSoHieuThuoc() {
@@ -207,5 +212,13 @@ public class Thuoc {
 
     public void setKeThuoc(KeThuoc keThuoc) {
         this.keThuoc = keThuoc;
+    }
+
+    public boolean isTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
     }
 }

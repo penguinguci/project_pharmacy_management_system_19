@@ -9,6 +9,8 @@ public class PhieuDoiTra {
     private HoaDon hoaDon;
     private LocalDate ngayDoiTra;
 
+    public PhieuDoiTra() {}
+
     public PhieuDoiTra(String maPhieu, String lyDo, NhanVien nhanVien, boolean loai, HoaDon hoaDon, LocalDate ngayDoiTra) {
         this.maPhieu = maPhieu;
         this.lyDo = lyDo;

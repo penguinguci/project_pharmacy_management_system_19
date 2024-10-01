@@ -6,21 +6,22 @@ import ui.form.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GUI_TrangChu extends JFrame implements ActionListener{
+public class GUI_QuanLyDonDatThuoc extends JFrame implements ActionListener{
 
     public JPanel submenuNhanVien, submenuKhachHang, submenuThuoc, submenuNhaCungCap, submenuHoaDon, submenuThongKe;
     public JLabel jLabel_Logo;
     public JButton btnNhanVien, btnKhachHang, btnThuoc, btnNhaCungCap, btnHoaDon, btnThongKe;
     public JButton btnBanThuoc, btnCapNhatNV, btnTimKiemNV, btnTaiKhoan, btnCapNhatKH, btnDatThuoc, btnTimKiemKH
-                    , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
-                    btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
-                    btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH;
+            , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
+            btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
+            btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH;
     public JButton btnDangXuat, btnThongBao;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
@@ -50,9 +51,17 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public Form_TimKiemNhaCungCap formTimKiemNhaCungCap;
     public Form_TimKiemNhanVien formTimKiemNhanVien;
     public Form_TimKiemThuoc formTimKiemThuoc;
+    public JButton btnQuayLai, btnThanhToan, btnChinhSua, btnHuy, btnTimKiemDon, btnLamMoi;
+    public JComboBox<String> cbMaDonDat, cbThoiGianDat;
+    public JLabel lblTitle;
+    public JTextField txtTimKiem;
+    public JTable tabDon, tabChiTietDon;
+    public JScrollPane scrDon, scrChiTietDon;
+    public DefaultTableModel dtmDon, dtmChiTietDon;
+    public DefaultComboBoxModel<String> dcbmMaDonDat, dcbmThoiGianDat;
 
     public int role; //Set role cho GUI để bật tắt chức năng
-    public GUI_TrangChu() {
+    public GUI_QuanLyDonDatThuoc() {
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -384,8 +393,107 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(customButtonUser);
 
+        // Tạo CenterContentPanel và các component trong Panel
+        JPanel centerContentPanel = new JPanel();
+        centerContentPanel.setLayout(new BorderLayout());
+        centerContentPanel.setBackground(Color.WHITE);
+        lblTitle = new JLabel("Quản lý đặt thuốc");
+        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        txtTimKiem = new JTextField(20);
+        btnQuayLai = new JButton("Quay lại");
+        btnTimKiemDon = new JButton("Tìm kiếm");
+        btnLamMoi = new JButton("Làm mới");
+        btnLamMoi.setBackground(Color.BLUE);
+        String[] titleMa = {"Mã đơn đặt hàng"};
+        cbMaDonDat = new JComboBox(titleMa);
+        String[] titleThoiGian = {"Thời gian đặt hàng"};
+        cbThoiGianDat = new JComboBox<>(titleThoiGian);
+        String[] colsnameTabDon = {"Mã đơn đặt hàng", "Mã khách hàng", "Tên khách hàng", "Số điện thoại", "Địa chỉ", "Tổng tiền", "Thời gian đặt"};
+        dtmDon = new DefaultTableModel(colsnameTabDon, 0);
+        tabDon = new JTable(dtmDon);
+        scrDon = new JScrollPane(tabDon);
+        //scrDon.setPreferredSize(new Dimension(600, 350));
+        String[] colsnameTabChiTietDon = {"Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
+        dtmChiTietDon = new DefaultTableModel(colsnameTabChiTietDon, 0);
+        tabChiTietDon = new JTable(dtmChiTietDon);
+        scrChiTietDon = new JScrollPane(tabChiTietDon);
+
+        //Tạo TitlePanel_Center
+        JPanel titlePanel_Center = new JPanel();
+        titlePanel_Center.setLayout(new BorderLayout());
+        titlePanel_Center.setBackground(Color.WHITE);
+
+        //Tạo Panel Danh sách đơn đặt hàng
+        JPanel listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        listPanel.setBackground(Color.WHITE);
+
+        //Thêm các thành phần TitlePanel_Center
+        JPanel cloneMidPanel = new JPanel();
+        cloneMidPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Căn giữa các thành phần trong panel
+        cloneMidPanel.setBackground(Color.WHITE);
+        cloneMidPanel.add(lblTitle);
+        titlePanel_Center.add(btnQuayLai, BorderLayout.WEST);
+        titlePanel_Center.add(cloneMidPanel, BorderLayout.CENTER);
+
+        //Thêm các thành phần vào listPanel và tạo border
+            //Tạo các box chiều ngang để chứa các component
+        Box box1 = Box.createHorizontalBox();
+        box1.add(cbMaDonDat);
+        box1.add(Box.createHorizontalStrut(10));
+        box1.add(txtTimKiem);
+        box1.add(Box.createHorizontalStrut(10));
+        box1.add(btnTimKiemDon);
+        box1.add(Box.createHorizontalStrut(10));
+        box1.add(btnLamMoi);
+        box1.add(Box.createHorizontalStrut(10));
+        box1.add(cbThoiGianDat);
+        box1.add(Box.createHorizontalStrut(700));
+        Box box2 = Box.createHorizontalBox();
+        box2.add(scrDon);
+        Box box3 = Box.createHorizontalBox();
+        box3.add(scrChiTietDon);
+            //Tạo border
+        listPanel.setBorder(BorderFactory.createTitledBorder("Danh sách đơn đặt hàng"));
+            //Thêm các Box và Panel
+        listPanel.add(Box.createVerticalStrut(5));
+        listPanel.add(box1);
+        listPanel.add(Box.createVerticalStrut(5));
+        listPanel.add(box2);
+        listPanel.add(Box.createVerticalStrut(20));
+        listPanel.add(box3);
+        listPanel.add(Box.createVerticalStrut(20));
+
+        // Tạo FooterPanel và các thành phần trong Panel
+        JPanel footerPanel = new JPanel();
+        footerPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        footerPanel.setBackground(Color.WHITE);
+        btnThanhToan = new JButton("Thanh toán");
+        btnChinhSua = new JButton("Chỉnh sửa");
+        btnHuy = new JButton("Huỷ");
+
+        // Tạo box chứa các button trong FooterPanel
+        Box box4 = Box.createHorizontalBox();
+        box4.add(btnThanhToan);
+        box4.add(Box.createHorizontalStrut(10));
+        box4.add(btnChinhSua);
+        box4.add(Box.createHorizontalStrut(10));
+        box4.add(btnHuy);
+        box4.add(Box.createHorizontalStrut(10));
+
+        //Thêm Box vào FooterPanel
+        footerPanel.add(box4);
+
+        //Thêm các Panel vào centerContentPanel
+        centerContentPanel.add(titlePanel_Center, BorderLayout.NORTH);
+        centerContentPanel.add(listPanel, BorderLayout.CENTER);
+        centerContentPanel.add(footerPanel, BorderLayout.SOUTH);
+
         // Thêm top Panel vào mainContentPanel
         mainContentPanel.add(topPanel, BorderLayout.NORTH);
+
+        // Thêm centerContentPanel vào mainContentPanel
+        mainContentPanel.add(centerContentPanel, BorderLayout.CENTER);
 
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
@@ -396,28 +504,28 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
 
         // tạo các form trước và thêm vào centerPanel
-        formBanThuoc = new Form_BanThuoc();
-        formNhapThuoc = new Form_NhapThuoc();
-        formDoiTra = new Form_DoiTra();
-        formQuanLyDanhMuc = new Form_QuanLyDanhMuc();
-        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
-        formQuanLyHoaDon = new Form_QuanLyHoaDon();
-        formQuanLyKhachHang = new Form_QuanLyKhachHang();
-        formQuanLyNhaCungCap = new Form_QuanLyNhaCungCap();
-        formQuanLyNhanVien = new Form_QuanLyNhanVien();
-        formQuanLyNhaSanXuat = new Form_QuanLyNhaSanXuat();
-        formQuanLyNuocSanXuat = new Form_QuanLyNuocSanXuat();
-        formQuanLyTaiKhoanNhanVien = new Form_QuanLyTaiKhoanNhanVien();
-        formQuanLyThuoc = new Form_QuanLyThuoc();
-        formThongKeDoanhThu = new Form_ThongKeDoanhThu();
-        formThongKeKhachHangThuongXuyen = new Form_ThongKeKhachHangThuongXuyen();
-        formThongKeSPBanCham = new Form_ThongKeSPBanCham();
-        formThongKeSPBanChay = new Form_ThongKeSPBanChay();
-        formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
-        formTimKiemKhachHang = new Form_TimKiemKhachHang();
-        formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
-        formTimKiemNhanVien = new Form_TimKiemNhanVien();
-        formTimKiemThuoc = new Form_TimKiemThuoc();
+//        formBanThuoc = new Form_BanThuoc();
+//        formNhapThuoc = new Form_NhapThuoc();
+//        formDoiTra = new Form_DoiTra();
+//        formQuanLyDanhMuc = new Form_QuanLyDanhMuc();
+//        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
+//        formQuanLyHoaDon = new Form_QuanLyHoaDon();
+//        formQuanLyKhachHang = new Form_QuanLyKhachHang();
+//        formQuanLyNhaCungCap = new Form_QuanLyNhaCungCap();
+//        formQuanLyNhanVien = new Form_QuanLyNhanVien();
+//        formQuanLyNhaSanXuat = new Form_QuanLyNhaSanXuat();
+//        formQuanLyNuocSanXuat = new Form_QuanLyNuocSanXuat();
+//        formQuanLyTaiKhoanNhanVien = new Form_QuanLyTaiKhoanNhanVien();
+//        formQuanLyThuoc = new Form_QuanLyThuoc();
+//        formThongKeDoanhThu = new Form_ThongKeDoanhThu();
+//        formThongKeKhachHangThuongXuyen = new Form_ThongKeKhachHangThuongXuyen();
+//        formThongKeSPBanCham = new Form_ThongKeSPBanCham();
+//        formThongKeSPBanChay = new Form_ThongKeSPBanChay();
+//        formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
+//        formTimKiemKhachHang = new Form_TimKiemKhachHang();
+//        formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
+//        formTimKiemNhanVien = new Form_TimKiemNhanVien();
+//        formTimKiemThuoc = new Form_TimKiemThuoc();
 
         // nội dung chính vào cửa sổ
         add(menuPanel, BorderLayout.WEST);
@@ -592,7 +700,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formDoiTra");
-            } else if(o == btnTKDoanhThu) {
+        } else if(o == btnTKDoanhThu) {
             centerPanel.add(formThongKeDoanhThu, "formThongKeDoanhThu");
             centerPanel.revalidate();
             centerPanel.repaint();
@@ -771,6 +879,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     }
 
     public static void main(String[] args) {
-        new GUI_TrangChu();
+        new GUI_QuanLyDonDatThuoc();
     }
 }

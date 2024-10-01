@@ -6,6 +6,8 @@ public class ChiTietDonDatThuoc {
     private String donViTinh;
     private int soLuong;
 
+    public ChiTietDonDatThuoc(){}
+
     public ChiTietDonDatThuoc(DonDatThuoc donDatThuoc, Thuoc thuoc, String donViTinh, int soLuong) {
         this.donDatThuoc = donDatThuoc;
         this.thuoc = thuoc;
