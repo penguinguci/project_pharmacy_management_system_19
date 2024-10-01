@@ -20,8 +20,8 @@ public class DangNhap_DAO {
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "Select taiKhoan, matKhau, tenVaiTro" +
-                    " From NhanVien nv join TaiKhoan tk on nv.maNV = tk.taiKhoan join ChucVu cv on nv.vaiTro = cv.tenChucVu";
+        String sql = "Select taiKhoan, matKhau, tenChucVu" +
+                " From NhanVien nv join TaiKhoan tk on nv.maNV = tk.taiKhoan join ChucVu cv on nv.vaiTro = cv.maChucVu";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
