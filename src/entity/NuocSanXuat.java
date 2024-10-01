@@ -1,17 +1,11 @@
 package entity;
 
-import java.util.Objects;
-
 public class NuocSanXuat {
-    private String maNuocSX;
-    private String tenNuocSX;
+    private String maNuocSX, tenNuoxSX;
 
-    public NuocSanXuat() {
-    }
-
-    public NuocSanXuat(String maNuocSX, String tenNuocSX) {
+    public NuocSanXuat(String maNuocSX, String tenNuoxSX) {
         this.maNuocSX = maNuocSX;
-        this.tenNuocSX = tenNuocSX;
+        this.tenNuoxSX = tenNuoxSX;
     }
 
     public String getMaNuocSX() {
@@ -22,33 +16,11 @@ public class NuocSanXuat {
         this.maNuocSX = maNuocSX;
     }
 
-    public String getTenNuocSX() {
-        return tenNuocSX;
+    public String getTenNuoxSX() {
+        return tenNuoxSX;
     }
 
-    public void setTenNuocSX(String tenNuocSX) {
-        this.tenNuocSX = tenNuocSX;
+    public void setTenNuoxSX(String tenNuoxSX) {
+        this.tenNuoxSX = tenNuoxSX;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NuocSanXuat that = (NuocSanXuat) o;
-        return Objects.equals(maNuocSX, that.maNuocSX);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(maNuocSX);
-    }
-
-    @Override
-    public String toString() {
-        return "NuocSanXuat{" +
-                "maNuocSX='" + maNuocSX + '\'' +
-                ", tenNuocSX='" + tenNuocSX + '\'' +
-                '}';
-    }
-
 }

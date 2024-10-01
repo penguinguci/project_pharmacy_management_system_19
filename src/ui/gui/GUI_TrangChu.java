@@ -768,23 +768,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         });
     }
 
-//    public static void main(String[] args) {
-//        EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                try {
-//                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//                    GUI_TrangChu frame = new GUI_TrangChu();
-//                    frame.setVisible(true);
-//                    ConnectDB.getInstance().connect();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        SwingUtilities.invokeLater(() -> {
-//            GUI_TrangChu frame = new GUI_TrangChu();
-//            frame.setVisible(true);
-//        });
-//
-//    }
+    public static void main(String[] args) {
+        GUI_TrangChu frame = new GUI_TrangChu();
+        frame.setVisible(true);
+    }
 }

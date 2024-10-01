@@ -1,60 +1,60 @@
 package entity;
 
-import java.sql.Date;
-import java.util.Objects;
+import java.time.LocalDate;
 
 public class NhanVien {
-    private String maNhanVien;
-    private String hoNhanVien;
-    private String tenNhanVien;
-    private String email;
-    private Date ngaySinh;
-    private int soDienThoai;
-    private String diaChi;
-    private boolean gioiTinh;
-    private int vaiTro;
-    private int trangThai;
+    private String maNV, hoNV, tenNV, email, diaChi, vaiTro, gioiTinh;
+    private LocalDate ngaySinh;
+    private boolean trangThai; // true = còn làm, false = nghỉ việc
+    private  int sdt;
 
-    public NhanVien() {
-    }
-
-    public NhanVien(String maNhanVien, String hoNhanVien,
-                    String tenNhanVien, String email, Date ngaySinh,
-                    int soDienThoai, String diaChi, boolean gioiTinh, int vaiTro, int trangThai) {
-        this.maNhanVien = maNhanVien;
-        this.hoNhanVien = hoNhanVien;
-        this.tenNhanVien = tenNhanVien;
+    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, int vaiTro, boolean gioiTinh, LocalDate ngaySinh,  boolean trangThai, int sdt) {
+        this.maNV = maNV;
+        this.hoNV = hoNV;
+        this.tenNV = tenNV;
         this.email = email;
-        this.ngaySinh = ngaySinh;
-        this.soDienThoai = soDienThoai;
         this.diaChi = diaChi;
-        this.gioiTinh = gioiTinh;
-        this.vaiTro = vaiTro;
+        setVaiTro(vaiTro);
+        this.ngaySinh = ngaySinh;
+        setGioiTinh(gioiTinh);
         this.trangThai = trangThai;
+        this.sdt = sdt;
+    }
+    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, int vaiTro, boolean gioiTinh, LocalDate ngaySinh, boolean trangThai, int sdt) {
+        this.maNV = maNV;
+        this.hoNV = hoNV;
+        this.tenNV = tenNV;
+        this.email = email;
+        this.diaChi = diaChi;
+        setVaiTro(vaiTro);
+        this.ngaySinh = ngaySinh;
+        setGioiTinh(gioiTinh);
+        this.trangThai = trangThai;
+        this.sdt = sdt;
     }
 
-    public String getMaNhanVien() {
-        return maNhanVien;
+    public String getMaNV() {
+        return maNV;
     }
 
-    public void setMaNhanVien(String maNhanVien) {
-        this.maNhanVien = maNhanVien;
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
     }
 
-    public String getHoNhanVien() {
-        return hoNhanVien;
+    public String getHoNV() {
+        return hoNV;
     }
 
-    public void setHoNhanVien(String hoNhanVien) {
-        this.hoNhanVien = hoNhanVien;
+    public void setHoNV(String hoNV) {
+        this.hoNV = hoNV;
     }
 
-    public String getTenNhanVien() {
-        return tenNhanVien;
+    public String getTenNV() {
+        return tenNV;
     }
 
-    public void setTenNhanVien(String tenNhanVien) {
-        this.tenNhanVien = tenNhanVien;
+    public void setTenNV(String tenNV) {
+        this.tenNV = tenNV;
     }
 
     public String getEmail() {
@@ -65,22 +65,6 @@ public class NhanVien {
         this.email = email;
     }
 
-    public Date getNgaySinh() {
-        return ngaySinh;
-    }
-
-    public void setNgaySinh(Date ngaySinh) {
-        this.ngaySinh = ngaySinh;
-    }
-
-    public int getSoDienThoai() {
-        return soDienThoai;
-    }
-
-    public void setSoDienThoai(int soDienThoai) {
-        this.soDienThoai = soDienThoai;
-    }
-
     public String getDiaChi() {
         return diaChi;
     }
@@ -89,56 +73,55 @@ public class NhanVien {
         this.diaChi = diaChi;
     }
 
-    public boolean isGioiTinh() {
-        return gioiTinh;
-    }
-
-    public void setGioiTinh(boolean gioiTinh) {
-        this.gioiTinh = gioiTinh;
-    }
-
-    public int getVaiTro() {
+    public String getVaiTro() {
         return vaiTro;
     }
 
     public void setVaiTro(int vaiTro) {
-        this.vaiTro = vaiTro;
+        if(vaiTro == 1){
+            this.vaiTro = "Nhân viên bán thuốc";
+        } else if(vaiTro == 2){
+            this.vaiTro = "Nhân viên quản lý";
+        } else if(vaiTro == 0){
+            this.vaiTro = "Admin";
+        } else{
+            this.vaiTro = "Không xác định";
+        }
     }
 
-    public int getTrangThai() {
+    public String getGioiTinh() {
+        return gioiTinh;
+    }
+
+    public void setGioiTinh(boolean gioiTinh) {
+        if(gioiTinh == false){
+            this.gioiTinh = "Nữ";
+        } else {
+            this.gioiTinh = "Nam";
+        }
+    }
+
+    public LocalDate getNgaySinh() {
+        return ngaySinh;
+    }
+
+    public void setNgaySinh(LocalDate ngaySinh) {
+        this.ngaySinh = ngaySinh;
+    }
+
+    public boolean isTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(int trangThai) {
+    public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NhanVien nhanVien = (NhanVien) o;
-        return soDienThoai == nhanVien.soDienThoai && Objects.equals(maNhanVien, nhanVien.maNhanVien) && Objects.equals(email, nhanVien.email);
+    public int getSdt() {
+        return sdt;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(maNhanVien, email, soDienThoai);
-    }
-
-    @Override
-    public String toString() {
-        return "NhanVien{" +
-                "maNhanVien='" + maNhanVien + '\'' +
-                ", hoNhanVien='" + hoNhanVien + '\'' +
-                ", tenNhanVien='" + tenNhanVien + '\'' +
-                ", email='" + email + '\'' +
-                ", ngaySinh=" + ngaySinh +
-                ", soDienThoai=" + soDienThoai +
-                ", diaChi='" + diaChi + '\'' +
-                ", gioiTinh=" + gioiTinh +
-                ", vaiTro=" + vaiTro +
-                ", trangThai=" + trangThai +
-                '}';
+    public void setSdt(int sdt) {
+        this.sdt = sdt;
     }
 }

@@ -1,14 +1,8 @@
 package entity;
 
-import java.util.Objects;
-
 public class KeThuoc {
-    private String maKe;
-    private String tenKe;
+    private String maKe, tenKe;
     private NhanVien nhanVien;
-
-    public KeThuoc() {
-    }
 
     public KeThuoc(String maKe, String tenKe, NhanVien nhanVien) {
         this.maKe = maKe;
@@ -38,27 +32,5 @@ public class KeThuoc {
 
     public void setNhanVien(NhanVien nhanVien) {
         this.nhanVien = nhanVien;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KeThuoc keThuoc = (KeThuoc) o;
-        return Objects.equals(maKe, keThuoc.maKe);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(maKe);
-    }
-
-    @Override
-    public String toString() {
-        return "KeThuoc{" +
-                "maKe='" + maKe + '\'' +
-                ", tenKe='" + tenKe + '\'' +
-                ", nhanVien=" + nhanVien +
-                '}';
     }
 }
