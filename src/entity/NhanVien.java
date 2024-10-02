@@ -1,16 +1,16 @@
 package entity;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public class NhanVien {
     private String maNV, hoNV, tenNV, email, diaChi, vaiTro, gioiTinh;
-    private LocalDate ngaySinh;
+    private Date ngaySinh;
     private boolean trangThai; // true = còn làm, false = nghỉ việc
     private  int sdt;
 
     public NhanVien() {}
 
-    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, String vaiTro, boolean gioiTinh, LocalDate ngaySinh,  boolean trangThai, int sdt) {
+    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh,  boolean trangThai, int sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
@@ -22,7 +22,7 @@ public class NhanVien {
         this.trangThai = trangThai;
         this.sdt = sdt;
     }
-    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, String vaiTro, boolean gioiTinh, LocalDate ngaySinh, boolean trangThai, int sdt) {
+    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh, boolean trangThai, int sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
@@ -94,11 +94,11 @@ public class NhanVien {
         }
     }
 
-    public LocalDate getNgaySinh() {
+    public Date getNgaySinh() {
         return ngaySinh;
     }
 
-    public void setNgaySinh(LocalDate ngaySinh) {
+    public void setNgaySinh(Date ngaySinh) {
         this.ngaySinh = ngaySinh;
     }
 
