@@ -5,6 +5,10 @@ public class DanhMuc {
 
     public DanhMuc() {}
 
+    public DanhMuc(String maDanhMuc) {
+        this.maDanhMuc = maDanhMuc;
+    }
+
     public DanhMuc(String maDanhMuc, String tenDanhMuc) {
         this.maDanhMuc = maDanhMuc;
         this.tenDanhMuc = tenDanhMuc;
