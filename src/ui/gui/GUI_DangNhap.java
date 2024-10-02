@@ -187,7 +187,12 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
             String mk = new String(text_Password.getPassword()).trim();  // Handle password securely
             if (log.checkVar(tk, mk)) {
                 this.setVisible(false);
-                GUI_TrangChu frame = new GUI_TrangChu();
+                GUI_TrangChu frame = null;
+                try {
+                    frame = new GUI_TrangChu();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
                 frame.setVisible(true);
                 ConnectDB.getInstance().connect();
             } else {

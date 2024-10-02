@@ -1,6 +1,7 @@
 package entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class HoaDon {
     private String maHD, hinhThucThanhToan;
@@ -79,11 +80,44 @@ public class HoaDon {
         this.trangThai = trangThai;
     }
 
-    public double tinhTienThue(){
+    public double tinhTienThue(List<ChiTietHoaDon> dsChiTietHoaDon){
+        double tienThue = 0;
+        double tongThanhTien = 0;
+        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
+            tongThanhTien += chiTietHoaDon.tinhThanhTien();
+        }
+        tienThue = tongThanhTien * thue.getTyleThue();
+        return tienThue;
+    }
+
+    public double tinhTienKhuyenMai(List<ChiTietHoaDon> dsChiTietHoaDon, ChuongTrinhKhuyenMai chuongTrinhKhuyenMai){
+        double tienKhuyenMai = 0;
+
+        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon){
+            String maThuoc = chiTietHoaDon.getThuoc().getMaThuoc();
+
+//            for(ChiTietKhuyenMai chiTietKhuyenMai : chuongTrinhKhuyenMai.
+        }
         return 0;
     }
 
-    public double tinhTongTien(){
-        return 0;
+    public double tinhTienGiam(List<ChiTietHoaDon> dsChiTietHoaDon){
+        return khachHang.tinhTinhDiemTichLuy(dsChiTietHoaDon);
     }
+
+    public double tinhTongTien(List<ChiTietHoaDon> dsChiTietHoaDon){
+        double tienThue = tinhTienThue(dsChiTietHoaDon);
+        double tienGiam = khachHang.tinhTinhDiemTichLuy(dsChiTietHoaDon);
+        double tienKhuyenMai = 0;
+        double tongThanhTien = 0;
+
+        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
+            tongThanhTien += chiTietHoaDon.tinhThanhTien();
+        }
+
+        double tongTien = tongThanhTien + tienThue - tienGiam - tienKhuyenMai;
+
+        return tongTien;
+    }
+
 }

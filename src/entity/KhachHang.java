@@ -1,6 +1,7 @@
 package entity;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class KhachHang {
@@ -140,7 +141,13 @@ public class KhachHang {
                 '}';
     }
 
-    private double tinhTinhDiemTichLuy() {
-        return 1;
+    public double tinhTinhDiemTichLuy(List<ChiTietHoaDon> dsChiTietHoaDon) {
+        double tongThanhTien = 0;
+        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
+            tongThanhTien += chiTietHoaDon.tinhThanhTien();
+        }
+        double diemTichLuy = tongThanhTien * 0.01;
+
+        return diemTichLuy;
     }
 }

@@ -5,6 +5,12 @@ GO
 USE QuanLyNhaThuoc;
 GO
 
+CREATE TABLE ChucVu (
+	maChucVu SMALLINT PRIMARY KEY NOT NULL,
+	tenChucVu NVARCHAR(50) NOT NULL
+	
+);
+
 -- Bảng NhanVien
 CREATE TABLE NhanVien (
     maNV VARCHAR(10) NOT NULL PRIMARY KEY,
@@ -17,6 +23,7 @@ CREATE TABLE NhanVien (
     gioiTinh BIT,
     vaiTro SMALLINT NOT NULL,
     trangThai BIT NOT NULL
+	FOREIGN KEY (vaiTro) REFERENCES ChucVu(maChucVu)
 );
 
 -- Bảng TaiKhoan
@@ -37,8 +44,15 @@ CREATE TABLE KhachHang (
     email VARCHAR(50),
     diaChi NVARCHAR(255),
     SDT INT,
-    diemTichLuy FLOAT(10),
     trangThai BIT
+);
+
+CREATE TABLE DiemTichLuy (
+	maKH VARCHAR(10) PRIMARY KEY,
+	xepHang NVARCHAR(50) NOT NULL,
+	diemTong FLOAT NOT NULL,
+	diemHienTai FLOAT NOT NULL
+	FOREIGN KEY (maKH) REFERENCES KhachHang(maKH)
 );
 
 -- Bảng Thue
@@ -94,7 +108,7 @@ CREATE TABLE Thuoc (
 	maNuocSanXuat VARCHAR(10),
     maKe VARCHAR(10),
     ngaySX DATE,
-    HSD INT,
+    HSD INT, 
     donViTinh NVARCHAR(10) NOT NULL,
 	soLuongCon int NOT NULL,
     cachDung NVARCHAR(255),
@@ -102,8 +116,10 @@ CREATE TABLE Thuoc (
     baoQuan NVARCHAR(255),
     congDung NVARCHAR(255),
     chiDinh NVARCHAR(255),
+	hinhAnh VARCHAR(255),
     giaNhap FLOAT(10),
     giaBan FLOAT(10),
+	trangThai bit,
 	PRIMARY KEY (soHieuThuoc, maThuoc),
     FOREIGN KEY (maDanhMuc) REFERENCES DanhMuc(maDanhMuc),
     FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC),
@@ -236,6 +252,13 @@ CREATE TABLE ChiTietPhieuDoiTra (
 
 ---- Thêm dữ liệu
 
+-- Bảng ChucVu
+INSERT INTO ChucVu (maChucVu, tenChucVu)
+VALUES
+(0, N'Quản trị viên'),
+(1, N'Nhân viên bán thuốc'),
+(2, N'Nhân viên quản lý')
+
 -- Bảng NhanVien
 INSERT INTO NhanVien (maNV, hoNV, tenNV, email, ngaySinh, SDT, diaChi, gioiTinh, vaiTro, trangThai)
 VALUES
@@ -255,13 +278,22 @@ VALUES
 ('QL002', '123')
 
 -- Bảng KhachHang
-INSERT INTO KhachHang (maKH, hoKH, tenKH, ngaySinh, gioiTinh, diaChi, SDT, diemTichLuy, trangThai)
+INSERT INTO KhachHang (maKH, hoKH, tenKH, ngaySinh, gioiTinh, diaChi, SDT, trangThai)
 VALUES
-('KH001', N'Lê', N'Thanh', '1991-04-10', 0,'23 Nguyen Hue, TP.HCM', 912345678, 100, 1),
-('KH002', N'Phạm', N'Khánh Vân', '1980-11-22', 0,'45 Dien Bien Phu, TP.HCM', 923456789, 200, 1),
-('KH003', N'Trần', N'Quốc Anh', '1993-02-18', 1,'67 Phan Xich Long, TP.HCM', 934567890, 300, 1),
-('KH004', N'Nguyễn', N'Văn Hải', '1996-09-07', 1,'89 Ton Duc Thang, TP.HCM', 945678901, 400, 1),
-('KH005', N'Hồ', N'Văn Minh', '1989-06-30', 1,'12 Tran Cao Van, TP.HCM', 956789012, 500, 1);
+('KH001', N'Lê', N'Thanh', '1991-04-10', 0,'23 Nguyen Hue, TP.HCM', 100, 1),
+('KH002', N'Phạm', N'Khánh Vân', '1980-11-22', 0,'45 Dien Bien Phu, TP.HCM', 200, 1),
+('KH003', N'Trần', N'Quốc Anh', '1993-02-18', 1,'67 Phan Xich Long, TP.HCM', 300, 1),
+('KH004', N'Nguyễn', N'Văn Hải', '1996-09-07', 1,'89 Ton Duc Thang, TP.HCM', 400, 1),
+('KH005', N'Hồ', N'Văn Minh', '1989-06-30', 1,'12 Tran Cao Van, TP.HCM', 500, 1)
+
+-- Bảng DiemTichLuy
+INSERT INTO DiemTichLuy(maKH, xepHang, diemTong, diemHienTai)
+VALUES
+('KH001', N'Vàng', 90000, 90000),
+('KH002', N'Đồng', 9000, 9000),
+('KH003', N'Bạc', 30000, 30000),
+('KH004', N'Kim cương', 5000000, 500000),
+('KH005', N'Bạch kim', 2000000, 200000)
 
 -- Bảng ChuongTrinhKhuyenMai
 INSERT INTO ChuongTrinhKhuyenMai (maCTKM, moTa, ngayBatDau, ngayKetThuc)
@@ -320,13 +352,13 @@ VALUES
 ('THUE003', N'Thuế tiêu thụ đặc biệt', 0.2)
 
 -- Bảng Thuoc
-INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, donViTinh, maKe, HSD, giaBan, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat)
+INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, donViTinh, maKe, HSD, giaBan, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
 VALUES
-('S00001', 'T001', 'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US'),
-('S00002' ,'T002', 'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN'),
-('S00003', 'T003', 'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU'),
-('S00004', 'T004', 'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN'),
-('S00005', 'T005', 'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US')
+('S00001', 'T001', 'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
+('S00002' ,'T002', 'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
+('S00003', 'T003', 'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
+('S00004', 'T004', 'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
+('S00005', 'T005', 'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
 
 
 -- Bảng HoaDon

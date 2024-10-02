@@ -48,7 +48,7 @@ public class ChiTietHoaDon {
     }
 
     public double tinhThanhTien(){
-        return 0;
+        return soLuong * thuoc.getGiaBan();
     }
 }
 
