@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class Form_QuanLyDonDatThuoc  extends JPanel {
+public class Form_QuanLyDonDatThuoc extends JPanel {
     public JButton btnQuayLai, btnThanhToan, btnChinhSua, btnHuy, btnTimKiemDon, btnLamMoi;
     public JComboBox<String> cbMaDonDat, cbThoiGianDat;
     public JLabel lblTitle;
@@ -15,6 +15,11 @@ public class Form_QuanLyDonDatThuoc  extends JPanel {
     public DefaultComboBoxModel<String> dcbmMaDonDat, dcbmThoiGianDat;
 
     public Form_QuanLyDonDatThuoc() {
+
+        //Tạo main Panel
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setLayout(new BorderLayout());
 
         lblTitle = new JLabel("Quản lý đặt thuốc");
         lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
@@ -31,11 +36,12 @@ public class Form_QuanLyDonDatThuoc  extends JPanel {
         dtmDon = new DefaultTableModel(colsnameTabDon, 0);
         tabDon = new JTable(dtmDon);
         scrDon = new JScrollPane(tabDon);
-        //scrDon.setPreferredSize(new Dimension(600, 350));
+        scrDon.setPreferredSize(new Dimension(1530, 300));
         String[] colsnameTabChiTietDon = {"Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         dtmChiTietDon = new DefaultTableModel(colsnameTabChiTietDon, 0);
         tabChiTietDon = new JTable(dtmChiTietDon);
         scrChiTietDon = new JScrollPane(tabChiTietDon);
+        scrChiTietDon.setPreferredSize(new Dimension(1530, 300));
 
         //Tạo TitlePanel_Center
         JPanel titlePanel_Center = new JPanel();
@@ -103,9 +109,12 @@ public class Form_QuanLyDonDatThuoc  extends JPanel {
         //Thêm Box vào FooterPanel
         footerPanel.add(box4);
 
-        //Thêm các Panel vào centerContentPanel
-        add(titlePanel_Center, BorderLayout.NORTH);
-        add(listPanel, BorderLayout.CENTER);
-        add(footerPanel, BorderLayout.SOUTH);
+        //Thêm các Panel vào mainPanel
+        mainPanel.add(titlePanel_Center, BorderLayout.NORTH);
+        mainPanel.add(listPanel, BorderLayout.CENTER);
+        mainPanel.add(footerPanel, BorderLayout.SOUTH);
+
+        this.setLayout(new BorderLayout());
+        this.add(mainPanel, BorderLayout.CENTER);
     }
 }
