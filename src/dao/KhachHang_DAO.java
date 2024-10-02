@@ -14,7 +14,7 @@ public class KhachHang_DAO {
         list = new ArrayList<KhachHang>();
     }
 
-    public ArrayList<KhachHang> getData() throws Exception{
+    public ArrayList<KhachHang> getAllKhachHang() throws Exception{
 
         ConnectDB con  = new ConnectDB();
         con.connect();

@@ -14,7 +14,7 @@ public class DangNhap_DAO {
         listTK = new ArrayList<TaiKhoan>();
     }
 
-    public ArrayList<TaiKhoan> getData() throws Exception{
+    public ArrayList<TaiKhoan> getAllUser() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

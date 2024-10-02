@@ -171,7 +171,7 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         log = new DangNhap_DAO();
-        list = log.getData();
+        list = log.getAllUser();
     }
 
     public static void main(String[] args) throws Exception {
