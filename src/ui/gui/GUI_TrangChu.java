@@ -299,7 +299,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         // Top Panel
         JPanel topPanel = new JPanel();
-
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int widthOfMainContentPanel = screenSize.width - menuPanel.getPreferredSize().width;
@@ -396,6 +395,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
+
+        // Thêm centerPanel vào CENTER của mainContentPanel
         mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
 
