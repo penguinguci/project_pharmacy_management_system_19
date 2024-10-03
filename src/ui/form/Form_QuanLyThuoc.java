@@ -5,30 +5,36 @@ import java.awt.*;
 
 public class Form_QuanLyThuoc  extends JPanel {
 
-    private final JPanel pBack;
-
-    @Override
-    public Dimension getPreferredSize() {
-        // Trả về kích thước của JPanel
-        return super.getPreferredSize(); // Hoặc trả về kích thước bạn muốn
-    }
-
     public Form_QuanLyThuoc() {
+        //Set layout NORTH
+        JPanel pContainerNorth = new JPanel();
+        pContainerNorth.setLayout(new BorderLayout());
 
-        JPanel SOUTH = new JPanel();
 
-
-        pBack = new JPanel();
-        pBack.setLayout(new FlowLayout(FlowLayout.LEFT));
+        // Button back in NORTH
+        JPanel pBack = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ImageIcon arrowLeft = new ImageIcon("images/arrow_left.png");
-        pBack.add(new JLabel(arrowLeft));
-        pBack.add(new JLabel("Quay lại"));
-        SOUTH.add(pBack);
+        JButton btnBack = new JButton(arrowLeft);
+        btnBack.setText("Quay lại");
+        pBack.setPreferredSize(new Dimension(100, 50));
+        pBack.add(btnBack);
 
-        JLabel text = new JLabel("Quản lí thuốc");
-        text.setFont(new Font("Arial", Font.BOLD, 50));
-        SOUTH.add(text);
+        // Title in NORTH
+        JPanel pTitle = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel lblTitle = new JLabel("Quản lí thuốc");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 50));
+        pTitle.add(lblTitle);
 
-        add(SOUTH, BorderLayout.CENTER);
+        pContainerNorth.setBackground(Color.RED);
+        pBack.setBackground(Color.BLUE);
+        pTitle.setBackground(Color.GREEN);
+
+        pContainerNorth.add(pBack, BorderLayout.WEST);
+        pContainerNorth.add(pTitle, BorderLayout.CENTER);
+
+        this.add(pContainerNorth);
+
+        // Set layout CENTER
+
     }
 }
