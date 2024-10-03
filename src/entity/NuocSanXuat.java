@@ -5,6 +5,10 @@ public class NuocSanXuat {
 
     public NuocSanXuat() {}
 
+    public NuocSanXuat(String maNuocSX) {
+        this.maNuocSX = maNuocSX;
+    }
+
     public NuocSanXuat(String maNuocSX, String tenNuoxSX) {
         this.maNuocSX = maNuocSX;
         this.tenNuoxSX = tenNuoxSX;

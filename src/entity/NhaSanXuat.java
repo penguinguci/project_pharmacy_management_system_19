@@ -5,6 +5,10 @@ public class NhaSanXuat {
 
     public NhaSanXuat() {}
 
+    public NhaSanXuat(String maNhaSX) {
+        this.maNhaSX = maNhaSX;
+    }
+
     public NhaSanXuat(String tenNhaSX, String maNhaSX, String diaChi) {
         this.tenNhaSX = tenNhaSX;
         this.maNhaSX = maNhaSX;
