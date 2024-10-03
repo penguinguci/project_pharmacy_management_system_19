@@ -17,7 +17,7 @@ public class QuanLyDonDatThuoc_DAO {
         listDon = new ArrayList<DonDatThuoc>();
     }
 
-    public ArrayList<DonDatThuoc> getData() throws Exception{
+    public ArrayList<DonDatThuoc> getAllDonDatThuoc() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

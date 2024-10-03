@@ -14,7 +14,7 @@ public class NhanVien_DAO {
         this.list = new ArrayList<NhanVien>();
     }
 
-    public ArrayList<NhanVien> getData() throws Exception{
+    public ArrayList<NhanVien> getAllNhanVien() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

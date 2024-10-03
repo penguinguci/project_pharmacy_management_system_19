@@ -14,7 +14,7 @@ public class DanhMuc_DAO {
         list = new ArrayList<DanhMuc>();
     }
 
-    public ArrayList<DanhMuc> getData() throws Exception{
+    public ArrayList<DanhMuc> getAllDanhMuc() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
