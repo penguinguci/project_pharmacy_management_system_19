@@ -7,7 +7,7 @@ public class Thuoc {
     private String soHieuThuoc, maThuoc, tenThuoc, donViTinh, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh;
     private int HSD; //Đơn vị tính = tháng
     private int soLuongCon;
-    private LocalDate ngaySX;
+    private Date ngaySX;
     private double giaNhap, giaBan;
     private DanhMuc danhMuc;
     private NhaSanXuat nhaSanXuat;
@@ -20,7 +20,7 @@ public class Thuoc {
 
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
-                 int HSD, int soLuongCon, LocalDate ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
+                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
                  NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
@@ -45,7 +45,7 @@ public class Thuoc {
         this.hinhAnh = hinhAnh;
     }
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
-                 int HSD, int soLuongCon, LocalDate ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
+                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
                  NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
@@ -153,11 +153,11 @@ public class Thuoc {
         this.soLuongCon = soLuongCon;
     }
 
-    public LocalDate getNgaySX() {
+    public Date getNgaySX() {
         return ngaySX;
     }
 
-    public void setNgaySX(LocalDate ngaySX) {
+    public void setNgaySX(Date ngaySX) {
         this.ngaySX = ngaySX;
     }
 
