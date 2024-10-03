@@ -1,15 +1,25 @@
 package ui.form;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Form_QuanLyThuoc  extends JPanel {
-    private final JButton btnAdd;
-    private final JButton btnUpdate;
-    private final JButton btnDelete;
-    private final JButton btnReload;
+    public JScrollPane scrollListProduct;
+    public JTable tProduct;
+    public JButton btnAdd;
+    public JButton btnUpdate;
+    public JButton btnDelete;
+    public JButton btnReload;
+    public DefaultTableModel dtListProduct;
     public JTextField txtSearch;
     public JComboBox<String> cbNhaSanXuat, cbDanhMuc;
+    public int currentPage = 0;
+    public int rowsPerPage = 10;
+    public JButton btnPrev, btnNext;
+    public int totalRows = 20;
 
     public Form_QuanLyThuoc() {
         //Set layout NORTH
@@ -38,6 +48,10 @@ public class Form_QuanLyThuoc  extends JPanel {
 
         // Set layout CENTER
         JPanel pContainerCenter = new JPanel();
+        Box pListProduct = Box.createVerticalBox();
+
+        // List Product
+        // Option
         Box pOption = Box.createHorizontalBox();
 
         // Search
@@ -81,13 +95,56 @@ public class Form_QuanLyThuoc  extends JPanel {
         pOption.add(btnReload);
         pOption.add(Box.createHorizontalStrut(10));
 
-        pContainerCenter.add(pOption);
+        // Table product
+        String[] hTableListProduct = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nước sản xuất", "Quy cách", "Thành phần", "Đơn vị tính", "Giá bán"};
+        dtListProduct = new DefaultTableModel(hTableListProduct, 0);
+        tProduct = new JTable(dtListProduct);
+        scrollListProduct = new JScrollPane(tProduct);
 
-        setLayout(new BorderLayout());
+
+        JPanel pPag = new JPanel();
+        btnPrev = new JButton("<");
+        btnNext = new JButton(">");
+        pPag.add(btnPrev);
+        pPag.add(btnNext);
+
+        btnPrev.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(currentPage > 0){
+                    currentPage--;
+                    updateTable();
+                }
+            }
+        });
+
+        btnNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if((currentPage+1) * rowsPerPage < totalRows){
+                    currentPage++;
+                }
+            }
+        });
+
+
+        pListProduct.add(pOption);
+        pListProduct.add(Box.createVerticalStrut(10));
+        pListProduct.add(scrollListProduct);
+        pListProduct.add(Box.createVerticalStrut(10));
+        pListProduct.add(pPag);
+
+        pContainerCenter.setBackground(Color.RED);
+        pContainerCenter.setBackground(Color.BLUE);
+        pContainerCenter.add(pListProduct);
+        this.setLayout(new BorderLayout());
         this.add(pContainerNorth, BorderLayout.NORTH);
         this.add(pContainerCenter, BorderLayout.CENTER);
 
 
 
+    }
+
+    private void updateTable() {
     }
 }
