@@ -1,9 +1,11 @@
 package ui.form;
 
 import connectDB.ConnectDB;
+import dao.DanhMuc_DAO;
+import dao.DiemTichLuy_DAO;
+import dao.KhachHang_DAO;
 import dao.Thuoc_DAO;
-import entity.HoaDon;
-import entity.Thuoc;
+import entity.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 
 public class Form_BanThuoc extends JPanel implements ActionListener {
     public JButton btnBack, btnLamMoi;
+    private DefaultComboBoxModel dcbm_DanhMuc;
     public JComboBox<String> cbxDanhMuc;
     public JTable tbGioHang ;
     public static DefaultTableModel modelGioHang;
@@ -33,22 +36,34 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
     private JLabel lbTenKHTK;
     private JLabel lbSDTKH;
     private JLabel lbNoiDungMoTa;
-    public JTextField txtTimKiemKH;
+    private static JTextField txtTimKiemKH;
     public JTextField txtTienKhachTra;
     public JTextField txt_TienKhuyenMai;
     public JTextField txt_TienGiam;
     public static JTextField txt_tongTienValue;
     public JTextField text_TienThue;
     public JTextField text_TienThoi;
-    public  JButton btnTimKiemKH, btnThanhToan, btnThanhToanKhongIn, btnHuy, btnLuuDonHang;
+    private static JButton btnTimKiemKH;
+    private JButton btnThanhToan;
+    private JButton btnThanhToanKhongIn;
+    private JButton btnHuy;
+    private JButton btnLuuDonHang;
     public JCheckBox cbxDoiDiem;
     public JComboBox<String> cboChonLoaiKM;
     private JLabel lblGiaTriTienThoi;
     private JRadioButton rbtnViDienTu, rbtnTienMat;
     private ButtonGroup paymentMethodGroup;
+    private static KhachHang_DAO kh_dao;
+    private static DiemTichLuy_DAO dtl_dao;
+    private static DanhMuc_DAO dm_dao;
+    private static Thuoc_DAO thuoc_dao;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
+        // Lấy data thuốc
+        thuoc_dao = new Thuoc_DAO();
+        ArrayList<Thuoc> t = new ArrayList<Thuoc>();
+        t = thuoc_dao.getAllThuoc();
 
         // Panel Content Center
         JPanel panelContentCenter = new JPanel(new BorderLayout());
@@ -75,9 +90,32 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
 
         // Panel bên phải chứa Danh mục, Tìm kiếm, Làm mới
         JPanel panelButton_right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-        String[] danhMuc = {"Danh mục"};
-        panelButton_right.add(cbxDanhMuc = new JComboBox<>(danhMuc));
+        //Lấy data lên combobox danh mục
+        dm_dao = new DanhMuc_DAO();
+        ArrayList<DanhMuc> danhMucs = dm_dao.getAllDanhMuc();
+        dcbm_DanhMuc = new DefaultComboBoxModel();
+        for(DanhMuc x : danhMucs) {
+            dcbm_DanhMuc.addElement(x.getTenDanhMuc());
+        }
+        panelButton_right.add(cbxDanhMuc = new JComboBox<>(dcbm_DanhMuc));
         cbxDanhMuc.setPreferredSize(new Dimension(150, 28));
+
+        // Đăng ký sự kiện cho combo danh mục
+//        cbxDanhMuc.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    String selectedItem = (String) cbxDanhMuc.getSelectedItem();
+//                    ArrayList<Thuoc> thuocTam = new ArrayList<Thuoc>();
+//                    thuocTam = thuoc_dao.getThuocByDanhMuc(selectedItem);
+//                    for(Thuoc x : thuocTam) {
+//                        new ThuocPanel(x);
+//                    }
+//                } catch (Exception e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+//        });
 
         panelButton_right.add(txtTimKiem = new JPlaceholderTextField("Tìm kiếm thuốc bằng tên/mã thuốc"));
         txtTimKiem.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -191,7 +229,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
 
         // Hiển thị tên khách
         JLabel lbTenKH = new JLabel("Tên khách hàng: ");
-        lbTenKHTK = new JLabel("Trần Long Vũ");
+        lbTenKHTK = new JLabel("...");
 
         panelKhachHang.add(lbTenKH);
         panelKhachHang.add(Box.createHorizontalStrut(19));
@@ -200,14 +238,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
 
         // Hiển thị SDT khách
         JLabel lbSDT = new JLabel("Số điện thoại: ");
-        lbSDTKH = new JLabel("0915******");
+        lbSDTKH = new JLabel("...");
 
         panelKhachHang.add(lbSDT);
-        panelKhachHang.add(lbSDTKH);
+        panelKhachHang.add(this.lbSDTKH);
 
         // Hiển thị điểm tích lũy
         JLabel lblDiemTichLuy = new JLabel("Điểm tích lũy: ");
-        lbGiaTriDiemTL = new JLabel("0");
+        lbGiaTriDiemTL = new JLabel("...");
         cbxDoiDiem = new JCheckBox("Đổi điểm tích lũy");
 
         panelKhachHang.add(lblDiemTichLuy);
@@ -427,6 +465,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
         // thêm sự kiện
         rbtnTienMat.addActionListener(this);
         rbtnViDienTu.addActionListener(this);
+        btnTimKiemKH.addActionListener(this);
+
+        //Lấy dữ liệu tìm kiếm khách hàng
+        kh_dao = new KhachHang_DAO();
+        dtl_dao = new DiemTichLuy_DAO();
     }
 
 
@@ -613,6 +656,40 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
             txtTienKhachTra.setEnabled(false);
             txtTienKhachTra.setText("");
             lblGiaTriTienThoi.setText("");
+        }
+        if(o == btnTimKiemKH) {
+            String data = txtTimKiemKH.getText().trim();
+            System.out.println(data);
+            ArrayList<KhachHang> listKH = new ArrayList<>();
+            ArrayList<DiemTichLuy> listDiem = new ArrayList<>();
+            try {
+                listKH = kh_dao.getAllKhachHang();
+                listDiem = dtl_dao.getAllDiemTichLuy();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            if(kh_dao.searchAsName(listKH, data) || kh_dao.searchSDT(listKH ,data)) {
+                KhachHang kh = new KhachHang();
+                kh = kh_dao.getOneKhachHang(listKH, data);
+                DiemTichLuy diemTichLuy = new DiemTichLuy();
+                try {
+                    diemTichLuy = dtl_dao.getOneDiemTichLuy(listDiem, kh.getMaKH());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                lbTenKHTK.setText(kh.getHoKH()+" "+kh.getTenKH());
+                lbSDTKH.setText(kh.getSDT());
+                lbGiaTriDiemTL.setText(String.format("%.2f", diemTichLuy.getDiemHienTai()));
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy khách hàng!");
+            }
+        }
+        if(o == btnLamMoi) {
+            try {
+                loadThuocData();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
     }
 

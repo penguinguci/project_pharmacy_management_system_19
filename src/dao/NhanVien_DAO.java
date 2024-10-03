@@ -31,7 +31,7 @@ public class NhanVien_DAO {
             nv.setHoNV(rs.getString(2));
             nv.setTenNV(rs.getString(3));
             nv.setNgaySinh(rs.getDate(4));
-            nv.setSdt(rs.getInt(5));
+            nv.setSdt(rs.getString(5));
             if(rs.getString(6) == null){
                 nv.setEmail("Chưa có");
             } else {

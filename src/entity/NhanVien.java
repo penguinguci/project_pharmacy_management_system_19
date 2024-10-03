@@ -6,11 +6,11 @@ public class NhanVien {
     private String maNV, hoNV, tenNV, email, diaChi, vaiTro, gioiTinh;
     private Date ngaySinh;
     private boolean trangThai; // true = còn làm, false = nghỉ việc
-    private  int sdt;
+    private  String sdt;
 
     public NhanVien() {}
 
-    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh,  boolean trangThai, int sdt) {
+    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh,  boolean trangThai, String sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
@@ -22,7 +22,7 @@ public class NhanVien {
         this.trangThai = trangThai;
         this.sdt = sdt;
     }
-    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh, boolean trangThai, int sdt) {
+    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh, boolean trangThai, String sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
@@ -110,11 +110,11 @@ public class NhanVien {
         this.trangThai = trangThai;
     }
 
-    public int getSdt() {
+    public String getSdt() {
         return sdt;
     }
 
-    public void setSdt(int sdt) {
+    public void setSdt(String sdt) {
         this.sdt = sdt;
     }
 }

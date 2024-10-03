@@ -15,7 +15,6 @@ public class KhachHang_DAO {
     }
 
     public ArrayList<KhachHang> getAllKhachHang() throws Exception{
-
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
@@ -46,7 +45,44 @@ public class KhachHang_DAO {
             kh.setSDT(rs.getString(8));
             kh.setHang(rs.getString(9));
             kh.setTrangThai(rs.getBoolean(10));
+            list.add(kh);
         }
         return this.list;
+    }
+
+    public boolean searchAsName(ArrayList<KhachHang> list, String tenKH){
+        for(KhachHang x : list) {
+            String hoTen = x.getHoKH() + " " + x.getTenKH();
+            System.out.println(hoTen);
+            if (hoTen.equalsIgnoreCase(tenKH)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean searchSDT(ArrayList<KhachHang> list, String SDT){
+        for(KhachHang x : list) {
+            if(x.getSDT().equalsIgnoreCase(SDT)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public KhachHang getOneKhachHang(ArrayList<KhachHang> list, String data) {
+        for(KhachHang x : list) {
+            String hoTen = x.getHoKH()+ " " +x.getTenKH();
+            System.out.println(hoTen);
+            if(hoTen.equalsIgnoreCase(data)){
+                return x;
+            }
+        }
+        for(KhachHang x : list) {
+            if(x.getSDT().equalsIgnoreCase(data)){
+                return x;
+            }
+        }
+        return null;
     }
 }

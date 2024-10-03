@@ -121,4 +121,18 @@ public class Thuoc_DAO {
         }
         return list;
     }
+
+    public ArrayList<Thuoc> getThuocByDanhMuc(String danhMuc) throws Exception{
+        ArrayList<Thuoc> l = new ArrayList<Thuoc>();
+        for(Thuoc x : list) {
+            if(x.getDanhMuc().getTenDanhMuc().equalsIgnoreCase(danhMuc)){
+                l.add(x);
+            }
+        }
+        if(l!=null){
+            return l;
+        } else {
+            return null;
+        }
+    }
 }
