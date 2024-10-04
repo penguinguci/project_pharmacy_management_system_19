@@ -306,8 +306,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         // Top Panel
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.setPreferredSize(new Dimension(1300, 60));
-        topPanel.setBackground(Color.white);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int widthOfMainContentPanel = screenSize.width - menuPanel.getPreferredSize().width;
+        topPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, 60));
+        topPanel.setBackground(Color.WHITE);
+//        topPanel.setPreferredSize(new Dimension(1300, 60));
 //        topPanel.setBackground(new Color(65, 192, 201));
 
         // Nút thông báo
@@ -391,12 +394,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         topPanel.add(layeredPaneThongBao);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(customButtonUser);
+        topPanel.add(Box.createHorizontalStrut(30));
+
+        // Thêm top Panel vào mainContentPanel
+        mainContentPanel.add(topPanel, BorderLayout.NORTH);
 
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
         centerPanel.setPreferredSize(new Dimension(1320, 760));
         centerPanel.setBackground(Color.WHITE);
+
+        centerPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, screenSize.height));
+        // Thêm centerPanel vào CENTER của mainContentPanel
+        mainContentPanel.add(centerPanel, BorderLayout.CENTER);
+
 
         // tạo các form trước và thêm vào centerPanel
         formBanThuoc = new Form_BanThuoc();
@@ -422,15 +434,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         formTimKiemNhanVien = new Form_TimKiemNhanVien();
         formTimKiemThuoc = new Form_TimKiemThuoc();
 
-        // Thêm top Panel vào mainContentPanel
-        mainContentPanel.add(topPanel, BorderLayout.NORTH);
-
-        // Thêm centerPanel vào CENTER của mainContentPanel
-        mainContentPanel.add(centerPanel, BorderLayout.CENTER);
-
         // nội dung chính vào cửa sổ
-        this.add(menuPanel, BorderLayout.WEST);
-        this.add(mainContentPanel, BorderLayout.CENTER);
+        add(menuPanel, BorderLayout.WEST);
+        add(mainContentPanel, BorderLayout.CENTER);
+
 
         // Thêm sự kiện cho các nút
         btnNhanVien.addActionListener(this);
