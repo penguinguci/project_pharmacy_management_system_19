@@ -186,14 +186,13 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
             String tk = text_User.getText().trim();
             String mk = new String(text_Password.getPassword()).trim();  // Handle password securely
             if (log.checkVar(tk, mk)) {
-                this.setVisible(false);
-                GUI_TrangChu frame = null;
                 try {
-                    frame = new GUI_TrangChu();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                    this.setVisible(false);
+                    GUI_TrangChu frame = new GUI_TrangChu();
+                    frame.setVisible(true);
+                } catch (Exception e1){
+                    e1.printStackTrace();
                 }
-                frame.setVisible(true);
                 ConnectDB.getInstance().connect();
             } else {
                 JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác");
