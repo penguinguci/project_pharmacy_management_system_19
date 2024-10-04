@@ -14,7 +14,7 @@ public class NhaSanXuat_DAO {
         list = new ArrayList<NhaSanXuat>();
     }
 
-    public ArrayList<NhaSanXuat> getData() throws Exception{
+    public ArrayList<NhaSanXuat> getAllNhaSanXuat() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

@@ -6,6 +6,10 @@ public class KeThuoc {
 
     public KeThuoc() {}
 
+    public KeThuoc(String maKe) {
+        this.maKe = maKe;
+    }
+
     public KeThuoc(String maKe, String tenKe, NhanVien nhanVien) {
         this.maKe = maKe;
         this.tenKe = tenKe;

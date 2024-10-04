@@ -17,10 +17,10 @@ public class KeThuoc_DAO {
         list = new ArrayList<KeThuoc>();
         dao = new NhanVien_DAO();
         listNV = new ArrayList<NhanVien>();
-        listNV = dao.getData();
+        listNV = dao.getAllNhanVien();
     }
 
-    public ArrayList<KeThuoc> getData() throws Exception{
+    public ArrayList<KeThuoc> getAllKeThuoc() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

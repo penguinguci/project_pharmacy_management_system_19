@@ -28,18 +28,18 @@ public class Thuoc_DAO {
         nuoc = new NuocSanXuat_DAO();
         ke = new KeThuoc_DAO();
         listDanhMuc = new ArrayList<DanhMuc>();
-        listDanhMuc = dm.getData();
+        listDanhMuc = dm.getAllDanhMuc();
         listNCC = new ArrayList<NhaCungCap>();
-        listNCC = ncc.getData();
+        listNCC = ncc.getAllNhaCungCap();
         listNSX = new ArrayList<NhaSanXuat>();
-        listNSX = nsx.getData();
+        listNSX = nsx.getAllNhaSanXuat();
         listNuoc = new ArrayList<NuocSanXuat>();
-        listNuoc = nuoc.getData();
+        listNuoc = nuoc.getAllNuocSanXuat();
         listKe = new ArrayList<KeThuoc>();
-        listKe = ke.getData();
+        listKe = ke.getAllKeThuoc();
     }
 
-    public ArrayList<Thuoc> getData() throws Exception{
+    public ArrayList<Thuoc> getAllThuoc() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

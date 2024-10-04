@@ -52,9 +52,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public Form_TimKiemThuoc formTimKiemThuoc;
 
     public int role; //Set role cho GUI để bật tắt chức năng
-    public GUI_TrangChu() {
+    public GUI_TrangChu() throws Exception {
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(false);
 
         // Set logo
         ImageIcon logo = new ImageIcon("images/logo.jpg");
@@ -113,13 +116,16 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         menuItemsPanel.setLayout(new BoxLayout(menuItemsPanel, BoxLayout.Y_AXIS));
         menuItemsPanel.setBackground(new Color(65, 192, 201));
         menuItemsPanel.setMinimumSize(new Dimension(200, 600));
+        menuItemsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
 
         // Thêm menuItemsPanel vào JScrollPane
         JScrollPane menu_ScrollPane = new JScrollPane(menuItemsPanel);
         menu_ScrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        menu_ScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         JScrollBar verticalScrollBar = menu_ScrollPane.getVerticalScrollBar();
         verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
 
         verticalScrollBar.setUI(new BasicScrollBarUI() {
             @Override
@@ -396,6 +402,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
+        centerPanel.setPreferredSize(new Dimension(1320, 760));
+        centerPanel.setBackground(Color.WHITE);
 
         centerPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, screenSize.height));
         // Thêm centerPanel vào CENTER của mainContentPanel
@@ -467,11 +475,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnTKThuocBanChay.addActionListener(this);
         btnTKThuocBanCham.addActionListener(this);
         btnTKThuocSapHH.addActionListener(this);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
     // Sự kiện
@@ -769,7 +772,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     }
 
 
-    public static void main(String[] args) {
-        new GUI_TrangChu();
+    public static void main(String[] args) throws Exception {
+        GUI_TrangChu frame = new GUI_TrangChu();
+        frame.setVisible(true);
     }
 }

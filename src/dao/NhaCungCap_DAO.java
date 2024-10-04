@@ -14,7 +14,7 @@ public class NhaCungCap_DAO {
         list = new ArrayList<NhaCungCap>();
     }
 
-    public ArrayList<NhaCungCap> getData() throws Exception{
+    public ArrayList<NhaCungCap> getAllNhaCungCap() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

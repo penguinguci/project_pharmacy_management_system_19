@@ -1,6 +1,7 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Thuoc {
     private String soHieuThuoc, maThuoc, tenThuoc, donViTinh, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh;
