@@ -34,6 +34,15 @@ CREATE TABLE TaiKhoan (
     FOREIGN KEY (taiKhoan) REFERENCES NhanVien(maNV)
 );
 
+
+-- Bảng DiemTichLuy 
+CREATE TABLE DiemTichLuy (
+	maDTL VARCHAR(10) PRIMARY KEY,
+	xepHang NVARCHAR(50) NOT NULL,
+	diemTong FLOAT NOT NULL,
+	diemHienTai FLOAT NOT NULL
+);
+
 -- Bảng KhachHang
 CREATE TABLE KhachHang (
     maKH VARCHAR(10) NOT NULL PRIMARY KEY,
@@ -44,16 +53,11 @@ CREATE TABLE KhachHang (
     email VARCHAR(50),
     diaChi NVARCHAR(255),
     SDT INT,
-    trangThai BIT
+    trangThai BIT,
+	maDTL VARCHAR(10) NOT NULL,
+	FOREIGN KEY (maDTL) REFERENCES DiemTichLuy(maDTL)
 );
 
-CREATE TABLE DiemTichLuy (
-	maKH VARCHAR(10) PRIMARY KEY,
-	xepHang NVARCHAR(50) NOT NULL,
-	diemTong FLOAT NOT NULL,
-	diemHienTai FLOAT NOT NULL
-	FOREIGN KEY (maKH) REFERENCES KhachHang(maKH)
-);
 
 -- Bảng Thue
 CREATE TABLE Thue (
@@ -262,11 +266,11 @@ VALUES
 -- Bảng NhanVien
 INSERT INTO NhanVien (maNV, hoNV, tenNV, email, ngaySinh, SDT, diaChi, gioiTinh, vaiTro, trangThai)
 VALUES
-('NV001', N'Nguyễn', N'Văn An', null, '1990-05-10', 123456789, '123 Le Loi, TP.HCM', 1, 1, 1),
-('NV002', N'Trần', N'Thị Bình', null , '1992-07-20', 987654321, '456 Tran Hung Dao, TP.HCM', 0, 1, 1),
-('NV003', N'Lê', N'Văn Cao', null , '1988-03-15', 456789123, '789 Nguyen Trai, TP.HCM', 1, 1, 1),
-('QL001', N'Cao', N'Thành Đông', null , '1995-08-25', 321654987, '321 Hai Ba Trung, TP.HCM', 1, 2, 1),
-('QL002', N'Võ', N'Thị Dung', null , '1985-12-11', 789123456, '654 Cong Quynh, TP.HCM', 0, 2, 1);
+('NV001', N'Nguyễn', N'Văn An', null, '1990-05-10', 123456789, N'123 Le Loi, TP.HCM', 1, 1, 1),
+('NV002', N'Trần', N'Thị Bình', null , '1992-07-20', 987654321, N'456 Tran Hung Dao, TP.HCM', 0, 1, 1),
+('NV003', N'Lê', N'Văn Cao', null , '1988-03-15', 456789123, N'789 Nguyen Trai, TP.HCM', 1, 1, 1),
+('QL001', N'Cao', N'Thành Đông', null , '1995-08-25', 321654987, N'321 Hai Ba Trung, TP.HCM', 1, 2, 1),
+('QL002', N'Võ', N'Thị Dung', null , '1985-12-11', 789123456, N'654 Cong Quynh, TP.HCM', 0, 2, 1);
 
 -- Bảng TaiKhoan
 INSERT INTO TaiKhoan (taiKhoan, matKhau)
@@ -277,49 +281,41 @@ VALUES
 ('QL001', '123'),
 ('QL002', '123')
 
--- Bảng KhachHang
-INSERT INTO KhachHang (maKH, hoKH, tenKH, ngaySinh, gioiTinh, diaChi, SDT, trangThai)
-VALUES
-('KH001', N'Lê', N'Thanh', '1991-04-10', 0,'23 Nguyen Hue, TP.HCM', 100, 1),
-('KH002', N'Phạm', N'Khánh Vân', '1980-11-22', 0,'45 Dien Bien Phu, TP.HCM', 200, 1),
-('KH003', N'Trần', N'Quốc Anh', '1993-02-18', 1,'67 Phan Xich Long, TP.HCM', 300, 1),
-('KH004', N'Nguyễn', N'Văn Hải', '1996-09-07', 1,'89 Ton Duc Thang, TP.HCM', 400, 1),
-('KH005', N'Hồ', N'Văn Minh', '1989-06-30', 1,'12 Tran Cao Van, TP.HCM', 500, 1)
-
 -- Bảng DiemTichLuy
-INSERT INTO DiemTichLuy(maKH, xepHang, diemTong, diemHienTai)
+INSERT INTO DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai)
 VALUES
-('KH001', N'Vàng', 90000, 90000),
-('KH002', N'Đồng', 9000, 9000),
-('KH003', N'Bạc', 30000, 30000),
-('KH004', N'Kim cương', 5000000, 500000),
-('KH005', N'Bạch kim', 2000000, 200000)
+('DTL001', N'Vàng', 90000, 90000),
+('DTL002', N'Đồng', 9000, 9000),
+('DTL003', N'Bạc', 30000, 30000),
+('DTL004', N'Kim cương', 5000000, 500000),
+('DTL005', N'Bạch kim', 2000000, 200000)
 
--- Bảng ChuongTrinhKhuyenMai
-INSERT INTO ChuongTrinhKhuyenMai (maCTKM, moTa, ngayBatDau, ngayKetThuc)
+-- Bảng KhachHang
+INSERT INTO KhachHang (maKH, hoKH, tenKH, ngaySinh, gioiTinh, diaChi, SDT, trangThai, maDTL)
 VALUES
-('KM001', 'Khuyến mãi mua 1 tặng 1', '2024-09-01', '2024-09-30'),
-('KM002', 'Giảm giá 10% cho đơn trên 1 triệu', '2024-10-01', '2024-10-31'),
-('KM003', 'Miễn phí vận chuyển', '2024-11-01', '2024-11-30'),
-('KM004', 'Khuyến mãi 20% cho thành viên mới', '2024-12-01', '2024-12-31'),
-('KM005', 'Giảm giá 50% cho sản phẩm cận hạn', '2024-12-15', '2024-12-31');
+('KH001', N'Lê', N'Thanh', '1991-04-10', 0, N'23 Nguyen Hue, TP.HCM', 100, 1, 'DTL001'),
+('KH002', N'Phạm', N'Khánh Vân', '1980-11-22', 0, N'45 Dien Bien Phu, TP.HCM', 200, 1, 'DTL002'),
+('KH003', N'Trần', N'Quốc Anh', '1993-02-18', 1, N'67 Phan Xich Long, TP.HCM', 300, 1, 'DTL003'),
+('KH004', N'Nguyễn', N'Văn Hải', '1996-09-07', 1, N'89 Ton Duc Thang, TP.HCM', 400, 1, 'DTL004'),
+('KH005', N'Hồ', N'Văn Minh', '1989-06-30', 1, N'12 Tran Cao Van, TP.HCM', 500, 1, 'DTL005')
+
 
 -- Bảng NhaCungCap
 INSERT INTO NhaCungCap (maNCC, tenNCC, diaChi, email)
 VALUES
-('NCC001', 'Công ty Dược A', '123 Pham Van Dong, TP.HCM', 'duoc_a@example.com'),
-('NCC002', 'Công ty Dược B', '456 Nguyen Trai, TP.HCM', 'duoc_b@example.com'),
-('NCC003', 'Công ty Dược C', '789 Tran Hung Dao, TP.HCM', 'duoc_c@example.com'),
-('NCC004', 'Công ty Dược D', '321 Le Loi, TP.HCM', 'duoc_d@example.com'),
-('NCC005', 'Công ty Dược E', '654 Hai Ba Trung, TP.HCM', 'duoc_e@example.com');
+('NCC001', N'Công ty Dược A', N'123 Pham Van Dong, TP.HCM', 'duoc_a@example.com'),
+('NCC002', N'Công ty Dược B', N'456 Nguyen Trai, TP.HCM', 'duoc_b@example.com'),
+('NCC003', N'Công ty Dược C', N'789 Tran Hung Dao, TP.HCM', 'duoc_c@example.com'),
+('NCC004', N'Công ty Dược D', N'321 Le Loi, TP.HCM', 'duoc_d@example.com'),
+('NCC005', N'Công ty Dược E', N'654 Hai Ba Trung, TP.HCM', 'duoc_e@example.com');
 
 -- Bảng NuocSanXuat
 INSERT INTO NuocSanXuat (maNuoc, tenNuoc)
 VALUES
-('US', 'Mỹ'),
-('CN', 'Trung Quốc'),
-('EN', 'Anh'),
-('RU', 'Nga')
+('US', N'Mỹ'),
+('CN', N'Trung Quốc'),
+('EN', N'Anh'),
+('RU', N'Nga')
 
 -- Bảng KeThuoc
 INSERT INTO KeThuoc (maKe, tenKe, maNhanVien)
@@ -340,9 +336,9 @@ VALUES
 -- Bảng DanhMuc
 INSERT INTO DanhMuc (maDanhMuc, tenDanhMuc)
 VALUES
-('DM001', 'Thuốc giảm đau'),
-('DM002', 'Thực phẩm chức năng'),
-('DM003', 'Thuốc cảm sốt')
+('DM001', N'Thuốc giảm đau'),
+('DM002', N'Thực phẩm chức năng'),
+('DM003', N'Thuốc cảm sốt')
 
 -- Bảng Thue
 INSERT INTO Thue (maThue, loaiThue, tyLeThue)
@@ -354,12 +350,20 @@ VALUES
 -- Bảng Thuoc
 INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, donViTinh, maKe, HSD, giaBan, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
 VALUES
-('S00001', 'T001', 'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
-('S00002' ,'T002', 'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
-('S00003', 'T003', 'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
-('S00004', 'T004', 'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
-('S00005', 'T005', 'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
+('S00001', 'T001', N'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
+('S00002' ,'T002', N'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
+('S00003', 'T003', N'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
+('S00004', 'T004', N'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
+('S00005', 'T005', N'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
 
+
+INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, donViTinh, maKe, HSD, giaBan, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
+VALUES
+('S00006', 'T006', N'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
+('S00007' ,'T007', N'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
+('S00008', 'T008', N'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
+('S00009', 'T009', N'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
+('S00010', 'T0010', N'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
 
 -- Bảng HoaDon
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien)
@@ -393,3 +397,19 @@ VALUES
 ('MD003', 'S00004', 'T004', 'Hộp', 2, 75000),
 ('MD003', 'S00005', 'T005', 'Viên', 20, 100000)
 
+-- Bảng ChuongTrinhKhuyenMai
+INSERT INTO ChuongTrinhKhuyenMai (maCTKM, moTa, loaiKhuyenMai, ngayBatDau, ngayKetThuc)
+VALUES
+('KM001', N'Giảm giá 30% cho thuốc cảm cúm', N'Khuyến mãi tháng 10','2024-09-01', '2024-09-30'),
+('KM002', N'Giảm giá 10% cho đơn trên 500k', N'Khuyến mãi 9.9', '2024-10-01', '2024-10-31'),
+('KM003', N'Giảm 5% cho tất cả các thuốc', N'Khuyến mãi cuối tuần', '2024-11-01', '2024-11-30'),
+('KM004', N'Khuyến mãi 20% cho thành viên mới', N'Khuyến mãi khách hàng mới', '2024-12-01', '2024-12-31'),
+('KM005', N'Giảm giá 50% cho sản phẩm cận hạn', N'Khuyến mãi cuối tháng', '2024-12-15', '2024-12-31');
+
+INSERT INTO ChiTietKhuyenMai (maCTKM, soHieuThuoc, maThuoc, tyLeKhuyenMai, soLuongToiThieu)
+VALUES
+('KM001', 'S00001', 'T001', null, 5),
+('KM002', 'S00002', 'T002', 0.1, 5),
+('KM003', 'S00003', 'T003', null, 3),
+('KM004', 'S00004', 'T004', 0.2, 5),
+('KM005', 'S00005', 'T005', 0.5, 4);

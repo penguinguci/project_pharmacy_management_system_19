@@ -13,13 +13,13 @@ public class KhachHang {
     private String diaChi;
     private boolean gioiTinh;
     private String SDT;
-    private String hang;
     private boolean trangThai;
+    private DiemTichLuy diemTichLuy;
 
     public KhachHang() {}
 
     public KhachHang(String maKH, String hoKH, String tenKH, Date ngaySinh, String email, String diaChi,
-                     boolean gioiTinh, String SDT, String hang, boolean trangThai) {
+                     boolean gioiTinh, String SDT, boolean trangThai, DiemTichLuy diemTichLuy) {
         this.maKH = maKH;
         this.hoKH = hoKH;
         this.tenKH = tenKH;
@@ -28,8 +28,8 @@ public class KhachHang {
         this.diaChi = diaChi;
         this.gioiTinh = gioiTinh;
         this.SDT = SDT;
-        this.hang = hang;
         this.trangThai = trangThai;
+        this.diemTichLuy = diemTichLuy;
     }
 
     public String getMaKH() {
@@ -96,14 +96,6 @@ public class KhachHang {
         this.SDT = SDT;
     }
 
-    public String getHang() {
-        return hang;
-    }
-
-    public void setHang(String hang) {
-        this.hang = hang;
-    }
-
     public boolean isTrangThai() {
         return trangThai;
     }
@@ -112,18 +104,14 @@ public class KhachHang {
         this.trangThai = trangThai;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KhachHang khachHang = (KhachHang) o;
-        return gioiTinh == khachHang.gioiTinh && trangThai == khachHang.trangThai && Objects.equals(maKH, khachHang.maKH) && Objects.equals(hoKH, khachHang.hoKH) && Objects.equals(tenKH, khachHang.tenKH) && Objects.equals(ngaySinh, khachHang.ngaySinh) && Objects.equals(email, khachHang.email) && Objects.equals(diaChi, khachHang.diaChi) && Objects.equals(SDT, khachHang.SDT) && Objects.equals(hang, khachHang.hang);
+    public DiemTichLuy getDiemTichLuy() {
+        return diemTichLuy;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(maKH, hoKH, tenKH, ngaySinh, email, diaChi, gioiTinh, SDT, hang, trangThai);
+    public void setDiemTichLuy(DiemTichLuy diemTichLuy) {
+        this.diemTichLuy = diemTichLuy;
     }
+
 
     @Override
     public String toString() {
@@ -136,18 +124,12 @@ public class KhachHang {
                 ", diaChi='" + diaChi + '\'' +
                 ", gioiTinh=" + gioiTinh +
                 ", SDT='" + SDT + '\'' +
-                ", hang='" + hang + '\'' +
                 ", trangThai=" + trangThai +
                 '}';
     }
 
-    public double tinhTinhDiemTichLuy(List<ChiTietHoaDon> dsChiTietHoaDon) {
-        double tongThanhTien = 0;
-        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
-            tongThanhTien += chiTietHoaDon.tinhThanhTien();
-        }
-        double diemTichLuy = tongThanhTien * 0.01;
-
-        return diemTichLuy;
+    public double tinhDiemTichLuy() {
+        return diemTichLuy.getDiemHienTai();
     }
+
 }

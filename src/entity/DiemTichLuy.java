@@ -1,25 +1,29 @@
 package entity;
 
 public class DiemTichLuy {
-    private KhachHang khachHang;
+    private String maDTL;
     private String xepHang;
     private double diemTong, diemHienTai;
 
     public DiemTichLuy(){}
 
-    public DiemTichLuy(KhachHang khachHang, String xepHang, double diemTong, double diemHienTai) {
-        this.khachHang = khachHang;
+    public DiemTichLuy(String maDTL){
+        this.maDTL = maDTL;
+    }
+
+    public DiemTichLuy(String maDTL, String xepHang, double diemTong, double diemHienTai) {
+        this.maDTL = maDTL;
         this.xepHang = xepHang;
         this.diemTong = diemTong;
         this.diemHienTai = diemHienTai;
     }
 
-    public KhachHang getKhachHang() {
-        return khachHang;
+    public String getMaDTL() {
+        return maDTL;
     }
 
-    public void setKhachHang(KhachHang khachHang) {
-        this.khachHang = khachHang;
+    public void setMaDTL(String maDTL) {
+        this.maDTL = maDTL;
     }
 
     public String getXepHang() {
@@ -45,4 +49,5 @@ public class DiemTichLuy {
     public void setDiemHienTai(double diemHienTai) {
         this.diemHienTai = diemHienTai;
     }
+
 }
