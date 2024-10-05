@@ -311,7 +311,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         topPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, 60));
         topPanel.setBackground(Color.WHITE);
 //        topPanel.setPreferredSize(new Dimension(1300, 60));
-//        topPanel.setBackground(new Color(65, 192, 201));
 
         // Nút thông báo
         JLayeredPane layeredPaneThongBao = new JLayeredPane();
@@ -396,18 +395,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         topPanel.add(customButtonUser);
         topPanel.add(Box.createHorizontalStrut(30));
 
-        // Thêm top Panel vào mainContentPanel
-        mainContentPanel.add(topPanel, BorderLayout.NORTH);
 
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
         centerPanel.setPreferredSize(new Dimension(1320, 760));
         centerPanel.setBackground(Color.WHITE);
-
-        centerPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, screenSize.height));
-        // Thêm centerPanel vào CENTER của mainContentPanel
-        mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
 
         // tạo các form trước và thêm vào centerPanel
@@ -434,9 +427,16 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         formTimKiemNhanVien = new Form_TimKiemNhanVien();
         formTimKiemThuoc = new Form_TimKiemThuoc();
 
+        // Thêm top Panel vào mainContentPanel
+        mainContentPanel.add(topPanel, BorderLayout.NORTH);
+
+        // Thêm centerPanel vào CENTER của mainContentPanel
+        mainContentPanel.add(centerPanel, BorderLayout.CENTER);
+
+
         // nội dung chính vào cửa sổ
-        add(menuPanel, BorderLayout.WEST);
-        add(mainContentPanel, BorderLayout.CENTER);
+        this.add(menuPanel, BorderLayout.WEST);
+        this.add(mainContentPanel, BorderLayout.CENTER);
 
 
         // Thêm sự kiện cho các nút

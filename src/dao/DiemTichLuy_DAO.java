@@ -5,8 +5,7 @@ import entity.DiemTichLuy;
 import entity.KhachHang;
 import entity.PhieuNhapThuoc;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class DiemTichLuy_DAO {
@@ -25,38 +24,103 @@ public class DiemTichLuy_DAO {
     }
 
     public ArrayList<DiemTichLuy> getAllDiemTichLuy() throws Exception{
-        ConnectDB con  = new ConnectDB();
-        con.connect();
-        con.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        //Gọi bảng Khách hàng
-        String sql = "select * from DiemTichLuy";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()){
-            DiemTichLuy diemTichLuy = new DiemTichLuy();
-            for(KhachHang x : listKH){
-                if(x.getMaKH().equalsIgnoreCase(rs.getString("maKH"))){
-                    diemTichLuy.setKhachHang(x);
-                    break;
-                }
+        ArrayList<DiemTichLuy> dsDTL = new ArrayList<DiemTichLuy>();
+        try {
+            ConnectDB.getInstance();
+            Connection con = ConnectDB.getConnection();
+
+            String sql = "Select * from DiemTichLuy";
+            Statement statement = con.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                String maDTL = rs.getString(1);
+                String xepHang = rs.getString(2);
+                double diemTong = rs.getDouble(3);
+                double diemHienTai = rs.getDouble(4);
+
+                DiemTichLuy diemTichLuy = new DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai);
+                dsDTL.add(diemTichLuy);
             }
-            diemTichLuy.setXepHang(rs.getString("xepHang"));
-            diemTichLuy.setDiemTong(rs.getDouble("diemTong"));
-            diemTichLuy.setDiemHienTai(rs.getDouble("diemHienTai"));
-            list.add(diemTichLuy);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return this.list;
+        return dsDTL;
     }
 
-    public DiemTichLuy getOneDiemTichLuy(ArrayList<DiemTichLuy> list,String maKH) throws Exception {
-        for(DiemTichLuy x : list) {
-            if(x.getKhachHang().getMaKH().equalsIgnoreCase(maKH)){
-                return x;
+    //  Lấy điểm tích lũy theo mã điểm tích lũy
+    public DiemTichLuy getDiemTichLuy(String idDTL) throws Exception{
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        DiemTichLuy diemTichLuy = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM DiemTichLuy WHERE maDTL =?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, idDTL);
+            rs = statement.executeQuery();
+
+            // Nếu tìm thấy nhân viên, tạo đối tượng NhanVien và gán giá trị
+            if (rs.next()) {
+                String maDTL = rs.getString(1);
+                String xepHang = rs.getString(2);
+                double diemTong = rs.getDouble(3);
+                double diemHienTai = rs.getDouble(4);
+
+                diemTichLuy = new DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
             }
         }
-        return null;
+        return diemTichLuy;
+    }
+
+    // lấy điểm tích lũy bằng số điện thoại khách hàng
+    public DiemTichLuy getDiemTichLuyBySDT(String sdt) throws Exception{
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        DiemTichLuy diemTichLuy = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT dtl.maDTL, dtl.xepHang, dtl.diemTong, dtl.diemHienTai FROM DiemTichLuy dtl JOIN KhachHang kh ON dtl.maDTL = kh.maDTL WHERE kh.SDT = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, sdt);
+            rs = statement.executeQuery();
+
+            // Nếu tìm thấy nhân viên, tạo đối tượng NhanVien và gán giá trị
+            if (rs.next()) {
+                String maDTL = rs.getString(1);
+                String xepHang = rs.getString(2);
+                double diemTong = rs.getDouble(3);
+                double diemHienTai = rs.getDouble(4);
+
+                diemTichLuy = new DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return diemTichLuy;
     }
 
 }

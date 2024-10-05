@@ -1,10 +1,10 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.DiemTichLuy;
 import entity.KhachHang;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class KhachHang_DAO {
@@ -21,8 +21,8 @@ public class KhachHang_DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         //Gọi bảng Khách hàng
-        String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, d.xepHang, trangThai\n" +
-                "from KhachHang kh join DiemTichLuy d on kh.maKH = d.maKH";
+        String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, d.xepHang, trangThai, d.maDTL\n" +
+                "from KhachHang kh join DiemTichLuy d on kh.maDTL = d.maDTL";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
@@ -43,8 +43,8 @@ public class KhachHang_DAO {
                 kh.setDiaChi(rs.getString(7));
             }
             kh.setSDT(rs.getString(8));
-            kh.setHang(rs.getString(9));
-            kh.setTrangThai(rs.getBoolean(10));
+            kh.setTrangThai(rs.getBoolean(9));
+            kh.setDiemTichLuy(new DiemTichLuy(rs.getString(10)));
             list.add(kh);
         }
         return this.list;
@@ -73,7 +73,6 @@ public class KhachHang_DAO {
     public KhachHang getOneKhachHang(ArrayList<KhachHang> list, String data) {
         for(KhachHang x : list) {
             String hoTen = x.getHoKH()+ " " +x.getTenKH();
-            System.out.println(hoTen);
             if(hoTen.equalsIgnoreCase(data)){
                 return x;
             }
@@ -84,5 +83,44 @@ public class KhachHang_DAO {
             }
         }
         return null;
+    }
+
+    public KhachHang getOneKhachHangBySDT(String SDT) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        KhachHang kh = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM KhachHang WHERE sdt =?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, SDT);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maKH = rs.getString("maKH");
+                String hoKH = rs.getString("hoKH");
+                String tenKh = rs.getString("tenKH");
+                Date ngaySinh = rs.getDate("ngaySinh");
+                String email = rs.getString("email");
+                String diaChi = rs.getString("diaChi");
+                boolean gioiTinh = rs.getBoolean("gioiTinh");
+                boolean trangThai = rs.getBoolean("trangThai");
+                DiemTichLuy diemTichLuy = new DiemTichLuy(rs.getString("maDTL"));
+                kh = new KhachHang(maKH, hoKH, tenKh, ngaySinh, email, diaChi, gioiTinh, SDT, trangThai, diemTichLuy);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return kh;
     }
 }
