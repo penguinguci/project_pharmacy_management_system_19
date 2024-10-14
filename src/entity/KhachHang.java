@@ -18,6 +18,15 @@ public class KhachHang {
 
     public KhachHang() {}
 
+    public KhachHang(String maKH) {
+        this.maKH = maKH;
+    }
+
+//    public KhachHang(String maKH, String tenKH) {
+//        this.maKH = maKH;
+//        this.tenKH = tenKH;
+//    }
+
     public KhachHang(String maKH, String hoKH, String tenKH, Date ngaySinh, String email, String diaChi,
                      boolean gioiTinh, String SDT, boolean trangThai, DiemTichLuy diemTichLuy) {
         this.maKH = maKH;
@@ -129,6 +138,9 @@ public class KhachHang {
     }
 
     public double tinhDiemTichLuy() {
+        if(this.tenKH == "Khách hàng lẻ") {
+            return 0;
+        }
         return diemTichLuy.getDiemHienTai();
     }
 

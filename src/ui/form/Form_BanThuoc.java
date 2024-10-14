@@ -3,10 +3,17 @@ package ui.form;
 import connectDB.ConnectDB;
 import dao.*;
 import entity.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -17,10 +24,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class Form_BanThuoc extends JPanel implements ActionListener {
+public class Form_BanThuoc extends JPanel implements ActionListener, DocumentListener {
     public JButton btnBack, btnLamMoi;
     private DefaultComboBoxModel dcbm_DanhMuc;
     public JComboBox<String> cbxDanhMuc;
@@ -35,12 +54,12 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
     private JLabel lbSDTKH;
     private static JLabel lbNoiDungMoTa;
     private static JTextField txtTimKiemKH;
-    public JTextField txtTienKhachTra;
+    public static JTextField txtTienKhachTra;
     public static JTextField txt_TienKhuyenMai;
     public static JTextField txt_TienGiam;
     public static JTextField txt_tongTienValue;
     public static JTextField text_TienThue;
-    public JTextField text_TienThoi;
+    public static JTextField text_TienThoi;
     private static JButton btnTimKiemKH;
     private JButton btnThanhToan;
     private JButton btnThanhToanKhongIn;
@@ -57,6 +76,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
     private static Thuoc_DAO thuoc_dao;
     private static ChuongTrinhKhuyenMai_DAO chuongtrinh_dao;
     private static ChiTietKhuyenMai_DAO chitiet_dao;
+    private NhanVien nhanVienDN;
+    private static NhanVien_DAO nv_dao;
+    private static HoaDon_DAO hd_dao;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -454,6 +476,12 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
         btnTimKiemKH.addActionListener(this);
         cbxDoiDiem.addActionListener(this);
         cboChonLoaiKM.addActionListener(this);
+        txtTienKhachTra.getDocument().addDocumentListener(this);
+        txt_tongTienValue.getDocument().addDocumentListener(this);
+        btnThanhToan.addActionListener(this);
+        btnThanhToanKhongIn.addActionListener(this);
+        btnHuy.addActionListener(this);
+        btnLuuDonHang.addActionListener(this);
 
         //Lấy dữ liệu tìm kiếm khách hàng
         kh_dao = new KhachHang_DAO();
@@ -461,6 +489,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
         dm_dao = new DanhMuc_DAO();
         chuongtrinh_dao = new ChuongTrinhKhuyenMai_DAO();
         chitiet_dao = new ChiTietKhuyenMai_DAO();
+        nv_dao = new NhanVien_DAO();
+        hd_dao = new HoaDon_DAO();
+
+        updateTienThoi();
     }
 
 
@@ -493,6 +525,21 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
         for(ChuongTrinhKhuyenMai chuongTrinhKhuyenMai : dsCTKM) {
             cboChonLoaiKM.addItem(chuongTrinhKhuyenMai.getLoaiKhuyenMai());
         }
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        updateTienThoi();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        updateTienThoi();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        updateTienThoi();
     }
 
 
@@ -637,7 +684,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
 
                 double thanhTien = soLuong * giaBan;
                 if(!found) {
-
                     modelGioHang.addRow(new Object[]{
                             thuoc.getTenThuoc(),
                             donVi,
@@ -665,20 +711,23 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
     public static void updateTien() throws Exception {
         List<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<>();
         HoaDon hoaDon = new HoaDon();
+        double tongTienTemp = 0;
         for (int i = 0; i < modelGioHang.getRowCount(); i++) {
             String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
             String donViTinh = modelGioHang.getValueAt(i, 1).toString();
             int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
+            tongTienTemp += (soLuong * giaBanThuoc);
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(null, thuoc, donViTinh, soLuong);
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
+
 
         // Tính tiền thuế
         double tienThue = 0;
         if (!dsChiTietHoaDon.isEmpty()) {
-            hoaDon.setThue(new Thue("VAT", "Thuế giá trị gia tăng", 0.1));
+            hoaDon.setThue(new Thue("THUE001", "VAT", 0.1));
             tienThue = hoaDon.tinhTienThue(dsChiTietHoaDon);
         }
         text_TienThue.setText(String.format("%,.0f", tienThue) + "đ");
@@ -695,6 +744,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
             }
         }
         txt_TienGiam.setText(String.format("%,.0f", tienGiam) + "đ");
+
 
         // Tính tiền khuyến mãi
         double tienKhuyenMai = 0;
@@ -719,9 +769,29 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
         txt_TienKhuyenMai.setText(String.format("%,.0f", tienKhuyenMai) + "đ");
 
         // tổng tiền
-        double tongTien = hoaDon.tinhTongTien(dsChiTietHoaDon, dsChiTietKhuyenMai);
+        double tongTien = hoaDon.tinhTongTien(tongTienTemp, tienThue, tienGiam, tienKhuyenMai);
         txt_tongTienValue.setText(String.format("%,.0f", tongTien) + "đ");
     }
+
+
+    // update tiền thối
+    public static void updateTienThoi() {
+        String tienKhachTraStr = txtTienKhachTra.getText().trim();
+        String tongTienStr = txt_tongTienValue.getText().replace("đ", "").replace(",", "").trim();
+
+        if (!tongTienStr.isEmpty() && !tienKhachTraStr.isEmpty()) {
+            try {
+                double tongTien = Double.parseDouble(tongTienStr);
+                double tienKhachTra = Double.parseDouble(tienKhachTraStr);
+                if (tienKhachTra > 0) {
+                    text_TienThoi.setText(String.format("%,.0f", tienKhachTra - tongTien) + "đ");
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     // xử lý sự kiện cho toàn màn hình
     @Override
@@ -791,6 +861,471 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
                 updateTien();
             } catch (Exception ex) {
                 ex.printStackTrace();
+            }
+        } else if(o == btnThanhToan) {
+            try {
+                thanhToan();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if(o == btnThanhToanKhongIn) {
+            try {
+                thanhToanKhongIn();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if(o == btnHuy) {
+            xoaGioHang();
+        } else if(o == btnLuuDonHang) {
+
+        }
+    }
+
+    public void thanhToan() throws Exception {
+        if(modelGioHang.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trước khi thanh toán!!!");
+            return;
+        }
+
+        // Kiểm tra phương thức thanh toán
+        if (!rbtnTienMat.isSelected() && !rbtnViDienTu.isSelected()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn phương thức thanh toán!");
+            return;
+        }
+
+        // Kiểm tra nếu chọn phương thức thanh toán là tiền mặt
+        if (rbtnTienMat.isSelected()) {
+            if (txtTienKhachTra.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập tiền khách đưa!");
+                return;
+            }
+
+            try {
+                double tienKhachDua = Double.parseDouble(txtTienKhachTra.getText());
+                if (tienKhachDua < 0) {
+                    JOptionPane.showMessageDialog(this, "Tiền khách trả phải lớn hơn hoặc bằng 0!");
+                    return;
+                }
+                // Thực hiện tiếp các xử lý khác nếu tiền khách đưa hợp lệ
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Tiền khách đưa phải là số!");
+                return;
+            }
+        }
+
+//        if (rbtnViDienTu.isSelected()) {
+//            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
+//        }
+
+        // khởi tạo hóa đơn
+        HoaDon hoaDon = new HoaDon();
+        hoaDon.setMaHD(generateHoaDonID());
+
+        if(rbtnTienMat.isSelected()) {
+            hoaDon.setHinhThucThanhToan(rbtnTienMat.getText());
+        } else {
+            hoaDon.setHinhThucThanhToan(rbtnViDienTu.getText());
+        }
+
+        // lấy thông tin khách hàng
+        String SDT = txtTimKiemKH.getText().trim();
+        if(!SDT.isEmpty()) {
+            KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
+            DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
+            khachHang.setDiemTichLuy(diemTichLuy);
+            hoaDon.setKhachHang(khachHang);
+        } else {
+            KhachHang khachLe = new KhachHang();
+            khachLe.setTenKH("Khách hàng lẻ");
+            hoaDon.setKhachHang(khachLe);
+        }
+
+        // lấy thông tin nhân viên
+        NhanVien nhanVien = nv_dao.getNVTheoMaNV(nhanVienDN.getMaNV());
+        hoaDon.setNhanVien(nhanVien);
+
+        // Gán thuế
+        hoaDon.setThue(new Thue("THUE001", "VAT", 0.1));
+
+        // Ngày lập hóa đơn
+        hoaDon.setNgayLap(new Date());
+
+        // Cập nhật trang thái hiển thị hóa đơn
+        hoaDon.setTrangThai(true);
+
+        // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
+        ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<>();
+        for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+            String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
+            String donViTinh = modelGioHang.getValueAt(i, 1).toString();
+            int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
+            double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
+            Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+            dsChiTietHoaDon.add(chiTietHoaDon);
+        }
+
+        ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
+        String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
+
+        if (!loaiKM.equals("Chọn loại khuyến mãi")) {
+            ChuongTrinhKhuyenMai chuongTrinhKhuyenMai = chuongtrinh_dao.getCTKNByLoaiKM(loaiKM);
+            if (chuongTrinhKhuyenMai != null) {
+                dsChiTietKhuyenMai = chitiet_dao.getChiTietKMByCTKM(chuongTrinhKhuyenMai);
+            }
+        }
+
+        // Tạo hóa đơn trong cơ sở dữ liệu
+        boolean hoaDonDuocTao = hd_dao.create(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
+
+        if (hoaDonDuocTao) {
+            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
+
+            // In hóa đơn
+            HoaDonPrinter printer = new HoaDonPrinter(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
+            printer.printHoaDon();
+
+            // Xóa giỏ hàng
+            xoaGioHang();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thanh toán thất bại, vui lòng thử lại!");
+        }
+    }
+
+
+    // thanh toán không in
+    public void thanhToanKhongIn() throws Exception {
+        if(modelGioHang.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trước khi thanh toán!!!");
+            return;
+        }
+
+        // Kiểm tra xem đã nhập tiền khách đưa chưa
+        if (!rbtnTienMat.isSelected() && txtTienKhachTra.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tiền khách đưa!!!");
+            return;
+        }
+
+        try {
+            double tienKhachDua = Double.parseDouble(txtTienKhachTra.getText());
+            if (tienKhachDua < 0) {
+                JOptionPane.showMessageDialog(this, "Tiền khách trả phải lớn hơn hoặc bằng 0!!!");
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Tiền khách đưa phải là số!!!");
+            return;
+        }
+
+        // khởi tạo hóa đơn
+        HoaDon hoaDon = new HoaDon();
+        hoaDon.setMaHD(generateHoaDonID());
+
+        if(rbtnTienMat.isSelected()) {
+            hoaDon.setHinhThucThanhToan(rbtnTienMat.getText());
+        } else {
+            hoaDon.setHinhThucThanhToan(rbtnViDienTu.getText());
+        }
+
+        // lấy thông tin khách hàng
+        KhachHang khachHang = kh_dao.getOneKhachHangBySDT(txtTimKiemKH.getText());
+        hoaDon.setKhachHang(khachHang != null ? khachHang : new KhachHang("Khách hàng lẻ"));
+
+        // lấy thông tin nhân viên
+        NhanVien nhanVien = nv_dao.getNVTheoMaNV(nhanVienDN.getMaNV());
+        hoaDon.setNhanVien(nhanVien);
+
+        // Gán thuế
+        hoaDon.setThue(new Thue("THUE001", "VAT", 0.1));
+
+        // Ngày lập hóa đơn
+        hoaDon.setNgayLap(new Date());
+
+        // Cập nhật trang thái hiển thị hóa đơn
+        hoaDon.setTrangThai(true);
+
+        // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
+        ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<>();
+        for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+            String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
+            String donViTinh = modelGioHang.getValueAt(i, 1).toString();
+            int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
+            double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
+            Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+            dsChiTietHoaDon.add(chiTietHoaDon);
+        }
+
+        ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
+        String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
+
+        if (!loaiKM.equals("Chọn loại khuyến mãi")) {
+            ChuongTrinhKhuyenMai chuongTrinhKhuyenMai = chuongtrinh_dao.getCTKNByLoaiKM(loaiKM);
+            if (chuongTrinhKhuyenMai != null) {
+                dsChiTietKhuyenMai = chitiet_dao.getChiTietKMByCTKM(chuongTrinhKhuyenMai);
+            }
+        }
+
+        // Tạo hóa đơn trong cơ sở dữ liệu
+        boolean hoaDonDuocTao = hd_dao.create(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
+
+        if (hoaDonDuocTao) {
+            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
+
+            // Xóa giỏ hàng
+            xoaGioHang();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thanh toán thất bại, vui lòng thử lại!");
+        }
+    }
+
+
+    // Hàm xóa giỏ hàng sau khi thanh toán
+    private void xoaGioHang() {
+        modelGioHang.setRowCount(0);  // Xóa tất cả các dòng trong bảng giỏ hàng
+        txtTienKhachTra.setText("");
+        txt_tongTienValue.setText("0đ");
+        text_TienThoi.setText("0đ");
+        text_TienThue.setText("0đ");
+        txt_tongTienValue.setText("0đ");
+        txt_TienGiam.setText("0đ");
+        rbtnTienMat.setSelected(false);
+        rbtnViDienTu.setSelected(false);
+    }
+
+
+    private String generateHoaDonID() {
+        LocalDateTime now = LocalDateTime.now();
+        String timePart = now.format(DateTimeFormatter.ofPattern("HHmm")); // Lấy giờ, phút, giây (4 ký tự)
+        String randomPart = String.format("%04d", (int) (Math.random() * 10000)); // Tạo số ngẫu nhiên 4 chữ số
+        String hoaDonID = "HD" + timePart + randomPart;
+        return hoaDonID;
+    }
+
+
+    // in hóa đơn
+    public class HoaDonPrinter  {
+        private HoaDon hoaDon;
+        private ArrayList<ChiTietHoaDon> dsChiTietHoaDon;
+        private ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai;
+
+        public HoaDonPrinter(HoaDon hoaDon, ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai) {
+            this.hoaDon = hoaDon;
+            this.dsChiTietHoaDon = dsChiTietHoaDon;
+            this.dsChiTietKhuyenMai = dsChiTietKhuyenMai;
+        }
+
+        public void printHoaDon() {
+            try (PDDocument document = new PDDocument()) {
+                PDPage page = new PDPage();
+                document.addPage(page);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                    //  font
+                    PDType0Font headerfont = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Bold.ttf"));
+                    PDType0Font font = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Light.ttf"));
+                    PDType0Font fontOther = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Regular.ttf"));
+
+                    // logo
+//                    PDImageXObject logo = PDImageXObject.createFromFile("images\\logo.jpg", document);
+//                    contentStream.drawImage(logo, 100, 730, 100, 50);
+
+                    // tên nhà thuốc, địa chỉ, email, sdt
+                    float pageWidth = page.getMediaBox().getWidth();
+
+                    String tenNhaThuoc = "NHÀ THUỐC BVD";
+                    String diaChi = "12 Nguyễn Văn Bảo, Phường 4, Q. Gò Vấp, TP Hồ Chí Minh";
+                    String email = "nhathuocbvd@gmail.com";
+                    String sdt = "Hotline: 0915020803";
+
+
+                    contentStream.setFont(font, 12);
+                    float yPosition = 750;
+                    float lineSpacing = 20; // khoảng các các dòng
+
+                    // tên nhà thuốc
+                    contentStream.setFont(headerfont, 15);
+                    float textWidth = font.getStringWidth(tenNhaThuoc) / 1000 * 15;
+                    float xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(tenNhaThuoc);
+                    contentStream.endText();
+
+                    // địa chỉ
+                    contentStream.setFont(font, 12);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(diaChi) / 1000 * 12;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(diaChi);
+                    contentStream.endText();
+
+                    // gmail
+                    contentStream.setFont(headerfont, 11);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(email) / 1000 * 11;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(email);
+                    contentStream.endText();
+
+                    // sdt
+                    contentStream.setFont(headerfont, 11);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(sdt) / 1000 * 11;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(sdt);
+                    contentStream.endText();
+
+
+                    // header
+                    contentStream.setFont(headerfont, 16);
+                    yPosition -= 35;
+                    String headerText = "HÓA ĐƠN BÁN LẺ";
+                    textWidth = headerfont.getStringWidth(headerText) / 1000 * 16;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(headerText);
+                    contentStream.endText();
+
+                    // body
+                    yPosition -= 30;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.setFont(fontOther, 12);
+
+                    // Định dạng ngày tháng năm
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    String ngayLapFormatted = dateFormat.format(hoaDon.getNgayLap());
+                    contentStream.showText("NGÀY: " + ngayLapFormatted);
+                    contentStream.endText();
+
+                    yPosition -= 15;
+                    contentStream.setFont(headerfont, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("ĐƠN HÀNG: " + hoaDon.getMaHD());
+                    contentStream.endText();
+
+                    yPosition -= 15;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("THU NGÂN: " + hoaDon.getNhanVien().getHoNV() + " " + hoaDon.getNhanVien().getTenNV());
+                    contentStream.endText();
+
+                    yPosition -= 15;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("KHÁCH HÀNG: " + hoaDon.getKhachHang().getTenKH());
+                    contentStream.endText();
+
+                    yPosition -= 15;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("SĐT: " + hoaDon.getKhachHang().getSDT());
+                    contentStream.endText();
+
+                    // Draw the header for invoice details
+                    yPosition -= 20;
+                    contentStream.setFont(fontOther, 14);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Chi Tiết Hóa Đơn:");
+                    contentStream.endText();
+                    yPosition -= 15;
+
+                    // Draw a table header
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Tên Thuốc                     Số Lượng    Đơn Vị Tính    Thành Tiền");
+                    contentStream.endText();
+                    yPosition -= 15;
+
+                    // Draw a line
+                    contentStream.moveTo(100, yPosition);
+                    contentStream.lineTo(500, yPosition);
+                    contentStream.stroke();
+                    yPosition -= 10;
+
+                    // Định dạng tiền
+                    NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+                    currencyFormat.setMinimumFractionDigits(0);
+                    currencyFormat.setMaximumFractionDigits(0);
+
+                    double tongTienTemp = 0;
+                    for (ChiTietHoaDon ct : dsChiTietHoaDon) {
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(100, yPosition);
+                        String tenThuoc = ct.getThuoc().getTenThuoc();
+                        String soLuong = String.valueOf(ct.getSoLuong());
+                        String donViTinh = ct.getDonViTinh();
+                        String thanhTien = currencyFormat.format(ct.tinhThanhTien()) + " đ";
+
+                        // Hiển thị thông tin chi tiết hóa đơn
+                        contentStream.showText(String.format("%-30s %-10s %-15s %-10s", tenThuoc, soLuong, donViTinh, thanhTien));
+                        contentStream.endText();
+                        yPosition -= 15;
+                        tongTienTemp += ct.tinhThanhTien();
+                    }
+
+                    // Hiển thị tóm tắt thông tin hóa đơn với định dạng tiền
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Tiền Thuế (VAT - 10%): " + currencyFormat.format(hoaDon.tinhTienThue(dsChiTietHoaDon)) + " đ");
+                    contentStream.endText();
+                    yPosition -= 15;
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Tiền Giảm: " + currencyFormat.format(hoaDon.getKhachHang().tinhDiemTichLuy()) + " đ");
+                    contentStream.endText();
+                    yPosition -= 15;
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Tiền Khuyến Mãi: " + currencyFormat.format(hoaDon.tinhTienKhuyenMai(dsChiTietHoaDon, dsChiTietKhuyenMai)) + " đ");
+                    contentStream.endText();
+                    yPosition -= 15;
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Tổng Tiền: " + currencyFormat.format(hoaDon.tinhTongTien(tongTienTemp, hoaDon.tinhTienThue(dsChiTietHoaDon),
+                            hoaDon.tinhTienGiam(), hoaDon.tinhTienKhuyenMai(dsChiTietHoaDon, dsChiTietKhuyenMai))) + " đ");
+                    contentStream.endText();
+                }
+
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String fileName = "hoa_don_" + timeStamp + ".pdf";
+                String filePath = "HoaDon_PDF\\" + fileName;
+
+                // Hiển thị PDF
+                document.save(filePath);
+                openPDF(filePath);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        private void openPDF(String filePath) {
+            try {
+                File pdfFile = new File(filePath);
+                if (pdfFile.exists()) {
+                    Desktop.getDesktop().open(pdfFile);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -970,6 +1505,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener {
             label.setHorizontalAlignment(JLabel.CENTER);
             return label;
         }
+    }
+
+    public void setNhanVienDN(NhanVien nhanVien) {
+        this.nhanVienDN = nhanVien;
+    }
+
+    public NhanVien getNhanVienDN() {
+        return nhanVienDN;
     }
 
 }

@@ -1,6 +1,7 @@
 package ui.gui;
 
 import connectDB.ConnectDB;
+import entity.NhanVien;
 import ui.form.*;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public JButton btnBanThuoc, btnCapNhatNV, btnTimKiemNV, btnTaiKhoan, btnCapNhatKH, btnDatThuoc, btnTimKiemKH
                     , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
                     btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
-                    btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH;
+                    btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai;
     public JButton btnDangXuat, btnThongBao;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
@@ -50,6 +51,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public Form_TimKiemNhaCungCap formTimKiemNhaCungCap;
     public Form_TimKiemNhanVien formTimKiemNhanVien;
     public Form_TimKiemThuoc formTimKiemThuoc;
+    public Form_Thue formThue;
+    public Form_QuanLyKhuyenMai formQuanLyKhuyenMai;
+    private NhanVien nhanVienDN;
 
     public int role; //Set role cho GUI để bật tắt chức năng
     public GUI_TrangChu() throws Exception {
@@ -364,10 +368,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         // Vai trò và tên nhân viên
         Box customButtonUser_Center_box = new Box(BoxLayout.Y_AXIS);
-        textVaiTro = new JLabel("Quản lý", JLabel.CENTER);
+        textVaiTro = new JLabel("", JLabel.CENTER);
         textVaiTro.setFont(new Font("Arial", Font.BOLD, 17));
 
-        textUser = new JLabel("Trần Long Vũ");
+        textUser = new JLabel("");
         textUser.setFont(new Font("Arial", Font.PLAIN, 15));
 
         customButtonUser_Center_box.add(textVaiTro);
@@ -426,6 +430,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
         formTimKiemNhanVien = new Form_TimKiemNhanVien();
         formTimKiemThuoc = new Form_TimKiemThuoc();
+        formThue = new Form_Thue();
+        formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
 
         // Thêm top Panel vào mainContentPanel
         mainContentPanel.add(topPanel, BorderLayout.NORTH);
@@ -475,6 +481,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnTKThuocBanChay.addActionListener(this);
         btnTKThuocBanCham.addActionListener(this);
         btnTKThuocSapHH.addActionListener(this);
+
     }
 
     // Sự kiện
@@ -519,6 +526,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
             }
         } else if(o == btnBanThuoc) {
             centerPanel.add(formBanThuoc, "formBanThuoc");
+            formBanThuoc.setNhanVienDN(nhanVienDN);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formBanThuoc");
@@ -771,8 +779,23 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         }
     }
 
+    public void setNhanVienDN(NhanVien nhanVien) {
+        this.nhanVienDN = nhanVien;
+    }
+
+    public NhanVien getNhanVienDN() {
+        return nhanVienDN;
+    }
+
+    // update ưser
+    public void updateUser(String vaiTro, String hoNV, String tenNV) {
+        textUser.setText(hoNV + " " + tenNV);
+        textVaiTro.setText(vaiTro);
+    }
+
 
     public static void main(String[] args) throws Exception {
+//        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         GUI_TrangChu frame = new GUI_TrangChu();
         frame.setVisible(true);
     }

@@ -2,6 +2,7 @@ package ui.gui;
 
 import connectDB.ConnectDB;
 import dao.DangNhap_DAO;
+import entity.NhanVien;
 import entity.TaiKhoan;
 
 import javax.swing.*;
@@ -9,9 +10,11 @@ import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class GUI_DangNhap extends JFrame implements ActionListener{
+public class GUI_DangNhap extends JFrame implements ActionListener, KeyListener {
     JPanel jPanel_Main, jPanel_Left, jPanel_Right;
     JTextField text_User;
     JPasswordField text_Password;
@@ -21,11 +24,12 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
     DangNhap_DAO log;
     ArrayList<TaiKhoan> list;
 
+    private boolean isQuanLy = false;
+
     public GUI_DangNhap() throws Exception{
         super("Pharmacy Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Get screen size for responsive scaling
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.42);
         int height = (int) (screenSize.height * 0.57);
@@ -78,11 +82,11 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         jPanel_Right.setBackground(new Color(65, 192, 201));
         jPanel_Right.setPreferredSize(new Dimension(width / 2, height));
 
-        // Add components to the right panel
+        // gridbag constraints
         GridBagConstraints gbcRight = new GridBagConstraints();
         gbcRight.insets = new Insets(10, 10, 10, 10);
 
-        // Title
+        // tiêu đề đăng nhập
         jLabel_Login = new JLabel("Đăng nhập");
         jLabel_Login.setFont(new Font("Poppins", Font.BOLD, 30));
         jLabel_Login.setForeground(Color.WHITE);
@@ -92,7 +96,7 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         gbcRight.anchor = GridBagConstraints.CENTER;
         jPanel_Right.add(jLabel_Login, gbcRight);
 
-        // User label and field
+        // lb user
         gbcRight.gridx = 0;
         gbcRight.gridy++;
         gbcRight.insets = new Insets(25, 1, 7, 0);
@@ -112,7 +116,7 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         text_User.setBorder(BorderFactory.createEmptyBorder());
         jPanel_Right.add(text_User, gbcRight);
 
-        // Password label and field
+        // lb password
         gbcRight.gridy++;
         gbcRight.insets = new Insets(10, 1, 7, 0);
         gbcRight.gridwidth = 2;
@@ -157,16 +161,16 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
 
         jPanel_Right.add(buttonPanel, gbcRight);
 
-        // Add left and right panels to the main panel
         jPanel_Main.add(jPanel_Left, BorderLayout.WEST);
         jPanel_Main.add(jPanel_Right, BorderLayout.EAST);
 
-        // Add panels to frame
         add(tenHeThongPanel, BorderLayout.NORTH);
         add(jPanel_Main, BorderLayout.CENTER);
 
         btn_Login.addActionListener(this);
         btn_Thoat.addActionListener(this);
+        text_User.addKeyListener(this);
+        text_Password.addKeyListener(this);
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -184,18 +188,21 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(btn_Login)) {
             String tk = text_User.getText().trim();
-            String mk = new String(text_Password.getPassword()).trim();  // Handle password securely
+            String mk = new String(text_Password.getPassword()).trim();
             if (log.checkVar(tk, mk)) {
                 try {
+                    NhanVien nhanVien = log.getNVByTaiKhoan(tk);
                     this.setVisible(false);
                     GUI_TrangChu frame = new GUI_TrangChu();
                     frame.setVisible(true);
+                    frame.updateUser(nhanVien.getVaiTro().getTenChucVu(), nhanVien.getHoNV(), nhanVien.getTenNV());
+                    frame.setNhanVienDN(nhanVien);
                 } catch (Exception e1){
                     e1.printStackTrace();
                 }
                 ConnectDB.getInstance().connect();
             } else {
-                JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác");
+                JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác!");
             }
         }
         if (e.getSource().equals(btn_Thoat)) {
@@ -203,7 +210,28 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         }
     }
 
-    // Custom Rounded Text Field
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (e.getSource() == text_User) {
+                text_Password.requestFocus();
+            } else if (e.getSource() == text_Password) {
+                btn_Login.doClick();
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    // class tạo viền tròn
     public class RoundedTextField extends JTextField {
         private int radius;
 
@@ -230,7 +258,7 @@ public class GUI_DangNhap extends JFrame implements ActionListener{
         }
     }
 
-    // Custom Rounded Password Field
+    // class tạo viền tròn Password Field
     public class RoundedPasswordField extends JPasswordField {
         private int radius;
 
