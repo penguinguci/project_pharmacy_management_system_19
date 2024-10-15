@@ -4,7 +4,10 @@ import dao.KhachHang_DAO;
 import entity.KhachHang;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -192,6 +195,20 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         this.add(topPanel, BorderLayout.NORTH);
         this.add(centerPanel, BorderLayout.CENTER);
 
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < tabKhachHang.getColumnCount(); i++) {
+            tabKhachHang.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Set font cho tiêu đề cột
+        Font headerFont = new Font("Arial", Font.BOLD, 14);
+        for (int i = 0; i < colsNameKhachHang.length; i++) {
+            TableColumn column = tabKhachHang.getColumnModel().getColumn(i);
+            column.setHeaderRenderer((TableCellRenderer) new HeaderRenderer(headerFont));
+            column.setPreferredWidth(150);
+        }
+
         //Đăng ký sự kiện cho các nút, bảng
         btnThem.addActionListener(this);
         btnXoa.addActionListener(this);
@@ -363,5 +380,24 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
     public void clearTable() {
         dtmKhachHang.setRowCount(0);
+    }
+
+    // Class HeaderRenderer để thiết lập font cho tiêu đề cột
+    static class HeaderRenderer implements TableCellRenderer {
+        Font font;
+
+        public HeaderRenderer(Font font) {
+            this.font = font;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
+            JLabel label = new JLabel();
+            label.setText((String) value);
+            label.setFont(font);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            return label;
+        }
     }
 }
