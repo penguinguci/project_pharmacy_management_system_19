@@ -3,6 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.DiemTichLuy;
 import entity.KhachHang;
+import entity.PhieuNhapThuoc;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,31 +22,38 @@ public class KhachHang_DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         //Gọi bảng Khách hàng
-        String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, d.xepHang, trangThai, d.maDTL\n" +
+        String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, trangThai, d.maDTL, d.xepHang, d.diemTong, d.diemHienTai \n" +
                 "from KhachHang kh join DiemTichLuy d on kh.maDTL = d.maDTL";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
             KhachHang kh = new KhachHang();
-            kh.setMaKH(rs.getString(1));
-            kh.setHoKH(rs.getString(2));
-            kh.setTenKH(rs.getString(3));
-            kh.setNgaySinh(rs.getDate(4));
-            kh.setGioiTinh(rs.getBoolean(5));
-            if(rs.getString(6) == null){
+            kh.setMaKH(rs.getString("maKH"));
+            kh.setHoKH(rs.getString("hoKH"));
+            kh.setTenKH(rs.getString("tenKH"));
+            kh.setNgaySinh(rs.getDate("ngaySinh"));
+            kh.setGioiTinh(rs.getBoolean("gioiTinh"));
+            if(rs.getString("email") == null || rs.getString("email") == ""){
                 kh.setEmail("Chưa có");
             } else {
-                kh.setEmail(rs.getString(6));
+                kh.setEmail(rs.getString("email"));
             }
-            if(rs.getString(7) == null){
+            if(rs.getString("diaChi") == null || rs.getString("diaChi") == ""){
                 kh.setDiaChi("Chưa có");
             } else {
-                kh.setDiaChi(rs.getString(7));
+                kh.setDiaChi(rs.getString("diaChi"));
             }
-            kh.setSDT(rs.getString(8));
-            kh.setTrangThai(rs.getBoolean(9));
-            kh.setDiemTichLuy(new DiemTichLuy(rs.getString(10)));
-            list.add(kh);
+            kh.setSDT(rs.getString("SDT"));
+            kh.setTrangThai(rs.getBoolean("trangThai"));
+            DiemTichLuy dtl = new DiemTichLuy();
+            dtl.setMaDTL(rs.getString("maDTL"));
+            dtl.setXepHang(rs.getString("xepHang"));
+            dtl.setDiemTong(rs.getDouble("diemTong"));
+            dtl.setDiemHienTai(rs.getDouble("diemHienTai"));
+            kh.setDiemTichLuy(dtl);
+            if(getOneKhachHang(list ,kh.getMaKH()) == null && kh.isTrangThai()) {
+                list.add(kh);
+            }
         }
         return this.list;
     }
@@ -53,7 +61,6 @@ public class KhachHang_DAO {
     public boolean searchAsName(ArrayList<KhachHang> list, String tenKH){
         for(KhachHang x : list) {
             String hoTen = x.getHoKH() + " " + x.getTenKH();
-            System.out.println(hoTen);
             if (hoTen.equalsIgnoreCase(tenKH)) {
                 return true;
             }
@@ -79,6 +86,11 @@ public class KhachHang_DAO {
         }
         for(KhachHang x : list) {
             if(x.getSDT().equalsIgnoreCase(data)){
+                return x;
+            }
+        }
+        for(KhachHang x : list) {
+            if(x.getMaKH().equalsIgnoreCase(data)){
                 return x;
             }
         }
@@ -122,5 +134,177 @@ public class KhachHang_DAO {
             }
         }
         return kh;
+    }
+
+    public ArrayList<KhachHang> searchKhachHangBySDTorHoTen(String input) {
+        ArrayList<KhachHang> result = new ArrayList<KhachHang>();
+        for(KhachHang x : list){
+            if(x.getSDT().equalsIgnoreCase(input)){
+                result.add(x);
+            }
+        }
+        for(KhachHang x : list){
+            if(x.getHoKH().equalsIgnoreCase(input)){
+                result.add(x);
+            }
+        }
+        for(KhachHang x : list){
+            if(x.getTenKH().equalsIgnoreCase(input)){
+                result.add(x);
+            }
+        }
+        for(KhachHang x : list){
+            String hoVaTen = x.getHoKH()+" "+x.getTenKH();
+            if(hoVaTen.equalsIgnoreCase(input)){
+                result.add(x);
+            }
+        }
+        return result;
+    }
+
+    public boolean deleteKhachHang(String maKH) {
+        if(getOneKhachHang(list, maKH) != null) {
+            ConnectDB con  = new ConnectDB();
+            con.connect();
+            con.getConnection();
+            PreparedStatement ps = null;
+            try {
+                String sql = "update KhachHang set trangThai = 0 where maKH = ?";
+                ps = con.getConnection().prepareStatement(sql);
+                ps.setString(1, maKH);
+                ps.executeUpdate();
+            } catch (SQLException e){
+                e.printStackTrace();
+            } finally {
+                con.disconnect();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    //Lấy Lấy dữ liệu khách hàng kể cả bị ẩn/xoá
+    public ArrayList<KhachHang> getAllKhachHangAdmin() throws Exception{
+        ArrayList<KhachHang> listAll = new ArrayList<KhachHang>();
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        //Gọi bảng Khách hàng
+        String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, trangThai, d.maDTL, d.xepHang, d.diemTong, d.diemHienTai \n" +
+                "from KhachHang kh join DiemTichLuy d on kh.maDTL = d.maDTL";
+        ps = con.getConnection().prepareStatement(sql);
+        rs = ps.executeQuery();
+        while(rs.next()){
+            KhachHang kh = new KhachHang();
+            kh.setMaKH(rs.getString("maKH"));
+            kh.setHoKH(rs.getString("hoKH"));
+            kh.setTenKH(rs.getString("tenKH"));
+            kh.setNgaySinh(rs.getDate("ngaySinh"));
+            kh.setGioiTinh(rs.getBoolean("gioiTinh"));
+            if(rs.getString("email") == null || rs.getString("email") == ""){
+                kh.setEmail("Chưa có");
+            } else {
+                kh.setEmail(rs.getString("email"));
+            }
+            if(rs.getString("diaChi") == null || rs.getString("diaChi") == ""){
+                kh.setDiaChi("Chưa có");
+            } else {
+                kh.setDiaChi(rs.getString("diaChi"));
+            }
+            kh.setSDT(rs.getString("SDT"));
+            kh.setTrangThai(rs.getBoolean("trangThai"));
+            DiemTichLuy dtl = new DiemTichLuy();
+            dtl.setMaDTL(rs.getString("maDTL"));
+            dtl.setXepHang(rs.getString("xepHang"));
+            dtl.setDiemTong(rs.getDouble("diemTong"));
+            dtl.setDiemHienTai(rs.getDouble("diemHienTai"));
+            kh.setDiemTichLuy(dtl);
+            if(getOneKhachHang(listAll ,kh.getMaKH()) == null) {
+                listAll.add(kh);
+            }
+        }
+        return listAll;
+    }
+
+    public boolean themKhachHang(KhachHang khachHang) throws Exception {
+        DiemTichLuy_DAO diemTichLuy_dao = new DiemTichLuy_DAO();
+        String maDTL = diemTichLuy_dao.themDiemTichLuy();
+        String maKH = tuTaoMaKH();
+        if(getOneKhachHang(list, maKH) != null) {
+            return false;
+        }
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        try {
+            String sql = "insert into KhachHang values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, maKH);
+            ps.setString(2, khachHang.getHoKH());
+            ps.setString(3, khachHang.getTenKH());
+            ps.setDate(4, khachHang.getNgaySinh());
+            ps.setBoolean(5, khachHang.isGioiTinh());
+            ps.setString(6, khachHang.getEmail());
+            ps.setString(7, khachHang.getDiaChi());
+            ps.setString(8, khachHang.getSDT());
+            ps.setBoolean(9, khachHang.isTrangThai());
+            ps.setString(10, maDTL);
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            con.disconnect();
+        }
+        return true;
+    }
+
+    public String tuTaoMaKH() throws Exception {
+        ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
+        listKH = getAllKhachHangAdmin();
+        if(listKH.size() > 0) {
+            KhachHang khCuoi = listKH.get(listKH.size()-1);
+            String maKHCuoiCung = khCuoi.getMaKH();
+            String soHieu = maKHCuoiCung.substring(2); //Cắt chuỗi từ 2 kí tự đầu (KH)
+            String soLuongSoKhong = "";
+            while(Integer.parseInt(soHieu.substring(0,1)) == 0){  //Vòng lặp để lấy các số 0 của mã KH vì int k hiển thị được số 0
+                soLuongSoKhong += "0";
+                soHieu = soHieu.substring(1);
+            }
+            int soKhachHang = Integer.parseInt(soHieu);
+            soKhachHang++;                                   //Có được số cuối cùng thì tăng lên 1 đơn vị để k trùng
+            return "KH" + soLuongSoKhong + String.format("%s", soKhachHang);
+        }
+        return "null";
+    }
+
+    public boolean suaKhachHang(KhachHang khachHang) {
+        if(getOneKhachHang(list, khachHang.getMaKH()) != null) {
+            ConnectDB con  = new ConnectDB();
+            con.connect();
+            con.getConnection();
+            PreparedStatement ps = null;
+            try {
+                String sql = "update KhachHang set hoKH = ?, tenKH = ?, ngaySinh = ?, gioiTinh = ?, email = ?, diaChi = ?, SDT = ? where maKH = ?";
+                ps = con.getConnection().prepareStatement(sql);
+                ps.setString(1, khachHang.getHoKH());
+                ps.setString(2, khachHang.getTenKH());
+                ps.setDate(3, khachHang.getNgaySinh());
+                ps.setBoolean(4, khachHang.isGioiTinh());
+                ps.setString(5, khachHang.getEmail());
+                ps.setString(6, khachHang.getDiaChi());
+                ps.setString(7, khachHang.getSDT());
+                ps.setString(8, khachHang.getMaKH());
+                ps.executeUpdate();
+            } catch (SQLException e){
+                e.printStackTrace();
+            } finally {
+                con.disconnect();
+            }
+            return true;
+        }
+        return false;
     }
 }
