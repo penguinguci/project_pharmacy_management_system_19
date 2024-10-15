@@ -5,26 +5,27 @@ GO
 USE QuanLyNhaThuoc;
 GO
 
+
 CREATE TABLE ChucVu (
 	maChucVu SMALLINT PRIMARY KEY NOT NULL,
 	tenChucVu NVARCHAR(50) NOT NULL
-	
 );
 
 -- Bảng NhanVien
 CREATE TABLE NhanVien (
     maNV VARCHAR(10) NOT NULL PRIMARY KEY,
-	hoNV NVARCHAR(10) NOT NULL,
+    hoNV NVARCHAR(10) NOT NULL,
     tenNV NVARCHAR(50) NOT NULL,
     ngaySinh DATE NOT NULL,
-    SDT INT NOT NULL,
-	email VARCHAR(50),
+    SDT VARCHAR(15) NOT NULL, 
+    email VARCHAR(50),
     diaChi NVARCHAR(255),
     gioiTinh BIT,
     vaiTro SMALLINT NOT NULL,
-    trangThai BIT NOT NULL
-	FOREIGN KEY (vaiTro) REFERENCES ChucVu(maChucVu)
+    trangThai BIT NOT NULL,
+    FOREIGN KEY (vaiTro) REFERENCES ChucVu(maChucVu)
 );
+
 
 -- Bảng TaiKhoan
 CREATE TABLE TaiKhoan (
@@ -135,7 +136,7 @@ CREATE TABLE Thuoc (
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
     maHD VARCHAR(10) NOT NULL PRIMARY KEY,
-    maKhachHang VARCHAR(10) NOT NULL,
+    maKhachHang VARCHAR(10),
     maNhanVien VARCHAR(10) NOT NULL,
     maThue VARCHAR(15),
     ngayLap DATE NOT NULL,
