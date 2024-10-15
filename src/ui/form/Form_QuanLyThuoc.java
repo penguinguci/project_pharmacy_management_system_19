@@ -14,16 +14,13 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
+    public JLabel lblPageInfo;
     public JLabel lblCongDung;
     public JTextArea txtCongDung;
     public JLabel lblHDSD;
     public JTextArea txtHDSD;
     public JLabel lblDKBQ;
     public JTextArea txtDKBQ;
-    public JButton btnPage1;
-    public JButton btnPage2;
-    public JButton btnPage3;
-    public JButton btnPage4;
     public JLabel lblBaoQuan;
     public JTextField txtBaoQuan;
     public JLabel lblNgaySanXuat;
@@ -46,7 +43,15 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     public DefaultTableModel dtListProduct;
     public JTextField txtSearch;
     public JComboBox<String> cbNhaSanXuat, cbDanhMuc;
+    public int currentPage = 1;
+    public int rowsPerPage = 10;
+    public int totalPages;
+    public int totalRows ;
     public JButton btnPrev, btnNext;
+    public JButton btnFirst;
+    public JButton btnLast;
+    public ArrayList<Thuoc> listThuoc;
+
 
     public Form_QuanLyThuoc() throws Exception {
         //Set layout NORTH
@@ -76,7 +81,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         // Set layout CENTER
         JPanel pContainerCenter = new JPanel();
         pContainerCenter.setLayout(new BoxLayout(pContainerCenter, BoxLayout.Y_AXIS));
-        pContainerCenter.setPreferredSize(new Dimension(1700,850));
+        pContainerCenter.setPreferredSize(new Dimension(1100,550));
 
 
         // List Product
@@ -85,7 +90,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
 
         // Search
         txtSearch = new JTextField(30);
-        txtSearch.setPreferredSize(new Dimension(100, 20));
+        txtSearch.setPreferredSize(new Dimension(100, 25));
 
         // ComboBox Nhà sản xuất
         String[] listNhaSanXuat = {"Nhà sản xuất","Nhà sản xuaất 1"};
@@ -128,7 +133,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
 
         // Table product
         JPanel pTableProduct = new JPanel(new BorderLayout());
-        String[] hTableListProduct = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nước sản xuất", "Quy cách", "Thành phần", "Đơn vị tính", "Giá bán"};
+        String[] hTableListProduct = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nước sản xuất", "Số lượng còn", "Thành phần", "Đơn vị tính", "Giá bán"};
         dtListProduct = new DefaultTableModel(hTableListProduct, 0);
         tProduct = new JTable(dtListProduct);
         tProduct.setRowHeight(30);
@@ -140,39 +145,25 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         pContainerCenter.add(Box.createVerticalStrut(10));  // Add space
         pContainerCenter.add(pTableProduct);
 
-        // Pag
-        JPanel pPag = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnPrev = new JButton("<");
-        btnPage1 = new JButton("1");
-        btnPage2 = new JButton("2");
-        btnPage3 = new JButton("3");
-        btnPage4 = new JButton("4");
-        btnNext = new JButton(">");
-        pPag.add(btnPrev);
-        pPag.add(btnPage1);
-        pPag.add(btnPage2);
-        pPag.add(btnPage3);
-        pPag.add(btnPage4);
-        pPag.add(btnNext);
+        // Load Data
+        ConnectDB.getInstance().connect();
+        thuocDao = new Thuoc_DAO();
+        loadDataThuoc(currentPage, rowsPerPage);
 
-//        btnPrev.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                if(currentPage > 0){
-//                    currentPage--;
-//                    updateTable();
-//                }
-//            }
-//        });
-//
-//        btnNext.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                if((currentPage+1) * rowsPerPage < totalRows){
-//                    currentPage++;
-//                }
-//            }
-//        });
+        // Pag
+        lblPageInfo = new JLabel();
+        JPanel pPag = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnFirst = new JButton("<<");
+        btnPrev = new JButton("<");
+        btnNext = new JButton(">");
+        btnLast = new JButton(">>");
+
+        pPag.add(btnFirst);
+        pPag.add(btnPrev);
+        pPag.add(lblPageInfo);
+        pPag.add(btnNext);
+        pPag.add(btnLast);
+
         pContainerCenter.add(Box.createVerticalStrut(10));  // Add space
         pContainerCenter.add(pPag);
 
@@ -182,7 +173,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         JPanel imgProduct = new JPanel();
         ImageIcon imageIcon = new ImageIcon("images/logo.jpg");
         imgProduct.add(new JButton(imageIcon));
-        imgProduct.setPreferredSize(new Dimension(400, 400));
+        imgProduct.setPreferredSize(new Dimension(200, 100));
 
         JPanel pInforDetail = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -241,17 +232,80 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         this.add(pContainerNorth, BorderLayout.NORTH);
         this.add(pContainerCenter, BorderLayout.CENTER);
 
-        // Load Data
-        ConnectDB.getInstance().connect();
-        thuocDao = new Thuoc_DAO();
-        loadDataThuoc();
+
+        btnFirst.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentPage > 0) {
+                    currentPage = 0;  // Quay lại trang đầu
+                    try {
+                        loadDataThuoc(currentPage, rowsPerPage);
+                        lblPageInfo.setText("Trang " + (currentPage + 1) + " / " + totalPages);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        btnPrev.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(currentPage > 0){
+                    currentPage--;
+                    try{
+                        loadDataThuoc(currentPage, rowsPerPage);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+//
+        btnNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(currentPage < totalPages - 1){
+                    currentPage++;
+                    try{
+                        loadDataThuoc(currentPage,rowsPerPage);
+                    }catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        btnLast.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int lastPage = totalPages - 1;
+                if (currentPage < lastPage) {
+                    currentPage = lastPage;
+                    try {
+                        loadDataThuoc(currentPage, rowsPerPage);
+                        lblPageInfo.setText("Trang " + (currentPage + 1) + " / " + totalPages);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
-    public void loadDataThuoc() throws Exception {
-        ArrayList<Thuoc> listThuoc = thuocDao.getAllThuoc();
+    public void loadDataThuoc(int currentPage, int rowsPerPage) throws Exception {
+        listThuoc = thuocDao.getAllThuoc();
+        totalRows = listThuoc.size();
         dtListProduct.setRowCount(0);
-        for(Thuoc thuoc : listThuoc){
-            // Duyệt qua danh sách thuốc và thêm dữ liệu vào bảng
+        int startIndex = currentPage * rowsPerPage;
+        int endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+
+        if (totalRows == 0) {
+            return;
+        }
+
+        for(int i = startIndex; i < endIndex; i++) {
+            Thuoc thuoc = listThuoc.get(i);
             Object[] rowData = {
                     thuoc.getMaThuoc(),
                     thuoc.getSoHieuThuoc(),
@@ -259,20 +313,18 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
                     thuoc.getDanhMuc().getTenDanhMuc(),
                     thuoc.getNhaCungCap().getTenNCC(),
                     thuoc.getNuocSanXuat().getTenNuoxSX(),
-                    "",
+                    thuoc.getSoLuongCon(),
                     thuoc.getThanhPhan(),
                     thuoc.getDonViTinh(),
                     thuoc.getGiaBan()
             };
-            // Thêm hàng dữ liệu vào mô hình bảng
             dtListProduct.addRow(rowData);
         }
+        totalPages = (int) Math.ceil((double) listThuoc.size() / rowsPerPage);
+
 
     }
 
-
-    private void updateTable() {
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
