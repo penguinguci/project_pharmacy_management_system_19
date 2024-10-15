@@ -21,7 +21,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public JButton btnBanThuoc, btnCapNhatNV, btnTimKiemNV, btnTaiKhoan, btnCapNhatKH, btnDatThuoc, btnTimKiemKH
                     , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
                     btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
-                    btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai;
+                    btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu;
     public JButton btnDangXuat, btnThongBao;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
@@ -53,6 +53,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public Form_TimKiemThuoc formTimKiemThuoc;
     public Form_Thue formThue;
     public Form_QuanLyKhuyenMai formQuanLyKhuyenMai;
+    public Form_QuanLyChucVu formQuanLyChucVu;
     private NhanVien nhanVienDN;
 
     public int role; //Set role cho GUI để bật tắt chức năng
@@ -167,12 +168,14 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnBanThuoc = createSubMenuButton("Bán Thuốc");
         btnNhapThuocTuNCC  = createSubMenuButton("Nhập Thuốc");
         btnCapNhatNV = createSubMenuButton("Cập Nhật");
+        btnChucVu = createSubMenuButton("Chức vụ");
         btnTimKiemNV = createSubMenuButton("Tìm Kiếm");
         btnTaiKhoan = createSubMenuButton("Tài Khoản");
 
         submenuNhanVien.add(btnBanThuoc);
         submenuNhanVien.add(btnNhapThuocTuNCC);
         submenuNhanVien.add(btnCapNhatNV);
+        submenuNhanVien.add(btnChucVu);
         submenuNhanVien.add(btnTimKiemNV);
         submenuNhanVien.add(btnTaiKhoan);
 
@@ -432,6 +435,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         formTimKiemThuoc = new Form_TimKiemThuoc();
         formThue = new Form_Thue();
         formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
+        formQuanLyChucVu = new Form_QuanLyChucVu();
 
         // Thêm top Panel vào mainContentPanel
         mainContentPanel.add(topPanel, BorderLayout.NORTH);
@@ -457,6 +461,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnBanThuoc.addActionListener(this);
         btnNhapThuocTuNCC.addActionListener(this);
         btnCapNhatNV.addActionListener(this);
+        btnChucVu.addActionListener(this);
         btnTimKiemNV.addActionListener(this);
         btnTaiKhoan.addActionListener(this);
 
@@ -540,6 +545,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhanVien");
+        } else if (o == btnChucVu) {
+            centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyChucVu");
         } else if(o == btnTimKiemNV) {
             centerPanel.add(formTimKiemNhanVien, "formTimKiemNhanVien");
             centerPanel.revalidate();

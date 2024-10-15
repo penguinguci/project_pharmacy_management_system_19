@@ -10,43 +10,29 @@ import java.util.ArrayList;
 
 public class DiemTichLuy_DAO {
     private ArrayList<DiemTichLuy> list;
-    KhachHang_DAO khachHang_dao = new KhachHang_DAO();
-    private ArrayList<KhachHang> listKH;
 
     public DiemTichLuy_DAO() {
         list = new ArrayList<DiemTichLuy>();
-        listKH = new ArrayList<KhachHang>();
-        try {
-            listKH = khachHang_dao.getAllKhachHang();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     public ArrayList<DiemTichLuy> getAllDiemTichLuy() throws Exception{
-        ArrayList<DiemTichLuy> dsDTL = new ArrayList<DiemTichLuy>();
-        try {
-            ConnectDB.getInstance();
-            Connection con = ConnectDB.getConnection();
-
-            String sql = "Select * from DiemTichLuy";
-            Statement statement = con.createStatement();
-
-            ResultSet rs = statement.executeQuery(sql);
-
-            while (rs.next()) {
-                String maDTL = rs.getString(1);
-                String xepHang = rs.getString(2);
-                double diemTong = rs.getDouble(3);
-                double diemHienTai = rs.getDouble(4);
-
-                DiemTichLuy diemTichLuy = new DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai);
-                dsDTL.add(diemTichLuy);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "select * from DiemTichLuy";
+        ps = con.getConnection().prepareStatement(sql);
+        rs = ps.executeQuery();
+        while(rs.next()){
+            DiemTichLuy dtl = new DiemTichLuy();
+            dtl.setMaDTL(rs.getString(1));
+            dtl.setXepHang(rs.getString(2));
+            dtl.setDiemTong(rs.getDouble(3));
+            dtl.setDiemHienTai(rs.getDouble(4));
+            list.add(dtl);
         }
-        return dsDTL;
+        return this.list;
     }
 
     //  Lấy điểm tích lũy theo mã điểm tích lũy
@@ -121,6 +107,52 @@ public class DiemTichLuy_DAO {
             }
         }
         return diemTichLuy;
+    }
+
+    public String themDiemTichLuy(){
+        String maDTL = tuTaoMaDiemTichLuy();
+        DiemTichLuy dtl = new DiemTichLuy(maDTL, "Đồng", 0 , 0);
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        try {
+            String sql = "insert into DiemTichLuy values(?, ?, ?, ?)";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, dtl.getMaDTL());
+            ps.setString(2, dtl.getXepHang());
+            ps.setDouble(3, dtl.getDiemTong());
+            ps.setDouble(4, dtl.getDiemHienTai());
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            con.disconnect();
+        }
+        return dtl.getMaDTL();
+    }
+
+    private String tuTaoMaDiemTichLuy() {
+        ArrayList<DiemTichLuy> listDiem = new ArrayList<DiemTichLuy>();
+        try {
+            listDiem = getAllDiemTichLuy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(listDiem.size() > 0) {
+            DiemTichLuy dtl = listDiem.get(listDiem.size() - 1);
+            String maCuoiCung = dtl.getMaDTL();
+            String soHieu = maCuoiCung.substring(3); //Cắt chuỗi từ 3 kí tự đầu (DTL)
+            String soLuongSoKhong = "";
+            while(Integer.parseInt(soHieu.substring(0,1)) == 0){  //Vòng lặp để lấy các số 0 của mã vì int k hiển thị được số 0
+                soLuongSoKhong += "0";
+                soHieu = soHieu.substring(1);
+            }
+            int maSoDiem = Integer.parseInt(soHieu);
+            maSoDiem++;                                   //Có được số cuối cùng thì tăng lên 1 đơn vị để k trùng
+            return "DTL" + soLuongSoKhong + String.format("%s", maSoDiem);
+        }
+        return "null";
     }
 
 }

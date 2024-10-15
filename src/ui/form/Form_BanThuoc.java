@@ -1070,13 +1070,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 dsChiTietKhuyenMai = chitiet_dao.getChiTietKMByCTKM(chuongTrinhKhuyenMai);
             }
         }
-
         // Tạo hóa đơn trong cơ sở dữ liệu
         boolean hoaDonDuocTao = hd_dao.create(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
 
         if (hoaDonDuocTao) {
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
-
             // Xóa giỏ hàng
             xoaGioHang();
         } else {
