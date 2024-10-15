@@ -79,6 +79,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     private NhanVien nhanVienDN;
     private static NhanVien_DAO nv_dao;
     private static HoaDon_DAO hd_dao;
+    private static ChiTietHoaDon_DAO chiTietHoaDon_dao;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -195,7 +196,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             TableColumn column = tbGioHang.getColumnModel().getColumn(i);
             column.setHeaderRenderer((TableCellRenderer) new HeaderRenderer(headerFont));
             column.setPreferredWidth(150);
-
         }
 
         JScrollPane scrollCart = new JScrollPane(tbGioHang);
@@ -491,6 +491,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         chitiet_dao = new ChiTietKhuyenMai_DAO();
         nv_dao = new NhanVien_DAO();
         hd_dao = new HoaDon_DAO();
+        chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
 
         updateTienThoi();
     }
@@ -965,6 +966,8 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
 
+        System.out.println(dsChiTietHoaDon.size());
+
         ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
         String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
 
@@ -977,8 +980,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
         // Tạo hóa đơn trong cơ sở dữ liệu
         boolean hoaDonDuocTao = hd_dao.create(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
+        boolean chiTietHoaDonTao = chiTietHoaDon_dao.create(hoaDon, dsChiTietHoaDon);
 
-        if (hoaDonDuocTao) {
+        if (hoaDonDuocTao && chiTietHoaDonTao) {
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
 
             // In hóa đơn
@@ -1055,6 +1059,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
+
 
         ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
         String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
@@ -1234,7 +1239,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     contentStream.showText("SĐT: " + hoaDon.getKhachHang().getSDT());
                     contentStream.endText();
 
-                    // Draw the header for invoice details
+                    // header cho chi tiết
                     yPosition -= 20;
                     contentStream.setFont(fontOther, 14);
                     contentStream.beginText();
@@ -1243,21 +1248,21 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     contentStream.endText();
                     yPosition -= 15;
 
-                    // Draw a table header
+                    // header table
                     contentStream.setFont(fontOther, 12);
                     contentStream.beginText();
                     contentStream.newLineAtOffset(100, yPosition);
-                    contentStream.showText("Tên Thuốc                     Số Lượng    Đơn Vị Tính    Thành Tiền");
+                    contentStream.showText("Tên Thuốc                                        Số Lượng      Đơn Vị Tính      Thành Tiền");
                     contentStream.endText();
                     yPosition -= 15;
 
-                    // Draw a line
+                    // line
                     contentStream.moveTo(100, yPosition);
                     contentStream.lineTo(500, yPosition);
                     contentStream.stroke();
                     yPosition -= 10;
 
-                    // Định dạng tiền
+                    // định dạng tiền
                     NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
                     currencyFormat.setMinimumFractionDigits(0);
                     currencyFormat.setMaximumFractionDigits(0);
@@ -1272,7 +1277,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                         String thanhTien = currencyFormat.format(ct.tinhThanhTien()) + " đ";
 
                         // Hiển thị thông tin chi tiết hóa đơn
-                        contentStream.showText(String.format("%-30s %-10s %-15s %-10s", tenThuoc, soLuong, donViTinh, thanhTien));
+                        contentStream.showText(String.format("%-60s %-10s %-15s %-10s", tenThuoc, soLuong, donViTinh, thanhTien));
                         contentStream.endText();
                         yPosition -= 15;
                         tongTienTemp += ct.tinhThanhTien();
