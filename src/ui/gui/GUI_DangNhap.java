@@ -179,14 +179,14 @@ public class GUI_DangNhap extends JFrame implements ActionListener, KeyListener 
     }
 
     public static void main(String[] args) throws Exception {
-//        try {
-//            UIManager.setLookAndFeel(
-//                    UIManager.getCrossPlatformLookAndFeelClassName());
-//        } catch (final Exception e) {
-//            UIManager.setLookAndFeel(UIManager
-//                    .getCrossPlatformLookAndFeelClassName());
-//
-//        }
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (final Exception e) {
+            UIManager.setLookAndFeel(UIManager
+                    .getCrossPlatformLookAndFeelClassName());
+
+        }
 
         GUI_DangNhap frame = new GUI_DangNhap();
         frame.setVisible(true);
