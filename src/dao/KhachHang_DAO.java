@@ -13,6 +13,11 @@ public class KhachHang_DAO {
 
     public KhachHang_DAO(){
         list = new ArrayList<KhachHang>();
+        try {
+            list = getAllKhachHang();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<KhachHang> getAllKhachHang() throws Exception{
@@ -306,5 +311,14 @@ public class KhachHang_DAO {
             return true;
         }
         return false;
+    }
+
+    public KhachHang timKhachHang(String maKH) {
+        for(KhachHang x : list) {
+            if(x.getMaKH().equalsIgnoreCase(maKH)){
+                return x;
+            }
+        }
+        return null;
     }
 }

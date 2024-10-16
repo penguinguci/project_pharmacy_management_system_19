@@ -82,6 +82,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
         tabKhachHang = new JTable(dtmKhachHang);
         scrKhachHang = new JScrollPane(tabKhachHang);
+        scrKhachHang.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabKhachHang.setBackground(Color.WHITE);
 
             //ComboBox
