@@ -71,7 +71,17 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         txtDiemTichLuy.setMaximumSize(maxSize);
 
             //Button
-        btnQuayLai = new JButton("Quay lại");
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+
+        btnQuayLai = new JButton("Quay lại", scaledIconBack);
+        btnQuayLai.setFont(new Font("Arial", Font.BOLD, 17));
+        btnQuayLai.setContentAreaFilled(false);
+        btnQuayLai.setBorderPainted(false);
+        btnQuayLai.setFocusPainted(false);
+
         btnThem = new JButton("Thêm khách hàng");
         btnXoa = new JButton("Xoá khách hàng");
         btnSua = new JButton("Sửa thông tin");

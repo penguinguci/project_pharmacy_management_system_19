@@ -1,16 +1,17 @@
 package entity;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class DonDatThuoc {
     private String maDon;
     private KhachHang khachHang;
     private NhanVien nhanVien;
-    private LocalDate thoiGianDat;
+    private Date thoiGianDat;
 
     public DonDatThuoc() {}
 
-    public DonDatThuoc(String maDon, KhachHang khachHang, NhanVien nhanVien, LocalDate thoiGianDat) {
+    public DonDatThuoc(String maDon, KhachHang khachHang, NhanVien nhanVien, Date thoiGianDat) {
         this.maDon = maDon;
         this.khachHang = khachHang;
         this.nhanVien = nhanVien;
@@ -41,11 +42,11 @@ public class DonDatThuoc {
         this.nhanVien = nhanVien;
     }
 
-    public LocalDate getThoiGianDat() {
+    public Date getThoiGianDat() {
         return thoiGianDat;
     }
 
-    public void setThoiGianDat(LocalDate thoiGianDat) {
+    public void setThoiGianDat(Date thoiGianDat) {
         this.thoiGianDat = thoiGianDat;
     }
 

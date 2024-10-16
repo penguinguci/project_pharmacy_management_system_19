@@ -2,18 +2,17 @@ package dao;
 
 import connectDB.ConnectDB;
 import entity.DonDatThuoc;
+import entity.KhachHang;
 import entity.NhanVien;
-import entity.TaiKhoan;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class QuanLyDonDatThuoc_DAO {
+public class DonDatThuoc_DAO {
     private ArrayList<DonDatThuoc> listDon;
-    private ArrayList<DonDatThuoc> listNV;
-    private ArrayList<DonDatThuoc> listKH;
-    public QuanLyDonDatThuoc_DAO(){
+
+    public DonDatThuoc_DAO(){
         listDon = new ArrayList<DonDatThuoc>();
     }
 
@@ -23,11 +22,18 @@ public class QuanLyDonDatThuoc_DAO {
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from NhanVien";
+
+        String sql = "CALL getAllDonDatThuoc";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
             DonDatThuoc don = new DonDatThuoc();
+            don.setMaDon(rs.getString("maDon"));
+            don.setKhachHang(new KhachHang(rs.getString("maKhachHang")));
+            don.setNhanVien(new NhanVien(rs.getString("maNhanVien")));
+            don.setThoiGianDat(rs.getDate("thoiGianDat"));
+
+            listDon.add(don);
         }
         return listDon;
     }

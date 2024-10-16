@@ -414,3 +414,23 @@ VALUES
 ('KM003', 'S00003', 'T003', null, 3),
 ('KM004', 'S00004', 'T004', 0.2, 5),
 ('KM005', 'S00005', 'T005', 0.5, 4);
+GO
+
+
+
+-- lấy danh sách đơn đặt thuốc
+CREATE PROCEDURE getAllDonDatThuoc
+AS
+BEGIN
+    SELECT * FROM DonDatThuoc;
+END
+GO
+
+-- lấy danh sách chi tiết đơn đặt thuốc theo mã đơn 
+CREATE PROCEDURE getChiTietDonDatThuocByMaDon @maDon VARCHAR(10)
+AS
+BEGIN
+    SELECT * FROM ChiTietDonDatThuoc
+    WHERE maDon = @maDon;
+END
+GO
