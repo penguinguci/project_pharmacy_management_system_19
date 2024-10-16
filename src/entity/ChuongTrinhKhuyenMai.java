@@ -1,16 +1,16 @@
 package entity;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 public class ChuongTrinhKhuyenMai {
-    private String maCTKM, mota, loaiKhuyenMai;
-    private LocalDate ngayBatDau, ngayKetThuc;
+    private String maCTKM, moTa, loaiKhuyenMai;
+    private Date ngayBatDau, ngayKetThuc;
 
     public ChuongTrinhKhuyenMai() {}
 
-    public ChuongTrinhKhuyenMai(String maCTKM, String mota, String loaiKhuyenMai, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+    public ChuongTrinhKhuyenMai(String maCTKM, String moTa, String loaiKhuyenMai, Date ngayBatDau, Date ngayKetThuc) {
         this.maCTKM = maCTKM;
-        this.mota = mota;
+        this.moTa = moTa;
         this.loaiKhuyenMai = loaiKhuyenMai;
         this.ngayBatDau = ngayBatDau;
         this.ngayKetThuc = ngayKetThuc;
@@ -24,12 +24,12 @@ public class ChuongTrinhKhuyenMai {
         this.maCTKM = maCTKM;
     }
 
-    public String getMota() {
-        return mota;
+    public String getMoTa() {
+        return moTa;
     }
 
-    public void setMota(String mota) {
-        this.mota = mota;
+    public void setMoTa(String moTa) {
+        this.moTa = moTa;
     }
 
     public String getLoaiKhuyenMai() {
@@ -40,19 +40,19 @@ public class ChuongTrinhKhuyenMai {
         this.loaiKhuyenMai = loaiKhuyenMai;
     }
 
-    public LocalDate getNgayBatDau() {
+    public Date getNgayBatDau() {
         return ngayBatDau;
     }
 
-    public void setNgayBatDau(LocalDate ngayBatDau) {
+    public void setNgayBatDau(Date ngayBatDau) {
         this.ngayBatDau = ngayBatDau;
     }
 
-    public LocalDate getNgayKetThuc() {
+    public Date getNgayKetThuc() {
         return ngayKetThuc;
     }
 
-    public void setNgayKetThuc(LocalDate ngayKetThuc) {
+    public void setNgayKetThuc(Date ngayKetThuc) {
         this.ngayKetThuc = ngayKetThuc;
     }
 }

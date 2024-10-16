@@ -3,8 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.*;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Thuoc_DAO {
@@ -121,4 +120,126 @@ public class Thuoc_DAO {
         }
         return list;
     }
+
+    public ArrayList<Thuoc> getThuocByDanhMuc(String danhMuc) throws Exception{
+        ArrayList<Thuoc> l = new ArrayList<Thuoc>();
+        for(Thuoc x : list) {
+            if(x.getDanhMuc().getTenDanhMuc().equalsIgnoreCase(danhMuc)){
+                l.add(x);
+            }
+        }
+        if(l!=null){
+            return l;
+        } else {
+            return null;
+        }
+    }
+
+    public Thuoc getThuocByMaThuoc(String idThuoc) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        Thuoc thuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "select * from Thuoc where MaThuoc = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, idThuoc);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String soHieuThuoc = rs.getString("SoHieuThuoc");
+                String maThuoc = rs.getString("MaThuoc");
+                String tenThuoc = rs.getString("TenThuoc");
+                String donViTinh = rs.getString("donViTinh");
+                String cachDung = rs.getString("cachDung");
+                String thanhPhan = rs.getString("thanhPhan");
+                String baoQuan = rs.getString("baoQuan");
+                String congDung = rs.getString("congDung");
+                String chiDinh = rs.getString("chiDinh");
+                int HSD = rs.getInt("HSD");
+                int soLuongCon = rs.getInt("soLuongCon");
+                Date ngaySX = rs.getDate("ngaySX");
+                double giaNhap = rs.getDouble("giaNhap");
+                DanhMuc danhMuc = new DanhMuc(rs.getString("maDanhMuc"));
+                double giaBan = rs.getDouble("giaBan");
+                NhaSanXuat nhaSanXuat = new NhaSanXuat(rs.getString("maNhaSanXuat"));
+                NhaCungCap nhaCungCap = new NhaCungCap(rs.getString("maNhaCungCap"));
+                NuocSanXuat nuocSanXuat = new NuocSanXuat(rs.getString("maNuocSanXuat"));
+                KeThuoc keThuoc = new KeThuoc(rs.getString("maKe"));
+                boolean trangThai = rs.getBoolean("trangThai");
+                String hinhAnh = rs.getString("hinhAnh");
+
+                thuoc = new Thuoc(soHieuThuoc, maThuoc, tenThuoc, donViTinh,
+                        cachDung, thanhPhan, baoQuan, congDung, chiDinh, HSD, soLuongCon, ngaySX, giaNhap, danhMuc, giaBan,
+                nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return thuoc;
+    }
+
+
+    public Thuoc getThuocByTenThuoc(String nameThuoc) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        Thuoc thuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "select * from Thuoc where tenThuoc like ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, nameThuoc);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String soHieuThuoc = rs.getString("SoHieuThuoc");
+                String maThuoc = rs.getString("MaThuoc");
+                String tenThuoc = rs.getString("TenThuoc");
+                String donViTinh = rs.getString("donViTinh");
+                String cachDung = rs.getString("cachDung");
+                String thanhPhan = rs.getString("thanhPhan");
+                String baoQuan = rs.getString("baoQuan");
+                String congDung = rs.getString("congDung");
+                String chiDinh = rs.getString("chiDinh");
+                int HSD = rs.getInt("HSD");
+                int soLuongCon = rs.getInt("soLuongCon");
+                Date ngaySX = rs.getDate("ngaySX");
+                double giaNhap = rs.getDouble("giaNhap");
+                DanhMuc danhMuc = new DanhMuc(rs.getString("maDanhMuc"));
+                double giaBan = rs.getDouble("giaBan");
+                NhaSanXuat nhaSanXuat = new NhaSanXuat(rs.getString("maNhaSanXuat"));
+                NhaCungCap nhaCungCap = new NhaCungCap(rs.getString("maNhaCungCap"));
+                NuocSanXuat nuocSanXuat = new NuocSanXuat(rs.getString("maNuocSanXuat"));
+                KeThuoc keThuoc = new KeThuoc(rs.getString("maKe"));
+                boolean trangThai = rs.getBoolean("trangThai");
+                String hinhAnh = rs.getString("hinhAnh");
+
+                thuoc = new Thuoc(soHieuThuoc, maThuoc, tenThuoc, donViTinh,
+                        cachDung, thanhPhan, baoQuan, congDung, chiDinh, HSD, soLuongCon, ngaySX, giaNhap, danhMuc, giaBan,
+                        nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return thuoc;
+    }
+
 }

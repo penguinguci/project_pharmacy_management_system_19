@@ -1,29 +1,18 @@
 package entity;
 
 public class ChiTietKhuyenMai {
-    private String maCTKM;
-    private Thuoc thuoc;
     private ChuongTrinhKhuyenMai chuongTrinhKhuyenMai;
+    private Thuoc thuoc;
     private double tyLeKhuyenMai;
     private int soLuongToiThieu; //Mua soLuongToiThieu để được hưởng khuyến mãi
 
-    public ChiTietKhuyenMai() {}
-
-    public ChiTietKhuyenMai(String maCTKM, Thuoc thuoc, ChuongTrinhKhuyenMai chuongTrinhKhuyenMai, double tyLeKhuyenMai, int soLuongToiThieu) {
-        this.maCTKM = maCTKM;
+    public ChiTietKhuyenMai(ChuongTrinhKhuyenMai chuongTrinhKhuyenMai, Thuoc thuoc, double tyLeKhuyenMai, int soLuongToiThieu) {
         this.thuoc = thuoc;
         this.chuongTrinhKhuyenMai = chuongTrinhKhuyenMai;
         this.tyLeKhuyenMai = tyLeKhuyenMai;
         this.soLuongToiThieu = soLuongToiThieu;
     }
 
-    public String getMaCTKM() {
-        return maCTKM;
-    }
-
-    public void setMaCTKM(String maCTKM) {
-        this.maCTKM = maCTKM;
-    }
 
     public Thuoc getThuoc() {
         return thuoc;
