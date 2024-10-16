@@ -196,6 +196,10 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         centerPanel.add(tablePanel, BorderLayout.CENTER);
         centerPanel.add(inforPanel, BorderLayout.EAST);
 
+        // Khoá TextField
+        txtMaPhieu.setEditable(false);
+        txtMaHoaDon.setEditable(false);
+
         //Tải dữ liệu bảng
         loadDataTable(getDataHoaDon());
 
@@ -230,7 +234,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         System.out.println(newData.size());
         dtmHoaDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(HoaDon x: newData) {
-            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNgayLap(), "Test"};
+            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
             dtmHoaDon.addRow(data);
         }
     }
@@ -245,6 +249,11 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
             e1.printStackTrace();
         }
         return listHD;
+    }
+
+    private double tinhTienHoaDon(String maHD) {
+
+        return 0;
     }
 
     @Override
