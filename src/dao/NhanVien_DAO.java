@@ -14,6 +14,11 @@ public class NhanVien_DAO {
 
     public NhanVien_DAO(){
         this.list = new ArrayList<NhanVien>();
+        try {
+            list = getAllNhanVien();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<NhanVien> getAllNhanVien() throws Exception{
@@ -47,9 +52,20 @@ public class NhanVien_DAO {
             nv.setGioiTinh(rs.getBoolean(8));
             nv.setVaiTro(new ChucVu(rs.getInt(9)));
             nv.setTrangThai(rs.getBoolean(10));
-            this.list.add(nv);
+            if(timNhanVien(nv.getMaNV()) == null) {
+                list.add(nv);
+            }
         }
         return this.list;
+    }
+
+    public NhanVien timNhanVien(String maNV) {
+        for(NhanVien x : list){
+            if(x.getMaNV().equalsIgnoreCase(maNV)){
+                return x;
+            }
+        }
+        return null;
     }
 
 
@@ -93,7 +109,7 @@ public class NhanVien_DAO {
             try {
                 if (rs != null) rs.close();
                 if (statement != null) statement.close();
-                if (con != null) con.close();
+                //if (con != null) con.close();
             } catch (SQLException e2) {
                 e2.printStackTrace();
             }
