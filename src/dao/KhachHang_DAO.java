@@ -321,4 +321,43 @@ public class KhachHang_DAO {
         }
         return null;
     }
+
+    public KhachHang getOneKhachHangByMaKH(String maKH) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        KhachHang kh = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM KhachHang WHERE maKH =?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, maKH);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String hoKH = rs.getString("hoKH");
+                String tenKh = rs.getString("tenKH");
+                Date ngaySinh = rs.getDate("ngaySinh");
+                String email = rs.getString("email");
+                String diaChi = rs.getString("diaChi");
+                String SDT = rs.getString("SDT");
+                boolean gioiTinh = rs.getBoolean("gioiTinh");
+                boolean trangThai = rs.getBoolean("trangThai");
+                DiemTichLuy diemTichLuy = new DiemTichLuy(rs.getString("maDTL"));
+                kh = new KhachHang(maKH, hoKH, tenKh, ngaySinh, email, diaChi, gioiTinh, SDT, trangThai, diemTichLuy);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return kh;
+    }
 }

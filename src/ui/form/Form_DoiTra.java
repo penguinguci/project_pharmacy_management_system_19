@@ -234,8 +234,13 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         System.out.println(newData.size());
         dtmHoaDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(HoaDon x: newData) {
-            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
-            dtmHoaDon.addRow(data);
+            if(x.getKhachHang() != null) {
+                Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
+                dtmHoaDon.addRow(data);
+            } else {
+                Object[] data = {x.getMaHD(), "Khách hàng lẻ", x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
+                dtmHoaDon.addRow(data);
+            }
         }
     }
 

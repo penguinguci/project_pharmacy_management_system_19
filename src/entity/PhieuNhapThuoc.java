@@ -1,6 +1,7 @@
 package entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class PhieuNhapThuoc {
     private String maPhieuNhap;
@@ -50,7 +51,11 @@ public class PhieuNhapThuoc {
         this.nhaCungCap = nhaCungCap;
     }
 
-    public double tinhTongTien(){
-        return 0;
+    public double tinhTongTien(ArrayList<ChiTietPhieuNhap> dsCTPN){
+        double tongTien = 0;
+        for (ChiTietPhieuNhap ctpn : dsCTPN) {
+            tongTien += ctpn.tinhThanhTien();
+        }
+        return tongTien;
     }
 }

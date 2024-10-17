@@ -1,15 +1,17 @@
 package entity;
 
+import java.sql.Date;
+
 public class TaiKhoan {
     private String taiKhoan, matKhau;
-    private String vaiTro; // 0 = admin, 1 = NV ban thuoc, 2 = NV quan ly
+    private Date ngayCapNhat;
 
     public TaiKhoan() {}
 
-    public TaiKhoan(String taiKhoan, String matKhau, String vaiTro) {
+    public TaiKhoan(String taiKhoan, String matKhau, Date ngayCapNhat) {
         this.taiKhoan = taiKhoan;
         this.matKhau = matKhau;
-        this.vaiTro = vaiTro;
+        this.ngayCapNhat = ngayCapNhat;
     }
 
     public String getTaiKhoan() {
@@ -28,11 +30,11 @@ public class TaiKhoan {
         this.matKhau = matKhau;
     }
 
-    public String getVaiTro() {
-        return vaiTro;
+    public Date getNgayCapNhat() {
+        return ngayCapNhat;
     }
 
-    public void setVaiTro(String vaiTro) {
-        this.vaiTro = vaiTro;
+    public void setNgayCapNhat(Date ngayCapNhat) {
+        this.ngayCapNhat = ngayCapNhat;
     }
 }

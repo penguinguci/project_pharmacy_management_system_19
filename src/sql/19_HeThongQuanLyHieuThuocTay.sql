@@ -417,6 +417,7 @@ VALUES
 GO
 
 
+------------- PROCEDURE 
 
 -- lấy danh sách đơn đặt thuốc
 CREATE PROCEDURE getAllDonDatThuoc
@@ -434,3 +435,24 @@ BEGIN
     WHERE maDon = @maDon;
 END
 GO
+
+-- lấy danh sách chức vụ
+CREATE PROCEDURE getAllChucVu
+AS
+BEGIN
+	SELECT * FROM ChucVu
+END
+GO
+
+-- lấy tài khoản theo mã nhân viên
+CREATE PROCEDURE getTaiKhoanByMaNV @maNV VARCHAR(10)
+AS
+BEGIN
+	SELECT *
+	FROM TaiKhoan tk
+	JOIN NhanVien nv ON tk.taiKhoan = nv.maNV
+	WHERE nv.maNV = @maNV
+END
+GO
+
+

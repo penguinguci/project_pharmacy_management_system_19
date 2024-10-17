@@ -5,14 +5,16 @@ public class ChiTietPhieuNhap {
     private Thuoc thuoc;
     private int soLuong;
     private String donViTinh;
+    private double donGiaNhap;
 
     public ChiTietPhieuNhap() {}
 
-    public ChiTietPhieuNhap(PhieuNhapThuoc phieuNhapThuoc, Thuoc thuoc, int soLuong, String donViTinh) {
+    public ChiTietPhieuNhap(PhieuNhapThuoc phieuNhapThuoc, Thuoc thuoc, int soLuong, String donViTinh, double donGiaNhap) {
         this.phieuNhapThuoc = phieuNhapThuoc;
         this.thuoc = thuoc;
         this.soLuong = soLuong;
         this.donViTinh = donViTinh;
+        this.donGiaNhap = donGiaNhap;
     }
 
     public PhieuNhapThuoc getPhieuNhapThuoc() {
@@ -47,7 +49,15 @@ public class ChiTietPhieuNhap {
         this.donViTinh = donViTinh;
     }
 
+    public double getDonGiaNhap() {
+        return donGiaNhap;
+    }
+
+    public void setDonGiaNhap(double donGiaNhap) {
+        this.donGiaNhap = donGiaNhap;
+    }
+
     public double tinhThanhTien(){
-        return 0;
+        return this.soLuong * this.donGiaNhap;
     }
 }
