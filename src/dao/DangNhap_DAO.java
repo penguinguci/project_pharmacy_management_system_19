@@ -21,12 +21,11 @@ public class DangNhap_DAO {
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "Select taiKhoan, matKhau, tenChucVu" +
-                " From NhanVien nv join TaiKhoan tk on nv.maNV = tk.taiKhoan join ChucVu cv on nv.vaiTro = cv.maChucVu";
+        String sql = "Select * from TaiKhoan";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
-            TaiKhoan taiKhoan = new TaiKhoan(rs.getString(1), rs.getString(2), rs.getString(3));
+            TaiKhoan taiKhoan = new TaiKhoan(rs.getString("taiKhoan"), rs.getString("matKhau"), rs.getDate("ngayCapNhat"));
             this.listTK.add(taiKhoan);
         }
         return listTK;
@@ -90,14 +89,69 @@ public class DangNhap_DAO {
         return nhanVien;
     }
 
-//    private String convertVaiTroToString(int vaiTroInt) {
-//        switch (vaiTroInt) {
-//            case 1:
-//                return "Quản lý";
-//            case 2:
-//                return "Nhân viên";
-//            default:
-//                return "Không rõ";
-//        }
-//    }
+    public TaiKhoan getTaiKhoanByMaNV(String maNV) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        TaiKhoan taiKhoan = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "{CALL getTaiKhoanByMaNV(?)}";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, maNV);
+
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String taiKhoanStr = rs.getString("taiKhoan");
+                String matKhau = rs.getString("matKhau");
+                Date ngayCapNhat = rs.getDate("ngayCapNhat");
+
+                taiKhoan = new TaiKhoan(taiKhoanStr, matKhau, ngayCapNhat);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Đóng kết nối và giải phóng tài nguyên
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return taiKhoan;
+    }
+
+    public boolean createTaiKhoan(TaiKhoan taiKhoan) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        boolean result = false;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "INSERT INTO TaiKhoan (taiKhoan, matKhau, ngayCapNhat) VALUES (?, ?, ?)";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, taiKhoan.getTaiKhoan());
+            statement.setString(2, taiKhoan.getMatKhau());
+            statement.setDate(3, taiKhoan.getNgayCapNhat());
+
+            int rowsAffected = statement.executeUpdate();
+            result = rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 }

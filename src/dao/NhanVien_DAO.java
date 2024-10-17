@@ -28,30 +28,32 @@ public class NhanVien_DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         //Gọi bảng Nhân Viên
-        String sql = "select maNV, hoNV, tenNV, ngaySinh, SDT, email, diaChi, gioiTinh, vaiTro, trangThai \n" +
-                "from NhanVien nv join ChucVu cv on nv.vaiTro = cv.maChucVu";
+        String sql = "select * from NhanVien nv join ChucVu cv on nv.vaiTro = cv.maChucVu";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
             NhanVien nv = new NhanVien();
-            nv.setMaNV(rs.getString(1));
-            nv.setHoNV(rs.getString(2));
-            nv.setTenNV(rs.getString(3));
-            nv.setNgaySinh(rs.getDate(4));
-            nv.setSdt(rs.getString(5));
-            if(rs.getString(6) == null){
+            nv.setMaNV(rs.getString("maNV"));
+            nv.setHoNV(rs.getString("hoNV"));
+            nv.setTenNV(rs.getString("tenNV"));
+            nv.setNgaySinh(rs.getDate("ngaySinh"));
+            nv.setSdt(rs.getString("SDT"));
+            if(rs.getString("email") == null){
                 nv.setEmail("Chưa có");
             } else {
-                nv.setEmail(rs.getString(6));
+                nv.setEmail(rs.getString("email"));
             }
-            if(rs.getString(7) == null){
+            if(rs.getString("diaChi") == null){
                 nv.setDiaChi("Chưa có");
             } else {
-                nv.setDiaChi(rs.getString(7));
+                nv.setDiaChi(rs.getString("diaChi"));
             }
-            nv.setGioiTinh(rs.getBoolean(8));
-            nv.setVaiTro(new ChucVu(rs.getInt(9)));
-            nv.setTrangThai(rs.getBoolean(10));
+            nv.setGioiTinh(rs.getBoolean("gioiTinh"));
+            ChucVu cv = new ChucVu();
+            cv.setMaChucVu(rs.getInt("maChucVu"));
+            cv.setTenChucVu(rs.getString("tenChucVu"));
+            nv.setVaiTro(cv);
+            nv.setTrangThai(rs.getBoolean("trangThai"));
             if(timNhanVien(nv.getMaNV()) == null) {
                 list.add(nv);
             }
@@ -116,4 +118,42 @@ public class NhanVien_DAO {
         }
         return nhanVien;
     }
+
+
+    public boolean createNhanVien(NhanVien nhanVien) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        boolean result = false;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "INSERT INTO NhanVien (maNV, hoNV, tenNV, ngaySinh, SDT, email, diaChi, gioiTinh, vaiTro, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, nhanVien.getMaNV());
+            statement.setString(2, nhanVien.getHoNV());
+            statement.setString(3, nhanVien.getTenNV());
+            statement.setDate(4, new java.sql.Date(nhanVien.getNgaySinh().getTime()));
+            statement.setString(5, nhanVien.getSdt());
+            statement.setString(6, nhanVien.getEmail());
+            statement.setString(7, nhanVien.getDiaChi());
+            statement.setBoolean(8, nhanVien.isGioiTinh());
+            statement.setInt(9, nhanVien.getVaiTro().getMaChucVu());
+            statement.setBoolean(10, nhanVien.isTrangThai());
+
+            int rowsAffected = statement.executeUpdate();
+            result = rowsAffected > 0;  // Nếu có ít nhất một dòng bị ảnh hưởng, trả về true
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+
 }

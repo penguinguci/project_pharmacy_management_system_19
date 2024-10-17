@@ -35,8 +35,7 @@ public class HoaDon_DAO {
             HoaDon hd = new HoaDon();
             hd.setMaHD(rs.getString("maHD"));
 
-            KhachHang kh = new KhachHang();
-            kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+            KhachHang kh =  khachHang_dao.getOneKhachHangByMaKH(rs.getString("maKhachHang"));
             hd.setKhachHang(kh);
 
             NhanVien nv = new NhanVien();

@@ -205,12 +205,14 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnNhaSanXuat = createSubMenuButton("Nhà Sản Xuất");
         btnNuocSanXuat = createSubMenuButton("Nước Sản Xuất");
         btnDanhMuc = createSubMenuButton("Danh Mục");
+        btnKhuyenMai = createSubMenuButton("Khuyến mãi");
         btnTimKiemThuoc = createSubMenuButton("Tìm Kiếm");
 
         submenuThuoc.add(btnCapNhatThuoc);
         submenuThuoc.add(btnNhaSanXuat);
         submenuThuoc.add(btnNuocSanXuat);
         submenuThuoc.add(btnDanhMuc);
+        submenuThuoc.add(btnKhuyenMai);
         submenuThuoc.add(btnTimKiemThuoc);
 
 
@@ -473,6 +475,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnNhaSanXuat.addActionListener(this);
         btnNuocSanXuat.addActionListener(this);
         btnDanhMuc.addActionListener(this);
+        btnKhuyenMai.addActionListener(this);
         btnTimKiemThuoc.addActionListener(this);
 
         btnCapNhatNCC.addActionListener(this);
@@ -595,6 +598,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyDanhMuc");
+        } else if(o == btnKhuyenMai) {
+            centerPanel.add(formQuanLyKhuyenMai, "formQuanLyKhuyenMai");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyKhuyenMai");
         } else if(o == btnTimKiemThuoc) {
             centerPanel.add(formTimKiemThuoc, "formTimKiemThuoc");
             centerPanel.revalidate();
