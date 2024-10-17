@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
+    public JComboBox<String> cmbKhuyenMai;
     public JLabel lblPageInfo;
     public JLabel lblCongDung;
     public JTextArea txtCongDung;
@@ -42,7 +43,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     public JButton btnReload;
     public DefaultTableModel dtListProduct;
     public JTextField txtSearch;
-    public JComboBox<String> cbNhaSanXuat, cbDanhMuc;
+    public JComboBox<String> cmbNhaSanXuat, cmbDanhMuc;
     public int currentPage = 1;
     public int rowsPerPage = 10;
     public int totalPages;
@@ -73,15 +74,14 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblTitle.setFont(new Font("Arial", Font.BOLD, 50));
         pTitle.add(lblTitle);
 
-        pContainerNorth.setPreferredSize(new Dimension(screenSize.width, pTitle.getPreferredSize().height));
-        pBack.setBackground(Color.WHITE);
+        pContainerNorth.setPreferredSize(new Dimension(1300, pTitle.getPreferredSize().height));
         pContainerNorth.add(pBack, BorderLayout.WEST);
         pContainerNorth.add(pTitle, BorderLayout.CENTER);
 
         // Set layout CENTER
-        JPanel pContainerCenter = new JPanel();
+        JPanel pContainerCenter = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pContainerCenter.setLayout(new BoxLayout(pContainerCenter, BoxLayout.Y_AXIS));
-        pContainerCenter.setPreferredSize(new Dimension(1100,550));
+        pContainerCenter.setPreferredSize(new Dimension(1300,550));
 
 
         // List Product
@@ -90,40 +90,70 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
 
         // Search
         txtSearch = new JTextField(30);
-        txtSearch.setPreferredSize(new Dimension(100, 25));
+        txtSearch.setPreferredSize(new Dimension(50, 25));
+
+        String[] listKhuyenMai = {"Khuyến mãi 10%","Khuyến mãi 8%"};
+        cmbKhuyenMai = new JComboBox<>(listKhuyenMai);
 
         // ComboBox Nhà sản xuất
         String[] listNhaSanXuat = {"Nhà sản xuất","Nhà sản xuaất 1"};
-        cbNhaSanXuat = new JComboBox<>(listNhaSanXuat);
+        cmbNhaSanXuat = new JComboBox<>(listNhaSanXuat);
 
         // ComboBox Danh mục
         String[] listDanhMuc = {"Danh mục","Đau đầu","Trĩ"};
-        cbDanhMuc = new JComboBox<>(listDanhMuc);
+        cmbDanhMuc = new JComboBox<>(listDanhMuc);
 
         // Add product
         ImageIcon iconAdd = new ImageIcon("images/add.png");
         btnAdd = new JButton(iconAdd);
         btnAdd.setText("Thêm thuốc");
+        btnAdd.setFont(new Font("Arial", Font.PLAIN, 15));
+        btnAdd.setBackground(new Color(65, 192, 201));
+        btnAdd.setForeground(Color.WHITE);
+        btnAdd.setOpaque(true);
+        btnAdd.setFocusPainted(false);
+        btnAdd.setBorderPainted(false);
 
         // Update product
         ImageIcon iconUpdate = new ImageIcon("images/update.png");
         btnUpdate = new JButton(iconUpdate);
         btnUpdate.setText("Cập nhật");
+        btnUpdate.setFont(new Font("Arial", Font.PLAIN, 15));
+        btnUpdate.setBackground(new Color(65, 192, 201));
+        btnUpdate.setForeground(Color.WHITE);
+        btnUpdate.setOpaque(true);
+        btnUpdate.setFocusPainted(false);
+        btnUpdate.setBorderPainted(false);
+
 
         // Delete product
         ImageIcon iconDelete = new ImageIcon("images/delete.png");
         btnDelete = new JButton(iconDelete);
         btnDelete.setText("Xoá thuốc");
+        btnDelete.setFont(new Font("Arial", Font.PLAIN, 15));
+        btnDelete.setBackground(Color.RED);
+        btnDelete.setForeground(Color.WHITE);
+        btnDelete.setOpaque(true);
+        btnDelete.setFocusPainted(false);
+        btnDelete.setBorderPainted(false);
+
 
         // Delete product
         ImageIcon iconReload = new ImageIcon("images/reload.png");
         btnReload = new JButton(iconReload);
         btnReload.setText("Làm mới");
+        btnReload.setFont(new Font("Arial", Font.PLAIN, 15));
+        btnReload.setBackground(new Color(65, 192, 201));
+        btnReload.setForeground(Color.WHITE);
+        btnReload.setOpaque(true);
+        btnReload.setFocusPainted(false);
+        btnReload.setBorderPainted(false);
 
-        pOption.add(btnReload);
+
         pOption.add(txtSearch);
-        pOption.add(cbNhaSanXuat);
-        pOption.add(cbDanhMuc);
+        pOption.add(cmbKhuyenMai);
+        pOption.add(cmbNhaSanXuat);
+        pOption.add(cmbDanhMuc);
         pOption.add(btnAdd);
         pOption.add(btnUpdate);
         pOption.add(btnDelete);
@@ -168,7 +198,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         pContainerCenter.add(pPag);
 
         // Product Detail
-        JPanel pProductDetail = new JPanel(new BorderLayout(10, 10)); // 10px padding
+        JPanel pProductDetail = new JPanel(new BorderLayout()); // 10px padding
 
         JPanel imgProduct = new JPanel();
         ImageIcon imageIcon = new ImageIcon("images/logo.jpg");
@@ -183,24 +213,35 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
 // Labels and fields
         lblMaThuoc = new JLabel("Mã thuốc:");
         txtMaThuoc = new JTextField(15);
+        txtMaThuoc.setPreferredSize(new Dimension(150,25));
         lblTenThuoc = new JLabel("Tên thuốc:");
         txtTenThuoc = new JTextField(15);
+        txtTenThuoc.setPreferredSize(new Dimension(150,25));
         lblBaoQuan = new JLabel("Bảo quản:");
         txtBaoQuan = new JTextField(15);
+        txtBaoQuan.setPreferredSize(new Dimension(150,25));
+
 
         lblNgaySanXuat = new JLabel("Ngày sản xuất:");
         txtNgaySanXuat = new JTextField(15);
+        txtNgaySanXuat.setPreferredSize(new Dimension(150,25));
         lblHSD = new JLabel("Hạn sử dụng:");
         txtHSD = new JTextField(15);
+        txtHSD.setPreferredSize(new Dimension(150,25));
         lblKeThuoc = new JLabel("Kệ thuốc:");
         txtKeThuoc = new JTextField(15);
+        txtKeThuoc.setPreferredSize(new Dimension(150,25));
 
         lblCongDung = new JLabel("Công dụng:");
         txtCongDung = new JTextArea(3, 15);
+        txtCongDung.setPreferredSize(new Dimension(150,25));
         lblHDSD = new JLabel("Hướng dẫn sử dụng:");
         txtHDSD = new JTextArea(3, 15);
+        txtHDSD.setPreferredSize(new Dimension(150,25));
         lblDKBQ = new JLabel("Điều kiện bảo quản:");
         txtDKBQ = new JTextArea(3, 15);
+        txtDKBQ.setPreferredSize(new Dimension(150,25));
+
 
         gbc.gridx = 0; gbc.gridy = 0; pInforDetail.add(lblMaThuoc, gbc);  // Column 1, Row 1
         gbc.gridx = 1; gbc.gridy = 0; pInforDetail.add(txtMaThuoc, gbc);  // Column 2, Row 1
@@ -291,6 +332,11 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
                 }
             }
         });
+
+        btnAdd.addActionListener(this);
+        btnDelete.addActionListener(this);
+        btnUpdate.addActionListener(this);
+        btnReload.addActionListener(this);
     }
 
     public void loadDataThuoc(int currentPage, int rowsPerPage) throws Exception {
@@ -328,7 +374,18 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if(o.equals(btnAdd)){
+            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm thuốc", true);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            Form_NhapThuoc pnlThemThuoc = new Form_NhapThuoc();
+            dialog.add(pnlThemThuoc);
 
+            dialog.setSize(800,800);
+            dialog.setLocationRelativeTo(null);
+//            dialog.setResizable(false);
+            dialog.setVisible(true);
+        }
     }
 
 }
