@@ -1,6 +1,7 @@
 package entity;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HoaDon {
@@ -8,13 +9,13 @@ public class HoaDon {
     private KhachHang khachHang;
     private NhanVien nhanVien;
     private Thue thue;
-    private LocalDate ngayLap;
+    private Date ngayLap;
     private boolean trangThai; // 1 = Hiện thông tin, 0 = Ẩn thông tin
 
     public HoaDon() {}
 
     public HoaDon(String maHD, String hinhThucThanhToan, KhachHang khachHang, NhanVien nhanVien, Thue thue,
-                  LocalDate ngayLap, boolean trangThai) {
+                  Date ngayLap, boolean trangThai) {
         this.maHD = maHD;
         this.hinhThucThanhToan = hinhThucThanhToan;
         this.khachHang = khachHang;
@@ -64,11 +65,11 @@ public class HoaDon {
         this.thue = thue;
     }
 
-    public LocalDate getNgayLap() {
+    public Date getNgayLap() {
         return ngayLap;
     }
 
-    public void setNgayLap(LocalDate ngayLap) {
+    public void setNgayLap(Date ngayLap) {
         this.ngayLap = ngayLap;
     }
 
@@ -81,43 +82,52 @@ public class HoaDon {
     }
 
     public double tinhTienThue(List<ChiTietHoaDon> dsChiTietHoaDon){
-        double tienThue = 0;
         double tongThanhTien = 0;
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
             tongThanhTien += chiTietHoaDon.tinhThanhTien();
         }
-        tienThue = tongThanhTien * thue.getTyleThue();
+
+        double tienThue = tongThanhTien * thue.getTyleThue();
         return tienThue;
     }
 
-    public double tinhTienKhuyenMai(List<ChiTietHoaDon> dsChiTietHoaDon, ChuongTrinhKhuyenMai chuongTrinhKhuyenMai){
+    public double tinhTienKhuyenMai(List<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
         double tienKhuyenMai = 0;
-
-        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon){
-            String maThuoc = chiTietHoaDon.getThuoc().getMaThuoc();
-
-//            for(ChiTietKhuyenMai chiTietKhuyenMai : chuongTrinhKhuyenMai.
-        }
-        return 0;
-    }
-
-    public double tinhTienGiam(List<ChiTietHoaDon> dsChiTietHoaDon){
-        return khachHang.tinhTinhDiemTichLuy(dsChiTietHoaDon);
-    }
-
-    public double tinhTongTien(List<ChiTietHoaDon> dsChiTietHoaDon){
-        double tienThue = tinhTienThue(dsChiTietHoaDon);
-        double tienGiam = khachHang.tinhTinhDiemTichLuy(dsChiTietHoaDon);
-        double tienKhuyenMai = 0;
-        double tongThanhTien = 0;
 
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
-            tongThanhTien += chiTietHoaDon.tinhThanhTien();
+            Thuoc thuoc = chiTietHoaDon.getThuoc();
+
+            for (ChiTietKhuyenMai chiTietKhuyenMai : dsChiTietKhuyenMai) {
+                if (chiTietKhuyenMai.getThuoc().getMaThuoc().equals(thuoc.getMaThuoc()) &&
+                        chiTietHoaDon.getSoLuong() >= chiTietKhuyenMai.getSoLuongToiThieu()) {
+                    tienKhuyenMai += chiTietHoaDon.tinhThanhTien() * chiTietKhuyenMai.getTyLeKhuyenMai();
+                }
+            }
         }
+        return tienKhuyenMai;
+    }
 
-        double tongTien = tongThanhTien + tienThue - tienGiam - tienKhuyenMai;
+    public double tinhTienGiam() {
+        return khachHang.tinhDiemTichLuy();
+    }
 
-        return tongTien;
+//    public double tinhTongTien(List<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
+//        double tienThue = tinhTienThue(dsChiTietHoaDon);
+//        double tienGiam = tinhTienGiam();
+//        double tienKhuyenMai = tinhTienKhuyenMai(dsChiTietHoaDon, dsChiTietKhuyenMai);
+//        double tongThanhTien = 0;
+//
+//        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
+//            tongThanhTien += chiTietHoaDon.tinhThanhTien();
+//        }
+//
+//        double tongTien = tongThanhTien + tienThue - tienGiam - tienKhuyenMai;
+//
+//        return tongTien;
+//    }
+
+    public double tinhTongTien(double thanhTien, double tienThue, double tienGiam, double tienKhuyenMai) {
+        return thanhTien + tienThue - tienGiam - tienKhuyenMai;
     }
 
 }

@@ -6,6 +6,10 @@ public class Thue {
 
     public Thue() {}
 
+    public Thue(String maThue) {
+        this.maThue = maThue;
+    }
+
     public Thue(String maThue, String loaiThue, double tyleThue) {
         this.maThue = maThue;
         this.loaiThue = loaiThue;

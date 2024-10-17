@@ -1,10 +1,12 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.ChucVu;
+import entity.DiemTichLuy;
+import entity.KhachHang;
 import entity.NhanVien;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class NhanVien_DAO {
@@ -12,6 +14,11 @@ public class NhanVien_DAO {
 
     public NhanVien_DAO(){
         this.list = new ArrayList<NhanVien>();
+        try {
+            list = getAllNhanVien();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<NhanVien> getAllNhanVien() throws Exception{
@@ -21,7 +28,7 @@ public class NhanVien_DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         //Gọi bảng Nhân Viên
-        String sql = "select maNV, hoNV, tenNV, ngaySinh, SDT, email, diaChi, gioiTinh, tenChucVu, trangThai \n" +
+        String sql = "select maNV, hoNV, tenNV, ngaySinh, SDT, email, diaChi, gioiTinh, vaiTro, trangThai \n" +
                 "from NhanVien nv join ChucVu cv on nv.vaiTro = cv.maChucVu";
         ps = con.getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
@@ -31,7 +38,7 @@ public class NhanVien_DAO {
             nv.setHoNV(rs.getString(2));
             nv.setTenNV(rs.getString(3));
             nv.setNgaySinh(rs.getDate(4));
-            nv.setSdt(rs.getInt(5));
+            nv.setSdt(rs.getString(5));
             if(rs.getString(6) == null){
                 nv.setEmail("Chưa có");
             } else {
@@ -43,10 +50,70 @@ public class NhanVien_DAO {
                 nv.setDiaChi(rs.getString(7));
             }
             nv.setGioiTinh(rs.getBoolean(8));
-            nv.setVaiTro(rs.getString(9));
+            nv.setVaiTro(new ChucVu(rs.getInt(9)));
             nv.setTrangThai(rs.getBoolean(10));
-            this.list.add(nv);
+            if(timNhanVien(nv.getMaNV()) == null) {
+                list.add(nv);
+            }
         }
         return this.list;
+    }
+
+    public NhanVien timNhanVien(String maNV) {
+        for(NhanVien x : list){
+            if(x.getMaNV().equalsIgnoreCase(maNV)){
+                return x;
+            }
+        }
+        return null;
+    }
+
+
+    // lấy nhân viên theo mã mã nhân viên
+    public NhanVien getNVTheoMaNV(String maNhanVien) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        NhanVien nhanVien = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM NhanVien nv JOIN ChucVu cv ON nv.vaiTro = cv.maChucVu WHERE maNV = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, maNhanVien);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maNV = rs.getString("maNV");
+                String hoNV = rs.getString("hoNV");
+                String tenNV = rs.getString("tenNV");
+                Date ngaySinh = rs.getDate("ngaySinh");
+                String SDT = rs.getString("SDT");
+                if(SDT == null) {
+                    SDT = " ";
+                }
+                String email = rs.getString("email");
+                if(email == null) {
+                    email = " ";
+                }
+                String diaChi = rs.getString("diaChi");
+                boolean gioiTinh = rs.getBoolean("gioiTinh");
+                boolean trangThai = rs.getBoolean("trangThai");
+                ChucVu vaiTro = new ChucVu(rs.getInt("maChucVu"));
+
+                nhanVien = new NhanVien(maNV, hoNV, tenNV, email, diaChi, vaiTro, gioiTinh, ngaySinh, trangThai, SDT);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+                //if (con != null) con.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return nhanVien;
     }
 }

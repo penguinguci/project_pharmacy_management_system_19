@@ -3,33 +3,28 @@ package entity;
 import java.util.Date;
 
 public class NhanVien {
-    private String maNV, hoNV, tenNV, email, diaChi, vaiTro, gioiTinh;
+    private String maNV, hoNV, tenNV, email, diaChi;
     private Date ngaySinh;
     private boolean trangThai; // true = còn làm, false = nghỉ việc
-    private  int sdt;
+    private  String sdt;
+    private ChucVu vaiTro;
+    private boolean gioiTinh;
 
     public NhanVien() {}
 
-    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh,  boolean trangThai, int sdt) {
+    public NhanVien(String maNV) {
+        this.maNV = maNV;
+    }
+
+    public NhanVien(String maNV, String hoNV, String tenNV, String email, String diaChi, ChucVu vaiTro, boolean gioiTinh, Date ngaySinh,  boolean trangThai, String sdt) {
         this.maNV = maNV;
         this.hoNV = hoNV;
         this.tenNV = tenNV;
         this.email = email;
         this.diaChi = diaChi;
-        setVaiTro(vaiTro);
+        this.vaiTro = vaiTro;
         this.ngaySinh = ngaySinh;
-        setGioiTinh(gioiTinh);
-        this.trangThai = trangThai;
-        this.sdt = sdt;
-    }
-    public NhanVien(String maNV, String hoNV, String tenNV, String diaChi, String vaiTro, boolean gioiTinh, Date ngaySinh, boolean trangThai, int sdt) {
-        this.maNV = maNV;
-        this.hoNV = hoNV;
-        this.tenNV = tenNV;
-        this.diaChi = diaChi;
-        setVaiTro(vaiTro);
-        this.ngaySinh = ngaySinh;
-        setGioiTinh(gioiTinh);
+        this.gioiTinh = gioiTinh;
         this.trangThai = trangThai;
         this.sdt = sdt;
     }
@@ -74,24 +69,20 @@ public class NhanVien {
         this.diaChi = diaChi;
     }
 
-    public String getVaiTro() {
+    public ChucVu getVaiTro() {
         return vaiTro;
     }
 
-    public void setVaiTro(String vaiTro) {
+    public void setVaiTro(ChucVu vaiTro) {
         this.vaiTro = vaiTro;
     }
 
-    public String getGioiTinh() {
+    public Boolean isGioiTinh() {
         return gioiTinh;
     }
 
     public void setGioiTinh(boolean gioiTinh) {
-        if(!gioiTinh){
-            this.gioiTinh = "Nữ";
-        } else {
-            this.gioiTinh = "Nam";
-        }
+        this.gioiTinh = gioiTinh;
     }
 
     public Date getNgaySinh() {
@@ -110,11 +101,11 @@ public class NhanVien {
         this.trangThai = trangThai;
     }
 
-    public int getSdt() {
+    public String getSdt() {
         return sdt;
     }
 
-    public void setSdt(int sdt) {
+    public void setSdt(String sdt) {
         this.sdt = sdt;
     }
 }

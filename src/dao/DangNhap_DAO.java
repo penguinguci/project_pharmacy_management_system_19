@@ -1,10 +1,11 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.ChucVu;
+import entity.NhanVien;
 import entity.TaiKhoan;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class DangNhap_DAO {
@@ -46,4 +47,57 @@ public class DangNhap_DAO {
         }
         return null;
     }
+
+
+    public NhanVien getNVByTaiKhoan(String userName) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        NhanVien nhanVien = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM NhanVien nv JOIN TaiKhoan tk ON nv.maNV = tk.taiKhoan JOIN ChucVu cv ON nv.vaiTro = cv.maChucVu WHERE tk.taiKhoan = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, userName);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maNV = rs.getString("maNV");
+                String hoNV = rs.getString("hoNV");
+                String tenNV = rs.getString("tenNV");
+                Date ngaySinh = rs.getDate("ngaySinh");
+                String SDT = rs.getString("SDT");
+                String email = rs.getString("email");
+                String diaChi = rs.getString("diaChi");
+                boolean gioiTinh = rs.getBoolean("gioiTinh");
+                boolean trangThai = rs.getBoolean("trangThai");
+                ChucVu vaiTro = new ChucVu(rs.getInt("vaiTro"), rs.getString("tenChucVu"));
+
+                nhanVien = new NhanVien(maNV, hoNV, tenNV, email, diaChi, vaiTro, gioiTinh, ngaySinh, trangThai, SDT);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return nhanVien;
+    }
+
+//    private String convertVaiTroToString(int vaiTroInt) {
+//        switch (vaiTroInt) {
+//            case 1:
+//                return "Quản lý";
+//            case 2:
+//                return "Nhân viên";
+//            default:
+//                return "Không rõ";
+//        }
+//    }
 }
