@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class Thuoc {
-    private String soHieuThuoc, maThuoc, tenThuoc, donViTinh, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh;
+    private String soHieuThuoc, maThuoc, tenThuoc, donViTinh, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;
     private int HSD; //Đơn vị tính = tháng
     private int soLuongCon;
     private Date ngaySX;
@@ -21,7 +21,7 @@ public class Thuoc {
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -43,6 +43,9 @@ public class Thuoc {
         this.keThuoc = keThuoc;
         this.trangThai = trangThai;
         this.hinhAnh = hinhAnh;
+        this.moTa = moTa;
+        this.hamLuong = hamLuong;
+        this.dangBaoChe = dangBaoChe;
     }
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
@@ -63,6 +66,30 @@ public class Thuoc {
         this.keThuoc = keThuoc;
         this.trangThai = trangThai;
         this.hinhAnh = hinhAnh;
+    }
+
+    public String getMoTa() {
+        return moTa;
+    }
+
+    public void setMoTa(String moTa) {
+        this.moTa = moTa;
+    }
+
+    public String getHamLuong() {
+        return hamLuong;
+    }
+
+    public void setHamLuong(String hamLuong) {
+        this.hamLuong = hamLuong;
+    }
+
+    public String getDangBaoChe() {
+        return dangBaoChe;
+    }
+
+    public void setDangBaoChe(String dangBaoChe) {
+        this.dangBaoChe = dangBaoChe;
     }
 
     public String getSoHieuThuoc() {
