@@ -1,8 +1,10 @@
 package ui.form;
 
 import dao.HoaDon_DAO;
+import dao.PhieuDoiTra_DAO;
 import entity.HoaDon;
 import entity.KhachHang;
+import entity.PhieuDoiTra;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
@@ -25,17 +27,19 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private JTextField txtTimKiem, txtMaPhieu, txtMaHoaDon;
     private JTextArea txtLyDo;
     private JComboBox<String> cbLoaiPhieu;
-    private String[] dataComboBox = {"Đổi", "Trả"};
+    private String[] dataComboBox = {"Loại phiếu", "Đổi", "Trả"};
     private DefaultComboBoxModel<String> dcmLoaiPhieu = new DefaultComboBoxModel<>(dataComboBox);
     private JButton btnTimKiem, btnXacNhan, btnQuayLai;
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
-    private JTable tabHoaDon;
-    private DefaultTableModel dtmHoaDon;
-    private JScrollPane scrHoaDon, scrLyDo;
+    private JTable tabHoaDon, tabPDT;
+    private DefaultTableModel dtmHoaDon, dtmPDT;
+    private JScrollPane scrHoaDon, scrLyDo, scrPDT;
 
     private HoaDon_DAO hd_dao = new HoaDon_DAO();
+    private PhieuDoiTra_DAO phieuDoiTra_dao = new PhieuDoiTra_DAO();
     private ArrayList<HoaDon> listHD = new ArrayList<HoaDon>();
+    private ArrayList<PhieuDoiTra> listPDT = new ArrayList<PhieuDoiTra>();
 
     public Form_DoiTra() {
         this.setLayout(new BorderLayout());
@@ -48,7 +52,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         lblMaPhieu = new JLabel("Mã phiếu đổi/trả   ");
         lblLyDo = new JLabel("Lý do");
         lblLoaiPhieu = new JLabel("Loại phiếu");
-        lblMaHoaDon = new JLabel("Mã hoá đơn");
+        lblMaHoaDon = new JLabel("Mã hoá đơn  ");
         lblChonNgay = new JLabel("           Ngày lập");
 
             //TextField
@@ -73,11 +77,22 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         txtMaHoaDon.setMaximumSize(maxSize);
 
             //Button
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+
         btnXacNhan = new JButton("Xác nhận");
         btnTimKiem = new JButton("Tìm kiếm");
-        btnQuayLai = new JButton("Quay lại");
+
+        btnQuayLai = new JButton("Quay lại", scaledIconBack);
+        btnQuayLai.setFont(new Font("Arial", Font.BOLD, 17));
+        btnQuayLai.setContentAreaFilled(false);
+        btnQuayLai.setBorderPainted(false);
+        btnQuayLai.setFocusPainted(false);
 
         btnXacNhan.setBackground(new Color(106, 249, 150));
+
             //Đăng kí sự kiện cho các nút
         btnTimKiem.addActionListener(this);
         btnXacNhan.addActionListener(this);
@@ -88,26 +103,21 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         cbLoaiPhieu.setMaximumSize(maxSize);
         
             //Table
-        String[] colsNameHoaDon = {"Mã khách hàng", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
+        String[] colsNameHoaDon = {"Mã hoá đơn", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
         dtmHoaDon = new DefaultTableModel(colsNameHoaDon, 0);
         tabHoaDon = new JTable(dtmHoaDon);
         scrHoaDon = new JScrollPane(tabHoaDon);
         scrHoaDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabHoaDon.setBackground(Color.WHITE);
+        renderTable(colsNameHoaDon, tabHoaDon);
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < tabHoaDon.getColumnCount(); i++) {
-            tabHoaDon.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        // Set font cho tiêu đề cột
-        Font headerFont = new Font("Arial", Font.BOLD, 14);
-        for (int i = 0; i < colsNameHoaDon.length; i++) {
-            TableColumn column = tabHoaDon.getColumnModel().getColumn(i);
-            column.setHeaderRenderer((TableCellRenderer) new HeaderRenderer(headerFont));
-            column.setPreferredWidth(150);
-        }
+        String[] colsNamePDT = {"Mã phiếu", "Người lập", "Loại phiếu", "Ngày đổi/trả", "Lý do"};
+        dtmPDT = new DefaultTableModel(colsNamePDT, 0);
+        tabPDT = new JTable(dtmPDT);
+        scrPDT = new JScrollPane(tabPDT);
+        scrPDT.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        tabPDT.setBackground(Color.WHITE);
+        renderTable(colsNamePDT, tabPDT);
 
             // DatePicker
                 // Model cho JDatePicker
@@ -148,11 +158,27 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         // Tạo tablePanel thuộc centerPanel
         JPanel tablePanel = new JPanel();
         tablePanel.setBackground(Color.WHITE);
-        tablePanel.setLayout(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createTitledBorder("Danh sách hoá đơn"));
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.setBorder(BorderFactory.createTitledBorder("Thông tin quản lý"));
+
+        // Tạo các panel thuộc tablePanel
+        JPanel panelHD = new JPanel();
+        panelHD.setBackground(Color.WHITE);
+        panelHD.setLayout(new BorderLayout());
+        panelHD.setBorder(BorderFactory.createTitledBorder("Danh sách hoá đơn"));
+        panelHD.add(scrHoaDon);
+
+        JPanel panelPDT = new JPanel();
+        panelPDT.setBackground(Color.WHITE);
+        panelPDT.setLayout(new BorderLayout());
+        panelPDT.setBorder(BorderFactory.createTitledBorder("Danh sách phiếu đổi/trả"));
+        panelPDT.add(scrPDT);
 
         // Thêm các phần tử vào tablePanel
-        tablePanel.add(scrHoaDon);
+        tablePanel.add(panelHD);
+        tablePanel.add(Box.createVerticalStrut(20));
+        tablePanel.add(panelPDT);
+
 
         // Tạo inforPanel và các Box để setLayout
         JPanel inforPanel = new JPanel();
@@ -161,9 +187,9 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         inforPanel.setBorder(BorderFactory.createTitledBorder("Tạo phiếu đổi/trả"));
 
         Box boxLabel = Box.createVerticalBox();
+//        boxLabel.add(Box.createVerticalStrut(8));
+//        boxLabel.add(lblMaPhieu);
         boxLabel.add(Box.createVerticalStrut(8));
-        boxLabel.add(lblMaPhieu);
-        boxLabel.add(Box.createVerticalStrut(15));
         boxLabel.add(lblMaHoaDon);
         boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblLoaiPhieu);
@@ -171,8 +197,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         boxLabel.add(lblLyDo);
 
         Box boxTF = Box.createVerticalBox();
-        boxTF.add(txtMaPhieu);
-        boxTF.add(Box.createVerticalStrut(5));
+//        boxTF.add(txtMaPhieu);
+//        boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(txtMaHoaDon);
         boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(cbLoaiPhieu);
@@ -201,7 +227,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         txtMaHoaDon.setEditable(false);
 
         //Tải dữ liệu bảng
-        loadDataTable(getDataHoaDon());
+        loadDataTableHD(getDataHoaDon());
+        loadDataTablePDT(getDataPDT());
 
         //Thêm các panel vào frame
         this.add(topPanel, BorderLayout.NORTH);
@@ -230,18 +257,39 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    public void loadDataTable(ArrayList<HoaDon> newData){
-        System.out.println(newData.size());
+    public void loadDataTablePDT(ArrayList<PhieuDoiTra> newData){
+        dtmPDT.setRowCount(0); //Xoá dữ liệu hiện tại
+        for(PhieuDoiTra x: newData) {
+            String type = "";
+            if(x.isLoai()) {
+                type = "Trả";
+            } else {
+                type = "Đổi";
+            }
+            Object[] data = {x.getMaPhieu(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), type, x.getNgayDoiTra(), x.getLyDo()};
+            dtmPDT.addRow(data);
+        }
+    }
+
+    public void loadDataTableHD(ArrayList<HoaDon> newData){
         dtmHoaDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(HoaDon x: newData) {
-            if(x.getKhachHang() != null) {
-                Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
-                dtmHoaDon.addRow(data);
-            } else {
-                Object[] data = {x.getMaHD(), "Khách hàng lẻ", x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
-                dtmHoaDon.addRow(data);
-            }
+            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
+            dtmHoaDon.addRow(data);
         }
+    }
+
+    public ArrayList<PhieuDoiTra> getDataPDT() {
+        if(!listPDT.isEmpty()) {
+            listPDT.clear();
+        }
+        try {
+            listPDT = phieuDoiTra_dao.getAllPhieuDoiTra();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        System.out.println(listPDT.size());
+        return listPDT;
     }
 
     public ArrayList<HoaDon> getDataHoaDon() {
@@ -253,6 +301,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+        System.out.println(listHD.size());
         return listHD;
     }
 
@@ -307,6 +356,22 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
             label.setFont(font);
             label.setHorizontalAlignment(JLabel.CENTER);
             return label;
+        }
+    }
+
+    public void renderTable(String[] colsName, JTable table) {
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Set font cho tiêu đề cột
+        Font headerFont = new Font("Arial", Font.BOLD, 14);
+        for (int i = 0; i < colsName.length; i++) {
+            TableColumn column = table.getColumnModel().getColumn(i);
+            column.setHeaderRenderer((TableCellRenderer) new HeaderRenderer(headerFont));
+            column.setPreferredWidth(150);
         }
     }
 }

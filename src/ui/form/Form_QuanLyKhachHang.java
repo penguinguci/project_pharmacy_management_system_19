@@ -9,22 +9,19 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Form_QuanLyKhachHang extends JPanel implements ActionListener, MouseListener {
     private JLabel lblTitle, lblMa, lblHo, lblTen, lblSDT, lblGioiTinh, lblXepHang, lblDiemTichLuy, lblDiaChi, lblEmail;
-    private JButton btnQuayLai, btnThem, btnXoa, btnSua, btnTimKiem;
+    private JButton btnQuayLai, btnThem, btnXoa, btnSua, btnTimKiem, btnLamMoi;
     private JTable tabKhachHang;
     private DefaultTableModel dtmKhachHang;
     private JScrollPane scrKhachHang;
     private JTextField txtMa, txtHo, txtTen, txtDiaChi, txtEmail, txtDiemTichLuy, txtXepHang, txtSDT, txtTimKiem;
-    private String[] gioiTinh = {"Nữ", "Nam"};
+    private String[] gioiTinh = {"Giới tính","Nữ", "Nam"};
     private DefaultComboBoxModel<String> dcmGioiTinh = new DefaultComboBoxModel<>(gioiTinh);
     private JComboBox<String> cbGioiTinh;
 
@@ -59,7 +56,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         txtEmail = new JTextField(30);
         txtXepHang = new JTextField(10);
         txtDiemTichLuy = new JTextField(10);
-        txtTimKiem = new JTextField(20);
+        txtTimKiem = new JTextField("Tìm kiếm", 20);
 
         txtMa.setMaximumSize(maxSize);
         txtHo.setMaximumSize(maxSize);
@@ -69,6 +66,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         txtEmail.setMaximumSize(maxSize);
         txtXepHang.setMaximumSize(maxSize);
         txtDiemTichLuy.setMaximumSize(maxSize);
+        txtTimKiem.setMaximumSize(maxSize);
 
             //Button
         ImageIcon iconBack = new ImageIcon("images\\back.png");
@@ -82,10 +80,11 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnQuayLai.setBorderPainted(false);
         btnQuayLai.setFocusPainted(false);
 
-        btnThem = new JButton("Thêm khách hàng");
-        btnXoa = new JButton("Xoá khách hàng");
-        btnSua = new JButton("Sửa thông tin");
+        btnThem = new JButton("Thêm");
+        btnXoa = new JButton("Xoá");
+        btnSua = new JButton("Cập nhật");
         btnTimKiem = new JButton("Tìm kiếm");
+        btnLamMoi = new JButton("Làm mới");
 
             //Table
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Xếp hạng"};
@@ -124,6 +123,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         // Thêm các phần tử vào searchPanel
         searchPanel.add(txtTimKiem);
         searchPanel.add(btnTimKiem);
+        searchPanel.add(btnLamMoi);
 
 
         // Tạo tablePanel thuộc centerPanel
@@ -181,11 +181,13 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         boxTF.add(txtDiemTichLuy);
 
         Box boxBtn = Box.createHorizontalBox();
+        boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnThem);
         boxBtn.add(Box.createHorizontalStrut(5));
         boxBtn.add(btnXoa);
         boxBtn.add(Box.createHorizontalStrut(5));
         boxBtn.add(btnSua);
+        boxBtn.add(Box.createHorizontalGlue());
 
         // Thêm các Box vào inforPanel
         inforPanel.add(boxLabel, BorderLayout.WEST);
@@ -227,6 +229,15 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnTimKiem.addActionListener(this);
         btnQuayLai.addActionListener(this);
         tabKhachHang.addMouseListener(this);
+        btnLamMoi.addActionListener(this);
+
+        txtTimKiem.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                txtTimKiem.setText("");
+            }
+        });
     }
 
     public ArrayList<KhachHang> getDataKhachHang() {
@@ -342,6 +353,10 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
                 e1.printStackTrace();
             }
         }
+        if(e.getSource().equals(btnLamMoi)) {
+            clearData();
+            loadDataTable(getDataKhachHang());
+        }
     }
 
     @Override
@@ -356,9 +371,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             txtTen.setText(k.getTenKH());
             int gt = -1;
             if(k.isGioiTinh() == false) {
-                gt = 0;
-            } else {
                 gt = 1;
+            } else {
+                gt = 2;
             }
             cbGioiTinh.setSelectedIndex(gt);
             txtXepHang.setText(k.getDiemTichLuy().getXepHang());
@@ -410,5 +425,19 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             label.setHorizontalAlignment(JLabel.CENTER);
             return label;
         }
+    }
+
+    public void clearData() {
+        txtMa.setText("");
+        txtHo.setText("");
+        txtTen.setText("");
+        cbGioiTinh.setSelectedIndex(0);
+        txtXepHang.setText("");
+        txtSDT.setText("");
+        txtDiaChi.setText("");
+        txtEmail.setText("");
+        txtDiemTichLuy.setText("");
+        txtTimKiem.setText("");
+        txtTimKiem.requestFocus(true);
     }
 }

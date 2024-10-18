@@ -1,17 +1,17 @@
 package entity;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 public class PhieuDoiTra {
     private String maPhieu, lyDo;
     private NhanVien nhanVien;
     private boolean loai; // 0 = đổi, 1 = trả
     private HoaDon hoaDon;
-    private LocalDate ngayDoiTra;
+    private java.sql.Date ngayDoiTra;
 
     public PhieuDoiTra() {}
 
-    public PhieuDoiTra(String maPhieu, String lyDo, NhanVien nhanVien, boolean loai, HoaDon hoaDon, LocalDate ngayDoiTra) {
+    public PhieuDoiTra(String maPhieu, String lyDo, NhanVien nhanVien, boolean loai, HoaDon hoaDon, java.sql.Date ngayDoiTra) {
         this.maPhieu = maPhieu;
         this.lyDo = lyDo;
         this.nhanVien = nhanVien;
@@ -60,11 +60,11 @@ public class PhieuDoiTra {
         this.hoaDon = hoaDon;
     }
 
-    public LocalDate getNgayDoiTra() {
+    public java.sql.Date getNgayDoiTra() {
         return ngayDoiTra;
     }
 
-    public void setNgayDoiTra(LocalDate ngayDoiTra) {
+    public void setNgayDoiTra(Date ngayDoiTra) {
         this.ngayDoiTra = ngayDoiTra;
     }
 }

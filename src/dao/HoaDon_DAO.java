@@ -17,9 +17,11 @@ public class HoaDon_DAO {
 
     public HoaDon_DAO() {
         list = new ArrayList<HoaDon>();
-        khachHang_dao = new KhachHang_DAO();
-        nhanVien_dao = new NhanVien_DAO();
-        thue_dao = new Thue_DAO();
+        try {
+            list = getAllHoaDon();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<HoaDon> getAllHoaDon() throws SQLException {
@@ -35,13 +37,17 @@ public class HoaDon_DAO {
             HoaDon hd = new HoaDon();
             hd.setMaHD(rs.getString("maHD"));
 
-            KhachHang kh =  khachHang_dao.getOneKhachHangByMaKH(rs.getString("maKhachHang"));
+            khachHang_dao = new KhachHang_DAO();
+            KhachHang kh = new KhachHang();
+            kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
             hd.setKhachHang(kh);
 
+            nhanVien_dao = new NhanVien_DAO();
             NhanVien nv = new NhanVien();
             nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
             hd.setNhanVien(nv);
 
+            thue_dao = new Thue_DAO();
             Thue thue = new Thue();
             thue = thue_dao.timThue(rs.getString("maThue"));
             hd.setThue(thue);
@@ -51,7 +57,9 @@ public class HoaDon_DAO {
             hd.setTrangThai(rs.getBoolean("trangThai"));
 
             if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
-                this.list.add(hd);
+                if(timHoaDon(hd.getMaHD()) == null) {
+                    this.list.add(hd);
+                }
             }
         }
         return this.list;
@@ -127,5 +135,14 @@ public class HoaDon_DAO {
 
         // Trả về true nếu chèn thành công, ngược lại trả về false
         return n > 0;
+    }
+
+    public HoaDon timHoaDon(String maHD) {
+        for(HoaDon x : list) {
+            if(x.getMaHD().equalsIgnoreCase(maHD)) {
+                return x;
+            }
+        }
+        return null;
     }
 }
