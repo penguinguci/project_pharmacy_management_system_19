@@ -39,7 +39,12 @@ public class HoaDon_DAO {
 
             khachHang_dao = new KhachHang_DAO();
             KhachHang kh = new KhachHang();
-            kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+            if(rs.getString("maKhachHang") == null) {
+                kh.setHoKH("");
+                kh.setTenKH("Khách hàng lẻ");
+            } else {
+                kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+            }
             hd.setKhachHang(kh);
 
             nhanVien_dao = new NhanVien_DAO();
@@ -62,6 +67,7 @@ public class HoaDon_DAO {
                 }
             }
         }
+        System.out.println("list hd = " + list.size());
         return this.list;
     }
 
@@ -144,5 +150,26 @@ public class HoaDon_DAO {
             }
         }
         return null;
+    }
+
+    public double getTongTienFromDataBase(String maHD) {
+        double tien;
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select tongTien from HoaDon where maHD = ?";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, maHD);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getDouble("tongTien");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
