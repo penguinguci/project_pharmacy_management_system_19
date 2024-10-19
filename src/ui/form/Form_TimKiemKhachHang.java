@@ -260,12 +260,12 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
 
         tabKhachHang.addMouseListener(this);
 
-        txtTimKiem.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                txtTimKiem.setText("");
-            }
-        });
+//        txtTimKiem.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                txtTimKiem.setText("");
+//            }
+//        });
 
         //Tải dữ liệu lên bảng
         try {
