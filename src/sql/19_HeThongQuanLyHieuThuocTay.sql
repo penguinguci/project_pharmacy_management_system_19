@@ -53,7 +53,7 @@ CREATE TABLE KhachHang (
 	gioiTinh BIT,
     email VARCHAR(50),
     diaChi NVARCHAR(255),
-    SDT INT,
+    SDT VARCHAR(15),
     trangThai BIT,
 	maDTL VARCHAR(10),
 	FOREIGN KEY (maDTL) REFERENCES DiemTichLuy(maDTL)
@@ -102,6 +102,14 @@ CREATE TABLE NuocSanXuat (
 	tenNuoc NVARCHAR(50) NOT NULL
 );
 
+-- Bảng BangGiaSanPham
+CREATE TABLE BangGiaSanPham (
+	maBangGia VARCHAR(20) PRIMARY KEY NOT NULL,
+	maThuoc VARCHAR(10) NOT NULL,
+	donViTinh NVARCHAR(50) NOT NULL,
+	donGia FLOAT(10)
+)
+
 -- Bảng Thuoc (Sản phẩm thuốc)
 CREATE TABLE Thuoc (
     soHieuThuoc VARCHAR(10) NOT NULL,
@@ -113,8 +121,8 @@ CREATE TABLE Thuoc (
 	maNuocSanXuat VARCHAR(10),
     maKe VARCHAR(10),
     ngaySX DATE,
-    HSD INT, 
-    donViTinh NVARCHAR(10) NOT NULL,
+    HSD INT,
+    maBangGia VARCHAR(20) NOT NULL,
 	soLuongCon int NOT NULL,
     cachDung NVARCHAR(255),
     thanhPhan NVARCHAR(255),
@@ -126,14 +134,14 @@ CREATE TABLE Thuoc (
 	dangBaoChe NVARCHAR(255),
 	hinhAnh VARCHAR(255),
     giaNhap FLOAT(10),
-    giaBan FLOAT(10),
 	trangThai bit,
 	PRIMARY KEY (soHieuThuoc, maThuoc),
     FOREIGN KEY (maDanhMuc) REFERENCES DanhMuc(maDanhMuc),
     FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC),
     FOREIGN KEY (maNhaSanXuat) REFERENCES NhaSanXuat(maNhaSX),
     FOREIGN KEY (maKe) REFERENCES KeThuoc(maKe),
-	FOREIGN KEY (maNuocSanXuat) REFERENCES NuocSanXuat(maNuoc)
+	FOREIGN KEY (maNuocSanXuat) REFERENCES NuocSanXuat(maNuoc),
+	FOREIGN KEY (maBangGia) REFERENCES BangGiaSanPham(maBangGia),
 );
 
 -- Bảng HoaDon
@@ -351,23 +359,25 @@ VALUES
 ('THUE002', N'Thuế nhập khẩu', 0.05),
 ('THUE003', N'Thuế tiêu thụ đặc biệt', 0.2)
 
+-- Bảng BangGiaSanPham
+INSERT INTO BangGiaSanPham
+VALUES
+('DG0001', 'T001', N'Hộp', 50000),
+('DG0002', 'T002', N'Hộp', 35000),
+('DG0003', 'T003', N'Hộp', 150000),
+('DG0004', 'T004', N'Hộp', 75000),
+('DG0005', 'T005', N'Viên', 5000),
+('DG0006', 'T005', N'Hộp', 40000)
+
 -- Bảng Thuoc
-INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, donViTinh, maKe, HSD, giaBan, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
+INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maBangGia)
 VALUES
-('S00001', 'T001', N'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
-('S00002' ,'T002', N'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
-('S00003', 'T003', N'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
-('S00004', 'T004', N'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
-('S00005', 'T005', N'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
-
-
-INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, donViTinh, maKe, HSD, giaBan, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
-VALUES
-('S00006', 'T006', N'Paracetamol', N'Hộp','K01', 60, 50000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
-('S00007' ,'T007', N'Aspirin', N'Hộp','K01', 36, 35000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
-('S00008', 'T008', N'Amoxicillin', N'Hộp','K02', 24, 150000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
-('S00009', 'T009', N'Ibuprofen', N'Hộp','K03', 24, 75000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
-('S00010', 'T0010', N'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
+('S00001', 'T001', N'Paracetamol','K01', 60, 40000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png', 'DG0001'),
+('S00002' ,'T002', N'Aspirin','K01', 36, 25000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png', 'DG0002'),
+('S00003', 'T003', N'Amoxicillin','K02', 24, 120000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png', 'DG0003'),
+('S00004', 'T004', N'Ibuprofen','K03', 24, 50000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png', 'DG0004'),
+('S00005', 'T005', N'Vitamin C','K03', 36, 3000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0005'),
+('S00006', 'T005', N'Vitamin C','K03', 36, 30000, 20, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0006')
 
 -- Bảng HoaDon
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
