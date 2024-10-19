@@ -20,7 +20,7 @@ public class Thuoc_DAO {
     private NhaSanXuat_DAO nsx;
     private NuocSanXuat_DAO nuoc;
     private KeThuoc_DAO ke;
-    private BangGiaSanPham_DAO bg;
+    private DonGiaThuoc_DAO bg;
 
     public Thuoc_DAO(){
         list = new ArrayList<Thuoc>();
@@ -30,7 +30,7 @@ public class Thuoc_DAO {
             nsx = new NhaSanXuat_DAO();
             nuoc = new NuocSanXuat_DAO();
             ke = new KeThuoc_DAO();
-            bg = new BangGiaSanPham_DAO();
+            bg = new DonGiaThuoc_DAO();
             listDanhMuc = new ArrayList<DanhMuc>();
             listDanhMuc = dm.getAllDanhMuc();
             listNCC = new ArrayList<NhaCungCap>();
