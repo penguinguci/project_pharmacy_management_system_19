@@ -14,7 +14,7 @@ public class Thuoc_DAO {
     private ArrayList<NhaSanXuat> listNSX;
     private ArrayList<NuocSanXuat> listNuoc;
     private ArrayList<KeThuoc> listKe;
-    private ArrayList<BangGiaSanPham> listBangGia;
+    private ArrayList<DonGiaThuoc> listBangGia;
     private DanhMuc_DAO dm;
     private NhaCungCap_DAO ncc;
     private NhaSanXuat_DAO nsx;
@@ -22,26 +22,26 @@ public class Thuoc_DAO {
     private KeThuoc_DAO ke;
     private BangGiaSanPham_DAO bg;
 
-    public Thuoc_DAO() throws Exception{
+    public Thuoc_DAO(){
         list = new ArrayList<Thuoc>();
-        dm = new DanhMuc_DAO();
-        ncc = new NhaCungCap_DAO();
-        nsx = new NhaSanXuat_DAO();
-        nuoc = new NuocSanXuat_DAO();
-        ke = new KeThuoc_DAO();
-        bg = new BangGiaSanPham_DAO();
-        listDanhMuc = new ArrayList<DanhMuc>();
-        listDanhMuc = dm.getAllDanhMuc();
-        listNCC = new ArrayList<NhaCungCap>();
-        listNCC = ncc.getAllNhaCungCap();
-        listNSX = new ArrayList<NhaSanXuat>();
-        listNSX = nsx.getAllNhaSanXuat();
-        listNuoc = new ArrayList<NuocSanXuat>();
-        listNuoc = nuoc.getAllNuocSanXuat();
-        listKe = new ArrayList<KeThuoc>();
-        listKe = ke.getAllKeThuoc();
-        listBangGia = bg.getAllBanGia();
         try {
+            dm = new DanhMuc_DAO();
+            ncc = new NhaCungCap_DAO();
+            nsx = new NhaSanXuat_DAO();
+            nuoc = new NuocSanXuat_DAO();
+            ke = new KeThuoc_DAO();
+            bg = new BangGiaSanPham_DAO();
+            listDanhMuc = new ArrayList<DanhMuc>();
+            listDanhMuc = dm.getAllDanhMuc();
+            listNCC = new ArrayList<NhaCungCap>();
+            listNCC = ncc.getAllNhaCungCap();
+            listNSX = new ArrayList<NhaSanXuat>();
+            listNSX = nsx.getAllNhaSanXuat();
+            listNuoc = new ArrayList<NuocSanXuat>();
+            listNuoc = nuoc.getAllNuocSanXuat();
+            listKe = new ArrayList<KeThuoc>();
+            listKe = ke.getAllKeThuoc();
+            listBangGia = bg.getAllDonGia();
             list = getAllThuoc();
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,8 +93,8 @@ public class Thuoc_DAO {
                     break;
                 }
             }
-            for(BangGiaSanPham x : listBangGia) {
-                if(x.getmaBangGia().equalsIgnoreCase(rs.getString("maBangGia"))) {
+            for(DonGiaThuoc x : listBangGia) {
+                if(x.getmaDonGia().equalsIgnoreCase(rs.getString("maDonGia"))) {
                     t.setBangGiaSanPham(x);
                 }
             }
@@ -185,7 +185,6 @@ public class Thuoc_DAO {
                 String soHieuThuoc = rs.getString("SoHieuThuoc");
                 String maThuoc = rs.getString("MaThuoc");
                 String tenThuoc = rs.getString("TenThuoc");
-                String donViTinh = rs.getString("donViTinh");
                 String cachDung = rs.getString("cachDung");
                 String thanhPhan = rs.getString("thanhPhan");
                 String baoQuan = rs.getString("baoQuan");
@@ -196,7 +195,6 @@ public class Thuoc_DAO {
                 Date ngaySX = rs.getDate("ngaySX");
                 double giaNhap = rs.getDouble("giaNhap");
                 DanhMuc danhMuc = new DanhMuc(rs.getString("maDanhMuc"));
-                double giaBan = rs.getDouble("giaBan");
                 NhaSanXuat nhaSanXuat = new NhaSanXuat(rs.getString("maNhaSanXuat"));
                 NhaCungCap nhaCungCap = new NhaCungCap(rs.getString("maNhaCungCap"));
                 NuocSanXuat nuocSanXuat = new NuocSanXuat(rs.getString("maNuocSanXuat"));
@@ -206,7 +204,7 @@ public class Thuoc_DAO {
                 String hamLuong = rs.getString("hamLuong");
                 String moTa = rs.getString("moTa");
                 String dangBaoChe = rs.getString("dangBaoChe");
-                BangGiaSanPham bangGiaSanPham = new BangGiaSanPham(rs.getString("maBangGia"));
+                DonGiaThuoc bangGiaSanPham = new DonGiaThuoc(rs.getString("maDonGia"));
 
                 thuoc = new Thuoc(soHieuThuoc, maThuoc, tenThuoc,
                         cachDung, thanhPhan, baoQuan, congDung, chiDinh, HSD, soLuongCon, ngaySX, giaNhap, danhMuc,
@@ -240,10 +238,10 @@ public class Thuoc_DAO {
             rs = statement.executeQuery();
 
             if (rs.next()) {
+                DonGiaThuoc bangGiaSanPham = new DonGiaThuoc(rs.getString("maDonGia"));
                 String soHieuThuoc = rs.getString("SoHieuThuoc");
                 String maThuoc = rs.getString("MaThuoc");
                 String tenThuoc = rs.getString("TenThuoc");
-                String donViTinh = rs.getString("donViTinh");
                 String cachDung = rs.getString("cachDung");
                 String thanhPhan = rs.getString("thanhPhan");
                 String baoQuan = rs.getString("baoQuan");
@@ -254,7 +252,6 @@ public class Thuoc_DAO {
                 Date ngaySX = rs.getDate("ngaySX");
                 double giaNhap = rs.getDouble("giaNhap");
                 DanhMuc danhMuc = new DanhMuc(rs.getString("maDanhMuc"));
-                double giaBan = rs.getDouble("giaBan");
                 NhaSanXuat nhaSanXuat = new NhaSanXuat(rs.getString("maNhaSanXuat"));
                 NhaCungCap nhaCungCap = new NhaCungCap(rs.getString("maNhaCungCap"));
                 NuocSanXuat nuocSanXuat = new NuocSanXuat(rs.getString("maNuocSanXuat"));
@@ -264,8 +261,6 @@ public class Thuoc_DAO {
                 String hamLuong = rs.getString("hamLuong");
                 String moTa = rs.getString("moTa");
                 String dangBaoChe = rs.getString("dangBaoChe");
-                BangGiaSanPham bangGiaSanPham = new BangGiaSanPham(rs.getString("maBangGia"));
-
                 thuoc = new Thuoc(soHieuThuoc, maThuoc, tenThuoc,
                         cachDung, thanhPhan, baoQuan, congDung, chiDinh, HSD, soLuongCon, ngaySX, giaNhap, danhMuc,
                         nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, bangGiaSanPham);
@@ -353,8 +348,8 @@ public class Thuoc_DAO {
                     }
                 }
 
-                for (BangGiaSanPham x : listBangGia) {
-                    if(x.getmaBangGia().equalsIgnoreCase(rs.getString("maBangGia"))) {
+                for (DonGiaThuoc x : listBangGia) {
+                    if(x.getmaDonGia().equalsIgnoreCase(rs.getString("maDonGia"))) {
                         t.setBangGiaSanPham(x);
                         break;
                     }
@@ -442,7 +437,7 @@ public class Thuoc_DAO {
 
                 NuocSanXuat nuocSanXuat = nuoc.timNuocSanXuat(rs.getString("maNuocSanXuat"));
                 int soLuongCon = rs.getInt("soLuongCon");
-                BangGiaSanPham bangGiaSanPham = bg.timBangGia(rs.getString("maBangGia"));
+                DonGiaThuoc bangGiaSanPham = bg.timBangGia(rs.getString("maDonGia"));
                 String thanhPhan = rs.getString("thanhPhan");
                 String donViTinh = bangGiaSanPham.getDonViTinh();
                 double giaBan = bangGiaSanPham.getDonGia();

@@ -1,7 +1,6 @@
 package entity;
 
 import java.sql.Date;
-import java.time.LocalDate;
 
 public class Thuoc {
     private String soHieuThuoc, maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;
@@ -14,7 +13,7 @@ public class Thuoc {
     private NhaCungCap nhaCungCap;
     private NuocSanXuat nuocSanXuat;
     private KeThuoc keThuoc;
-    private BangGiaSanPham bangGiaSanPham;
+    private DonGiaThuoc bangGiaSanPham;
     private boolean trangThai;
 
     public Thuoc(){}
@@ -22,7 +21,7 @@ public class Thuoc {
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe, BangGiaSanPham bangGiaSanPham) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe, DonGiaThuoc bangGiaSanPham) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -49,7 +48,7 @@ public class Thuoc {
     }
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, BangGiaSanPham bangGiaSanPham) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, DonGiaThuoc bangGiaSanPham) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -243,10 +242,10 @@ public class Thuoc {
         this.hinhAnh = hinhAnh;
     }
 
-    public BangGiaSanPham getBangGiaSanPham() {
+    public DonGiaThuoc getBangGiaSanPham() {
         return bangGiaSanPham;
     }
-    public void setBangGiaSanPham(BangGiaSanPham bangGiaSanPham) {
+    public void setBangGiaSanPham(DonGiaThuoc bangGiaSanPham) {
         this.bangGiaSanPham = bangGiaSanPham;
     }
 }

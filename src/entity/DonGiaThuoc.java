@@ -1,26 +1,26 @@
 package entity;
 
-public class BangGiaSanPham {
-    private String maBangGia, donViTinh, maThuoc;
+public class DonGiaThuoc {
+    private String maDonGia, donViTinh, maThuoc;
     private double donGia;
 
-    public BangGiaSanPham() {}
+    public DonGiaThuoc() {}
 
-    public BangGiaSanPham(String maBangGia) {this.maBangGia = maBangGia;}
+    public DonGiaThuoc(String maDonGia) {this.maDonGia = maDonGia;}
 
-    public BangGiaSanPham(String maBangGia, String donViTinh, String maThuoc, double donGia) {
-        this.maBangGia = maBangGia;
+    public DonGiaThuoc(String maDonGia, String donViTinh, String maThuoc, double donGia) {
+        this.maDonGia = maDonGia;
         this.donViTinh = donViTinh;
         this.maThuoc = maThuoc;
         this.donGia = donGia;
     }
 
-    public String getmaBangGia() {
-        return maBangGia;
+    public String getmaDonGia() {
+        return maDonGia;
     }
 
-    public void setmaBangGia(String maBangGia) {
-        this.maBangGia = maBangGia;
+    public void setmaDonGia(String maDonGia) {
+        this.maDonGia = maDonGia;
     }
 
     public String getDonViTinh() {
