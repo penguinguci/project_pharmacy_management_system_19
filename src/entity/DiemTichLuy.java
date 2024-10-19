@@ -50,4 +50,13 @@ public class DiemTichLuy {
         this.diemHienTai = diemHienTai;
     }
 
+    public void capNhatDiemTichLuyHienTaiSauKhiThanhToan() {
+        this.diemHienTai = 0;
+    }
+
+    public void capNhatDiemTichLuy(double diemMoi) {
+        this.diemHienTai += diemMoi;
+        this.diemTong += diemMoi;
+    }
+
 }

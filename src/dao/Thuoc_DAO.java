@@ -283,4 +283,95 @@ public class Thuoc_DAO {
         return null;
     }
 
+    public ArrayList<Thuoc> getDSThuocTheoTenDM(String tenDM) throws Exception {
+        ArrayList<Thuoc> listThuoc = new ArrayList<Thuoc>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            // Connect to the database
+            con = ConnectDB.getConnection();
+
+            String sql = "{CALL getDSThuocTheoTenDM(?)}";
+
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, tenDM);
+
+            // Execute the query
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Thuoc t = new Thuoc();
+                t.setSoHieuThuoc(rs.getString("soHieuThuoc"));
+                t.setMaThuoc(rs.getString("maThuoc"));
+                t.setTenThuoc(rs.getString("tenThuoc"));
+
+                for (DanhMuc x : listDanhMuc) {
+                    if (x.getMaDanhMuc().equalsIgnoreCase(rs.getString("maDanhMuc"))) {
+                        t.setDanhMuc(x);
+                        break;
+                    }
+                }
+
+                for (NhaCungCap x : listNCC) {
+                    if (x.getMaNCC().equalsIgnoreCase(rs.getString("maNhaCungCap"))) {
+                        t.setNhaCungCap(x);
+                        break;
+                    }
+                }
+
+                for (NhaSanXuat x : listNSX) {
+                    if (x.getMaNhaSX().equalsIgnoreCase(rs.getString("maNhaSanXuat"))) {
+                        t.setNhaSanXuat(x);
+                        break;
+                    }
+                }
+
+                for (NuocSanXuat x : listNuoc) {
+                    if (x.getMaNuocSX().equalsIgnoreCase(rs.getString("maNuocSanXuat"))) {
+                        t.setNuocSanXuat(x);
+                        break;
+                    }
+                }
+
+                for (KeThuoc x : listKe) {
+                    if (x.getMaKe().equalsIgnoreCase(rs.getString("maKe"))) {
+                        t.setKeThuoc(x);
+                        break;
+                    }
+                }
+
+                t.setNgaySX(rs.getDate("ngaySX"));
+                t.setHSD(rs.getInt("HSD"));
+                t.setDonViTinh(rs.getString("donViTinh"));
+                t.setSoLuongCon(rs.getInt("soLuongCon"));
+                t.setCachDung(rs.getString("cachDung"));
+                t.setThanhPhan(rs.getString("thanhPhan"));
+                t.setBaoQuan(rs.getString("baoQuan"));
+                t.setCongDung(rs.getString("congDung"));
+                t.setChiDinh(rs.getString("chiDinh"));
+                t.setHinhAnh(rs.getString("hinhAnh"));
+                t.setMoTa(rs.getString("moTa"));
+                t.setHamLuong(rs.getString("hamLuong"));
+                t.setDangBaoChe(rs.getString("dangBaoChe"));
+                t.setGiaNhap(rs.getDouble("giaNhap"));
+                t.setGiaBan(rs.getDouble("giaBan"));
+                t.setTrangThai(rs.getBoolean("trangThai"));
+
+                listThuoc.add(t);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the resources
+            if (rs != null) rs.close();
+            if (statement != null) statement.close();
+        }
+
+        return listThuoc;
+    }
+
+
 }

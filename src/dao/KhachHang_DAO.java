@@ -360,4 +360,63 @@ public class KhachHang_DAO {
         }
         return kh;
     }
+
+    public ArrayList<KhachHang> timKhachHangTheoHoTenVipProMax(String data) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        int soKiTu = data.length();
+        for(KhachHang x : list) {
+            String hoTenKH = x.getHoKH() + " " + x.getTenKH();
+            String[] tach = hoTenKH.split(" "); // Cắt từng từ trong họ tên khách hàng
+            for(String s : tach) {
+                if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                    if(checkTrung(listKH, x.getMaKH())){
+                        listKH.add(x);
+                    }
+                }
+            }
+        }
+        return listKH;
+    }
+    public ArrayList<KhachHang> timKhachHangTheoSDTVipProMax(String data) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        int soKiTu = data.length();
+        for(KhachHang x : list) {
+            if(x.getSDT().substring(0, soKiTu).equalsIgnoreCase(data)) {
+                if(checkTrung(listKH, x.getMaKH())){
+                    listKH.add(x);
+                }
+            }
+        }
+        return listKH;
+    }
+    public ArrayList<KhachHang> timKhachHangTheoGioiTinh(boolean gt) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        for(KhachHang x : list) {
+            if(x.isGioiTinh() == gt) {
+                if(checkTrung(listKH, x.getMaKH())){
+                    listKH.add(x);
+                }
+            }
+        }
+        return listKH;
+    }
+    public ArrayList<KhachHang> timKhachHangTheoXepHang(String rank) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        for(KhachHang x : list) {
+            if(x.getDiemTichLuy().getXepHang().equalsIgnoreCase(rank)) {
+                if(checkTrung(listKH, x.getMaKH())){
+                    listKH.add(x);
+                }
+            }
+        }
+        return listKH;
+    }
+    public boolean checkTrung(ArrayList<KhachHang> list, String ma) {
+        for(KhachHang x : list) {
+            if(x.getMaKH().equalsIgnoreCase(ma)){
+                return false;
+            }
+        }
+        return true;
+    }
 }
