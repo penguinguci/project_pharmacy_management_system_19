@@ -7,10 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class BangGiaSanPham_DAO {
+public class DonGiaThuoc_DAO {
     private ArrayList<DonGiaThuoc> list;
 
-    public BangGiaSanPham_DAO() {
+    public DonGiaThuoc_DAO() {
         list = new ArrayList<>();
         try {
             list = getAllDonGia();
