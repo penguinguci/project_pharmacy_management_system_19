@@ -377,7 +377,6 @@ public class KhachHang_DAO {
         }
         return listKH;
     }
-
     public ArrayList<KhachHang> timKhachHangTheoSDTVipProMax(String data) {
         ArrayList<KhachHang> listKH = new ArrayList<>();
         int soKiTu = data.length();
@@ -390,7 +389,6 @@ public class KhachHang_DAO {
         }
         return listKH;
     }
-
     public ArrayList<KhachHang> timKhachHangTheoGioiTinh(boolean gt) {
         ArrayList<KhachHang> listKH = new ArrayList<>();
         for(KhachHang x : list) {
@@ -402,7 +400,6 @@ public class KhachHang_DAO {
         }
         return listKH;
     }
-
     public ArrayList<KhachHang> timKhachHangTheoXepHang(String rank) {
         ArrayList<KhachHang> listKH = new ArrayList<>();
         for(KhachHang x : list) {
@@ -414,7 +411,6 @@ public class KhachHang_DAO {
         }
         return listKH;
     }
-
     public boolean checkTrung(ArrayList<KhachHang> list, String ma) {
         for(KhachHang x : list) {
             if(x.getMaKH().equalsIgnoreCase(ma)){

@@ -6,10 +6,7 @@ import entity.ChiTietKhuyenMai;
 import entity.HoaDon;
 import entity.Thuoc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ChiTietHoaDon_DAO {
@@ -110,4 +107,118 @@ public class ChiTietHoaDon_DAO {
         // Trả về true nếu chèn thành công, ngược lại trả về false
         return n > 0;
     }
+
+    // lấy danh sách chi tiết hóa đơn theo mã hóa đơn
+    public ArrayList<ChiTietHoaDon> getDSChiTietHD(String maHD) throws SQLException {
+        ConnectDB con = new ConnectDB();
+        con.connect();
+        Connection connection = null;
+        CallableStatement cstmt = null;
+        ResultSet rs = null;
+        ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
+
+        try {
+            // Lấy kết nối
+            connection = con.getConnection();
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return listCTHD; // Trả về danh sách rỗng nếu không có kết nối
+            }
+
+            // Chuẩn bị gọi thủ tục
+            String sql = "{call getDSChiTietHD(?)}"; // Gọi thủ tục
+            cstmt = connection.prepareCall(sql);
+            cstmt.setString(1, maHD);
+
+            // Thực thi thủ tục và lấy kết quả
+            rs = cstmt.executeQuery();
+
+            // Lặp qua kết quả và thêm vào danh sách
+            while (rs.next()) {
+                ChiTietHoaDon cthd = new ChiTietHoaDon();
+
+                // Tạo đối tượng HoaDon
+                HoaDon hd = new HoaDon();
+                hd.setMaHD(rs.getString("maHD")); // Lấy mã hóa đơn từ kết quả
+
+                cthd.setHoaDon(hd); // Gán hóa đơn vào chi tiết hóa đơn
+
+                // Tạo đối tượng Thuoc
+                Thuoc thuoc = new Thuoc();
+                thuoc.setSoHieuThuoc(rs.getString("soHieuThuoc")); // Lấy số hiệu thuốc
+                thuoc.setMaThuoc(rs.getString("maThuoc")); // Lấy mã thuốc
+
+                cthd.setThuoc(thuoc); // Gán thuốc vào chi tiết hóa đơn
+                cthd.setDonViTinh(rs.getString("donViTinh")); // Lấy đơn vị tính
+                cthd.setSoLuong(rs.getInt("soLuong")); // Lấy số lượng
+
+                listCTHD.add(cthd); // Thêm chi tiết hóa đơn vào danh sách
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // In ra ngoại lệ nếu có
+        } finally {
+            // Đóng kết nối và các đối tượng sau khi sử dụng
+            if (rs != null) {
+                rs.close();
+            }
+            if (cstmt != null) {
+                cstmt.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+
+        return listCTHD; // Trả về danh sách chi tiết hóa đơn
+    }
+
+    // lấy thành tiền khi biết mã hóa đơn và mã thuốc
+    public double getThanhTienByMHDVaMaThuoc(String maHD, String maThuoc) throws SQLException {
+        ConnectDB con = new ConnectDB();
+        con.connect();
+        Connection connection = null;
+        CallableStatement cstmt = null;
+        ResultSet rs = null;
+        double thanhTien = 0.0;
+
+        try {
+            // Lấy kết nối
+            connection = con.getConnection();
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return thanhTien; // Trả về 0 nếu không có kết nối
+            }
+
+            // Chuẩn bị gọi thủ tục
+            String sql = "{call getThanhTienByMHDVaMaThuoc(?, ?)}"; // Gọi thủ tục
+            cstmt = connection.prepareCall(sql);
+            cstmt.setString(1, maHD);
+            cstmt.setString(2, maThuoc);
+
+            rs = cstmt.executeQuery();
+
+            if (rs.next()) {
+                thanhTien = rs.getDouble("thanhTien");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (cstmt != null) {
+                cstmt.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+
+        return thanhTien;
+    }
+
 }

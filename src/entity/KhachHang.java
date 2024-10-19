@@ -141,7 +141,11 @@ public class KhachHang {
         if(this.tenKH == "Khách hàng lẻ") {
             return 0;
         }
+        if (this.diemTichLuy == null) {
+            return 0;
+        }
         return diemTichLuy.getDiemHienTai();
     }
+
 
 }

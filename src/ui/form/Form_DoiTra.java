@@ -29,7 +29,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private JComboBox<String> cbLoaiPhieu;
     private String[] dataComboBox = {"Loại phiếu", "Đổi", "Trả"};
     private DefaultComboBoxModel<String> dcmLoaiPhieu = new DefaultComboBoxModel<>(dataComboBox);
-    private JButton btnTimKiem, btnXacNhan, btnQuayLai;
+    private JButton btnTimKiem, btnXacNhan, btnQuayLai, btnHuy;
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
     private JTable tabHoaDon, tabPDT;
@@ -46,7 +46,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         this.setBackground(Color.white);
 
         //Khởi tạo các component
-            //Label
+        //Label
         lblTitle = new JLabel("Quản lý đổi trả", JLabel.CENTER);
         lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
         lblMaPhieu = new JLabel("Mã phiếu đổi/trả   ");
@@ -55,13 +55,13 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         lblMaHoaDon = new JLabel("Mã hoá đơn  ");
         lblChonNgay = new JLabel("           Ngày lập");
 
-            //TextField
+        //TextField
         Dimension maxSize = new Dimension(300, 30);
         txtTimKiem = new JTextField(30);
         txtMaPhieu = new JTextField(30);
         txtMaHoaDon = new JTextField(30);
 
-            //TextArea
+        //TextArea
         txtLyDo = new JTextArea(5, 20);
         txtLyDo.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txtLyDo.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
@@ -76,13 +76,30 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         txtMaPhieu.setMaximumSize(maxSize);
         txtMaHoaDon.setMaximumSize(maxSize);
 
-            //Button
+        //Button
         ImageIcon iconBack = new ImageIcon("images\\back.png");
         Image imageBack = iconBack.getImage();
         Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
         ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
 
         btnXacNhan = new JButton("Xác nhận");
+        btnXacNhan.setBackground(new Color(65, 192, 201));
+        btnXacNhan.setForeground(Color.WHITE);
+        btnXacNhan.setOpaque(true);
+        btnXacNhan.setFocusPainted(false);
+        btnXacNhan.setBorderPainted(false);
+        btnXacNhan.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXacNhan.setPreferredSize(new Dimension(100, 35));
+
+        btnHuy = new JButton("Hủy");
+        btnHuy.setBackground(new Color(204, 0, 0));
+        btnHuy.setForeground(Color.WHITE);
+        btnHuy.setOpaque(true);
+        btnHuy.setFocusPainted(false);
+        btnHuy.setBorderPainted(false);
+        btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
+        btnHuy.setPreferredSize(new Dimension(70, 35));
+
         btnTimKiem = new JButton("Tìm kiếm");
 
         btnQuayLai = new JButton("Quay lại", scaledIconBack);
@@ -91,18 +108,17 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         btnQuayLai.setBorderPainted(false);
         btnQuayLai.setFocusPainted(false);
 
-        btnXacNhan.setBackground(new Color(106, 249, 150));
-
-            //Đăng kí sự kiện cho các nút
+        //Đăng kí sự kiện cho các nút
         btnTimKiem.addActionListener(this);
         btnXacNhan.addActionListener(this);
+        btnHuy.addActionListener(this);
         btnQuayLai.addActionListener(this);
 
-            //ComboBox
+        //ComboBox
         cbLoaiPhieu = new JComboBox<String>(dcmLoaiPhieu);
         cbLoaiPhieu.setMaximumSize(maxSize);
-        
-            //Table
+
+        //Table
         String[] colsNameHoaDon = {"Mã hoá đơn", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
         dtmHoaDon = new DefaultTableModel(colsNameHoaDon, 0);
         tabHoaDon = new JTable(dtmHoaDon);
@@ -119,8 +135,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         tabPDT.setBackground(Color.WHITE);
         renderTable(colsNamePDT, tabPDT);
 
-            // DatePicker
-                // Model cho JDatePicker
+        // DatePicker
+        // Model cho JDatePicker
         SqlDateModel model = new SqlDateModel();
         Properties properties = new Properties();
         properties.put("text.today", "Today");
@@ -210,6 +226,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         Box boxBtn = Box.createHorizontalBox();
         boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnXacNhan);
+        boxBtn.add(Box.createHorizontalStrut(30));
+        boxBtn.add(btnHuy);
         boxBtn.add(Box.createHorizontalGlue());
 
         // Thêm các Box vào inforPanel

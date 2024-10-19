@@ -55,7 +55,7 @@ CREATE TABLE KhachHang (
     diaChi NVARCHAR(255),
     SDT INT,
     trangThai BIT,
-	maDTL VARCHAR(10) NOT NULL,
+	maDTL VARCHAR(10),
 	FOREIGN KEY (maDTL) REFERENCES DiemTichLuy(maDTL)
 );
 
@@ -121,6 +121,9 @@ CREATE TABLE Thuoc (
     baoQuan NVARCHAR(255),
     congDung NVARCHAR(255),
     chiDinh NVARCHAR(255),
+	moTa NVARCHAR(255),
+	hamLuong NVARCHAR(255),
+	dangBaoChe NVARCHAR(255),
 	hinhAnh VARCHAR(255),
     giaNhap FLOAT(10),
     giaBan FLOAT(10),
@@ -367,10 +370,10 @@ VALUES
 ('S00010', 'T0010', N'Vitamin C', N'Viên','K03', 36, 5000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
 
 -- Bảng HoaDon
-INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien)
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
 VALUES
-('HD001', 'KH001', 'NV001', 'THUE001', '2024-09-01', N'Tiền mặt', 187000),
-('HD002', 'KH002', 'NV002', 'THUE001', '2024-09-02', N'Tiền mặt', 357500)
+('HD001', 'KH001', 'NV001', 'THUE001', '2024-09-01', N'Tiền mặt', 187000, 1),
+('HD002', 'KH002', 'NV002', 'THUE001', '2024-09-02', N'Tiền mặt', 357500, 1)
 
 
 -- Bảng ChiTietHoaDon
@@ -381,6 +384,39 @@ VALUES
 ('HD002', 'S00003', 'T003', N'Hộp', 1, 150000),
 ('HD002', 'S00004', 'T004', N'Hộp', 1, 75000),
 ('HD002', 'S00005', 'T005', N'Viên', 5, 100000)
+
+
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD003', 'KH001', 'NV001', 'THUE001', '2024-08-01', N'Tiền mặt', 187000, 1),
+('HD004', 'KH002', 'NV002', 'THUE001', '2024-07-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD003', 'S00001', 'T001', N'Hộp', 1, 100000),
+('HD003', 'S00002', 'T002', N'Hộp', 2, 35000),
+('HD004', 'S00003', 'T003', N'Hộp', 1, 150000),
+('HD004', 'S00004', 'T004', N'Hộp', 1, 75000),
+('HD004', 'S00005', 'T005', N'Viên', 5, 100000)
+
+
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD005', 'KH001', 'NV001', 'THUE001', '2024-09-01', N'Tiền mặt', 187000, 1),
+('HD006', 'KH002', 'NV002', 'THUE001', '2024-09-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD005', 'S00001', 'T001', N'Hộp', 1, 100000),
+('HD005', 'S00002', 'T002', N'Hộp', 2, 35000),
+('HD006', 'S00003', 'T003', N'Hộp', 1, 150000),
+('HD006', 'S00004', 'T004', N'Hộp', 1, 75000),
+('HD006', 'S00005', 'T005', N'Viên', 5, 100000)
+
 
 -- Bảng DonDatThuoc
 INSERT INTO DonDatThuoc (maDon, maKhachHang, maNhanVien, thoiGianDat, tongTien)
@@ -453,6 +489,279 @@ BEGIN
 	JOIN NhanVien nv ON tk.taiKhoan = nv.maNV
 	WHERE nv.maNV = @maNV
 END
+GO
+
+
+-- lấy danh sách chi tiết hóa đơn theo mã hóa đơn
+CREATE PROCEDURE getDSChiTietHD @maHD VARCHAR(10)
+AS
+BEGIN
+	SELECT *
+	FROM ChiTietHoaDon
+	WHERE maHD = @maHD	
+END
+GO
+
+-- lấy thành tiền khi biết mã hóa đơn và mã thuốc
+CREATE PROCEDURE getThanhTienByMHDVaMaThuoc @maHD VARCHAR(10), @maThuoc VARCHAR(10)
+AS
+BEGIN
+	SELECT thanhTien
+	FROM ChiTietHoaDon
+	WHERE maHD = @maHD AND maThuoc = @maThuoc
+END
+GO
+
+
+-- lấy thuốc khi biết mã thuốc
+CREATE PROCEDURE getThuocByMaThuoc @maThuoc VARCHAR(10)
+AS 
+BEGIN
+	SELECT *
+	FROM Thuoc
+	WHERE maThuoc = @maThuoc
+END
+GO
+
+
+-- danh sach doanh thu các tháng trong năm 
+CREATE PROCEDURE getDoanhThuThangTrongNam @nam INT
+AS 
+BEGIN
+	SELECT MONTH(hd.ngayLap) AS thang, doanhThu = SUM(hd.tongTien)
+	FROM HoaDon hd
+	WHERE YEAR(hd.ngayLap) = @nam
+	GROUP BY MONTH(hd.ngayLap)
+END
+GO
+
+
+-- danh sach doanh thu các tháng trong tháng  
+CREATE PROCEDURE getDoanhThuCacNgayTrongThang @nam INT, @thang INT
+AS 
+BEGIN
+	SELECT DAY(hd.ngayLap) AS ngay, doanhThu = SUM(hd.tongTien)
+	FROM HoaDon hd
+	WHERE YEAR(hd.ngayLap) = @nam AND MONTH(hd.ngayLap) = @thang
+	GROUP BY DAY(hd.ngayLap)
+	ORDER BY DAY(hd.ngayLap);
+END
+GO
+
+
+-- lấy doanh thu các ngày trong tuần
+CREATE PROCEDURE getDoanhThuCacNgayTrongTuan 
+    @nam INT, 
+    @thang INT, 
+    @tuan INT
+AS 
+BEGIN
+    -- tính ngày đầu tiên của tháng
+    DECLARE @firstDayOfMonth DATE = DATEFROMPARTS(@nam, @thang, 1);
+
+    -- tính ngày đầu tiên của tuần trong tháng
+    DECLARE @firstDayOfWeek DATE = DATEADD(DAY, (1 - DATEPART(WEEKDAY, @firstDayOfMonth) + 7 * (@tuan - 1)), @firstDayOfMonth);
+    
+    -- tính ngày cuối cùng của tuần
+    DECLARE @lastDayOfWeek DATE = DATEADD(DAY, 6, @firstDayOfWeek);
+
+    -- lọc doanh thu cho các ngày trong tuần và tháng cụ thể
+    SELECT 
+        DATENAME(WEEKDAY, hd.ngayLap) AS Ngay,
+        SUM(hd.tongTien) AS DoanhThu
+    FROM 
+        HoaDon hd
+    WHERE 
+        hd.ngayLap >= @firstDayOfWeek AND hd.ngayLap <= @lastDayOfWeek
+        AND MONTH(hd.ngayLap) = @thang 
+        AND YEAR(hd.ngayLap) = @nam
+    GROUP BY 
+        DATENAME(WEEKDAY, hd.ngayLap)
+    ORDER BY 
+        CASE DATENAME(WEEKDAY, hd.ngayLap)
+            WHEN N'Thứ hai' THEN 1
+            WHEN N'Thứ ba' THEN 2
+            WHEN N'Thứ tư' THEN 3
+            WHEN N'Thứ năm' THEN 4
+            WHEN N'Thứ sáu' THEN 5
+            WHEN N'Thứ bảy' THEN 6
+            WHEN N'Chủ nhật' THEN 7
+        END;
+END
+GO
+
+
+-- lấy danh sách hóa đơn theo năm
+CREATE PROCEDURE getDanhSachHoaDonByYear @nam INT
+AS
+BEGIN
+	SELECT *
+	FROM HoaDon hd
+	WHERE YEAR(hd.ngayLap) = @nam
+END
+GO
+
+
+-- lấy danh sách hóa đơn theo năm
+CREATE PROCEDURE getDanhSachHoaDonTheoThangTrongNam @nam INT, @thang INT
+AS
+BEGIN
+    SELECT *
+    FROM HoaDon hd
+    WHERE YEAR(hd.ngayLap) = @nam AND MONTH(hd.ngayLap) = @thang
+END
+GO
+
+
+-- lấy danh sách hóa đơn theo năm
+CREATE PROCEDURE getDanhSachHoaDonTheoTuanCuaThangTrongNam @nam INT, @thang INT, @tuan INT
+AS
+BEGIN
+    -- tính ngày bắt đầu và ngày kết thúc của tuần
+    DECLARE @ngayBatDau DATE, @ngayKetThuc DATE
+
+    -- tìm ngày đầu tiên của tháng
+    SET @ngayBatDau = DATEADD(WEEK, @tuan - 1, DATEFROMPARTS(@nam, @thang, 1))
+
+    -- tìm ngày cuối cùng của tuần (thêm 6 ngày để hoàn thành tuần)
+    SET @ngayKetThuc = DATEADD(DAY, 6, @ngayBatDau)
+
+    -- lấy danh sách hóa đơn theo tuần
+    SELECT *
+    FROM HoaDon hd
+    WHERE hd.ngayLap BETWEEN @ngayBatDau AND @ngayKetThuc
+END
+GO
+
+
+-- trung bình doanh thu cho năm
+CREATE PROCEDURE getTrungBinhDoanhThuTheoNam @nam INT
+AS 
+BEGIN
+	SELECT MONTH(hd.ngayLap) AS thang, trungBinhDoanhThu = AVG(hd.tongTien)
+	FROM HoaDon hd
+	WHERE YEAR(hd.ngayLap) = @nam
+	GROUP BY MONTH(hd.ngayLap)
+END
+GO
+
+
+-- trung bình doanh thu theo các ngày trong tháng 
+CREATE PROCEDURE getTrungBinhDoanhThuCacNgayTrongThang @nam INT, @thang INT
+AS 
+BEGIN
+	SELECT DAY(hd.ngayLap) AS ngay, doanhThu = AVG(hd.tongTien)
+	FROM HoaDon hd
+	WHERE YEAR(hd.ngayLap) = @nam AND MONTH(hd.ngayLap) = @thang
+	GROUP BY DAY(hd.ngayLap)
+	ORDER BY DAY(hd.ngayLap);
+END
+GO
+
+
+-- trung bình doanh thu các ngày trong tuần 
+CREATE PROCEDURE getTrungBinhDoanhThuCacNgayTrongTuan 
+    @nam INT, 
+    @thang INT, 
+    @tuan INT
+AS 
+BEGIN
+    -- tính ngày đầu tiên của tháng
+    DECLARE @firstDayOfMonth DATE = DATEFROMPARTS(@nam, @thang, 1);
+
+    -- tính ngày đầu tiên của tuần trong tháng
+    DECLARE @firstDayOfWeek DATE = DATEADD(DAY, (1 - DATEPART(WEEKDAY, @firstDayOfMonth) + 7 * (@tuan - 1)), @firstDayOfMonth);
+    
+    -- tính ngày cuối cùng của tuần
+    DECLARE @lastDayOfWeek DATE = DATEADD(DAY, 6, @firstDayOfWeek);
+
+    -- lọc doanh thu cho các ngày trong tuần và tháng cụ thể
+    SELECT 
+        DATENAME(WEEKDAY, hd.ngayLap) AS Ngay,
+        AVG(hd.tongTien) AS DoanhThu
+    FROM 
+        HoaDon hd
+    WHERE 
+        hd.ngayLap >= @firstDayOfWeek AND hd.ngayLap <= @lastDayOfWeek
+        AND MONTH(hd.ngayLap) = @thang 
+        AND YEAR(hd.ngayLap) = @nam
+    GROUP BY 
+        DATENAME(WEEKDAY, hd.ngayLap)
+    ORDER BY 
+        CASE DATENAME(WEEKDAY, hd.ngayLap)
+            WHEN N'Thứ hai' THEN 1
+            WHEN N'Thứ ba' THEN 2
+            WHEN N'Thứ tư' THEN 3
+            WHEN N'Thứ năm' THEN 4
+            WHEN N'Thứ sáu' THEN 5
+            WHEN N'Thứ bảy' THEN 6
+            WHEN N'Chủ nhật' THEN 7
+        END;
+END
+GO
+
+
+-- lấy danh sách thuốc theo tên danh mục
+CREATE PROCEDURE getDSThuocTheoTenDM @tenDM NVARCHAR(50)
+AS
+BEGIN
+	SELECT *
+	FROM Thuoc t
+	JOIN DanhMuc dm ON t.maDanhMuc = dm.maDanhMuc
+	WHERE dm.tenDanhMuc = @tenDM
+END
+GO
+
+
+
+
+-- --------- TRIGGER
+-- cập nhật điểm tích lũy sau khi thanh toán	
+CREATE TRIGGER trg_CapNhatDiemTichLuy
+ON HoaDon
+AFTER INSERT
+AS
+BEGIN
+    -- Kiểm tra nếu hóa đơn có trạng thái đã thanh toán và có mã khách hàng
+    IF EXISTS (
+        SELECT 1
+        FROM inserted
+        WHERE trangThai = 1 AND maKhachHang IS NOT NULL
+    )
+    BEGIN
+        -- Đặt điểm tích lũy hiện tại về 0 trước khi cập nhật, chỉ nếu maDTL khác null
+        UPDATE DiemTichLuy
+        SET diemHienTai = 0
+        FROM DiemTichLuy dtl
+        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
+        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
+        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
+
+        -- Cập nhật điểm tích lũy tổng và điểm tích lũy hiện tại, chỉ nếu maDTL khác null
+        UPDATE DiemTichLuy
+        SET diemTong = diemTong + (hd.tongTien * 0.01),
+            diemHienTai = diemHienTai + (hd.tongTien * 0.01)
+        FROM DiemTichLuy dtl
+        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
+        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
+        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
+
+        -- Cập nhật xếp hạng dựa trên điểm tích lũy tổng
+        UPDATE DiemTichLuy
+        SET xepHang = CASE
+            WHEN diemTong < 30000 THEN N'Đồng'
+            WHEN diemTong < 50000 THEN N'Bạc'
+            WHEN diemTong < 100000 THEN N'Vàng'
+            WHEN diemTong < 300000 THEN N'Bạch kim'
+            WHEN diemTong >= 500000 THEN N'Kim cương'
+            ELSE xepHang -- Giữ nguyên hạng nếu không thuộc các điều kiện trên
+        END
+        FROM DiemTichLuy dtl
+        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
+        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
+        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
+    END
+END;
 GO
 
 

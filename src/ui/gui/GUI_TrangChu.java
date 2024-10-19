@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 public class GUI_TrangChu extends JFrame implements ActionListener{
 
@@ -414,30 +415,30 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         // tạo các form trước và thêm vào centerPanel
         formBanThuoc = new Form_BanThuoc();
-        formNhapThuoc = new Form_NhapThuoc();
-        formDoiTra = new Form_DoiTra();
-        formQuanLyDanhMuc = new Form_QuanLyDanhMuc();
-        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
-        formQuanLyHoaDon = new Form_QuanLyHoaDon();
-        formQuanLyKhachHang = new Form_QuanLyKhachHang();
-        formQuanLyNhaCungCap = new Form_QuanLyNhaCungCap();
-        formQuanLyNhanVien = new Form_QuanLyNhanVien();
-        formQuanLyNhaSanXuat = new Form_QuanLyNhaSanXuat();
-        formQuanLyNuocSanXuat = new Form_QuanLyNuocSanXuat();
-        formQuanLyTaiKhoanNhanVien = new Form_QuanLyTaiKhoanNhanVien();
-        formQuanLyThuoc = new Form_QuanLyThuoc();
-        formThongKeDoanhThu = new Form_ThongKeDoanhThu();
-        formThongKeKhachHangThuongXuyen = new Form_ThongKeKhachHangThuongXuyen();
-        formThongKeSPBanCham = new Form_ThongKeSPBanCham();
-        formThongKeSPBanChay = new Form_ThongKeSPBanChay();
-        formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
-        formTimKiemKhachHang = new Form_TimKiemKhachHang();
-        formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
-        formTimKiemNhanVien = new Form_TimKiemNhanVien();
-        formTimKiemThuoc = new Form_TimKiemThuoc();
-        formThue = new Form_Thue();
-        formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
-        formQuanLyChucVu = new Form_QuanLyChucVu();
+//        formNhapThuoc = new Form_NhapThuoc();
+//        formDoiTra = new Form_DoiTra();
+//        formQuanLyDanhMuc = new Form_QuanLyDanhMuc();
+//        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
+//        formQuanLyHoaDon = new Form_QuanLyHoaDon();
+//        formQuanLyKhachHang = new Form_QuanLyKhachHang();
+//        formQuanLyNhaCungCap = new Form_QuanLyNhaCungCap();
+//        formQuanLyNhanVien = new Form_QuanLyNhanVien();
+//        formQuanLyNhaSanXuat = new Form_QuanLyNhaSanXuat();
+//        formQuanLyNuocSanXuat = new Form_QuanLyNuocSanXuat();
+//        formQuanLyTaiKhoanNhanVien = new Form_QuanLyTaiKhoanNhanVien();
+//        formQuanLyThuoc = new Form_QuanLyThuoc();
+//        formThongKeDoanhThu = new Form_ThongKeDoanhThu();
+//        formThongKeKhachHangThuongXuyen = new Form_ThongKeKhachHangThuongXuyen();
+//        formThongKeSPBanCham = new Form_ThongKeSPBanCham();
+//        formThongKeSPBanChay = new Form_ThongKeSPBanChay();
+//        formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
+//        formTimKiemKhachHang = new Form_TimKiemKhachHang();
+//        formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
+//        formTimKiemNhanVien = new Form_TimKiemNhanVien();
+//        formTimKiemThuoc = new Form_TimKiemThuoc();
+//        formThue = new Form_Thue();
+//        formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
+//        formQuanLyChucVu = new Form_QuanLyChucVu();
 
         // Thêm top Panel vào mainContentPanel
         mainContentPanel.add(topPanel, BorderLayout.NORTH);
@@ -539,116 +540,175 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formBanThuoc");
         } else if(o == btnNhapThuocTuNCC) {
+            formNhapThuoc = new Form_NhapThuoc();
             centerPanel.add(formNhapThuoc, "formNhapThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formNhapThuoc");
         } else if(o == btnCapNhatNV) {
+            try {
+                formQuanLyNhanVien = new Form_QuanLyNhanVien();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhanVien");
         } else if (o == btnChucVu) {
+            formQuanLyChucVu = new Form_QuanLyChucVu();
             centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyChucVu");
         } else if(o == btnTimKiemNV) {
+            formTimKiemNhanVien = new Form_TimKiemNhanVien();
             centerPanel.add(formTimKiemNhanVien, "formTimKiemNhanVien");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formTimKiemNhanVien");
         } else if(o == btnTaiKhoan) {
+            try {
+                formQuanLyTaiKhoanNhanVien = new Form_QuanLyTaiKhoanNhanVien();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyTaiKhoanNhanVien, "formQuanLyTaiKhoanNhanVien");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyTaiKhoanNhanVien");
         } else if(o == btnCapNhatKH) {
+            formQuanLyKhachHang = new Form_QuanLyKhachHang();
             centerPanel.add(formQuanLyKhachHang, "formQuanLyKhachHang");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyKhachHang");
         } else if(o == btnDatThuoc) {
+            formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
             centerPanel.add(formQuanLyDonDatThuoc, "formQuanLyDonDatThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyDonDatThuoc");
         } else if(o == btnTimKiemKH) {
+            formTimKiemKhachHang = new Form_TimKiemKhachHang();
             centerPanel.add(formTimKiemKhachHang, "formTimKiemKhachHang");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formTimKiemKhachHang");
         } else if(o == btnCapNhatThuoc) {
+            try {
+                formQuanLyThuoc = new Form_QuanLyThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyThuoc, "formQuanLyThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyThuoc");
         } else if(o == btnNhaSanXuat) {
+            try {
+                formQuanLyNhaSanXuat = new Form_QuanLyNhaSanXuat();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyNhaSanXuat, "formQuanLyNhaSanXuat");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhaSanXuat");
         } else if(o == btnNuocSanXuat) {
+            try {
+                formQuanLyNuocSanXuat = new Form_QuanLyNuocSanXuat();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyNuocSanXuat, "formQuanLyNuocSanXuat");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNuocSanXuat");
         } else if(o == btnDanhMuc) {
+            try {
+                formQuanLyDanhMuc = new Form_QuanLyDanhMuc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyDanhMuc, "formQuanLyDanhMuc");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyDanhMuc");
         } else if(o == btnKhuyenMai) {
+            formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
             centerPanel.add(formQuanLyKhuyenMai, "formQuanLyKhuyenMai");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyKhuyenMai");
         } else if(o == btnTimKiemThuoc) {
+            formTimKiemThuoc = new Form_TimKiemThuoc();
             centerPanel.add(formTimKiemThuoc, "formTimKiemThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formTimKiemThuoc");
         } else if(o == btnCapNhatNCC) {
+            try {
+                formQuanLyNhaCungCap = new Form_QuanLyNhaCungCap();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyNhaCungCap, "formQuanLyNhaCungCap");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhaCungCap");
         } else if(o == btnTimKiemNCC) {
+            formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
             centerPanel.add(formTimKiemNhaCungCap, "formTimKiemNhaCungCap");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formTimKiemNhaCungCap");
         } else if(o == btnHDBanThuoc) {
+            try {
+                formQuanLyHoaDon = new Form_QuanLyHoaDon();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyHoaDon, "formQuanLyHoaDon");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyHoaDon");
         } else if(o == btnPhieuDoiTra) {
+            formDoiTra = new Form_DoiTra();
             centerPanel.add(formDoiTra, "formDoiTra");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formDoiTra");
-            } else if(o == btnTKDoanhThu) {
+        } else if(o == btnTKDoanhThu) {
+            try {
+                formThongKeDoanhThu = new Form_ThongKeDoanhThu();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formThongKeDoanhThu, "formThongKeDoanhThu");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeDoanhThu");
         } else if(o == btnTKKhachHang) {
+            formThongKeKhachHangThuongXuyen = new Form_ThongKeKhachHangThuongXuyen();
             centerPanel.add(formThongKeKhachHangThuongXuyen, "formThongKeKhachHangThuongXuyen");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeKhachHangThuongXuyen");
         } else if(o == btnTKThuocBanChay) {
+            formThongKeSPBanChay = new Form_ThongKeSPBanChay();
             centerPanel.add(formThongKeSPBanChay, "formThongKeSPBanChay");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPBanChay");
         } else if(o == btnTKThuocBanCham) {
+            formThongKeSPBanCham = new Form_ThongKeSPBanCham();
             centerPanel.add(formThongKeSPBanCham, "formThongKeSPBanCham");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPBanCham");
         } else if(o == btnTKThuocSapHH) {
+            formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
             centerPanel.add(formThongKeSPSapHetHan, "formThongKeSPSapHetHan");
             centerPanel.revalidate();
             centerPanel.repaint();

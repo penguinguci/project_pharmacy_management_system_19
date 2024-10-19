@@ -113,7 +113,7 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         cbXepHang.setMaximumSize(maxSize);
 
         // DatePicker
-            // Model cho JDatePicker
+        // Model cho JDatePicker
         SqlDateModel model = new SqlDateModel();
         Properties properties = new Properties();
         properties.put("text.today", "Today");
