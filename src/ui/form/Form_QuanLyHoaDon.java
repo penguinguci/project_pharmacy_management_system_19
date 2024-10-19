@@ -195,27 +195,27 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         ArrayList<HoaDon> dsHD = hoaDon_dao.getAllHoaDon();
         modelHD.setRowCount(0);
         for (HoaDon hd : dsHD) {
-           if (hd.getKhachHang() != null) {
-               modelHD.addRow(new Object[] {
-                       hd.getMaHD(),
-                       hd.getNhanVien().getHoNV() + " " + hd.getNhanVien().getTenNV(),
-                       hd.getKhachHang().getHoKH() + " " + hd.getKhachHang().getTenKH(),
-                       hd.getKhachHang().getSDT(),
-                       hd.getNgayLap(),
-                       hd.getThue().getLoaiThue(),
-                       hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())
-               });
-           } else {
-               modelHD.addRow(new Object[] {
-                       hd.getMaHD(),
-                       hd.getNhanVien().getHoNV() + " " + hd.getNhanVien().getTenNV(),
-                       hd.getKhachHang().getTenKH(),
-                       hd.getKhachHang().getSDT(),
-                       hd.getNgayLap(),
-                       hd.getThue().getLoaiThue(),
-                       hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())
-               });
-           }
+            if (hd.getKhachHang() != null) {
+                modelHD.addRow(new Object[] {
+                        hd.getMaHD(),
+                        hd.getNhanVien().getHoNV() + " " + hd.getNhanVien().getTenNV(),
+                        hd.getKhachHang().getHoKH() + " " + hd.getKhachHang().getTenKH(),
+                        hd.getKhachHang().getSDT(),
+                        hd.getNgayLap(),
+                        hd.getThue().getLoaiThue(),
+                        hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())
+                });
+            } else {
+                modelHD.addRow(new Object[] {
+                        hd.getMaHD(),
+                        hd.getNhanVien().getHoNV() + " " + hd.getNhanVien().getTenNV(),
+                        hd.getKhachHang().getTenKH(),
+                        hd.getKhachHang().getSDT(),
+                        hd.getNgayLap(),
+                        hd.getThue().getLoaiThue(),
+                        hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())
+                });
+            }
         }
     }
 
@@ -229,9 +229,9 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                     thuoc.getMaThuoc(),
                     thuoc.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
-                    thuoc.getDonViTinh(),
+                    thuoc.getBangGiaSanPham().getDonViTinh(),
                     ct.getSoLuong(),
-                    thuoc.getGiaBan(),
+                    thuoc.getBangGiaSanPham().getDonGia(),
                     chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, ct.getThuoc().getMaThuoc())
             });
         }

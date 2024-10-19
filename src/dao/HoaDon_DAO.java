@@ -69,7 +69,6 @@ public class HoaDon_DAO {
                 }
             }
         }
-        System.out.println("list hd = " + list.size());
         return this.list;
     }
 
@@ -347,7 +346,9 @@ public class HoaDon_DAO {
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
                 // Thêm hóa đơn vào danh sách
-                danhSachHoaDon.add(hd);
+                if(timHoaDon(hd.getMaHD()) == null) {
+                    danhSachHoaDon.add(hd);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -407,7 +408,10 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                danhSachHoaDon.add(hd);
+                // Thêm hóa đơn vào danh sách
+                if(timHoaDon(hd.getMaHD()) == null) {
+                    danhSachHoaDon.add(hd);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -468,7 +472,10 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                danhSachHoaDon.add(hd);
+                // Thêm hóa đơn vào danh sách
+                if(timHoaDon(hd.getMaHD()) == null) {
+                    danhSachHoaDon.add(hd);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

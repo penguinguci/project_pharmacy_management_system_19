@@ -3,6 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.DiemTichLuy;
 import entity.KhachHang;
+import entity.NhanVien;
 import entity.PhieuNhapThuoc;
 
 import java.sql.*;
@@ -364,13 +365,31 @@ public class KhachHang_DAO {
     public ArrayList<KhachHang> timKhachHangTheoHoTenVipProMax(String data) {
         ArrayList<KhachHang> listKH = new ArrayList<>();
         int soKiTu = data.length();
-        for(KhachHang x : list) {
-            String hoTenKH = x.getHoKH() + " " + x.getTenKH();
-            String[] tach = hoTenKH.split(" "); // Cắt từng từ trong họ tên khách hàng
-            for(String s : tach) {
-                if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
-                    if(checkTrung(listKH, x.getMaKH())){
-                        listKH.add(x);
+        String[] tachData = data.split(" ");
+        if(tachData.length > 1 ) {
+            for(KhachHang s : list) {
+                String hoTenKH = s.getHoKH() + " " + s.getTenKH();
+                String[] tachHoTen = hoTenKH.split(" "); // Cắt từng từ trong họ tên
+                for(String x : tachHoTen) {
+                    for(String y : tachData) {
+                        if(x.equalsIgnoreCase(y)) {
+                            if(checkTrung(listKH, s.getMaKH())){
+                                listKH.add(s);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            for(KhachHang x : list) {
+                String hoTenKH = x.getHoKH() + " " + x.getTenKH();
+                String[] tach = hoTenKH.split(" "); // Cắt từng từ trong họ tên khách hàng
+                for(String s : tach) {
+                    if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                        if(checkTrung(listKH, x.getMaKH())){
+                            listKH.add(x);
+                        }
                     }
                 }
             }

@@ -8,6 +8,7 @@ import entity.NhanVien;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class NhanVien_DAO {
     private ArrayList<NhanVien> list;
@@ -155,5 +156,100 @@ public class NhanVien_DAO {
         return result;
     }
 
+    public boolean checkTrung(ArrayList<NhanVien> list, String ma) {
+        for(NhanVien x : list) {
+            if(x.getMaNV().equalsIgnoreCase(ma)){
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public ArrayList<NhanVien> timNhanVienTheoHoTenVipProMax(String data) {
+        ArrayList<NhanVien> listNV = new ArrayList<>();
+        int soKiTu = data.length();
+        String[] tachData = data.split(" ");
+        if(tachData.length > 1) {
+            for(NhanVien s : list) {
+                String hoTenKH = s.getHoNV() + " " + s.getTenNV();
+                String[] tachHoTen = hoTenKH.split(" "); // Cắt từng từ trong họ tên
+                for(String x : tachHoTen) {
+                    for(String y : tachData) {
+                        if(x.equalsIgnoreCase(y)) {
+                            if(checkTrung(listNV, s.getMaNV())){
+                                listNV.add(s);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            for(NhanVien x : list) {
+                String hoTenKH = x.getHoNV() + " " + x.getTenNV();
+                String[] tachHoTen = hoTenKH.split(" "); // Cắt từng từ trong họ tên
+                for(String s : tachHoTen) {
+                    if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                        if(checkTrung(listNV, x.getMaNV())){
+                            listNV.add(x);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return listNV;
+    }
+
+    public ArrayList<NhanVien> timNhanVienTheoSDTVipProMax(String data) {
+        ArrayList<NhanVien> listNV = new ArrayList<>();
+        int soKiTu = data.length();
+        for(NhanVien x : list) {
+            if(x.getSdt().substring(0, soKiTu).equalsIgnoreCase(data)) {
+                if(checkTrung(listNV, x.getMaNV())){
+                    listNV.add(x);
+                }
+            }
+        }
+        return listNV;
+    }
+
+    public ArrayList<NhanVien> timNhanVienTheoGioiTinh(boolean gt) {
+        ArrayList<NhanVien> listNV = new ArrayList<>();
+        for(NhanVien x : list) {
+            if(x.isGioiTinh() == gt) {
+                if(checkTrung(listNV, x.getMaNV())){
+                    listNV.add(x);
+                }
+            }
+        }
+        return listNV;
+    }
+
+    public ArrayList<NhanVien> timNhanVienTheoNamSinh(int namSinh) {
+        ArrayList<NhanVien> listNV = new ArrayList<>();
+        for(NhanVien x : list) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(x.getNgaySinh());
+            int year = calendar.get(Calendar.YEAR);
+            if(year == namSinh) {
+                if(checkTrung(listNV, x.getMaNV())){
+                    listNV.add(x);
+                }
+            }
+        }
+        return listNV;
+    }
+
+    public ArrayList<NhanVien> timNhanVienTheoChucVu(String tenChucVu) {
+        ArrayList<NhanVien> listNV = new ArrayList<>();
+        for(NhanVien x : list) {
+            if(x.getVaiTro().getTenChucVu().equalsIgnoreCase(tenChucVu)) {
+                if(checkTrung(listNV, x.getMaNV())){
+                    listNV.add(x);
+                }
+            }
+        }
+        return listNV;
+    }
 }

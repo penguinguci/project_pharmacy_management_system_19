@@ -1,31 +1,34 @@
 package entity;
 
 import java.sql.Date;
-import java.time.LocalDate;
 
 public class Thuoc {
-    private String soHieuThuoc, maThuoc, tenThuoc, donViTinh, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;
+    private String soHieuThuoc, maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;
     private int HSD; //Đơn vị tính = tháng
     private int soLuongCon;
     private Date ngaySX;
-    private double giaNhap, giaBan;
+    private double giaNhap;
     private DanhMuc danhMuc;
     private NhaSanXuat nhaSanXuat;
     private NhaCungCap nhaCungCap;
     private NuocSanXuat nuocSanXuat;
     private KeThuoc keThuoc;
+    private DonGiaThuoc bangGiaSanPham;
     private boolean trangThai;
 
     public Thuoc(){}
 
-    public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
+    public Thuoc(String maThuoc){
+        this.maThuoc = maThuoc;
+    }
+
+    public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
-                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe) {
+                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe, DonGiaThuoc bangGiaSanPham) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
-        this.donViTinh = donViTinh;
         this.cachDung = cachDung;
         this.thanhPhan = thanhPhan;
         this.baoQuan = baoQuan;
@@ -36,7 +39,6 @@ public class Thuoc {
         this.ngaySX = ngaySX;
         this.giaNhap = giaNhap;
         this.danhMuc = danhMuc;
-        this.giaBan = giaBan;
         this.nhaSanXuat = nhaSanXuat;
         this.nhaCungCap = nhaCungCap;
         this.nuocSanXuat = nuocSanXuat;
@@ -46,26 +48,26 @@ public class Thuoc {
         this.moTa = moTa;
         this.hamLuong = hamLuong;
         this.dangBaoChe = dangBaoChe;
+        this.bangGiaSanPham = bangGiaSanPham;
     }
-    public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc, String donViTinh,
-                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc, double giaBan,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh) {
+    public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
+                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, DonGiaThuoc bangGiaSanPham) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
-        this.donViTinh = donViTinh;
         this.HSD = HSD;
         this.soLuongCon = soLuongCon;
         this.ngaySX = ngaySX;
         this.giaNhap = giaNhap;
         this.danhMuc = danhMuc;
-        this.giaBan = giaBan;
         this.nhaSanXuat = nhaSanXuat;
         this.nhaCungCap = nhaCungCap;
         this.nuocSanXuat = nuocSanXuat;
         this.keThuoc = keThuoc;
         this.trangThai = trangThai;
         this.hinhAnh = hinhAnh;
+        this.bangGiaSanPham = bangGiaSanPham;
     }
 
     public String getMoTa() {
@@ -114,14 +116,6 @@ public class Thuoc {
 
     public void setTenThuoc(String tenThuoc) {
         this.tenThuoc = tenThuoc;
-    }
-
-    public String getDonViTinh() {
-        return donViTinh;
-    }
-
-    public void setDonViTinh(String donViTinh) {
-        this.donViTinh = donViTinh;
     }
 
     public String getCachDung() {
@@ -196,14 +190,6 @@ public class Thuoc {
         this.giaNhap = giaNhap;
     }
 
-    public double getGiaBan() {
-        return giaBan;
-    }
-
-    public void setGiaBan(double giaBan) {
-        this.giaBan = giaBan;
-    }
-
     public DanhMuc getDanhMuc() {
         return danhMuc;
     }
@@ -260,5 +246,10 @@ public class Thuoc {
         this.hinhAnh = hinhAnh;
     }
 
-
+    public DonGiaThuoc getBangGiaSanPham() {
+        return bangGiaSanPham;
+    }
+    public void setBangGiaSanPham(DonGiaThuoc bangGiaSanPham) {
+        this.bangGiaSanPham = bangGiaSanPham;
+    }
 }

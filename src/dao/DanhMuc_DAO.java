@@ -6,12 +6,18 @@ import entity.DanhMuc;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DanhMuc_DAO {
     private ArrayList<DanhMuc> list;
 
     public DanhMuc_DAO() {
         list = new ArrayList<DanhMuc>();
+        try {
+            list = getAllDanhMuc();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<DanhMuc> getAllDanhMuc() throws Exception{
@@ -31,5 +37,14 @@ public class DanhMuc_DAO {
             list.add(d);
         }
         return this.list;
+    }
+
+    public DanhMuc timDanhMuc(String maDanhMuc) {
+        for(DanhMuc x : list) {
+            if(x.getMaDanhMuc().equalsIgnoreCase(maDanhMuc)) {
+                return x;
+            }
+        }
+        return null;
     }
 }

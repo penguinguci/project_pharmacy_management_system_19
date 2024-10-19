@@ -81,17 +81,16 @@ public class HoaDon {
         this.trangThai = trangThai;
     }
 
-    public double tinhTienThue(List<ChiTietHoaDon> dsChiTietHoaDon){
+    public double tinhTienThue(ArrayList<ChiTietHoaDon> dsChiTietHoaDon){
         double tongThanhTien = 0;
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
             tongThanhTien += chiTietHoaDon.tinhThanhTien();
         }
-
         double tienThue = tongThanhTien * thue.getTyleThue();
         return tienThue;
     }
 
-    public double tinhTienKhuyenMai(List<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
+    public double tinhTienKhuyenMai(ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
         double tienKhuyenMai = 0;
 
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
