@@ -102,9 +102,9 @@ CREATE TABLE NuocSanXuat (
 	tenNuoc NVARCHAR(50) NOT NULL
 );
 
--- Bảng BangGiaSanPham
-CREATE TABLE BangGiaSanPham (
-	maBangGia VARCHAR(20) PRIMARY KEY NOT NULL,
+-- Bảng DonGiaThuoc
+CREATE TABLE DonGiaThuoc (
+	maDonGia VARCHAR(20) PRIMARY KEY NOT NULL,
 	maThuoc VARCHAR(10) NOT NULL,
 	donViTinh NVARCHAR(50) NOT NULL,
 	donGia FLOAT(10)
@@ -122,7 +122,7 @@ CREATE TABLE Thuoc (
     maKe VARCHAR(10),
     ngaySX DATE,
     HSD INT,
-    maBangGia VARCHAR(20) NOT NULL,
+    maDonGia VARCHAR(20) NOT NULL,
 	soLuongCon int NOT NULL,
     cachDung NVARCHAR(255),
     thanhPhan NVARCHAR(255),
@@ -141,7 +141,7 @@ CREATE TABLE Thuoc (
     FOREIGN KEY (maNhaSanXuat) REFERENCES NhaSanXuat(maNhaSX),
     FOREIGN KEY (maKe) REFERENCES KeThuoc(maKe),
 	FOREIGN KEY (maNuocSanXuat) REFERENCES NuocSanXuat(maNuoc),
-	FOREIGN KEY (maBangGia) REFERENCES BangGiaSanPham(maBangGia),
+	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 );
 
 -- Bảng HoaDon
@@ -360,7 +360,7 @@ VALUES
 ('THUE003', N'Thuế tiêu thụ đặc biệt', 0.2)
 
 -- Bảng BangGiaSanPham
-INSERT INTO BangGiaSanPham
+INSERT INTO DonGiaThuoc
 VALUES
 ('DG0001', 'T001', N'Hộp', 50000),
 ('DG0002', 'T002', N'Hộp', 35000),
@@ -370,7 +370,7 @@ VALUES
 ('DG0006', 'T005', N'Hộp', 40000)
 
 -- Bảng Thuoc
-INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maBangGia)
+INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maDonGia)
 VALUES
 ('S00001', 'T001', N'Paracetamol','K01', 60, 40000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png', 'DG0001'),
 ('S00002' ,'T002', N'Aspirin','K01', 36, 25000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png', 'DG0002'),
