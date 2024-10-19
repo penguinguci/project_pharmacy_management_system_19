@@ -1,10 +1,9 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.DonGiaThuoc;
+import entity.*;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class DonGiaThuoc_DAO {
@@ -32,7 +31,8 @@ public class DonGiaThuoc_DAO {
             while (rs.next()) {
                 DonGiaThuoc bangGiaSanPham = new DonGiaThuoc();
                 bangGiaSanPham.setmaDonGia(rs.getString("maDonGia"));
-                bangGiaSanPham.setMaThuoc(rs.getString("maThuoc"));
+                Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+                bangGiaSanPham.setThuoc(thuoc);
                 bangGiaSanPham.setDonViTinh(rs.getString("donViTinh"));
                 bangGiaSanPham.setDonGia(rs.getDouble("donGia"));
 
@@ -55,4 +55,37 @@ public class DonGiaThuoc_DAO {
         return null;
     }
 
+
+    public DonGiaThuoc getDonGiaByMaThuoc(String idThuoc) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        DonGiaThuoc donGiaThuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM DonGiaThuoc WHERE maThuoc = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, idThuoc);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maDonGia = rs.getString("maDonGia");
+                Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+                String donViTinh = rs.getString("donViTinh");
+                double donGia = rs.getDouble("donGia");
+                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return donGiaThuoc;
+    }
 }

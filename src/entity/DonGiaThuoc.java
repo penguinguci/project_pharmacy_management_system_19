@@ -1,17 +1,18 @@
 package entity;
 
 public class DonGiaThuoc {
-    private String maDonGia, donViTinh, maThuoc;
+    private String maDonGia, donViTinh;
+    private Thuoc thuoc;
     private double donGia;
 
     public DonGiaThuoc() {}
 
     public DonGiaThuoc(String maDonGia) {this.maDonGia = maDonGia;}
 
-    public DonGiaThuoc(String maDonGia, String donViTinh, String maThuoc, double donGia) {
+    public DonGiaThuoc(String maDonGia, String donViTinh, Thuoc thuoc, double donGia) {
         this.maDonGia = maDonGia;
         this.donViTinh = donViTinh;
-        this.maThuoc = maThuoc;
+        this.thuoc = thuoc;
         this.donGia = donGia;
     }
 
@@ -31,12 +32,20 @@ public class DonGiaThuoc {
         this.donViTinh = donViTinh;
     }
 
-    public String getMaThuoc() {
-        return maThuoc;
+    public String getMaDonGia() {
+        return maDonGia;
     }
 
-    public void setMaThuoc(String maThuoc) {
-        this.maThuoc = maThuoc;
+    public void setMaDonGia(String maDonGia) {
+        this.maDonGia = maDonGia;
+    }
+
+    public Thuoc getThuoc() {
+        return thuoc;
+    }
+
+    public void setThuoc(Thuoc thuoc) {
+        this.thuoc = thuoc;
     }
 
     public double getDonGia() {

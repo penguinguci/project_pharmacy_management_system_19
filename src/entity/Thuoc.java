@@ -18,6 +18,10 @@ public class Thuoc {
 
     public Thuoc(){}
 
+    public Thuoc(String maThuoc){
+        this.maThuoc = maThuoc;
+    }
+
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,

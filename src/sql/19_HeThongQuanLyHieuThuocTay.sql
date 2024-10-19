@@ -463,7 +463,7 @@ VALUES
 GO
 
 
-------------- PROCEDURE 
+------------- PROCEDURE
 
 -- lấy danh sách đơn đặt thuốc
 CREATE PROCEDURE getAllDonDatThuoc
@@ -473,7 +473,7 @@ BEGIN
 END
 GO
 
--- lấy danh sách chi tiết đơn đặt thuốc theo mã đơn 
+-- lấy danh sách chi tiết đơn đặt thuốc theo mã đơn
 CREATE PROCEDURE getChiTietDonDatThuocByMaDon @maDon VARCHAR(10)
 AS
 BEGIN
@@ -508,7 +508,7 @@ AS
 BEGIN
 	SELECT *
 	FROM ChiTietHoaDon
-	WHERE maHD = @maHD	
+	WHERE maHD = @maHD
 END
 GO
 
@@ -525,7 +525,7 @@ GO
 
 -- lấy thuốc khi biết mã thuốc
 CREATE PROCEDURE getThuocByMaThuoc @maThuoc VARCHAR(10)
-AS 
+AS
 BEGIN
 	SELECT *
 	FROM Thuoc
@@ -534,9 +534,9 @@ END
 GO
 
 
--- danh sach doanh thu các tháng trong năm 
+-- danh sach doanh thu các tháng trong năm
 CREATE PROCEDURE getDoanhThuThangTrongNam @nam INT
-AS 
+AS
 BEGIN
 	SELECT MONTH(hd.ngayLap) AS thang, doanhThu = SUM(hd.tongTien)
 	FROM HoaDon hd
@@ -546,9 +546,9 @@ END
 GO
 
 
--- danh sach doanh thu các tháng trong tháng  
+-- danh sach doanh thu các tháng trong tháng
 CREATE PROCEDURE getDoanhThuCacNgayTrongThang @nam INT, @thang INT
-AS 
+AS
 BEGIN
 	SELECT DAY(hd.ngayLap) AS ngay, doanhThu = SUM(hd.tongTien)
 	FROM HoaDon hd
@@ -560,34 +560,34 @@ GO
 
 
 -- lấy doanh thu các ngày trong tuần
-CREATE PROCEDURE getDoanhThuCacNgayTrongTuan 
-    @nam INT, 
-    @thang INT, 
+CREATE PROCEDURE getDoanhThuCacNgayTrongTuan
+    @nam INT,
+    @thang INT,
     @tuan INT
-AS 
+AS
 BEGIN
     -- tính ngày đầu tiên của tháng
     DECLARE @firstDayOfMonth DATE = DATEFROMPARTS(@nam, @thang, 1);
 
     -- tính ngày đầu tiên của tuần trong tháng
     DECLARE @firstDayOfWeek DATE = DATEADD(DAY, (1 - DATEPART(WEEKDAY, @firstDayOfMonth) + 7 * (@tuan - 1)), @firstDayOfMonth);
-    
+
     -- tính ngày cuối cùng của tuần
     DECLARE @lastDayOfWeek DATE = DATEADD(DAY, 6, @firstDayOfWeek);
 
     -- lọc doanh thu cho các ngày trong tuần và tháng cụ thể
-    SELECT 
+    SELECT
         DATENAME(WEEKDAY, hd.ngayLap) AS Ngay,
         SUM(hd.tongTien) AS DoanhThu
-    FROM 
+    FROM
         HoaDon hd
-    WHERE 
+    WHERE
         hd.ngayLap >= @firstDayOfWeek AND hd.ngayLap <= @lastDayOfWeek
-        AND MONTH(hd.ngayLap) = @thang 
+        AND MONTH(hd.ngayLap) = @thang
         AND YEAR(hd.ngayLap) = @nam
-    GROUP BY 
+    GROUP BY
         DATENAME(WEEKDAY, hd.ngayLap)
-    ORDER BY 
+    ORDER BY
         CASE DATENAME(WEEKDAY, hd.ngayLap)
             WHEN N'Thứ hai' THEN 1
             WHEN N'Thứ ba' THEN 2
@@ -646,7 +646,7 @@ GO
 
 -- trung bình doanh thu cho năm
 CREATE PROCEDURE getTrungBinhDoanhThuTheoNam @nam INT
-AS 
+AS
 BEGIN
 	SELECT MONTH(hd.ngayLap) AS thang, trungBinhDoanhThu = AVG(hd.tongTien)
 	FROM HoaDon hd
@@ -656,9 +656,9 @@ END
 GO
 
 
--- trung bình doanh thu theo các ngày trong tháng 
+-- trung bình doanh thu theo các ngày trong tháng
 CREATE PROCEDURE getTrungBinhDoanhThuCacNgayTrongThang @nam INT, @thang INT
-AS 
+AS
 BEGIN
 	SELECT DAY(hd.ngayLap) AS ngay, doanhThu = AVG(hd.tongTien)
 	FROM HoaDon hd
@@ -669,35 +669,35 @@ END
 GO
 
 
--- trung bình doanh thu các ngày trong tuần 
-CREATE PROCEDURE getTrungBinhDoanhThuCacNgayTrongTuan 
-    @nam INT, 
-    @thang INT, 
+-- trung bình doanh thu các ngày trong tuần
+CREATE PROCEDURE getTrungBinhDoanhThuCacNgayTrongTuan
+    @nam INT,
+    @thang INT,
     @tuan INT
-AS 
+AS
 BEGIN
     -- tính ngày đầu tiên của tháng
     DECLARE @firstDayOfMonth DATE = DATEFROMPARTS(@nam, @thang, 1);
 
     -- tính ngày đầu tiên của tuần trong tháng
     DECLARE @firstDayOfWeek DATE = DATEADD(DAY, (1 - DATEPART(WEEKDAY, @firstDayOfMonth) + 7 * (@tuan - 1)), @firstDayOfMonth);
-    
+
     -- tính ngày cuối cùng của tuần
     DECLARE @lastDayOfWeek DATE = DATEADD(DAY, 6, @firstDayOfWeek);
 
     -- lọc doanh thu cho các ngày trong tuần và tháng cụ thể
-    SELECT 
+    SELECT
         DATENAME(WEEKDAY, hd.ngayLap) AS Ngay,
         AVG(hd.tongTien) AS DoanhThu
-    FROM 
+    FROM
         HoaDon hd
-    WHERE 
+    WHERE
         hd.ngayLap >= @firstDayOfWeek AND hd.ngayLap <= @lastDayOfWeek
-        AND MONTH(hd.ngayLap) = @thang 
+        AND MONTH(hd.ngayLap) = @thang
         AND YEAR(hd.ngayLap) = @nam
-    GROUP BY 
+    GROUP BY
         DATENAME(WEEKDAY, hd.ngayLap)
-    ORDER BY 
+    ORDER BY
         CASE DATENAME(WEEKDAY, hd.ngayLap)
             WHEN N'Thứ hai' THEN 1
             WHEN N'Thứ ba' THEN 2
@@ -726,7 +726,7 @@ GO
 
 
 -- --------- TRIGGER
--- cập nhật điểm tích lũy sau khi thanh toán	
+-- cập nhật điểm tích lũy sau khi thanh toán
 CREATE TRIGGER trg_CapNhatDiemTichLuy
 ON HoaDon
 AFTER INSERT
@@ -773,5 +773,4 @@ BEGIN
     END
 END;
 GO
-
 

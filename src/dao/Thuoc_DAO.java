@@ -208,7 +208,7 @@ public class Thuoc_DAO {
 
                 thuoc = new Thuoc(soHieuThuoc, maThuoc, tenThuoc,
                         cachDung, thanhPhan, baoQuan, congDung, chiDinh, HSD, soLuongCon, ngaySX, giaNhap, danhMuc,
-                nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, bangGiaSanPham);
+                        nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, bangGiaSanPham);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -239,9 +239,10 @@ public class Thuoc_DAO {
 
             if (rs.next()) {
                 DonGiaThuoc bangGiaSanPham = new DonGiaThuoc(rs.getString("maDonGia"));
-                String soHieuThuoc = rs.getString("SoHieuThuoc");
-                String maThuoc = rs.getString("MaThuoc");
-                String tenThuoc = rs.getString("TenThuoc");
+
+                String soHieuThuoc = rs.getString("soHieuThuoc");
+                String maThuoc = rs.getString("maThuoc");
+                String tenThuoc = rs.getString("tenThuoc");
                 String cachDung = rs.getString("cachDung");
                 String thanhPhan = rs.getString("thanhPhan");
                 String baoQuan = rs.getString("baoQuan");

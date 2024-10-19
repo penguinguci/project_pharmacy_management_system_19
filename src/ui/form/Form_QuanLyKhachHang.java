@@ -39,7 +39,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         this.setBackground(Color.white);
 
         //Tạo và định dạng các thành phần trong Form
-            //Label
+        //Label
         lblTitle = new JLabel("Quản lý khách hàng", JLabel.CENTER);
         lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
         lblMa = new JLabel("Mã khách hàng");
@@ -53,7 +53,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         lblDiemTichLuy = new JLabel("Điểm tích luỹ");
         lblNgaySinh = new JLabel("Ngày sinh");
 
-            //Text Field
+        //Text Field
         Dimension maxSize = new Dimension(300, 30);
         txtMa = new JTextField(10);
         txtHo = new JTextField(10);
@@ -77,7 +77,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
         txtTimKiem.setPreferredSize(new Dimension(200, 25));
 
-            //Button
+        //Button
         ImageIcon iconBack = new ImageIcon("images\\back.png");
         Image imageBack = iconBack.getImage();
         Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
@@ -103,7 +103,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnXoa.setPreferredSize(new Dimension(100, 25));
         btnSua.setPreferredSize(new Dimension(100, 25));
 
-            //Table
+        //Table
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Xếp hạng"};
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
         tabKhachHang = new JTable(dtmKhachHang);
@@ -111,12 +111,12 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         scrKhachHang.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabKhachHang.setBackground(Color.WHITE);
 
-            //ComboBox
+        //ComboBox
         cbGioiTinh = new JComboBox<>(dcmGioiTinh);
         cbGioiTinh.setMaximumSize(maxSize);
 
-            // DatePicker
-                // Model cho JDatePicker
+        // DatePicker
+        // Model cho JDatePicker
         SqlDateModel model = new SqlDateModel();
         Properties properties = new Properties();
         properties.put("text.today", "Today");
