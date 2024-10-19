@@ -2,6 +2,9 @@ package ui.form;
 
 import dao.KhachHang_DAO;
 import entity.KhachHang;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.SqlDateModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -13,9 +16,10 @@ import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Properties;
 
 public class Form_QuanLyKhachHang extends JPanel implements ActionListener, MouseListener {
-    private JLabel lblTitle, lblMa, lblHo, lblTen, lblSDT, lblGioiTinh, lblXepHang, lblDiemTichLuy, lblDiaChi, lblEmail;
+    private JLabel lblTitle, lblMa, lblHo, lblTen, lblSDT, lblGioiTinh, lblXepHang, lblDiemTichLuy, lblDiaChi, lblEmail, lblNgaySinh;
     private JButton btnQuayLai, btnThem, btnXoa, btnSua, btnTimKiem, btnLamMoi;
     private JTable tabKhachHang;
     private DefaultTableModel dtmKhachHang;
@@ -24,6 +28,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
     private String[] gioiTinh = {"Giới tính","Nữ", "Nam"};
     private DefaultComboBoxModel<String> dcmGioiTinh = new DefaultComboBoxModel<>(gioiTinh);
     private JComboBox<String> cbGioiTinh;
+    private JDatePanelImpl datePanel;
+    private JDatePickerImpl datePicker;
 
     private KhachHang_DAO kh_dao = new KhachHang_DAO();
     private ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
@@ -45,6 +51,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         lblEmail = new JLabel("Email");
         lblXepHang = new JLabel("Xếp hạng");
         lblDiemTichLuy = new JLabel("Điểm tích luỹ");
+        lblNgaySinh = new JLabel("Ngày sinh");
 
             //Text Field
         Dimension maxSize = new Dimension(300, 30);
@@ -68,6 +75,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         txtDiemTichLuy.setMaximumSize(maxSize);
         txtTimKiem.setMaximumSize(maxSize);
 
+        txtTimKiem.setPreferredSize(new Dimension(200, 25));
+
             //Button
         ImageIcon iconBack = new ImageIcon("images\\back.png");
         Image imageBack = iconBack.getImage();
@@ -86,6 +95,14 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnTimKiem = new JButton("Tìm kiếm");
         btnLamMoi = new JButton("Làm mới");
 
+        btnThem.setBackground(new Color(65, 192, 201));
+        btnSua.setBackground(new Color(212, 112, 236));
+        btnXoa.setBackground(new Color(238, 156, 37));
+
+        btnThem.setPreferredSize(new Dimension(100, 25));
+        btnXoa.setPreferredSize(new Dimension(100, 25));
+        btnSua.setPreferredSize(new Dimension(100, 25));
+
             //Table
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Xếp hạng"};
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
@@ -97,6 +114,18 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             //ComboBox
         cbGioiTinh = new JComboBox<>(dcmGioiTinh);
         cbGioiTinh.setMaximumSize(maxSize);
+
+            // DatePicker
+                // Model cho JDatePicker
+        SqlDateModel model = new SqlDateModel();
+        Properties properties = new Properties();
+        properties.put("text.today", "Today");
+        properties.put("text.month", "Month");
+        properties.put("text.year", "Year");
+
+        datePanel = new JDatePanelImpl(model, properties);
+        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker.setMaximumSize(maxSize);
 
         // Lấy dữ liệu cho bảng
         loadDataTable(getDataKhachHang());
@@ -157,6 +186,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblDiaChi);
         boxLabel.add(Box.createVerticalStrut(20));
+        boxLabel.add(lblNgaySinh);
+        boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblEmail);
         boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblDiemTichLuy);
@@ -176,6 +207,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(txtDiaChi);
         boxTF.add(Box.createVerticalStrut(5));
+        boxTF.add(datePicker);
+        boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(txtEmail);
         boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(txtDiemTichLuy);
@@ -184,9 +217,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnThem);
         boxBtn.add(Box.createHorizontalStrut(5));
-        boxBtn.add(btnXoa);
-        boxBtn.add(Box.createHorizontalStrut(5));
         boxBtn.add(btnSua);
+        boxBtn.add(Box.createHorizontalStrut(5));
+        boxBtn.add(btnXoa);
         boxBtn.add(Box.createHorizontalGlue());
 
         // Thêm các Box vào inforPanel
@@ -309,7 +342,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             khachHang.setGioiTinh(gioiTinh);
             khachHang.setEmail(txtEmail.getText().trim());
             khachHang.setDiaChi(txtDiaChi.getText().trim());
-            khachHang.setSDT(txtSDT.getText().trim());
+            String sdt = txtSDT.getText().trim();
+            khachHang.setSDT(sdt);
             khachHang.setTrangThai(true);
             khachHang.setNgaySinh(null);
             try {
@@ -338,7 +372,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             khachHang.setGioiTinh(gioiTinh);
             khachHang.setEmail(txtEmail.getText().trim());
             khachHang.setDiaChi(txtDiaChi.getText().trim());
-            khachHang.setSDT(txtSDT.getText().trim());
+            String sdt = txtSDT.getText().trim();
+            khachHang.setSDT(sdt);
             khachHang.setTrangThai(true);
             khachHang.setNgaySinh(null);
             try {
@@ -439,5 +474,27 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         txtDiemTichLuy.setText("");
         txtTimKiem.setText("");
         txtTimKiem.requestFocus(true);
+    }
+
+    // Class để định dạng ngày tháng
+    class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
+
+        private String datePattern = "dd-MM-yyyy";
+        private java.text.SimpleDateFormat dateFormatter = new java.text.SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws java.text.ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws java.text.ParseException {
+            if (value != null) {
+                java.util.Calendar cal = (java.util.Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+
+            return "";
+        }
     }
 }

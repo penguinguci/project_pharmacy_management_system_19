@@ -69,7 +69,6 @@ public class HoaDon_DAO {
                 }
             }
         }
-        System.out.println("list hd = " + list.size());
         return this.list;
     }
 
