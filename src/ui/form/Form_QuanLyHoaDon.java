@@ -229,9 +229,9 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                     thuoc.getMaThuoc(),
                     thuoc.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
-                    thuoc.getBangGiaSanPham().getDonViTinh(),
+                    thuoc.getDonGiaThuoc().getDonViTinh(),
                     ct.getSoLuong(),
-                    thuoc.getBangGiaSanPham().getDonGia(),
+                    thuoc.getDonGiaThuoc().getDonGia(),
                     chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, ct.getThuoc().getMaThuoc())
             });
         }

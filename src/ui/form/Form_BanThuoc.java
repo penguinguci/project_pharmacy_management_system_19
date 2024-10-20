@@ -625,7 +625,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             add(tenThuocLabel, gbc);
 
             // Giá thuốc
-            giaLabel = new JLabel("Giá: " + String.format("%,.0f", thuoc.getBangGiaSanPham().getDonGia()) + "đ");
+            giaLabel = new JLabel("Giá: " + String.format("%,.0f", thuoc.getDonGiaThuoc().getDonGia()) + "đ");
             giaLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
             giaLabel.setForeground(new Color(0, 153, 51));
             gbc.gridy = 2;
@@ -692,7 +692,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             if(o == btnThemThuoc) {
                 int soLuong = (int) spinnerSoLuong.getValue();
                 String donVi = cboDonViThuoc.getSelectedItem().toString();
-                double giaBan = thuoc.getBangGiaSanPham().getDonGia();
+                double giaBan = thuoc.getDonGiaThuoc().getDonGia();
                 boolean found = false;
 
                 for(int i = 0; i < modelGioHang.getRowCount(); i++) {

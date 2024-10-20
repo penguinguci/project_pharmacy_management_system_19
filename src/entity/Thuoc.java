@@ -13,7 +13,7 @@ public class Thuoc {
     private NhaCungCap nhaCungCap;
     private NuocSanXuat nuocSanXuat;
     private KeThuoc keThuoc;
-    private DonGiaThuoc bangGiaSanPham;
+    private DonGiaThuoc donGiaThuoc;
     private boolean trangThai;
 
     public Thuoc(){}
@@ -21,7 +21,7 @@ public class Thuoc {
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe, DonGiaThuoc bangGiaSanPham) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe, DonGiaThuoc donGiaThuoc) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -44,11 +44,11 @@ public class Thuoc {
         this.moTa = moTa;
         this.hamLuong = hamLuong;
         this.dangBaoChe = dangBaoChe;
-        this.bangGiaSanPham = bangGiaSanPham;
+        this.donGiaThuoc =donGiaThuoc;
     }
     public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
                  int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, DonGiaThuoc bangGiaSanPham) {
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, DonGiaThuoc donGiaThuoc) {
         this.soHieuThuoc = soHieuThuoc;
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -63,7 +63,7 @@ public class Thuoc {
         this.keThuoc = keThuoc;
         this.trangThai = trangThai;
         this.hinhAnh = hinhAnh;
-        this.bangGiaSanPham = bangGiaSanPham;
+        this.donGiaThuoc = donGiaThuoc;
     }
 
     public String getMoTa() {
@@ -242,10 +242,10 @@ public class Thuoc {
         this.hinhAnh = hinhAnh;
     }
 
-    public DonGiaThuoc getBangGiaSanPham() {
-        return bangGiaSanPham;
+    public DonGiaThuoc getDonGiaThuoc() {
+        return donGiaThuoc;
     }
-    public void setBangGiaSanPham(DonGiaThuoc bangGiaSanPham) {
-        this.bangGiaSanPham = bangGiaSanPham;
+    public void setDonGiaThuoc(DonGiaThuoc bangGiaSanPham) {
+        this.donGiaThuoc = bangGiaSanPham;
     }
 }
