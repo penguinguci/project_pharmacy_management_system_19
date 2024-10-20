@@ -42,7 +42,9 @@ public class NhaCungCap_DAO {
             } else {
                 ncc.setEmail(rs.getString(4));
             }
-            list.add(ncc);
+            if(timNhaCungCap(ncc.getMaNCC()) == null){
+                list.add(ncc);
+            }
         }
         return list;
     }
