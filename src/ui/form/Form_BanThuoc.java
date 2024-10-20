@@ -753,7 +753,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             tongTienTemp += (soLuong * giaBanThuoc);
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
             DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setBangGiaSanPham(donGiaThuoc);
+            thuoc.setDonGiaThuoc(donGiaThuoc);
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
@@ -1012,7 +1012,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
             DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setBangGiaSanPham(donGiaThuoc);
+            thuoc.setDonGiaThuoc(donGiaThuoc);
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
@@ -1131,7 +1131,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
             DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setBangGiaSanPham(donGiaThuoc);
+            thuoc.setDonGiaThuoc(donGiaThuoc);
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
