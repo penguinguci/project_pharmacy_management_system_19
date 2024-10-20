@@ -1,11 +1,9 @@
 package ui.form;
 
 import dao.*;
-import entity.DanhMuc;
-import entity.NhaCungCap;
-import entity.NhaSanXuat;
-import entity.NuocSanXuat;
+import entity.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -16,9 +14,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseListener {
     private JLabel lblTitle, lblTen, lblDanhMuc, lblNCC, lblNhaNSX, lblNuocSX, lblKhoangGia;
@@ -38,6 +40,11 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
     private NhaSanXuat_DAO nhaSanXuat_dao = new NhaSanXuat_DAO();
     private NuocSanXuat_DAO nuocSanXuat_dao = new NuocSanXuat_DAO();
 
+    private JPanel imgPanel;
+
+    private BufferedImage image;
+    private String path = "images/sample.png";
+
     public Form_TimKiemThuoc() {
         this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
@@ -46,7 +53,12 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         lblTitle = new JLabel("TÌM KIẾM THUỐC", JLabel.CENTER);
         lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
 
-        lblTen = new JLabel("Tên khách hàng", JLabel.CENTER);
+        lblTen = new JLabel("Tên thuốc", JLabel.CENTER);
+        lblDanhMuc = new JLabel("Danh mục", JLabel.CENTER);
+        lblNCC = new JLabel("Nhà cung cấp", JLabel.CENTER);
+        lblNhaNSX = new JLabel("Nhà sản xuất", JLabel.CENTER);
+        lblNuocSX = new JLabel("Nước sản xuất", JLabel.CENTER);
+        lblKhoangGia = new JLabel("Khoảng giá", JLabel.CENTER);
 
         //Text Field
         Dimension maxSize = new Dimension(300, 30);
@@ -96,8 +108,12 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         cbNuocSX = new JComboBox<>(dcmNuocSX);
         cbNuocSX.setMaximumSize(maxSize);
 
+        dcmKhoangGia = new DefaultComboBoxModel<>(dataComboKhoangGia);
+        cbKhoangGia = new JComboBox<>(dataComboKhoangGia);
+        cbKhoangGia.setMaximumSize(maxSize);
+
         //Table
-        String[] colsNameThuoc = {"Mã nhân viên", "Họ nhân viên", "Tên nhân viên", "Ngày sinh", "Số điện thoại", "Giới tính", "Email", "Địa chỉ", "Vai trò"};
+        String[] colsNameThuoc = {"Số hiệu thuốc", "Mã thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nhà sản xuất", "Nước sản xuất", "Ngày sản xuất", "Hạn sử dụng", "Số lượng còn", "Đơn vị tính","Đơn giá"};
         dtmThuoc = new DefaultTableModel(colsNameThuoc, 0);
         tabThuoc = new JTable(dtmThuoc);
         scrThuoc = new JScrollPane(tabThuoc);
@@ -127,11 +143,11 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         // Thêm phần tử vào centerPanel
         Box box1 = Box.createVerticalBox();
         box1.add(lblTen);
-        box1.add(Box.createVerticalStrut(35));
+        box1.add(Box.createVerticalStrut(30));
         box1.add(lblDanhMuc);
-        box1.add(Box.createVerticalStrut(35));
+        box1.add(Box.createVerticalStrut(30));
         box1.add(lblNCC);
-        box1.add(Box.createVerticalStrut(35));
+        box1.add(Box.createVerticalStrut(30));
         box1.add(lblNhaNSX);
         box1.add(Box.createVerticalStrut(30));
         box1.add(lblNuocSX);
@@ -174,9 +190,25 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         centerPanel.add(Box.createHorizontalStrut(50));
         centerPanel.add(box3);
         centerPanel.add(Box.createHorizontalGlue());
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Thông tin thuốc"));
 
-        // Tạo imgPanel thuộc contentPanel
-        JPanel imgPanel = new JPanel();
+        contentPanel.add(centerPanel, BorderLayout.CENTER);
+
+
+        //Tạo botPanel
+        JPanel botPanel = new JPanel();
+        botPanel.setBackground(Color.WHITE);
+        botPanel.setLayout(new BorderLayout());
+
+        botPanel.add(scrThuoc, BorderLayout.CENTER);
+        botPanel.setBorder(BorderFactory.createTitledBorder("Danh sách thuốc"));
+
+        //Lấy dữ liệu bảng
+        try {
+            loadDataTable(thuoc_dao.getAllThuoc());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         //Đăng ký sự kiện
@@ -186,6 +218,10 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         btnQuayLai.addActionListener(this);
 
         tabThuoc.addMouseListener(this);
+
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(contentPanel, BorderLayout.CENTER);
+        this.add(botPanel, BorderLayout.SOUTH);
 
     }
 
@@ -231,7 +267,98 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(btnLamMoi)) {
+            try {
+                loadDataTable(thuoc_dao.getAllThuoc());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        if(e.getSource().equals(btnTimKiem)){
+            HashSet<Thuoc> data = new HashSet<>();
+            if(!txtTen.getText().trim().equals("")){
+                if(data.isEmpty()) {
+                    data.addAll(thuoc_dao.timThuocTheoTenVipProMax(txtTen.getText().trim()));
+                } else {
+                    data.retainAll(thuoc_dao.timThuocTheoTenVipProMax(txtTen.getText().trim()));
+                }
+            }
+            if(cbDanhMuc.getSelectedIndex()!=0) {
+                if(data.isEmpty()) {
+                    data.addAll(thuoc_dao.timThuocTheoDanhMuc((String) cbDanhMuc.getSelectedItem()));
+                } else {
+                    data.retainAll(thuoc_dao.timThuocTheoDanhMuc((String) cbDanhMuc.getSelectedItem()));
+                }
+            }
+            if(cbNCC.getSelectedIndex()!=0) {
+                if(data.isEmpty()) {
+                    data.addAll(thuoc_dao.timThuocTheoNCC((String) cbNCC.getSelectedItem()));
+                } else {
+                    data.retainAll(thuoc_dao.timThuocTheoNCC((String) cbNCC.getSelectedItem()));
+                }
+            }
+            if(cbNhaSX.getSelectedIndex()!=0) {
+                if(data.isEmpty()) {
+                    data.addAll(thuoc_dao.timThuocTheoNhaSX((String) cbNhaSX.getSelectedItem()));
+                } else {
+                    data.retainAll(thuoc_dao.timThuocTheoNhaSX((String) cbNhaSX.getSelectedItem()));
+                }
+            }
+            if(cbNuocSX.getSelectedIndex()!=0) {
+                if(data.isEmpty()) {
+                    data.addAll(thuoc_dao.timThuocTheoNuocSX((String) cbNuocSX.getSelectedItem()));
+                } else {
+                    data.retainAll(thuoc_dao.timThuocTheoNuocSX((String) cbNuocSX.getSelectedItem()));
+                }
+            }
+            if(cbKhoangGia.getSelectedIndex()!=0) {
+                if (cbKhoangGia.getSelectedIndex() == 1) {
+                    if (data.isEmpty()) {
+                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
+                    } else {
+                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
+                    }
+                } else if (cbKhoangGia.getSelectedIndex() == 2) {
+                    if (data.isEmpty()) {
+                        data.addAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
+                    } else {
+                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
+                    }
+                } else if (cbKhoangGia.getSelectedIndex() == 3) {
+                    if (data.isEmpty()) {
+                        data.addAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
+                    } else {
+                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
+                    }
+                } else {
+                    if (data.isEmpty()) {
+                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
+                    } else {
+                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
+                    }
+                }
+            }
+            if(data.isEmpty()){
+                JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc phù hợp!");
+                try {
+                    loadDataTable(thuoc_dao.getAllThuoc());
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                clearData();
+            } else {
+                loadDataTable(data);
+            }
+        }
+    }
 
+    public void clearData() {
+        txtTen.setText("");
+        cbDanhMuc.setSelectedIndex(0);
+        cbNCC.setSelectedIndex(0);
+        cbNhaSX.setSelectedIndex(0);
+        cbNuocSX.setSelectedIndex(0);
+        cbKhoangGia.setSelectedIndex(0);
     }
 
     @Override
@@ -257,6 +384,30 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    public void loadDataTable(ArrayList<Thuoc> newData) {
+        dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
+        for(Thuoc x: newData) {
+            String date = "Chưa cập nhật";
+            if(x.getNgaySX() != null) {
+                date = formatDate(x.getNgaySX());
+            }
+            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+            dtmThuoc.addRow(data);
+        }
+    }
+
+    public void loadDataTable(HashSet<Thuoc> newData) {
+        dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
+        for(Thuoc x: newData) {
+            String date = "Chưa cập nhật";
+            if(x.getNgaySX() != null) {
+                date = formatDate(x.getNgaySX());
+            }
+            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+            dtmThuoc.addRow(data);
+        }
     }
 
     public void renderTable(String[] colsName, JTable table) {

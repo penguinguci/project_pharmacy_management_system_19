@@ -48,6 +48,6 @@ public class ChiTietHoaDon {
     }
 
     public double tinhThanhTien(){
-        return soLuong * thuoc.getBangGiaSanPham().getDonGia();
+        return soLuong * thuoc.getDonGiaThuoc().getDonGia();
     }
 }

@@ -95,7 +95,7 @@ public class Thuoc_DAO {
             }
             for(DonGiaThuoc x : listBangGia) {
                 if(x.getmaDonGia().equalsIgnoreCase(rs.getString("maDonGia"))) {
-                    t.setBangGiaSanPham(x);
+                    t.setDonGiaThuoc(x);
                 }
             }
             t.setNgaySX(rs.getDate("ngaySX"));
@@ -351,7 +351,7 @@ public class Thuoc_DAO {
 
                 for (DonGiaThuoc x : listBangGia) {
                     if(x.getmaDonGia().equalsIgnoreCase(rs.getString("maDonGia"))) {
-                        t.setBangGiaSanPham(x);
+                        t.setDonGiaThuoc(x);
                         break;
                     }
                 }
@@ -464,6 +464,142 @@ public class Thuoc_DAO {
             }
         }
         return rowsDataList.toArray(new Object[0][]);
+    }
+
+    public boolean checkTrung(ArrayList<Thuoc> list, String ma) {
+        for(Thuoc x : list) {
+            if(x.getSoHieuThuoc().equalsIgnoreCase(ma)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoTenVipProMax(String data) {
+        ArrayList<Thuoc> listThuoc = new ArrayList<>();
+        int soKiTu = data.length();
+        String[] tachData = data.split(" ");
+        if(tachData.length > 1) {
+            for(Thuoc s : list) {
+                String tenThuoc = s.getTenThuoc();
+                String[] tachTen = tenThuoc.split(" "); // Cắt từng từ trong họ tên
+                for(String x : tachTen) {
+                    for(String y : tachData) {
+                        if(x.equalsIgnoreCase(y)) {
+                            if(checkTrung(listThuoc, s.getMaThuoc())){
+                                listThuoc.add(s);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            for(Thuoc x : list) {
+                String tenThuoc = x.getTenThuoc();
+                String[] tachTen = tenThuoc.split(" ");// Cắt từng từ trong họ tên
+                if(tachTen.length > 1){
+                    for(String s : tachTen) {
+                        if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                            if(checkTrung(listThuoc, x.getMaThuoc())){
+                                listThuoc.add(x);
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    if(tenThuoc.substring(0, soKiTu).equalsIgnoreCase(data)){
+                        if(checkTrung(listThuoc, x.getMaThuoc())){
+                            listThuoc.add(x);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return listThuoc;
+    }
+    public ArrayList<Thuoc> timThuocTheoDanhMuc(String data) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getDanhMuc().getTenDanhMuc().equalsIgnoreCase(data)) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoNCC(String data) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getNhaCungCap().getTenNCC().equalsIgnoreCase(data)) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
+    }
+    public ArrayList<Thuoc> timThuocTheoNhaSX(String data) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getNhaSanXuat().getTenNhaSX().equalsIgnoreCase(data)) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoNuocSX(String data) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getNuocSanXuat().getTenNuoxSX().equalsIgnoreCase(data)) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoKhangGia(double min, double max) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getDonGiaThuoc().getDonGia() >= min && x.getDonGiaThuoc().getDonGia() <= max) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoKhangGiaMin(double gia) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getDonGiaThuoc().getDonGia() >= gia) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoKhangGiaMax(double gia) {
+        ArrayList<Thuoc> list = new ArrayList<>();
+        for(Thuoc x : this.list) {
+            if(x.getDonGiaThuoc().getDonGia() >= gia) {
+                if(checkTrung(list, x.getMaThuoc())) {
+                    list.add(x);
+                }
+            }
+        }
+        return list;
     }
 
 }
