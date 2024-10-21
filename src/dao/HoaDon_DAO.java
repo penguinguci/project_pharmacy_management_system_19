@@ -154,7 +154,6 @@ public class HoaDon_DAO {
     }
 
     public double getTongTienFromDataBase(String maHD) {
-        double tien;
         ConnectDB con  = new ConnectDB();
         con.connect();
         getConnection();

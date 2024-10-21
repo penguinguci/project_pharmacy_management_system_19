@@ -33,7 +33,9 @@ public class NuocSanXuat_DAO {
             NuocSanXuat nuoc = new NuocSanXuat();
             nuoc.setMaNuocSX(rs.getString(1));
             nuoc.setTenNuoxSX(rs.getString(2));
-            list.add(nuoc);
+            if(timNuocSanXuat(nuoc.getMaNuocSX()) == null){
+                list.add(nuoc);
+            }
         }
         return this.list;
     }

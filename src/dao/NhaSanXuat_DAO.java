@@ -32,8 +32,19 @@ public class NhaSanXuat_DAO {
             } else {
                 nsx.setDiaChi(rs.getString(3));
             }
-            this.list.add(nsx);
+            if(timNhaSX(nsx.getMaNhaSX()) == null) {
+                this.list.add(nsx);
+            }
         }
         return this.list;
+    }
+
+    public NhaSanXuat timNhaSX(String ma) {
+        for(NhaSanXuat x : list) {
+            if(x.getMaNhaSX().equalsIgnoreCase(ma)) {
+                return x;
+            }
+        }
+        return null;
     }
 }

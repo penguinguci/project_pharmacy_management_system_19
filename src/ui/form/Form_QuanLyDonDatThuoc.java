@@ -1,5 +1,11 @@
 package ui.form;
 
+import dao.ChiTietDonDatThuoc_DAO;
+import dao.DonDatThuoc_DAO;
+import entity.ChiTietDonDatThuoc;
+import entity.DonDatThuoc;
+import entity.DonGiaThuoc;
+import entity.KhachHang;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -7,14 +13,15 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 
-public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
+public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, ActionListener, MouseListener {
     public JButton btnQuayLai, btnThanhToan, btnChinhSua, btnHuy, btnTimKiemDon, btnLamMoi;
     public JComboBox<String> cbMaDonDat, cbThoiGianDat;
     public JLabel lblTitle;
@@ -22,9 +29,12 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
     public JTable tabDon, tabChiTietDon;
     public JScrollPane scrDon, scrChiTietDon;
     public DefaultTableModel dtmDon, dtmChiTietDon;
-    public DefaultComboBoxModel<String> dcbmMaDonDat, dcbmThoiGianDat;
+    public DefaultComboBoxModel<String> dcbmMaDonDat;
     public UtilDateModel ngayDatModel;
     JTextField textPlaceholder;
+
+    private DonDatThuoc_DAO donDatThuoc_dao = new DonDatThuoc_DAO();
+    private ChiTietDonDatThuoc_DAO chiTietDonDatThuoc_dao = new ChiTietDonDatThuoc_DAO();
 
     public Form_QuanLyDonDatThuoc() {
         setLayout(new BorderLayout());
@@ -54,7 +64,9 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
         btnQuayLai.setBorderPainted(false);
         btnQuayLai.setFocusPainted(false);
 
-        cbMaDonDat = new JComboBox<>(new String[]{"Mã đơn đặt hàng"});
+        dcbmMaDonDat = new DefaultComboBoxModel<>(dataComboMaDon());
+        cbMaDonDat = new JComboBox<>(dcbmMaDonDat);
+        cbMaDonDat.setPreferredSize(new Dimension(200, 25));
 
         ngayDatModel = new UtilDateModel();
         Properties p = new Properties();
@@ -74,6 +86,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
 
         txtTimKiem = new JTextField(20);
         btnTimKiemDon = new JButton("Tìm kiếm");
+        txtTimKiem.setPreferredSize(new Dimension(200, 25));
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -109,7 +122,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
         tabDon = new JTable(dtmDon);
         scrDon = new JScrollPane(tabDon);
 
-        String[] colsnameTabChiTietDon = {"Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
+        String[] colsnameTabChiTietDon = {"Mã đơn", "Số hiệu thuốc","Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         dtmChiTietDon = new DefaultTableModel(colsnameTabChiTietDon, 0);
         tabChiTietDon = new JTable(dtmChiTietDon);
         scrChiTietDon = new JScrollPane(tabChiTietDon);
@@ -156,6 +169,13 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
         footerPanel.add(btnChinhSua);
         footerPanel.add(btnHuy);
 
+        //Tải dữ liệu bảng
+        try {
+            loadDataTableDonDatThuoc(donDatThuoc_dao.getAllDonDatThuoc());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         // thêm vào this
         add(titlePanel_Center, BorderLayout.NORTH);
         add(topPanel, BorderLayout.BEFORE_FIRST_LINE);
@@ -164,6 +184,15 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
 
         // thêm sự kiện
         textPlaceholder.addFocusListener(this);
+        tabDon.addMouseListener(this);
+        tabChiTietDon.addMouseListener(this);
+
+        btnQuayLai.addActionListener(this);
+        btnHuy.addActionListener(this);
+        btnChinhSua.addActionListener(this);
+        btnThanhToan.addActionListener(this);
+        btnLamMoi.addActionListener(this);
+        btnTimKiemDon.addActionListener(this);
     }
 
     @Override
@@ -180,6 +209,136 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener {
             textPlaceholder.setForeground(Color.GRAY);
             textPlaceholder.setText("Chọn ngày");
         }
+    }
+
+    public void loadDataTableDonDatThuoc(ArrayList<DonDatThuoc> newData) {
+        dtmDon.setRowCount(0); //Xoá dữ liệu hiện tại
+        for(DonDatThuoc x: newData) {
+            String date = formatDate(x.getThoiGianDat());
+            Object[] data = {x.getMaDon(), x.getKhachHang().getMaKH(), x.getKhachHang().getHoKH()+" "+x.getKhachHang().getTenKH(), x.getKhachHang().getSDT(), x.getKhachHang().getDiaChi(), donDatThuoc_dao.getTongTienFromDataBase(x.getMaDon()), date};
+            dtmDon.addRow(data);
+        }
+    }
+
+    public void loadDataTableChiTiet(ArrayList<ChiTietDonDatThuoc> newData) {
+        dtmChiTietDon.setRowCount(0); //Xoá dữ liệu hiện tại
+        for(ChiTietDonDatThuoc x: newData) {
+            Object[] data = {x.getDonDatThuoc().getMaDon(), x.getThuoc().getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDonGiaThuoc().getDonViTinh(), x.getSoLuong(), x.getThuoc().getDonGiaThuoc().getDonGia(), chiTietDonDatThuoc_dao.getThanhTienFromDataBase(x.getDonDatThuoc().getMaDon(), x.getThuoc().getSoHieuThuoc())};
+            dtmChiTietDon.addRow(data);
+        }
+    }
+
+    public String formatDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(btnLamMoi)) {
+            clear();
+        }
+        if(e.getSource().equals(btnTimKiemDon)) {
+            ArrayList<DonDatThuoc> list = new ArrayList<>();
+            if(cbMaDonDat.getSelectedIndex()!=0) {
+                if(list.isEmpty()) {
+                    list.addAll(donDatThuoc_dao.timListDonDatThuoc((String) cbMaDonDat.getSelectedItem()));
+                } else {
+                    list.retainAll(donDatThuoc_dao.timListDonDatThuoc((String) cbMaDonDat.getSelectedItem()));
+                }
+            }
+            if(!txtTimKiem.equals("")) {
+                String data = txtTimKiem.getText().trim();
+                if(list.isEmpty()) {
+                    if(data.matches("[0-9]+")) {
+                        list.addAll(donDatThuoc_dao.timDonDatThuocTheoKhachHangSDT(txtTimKiem.getText().trim()));
+                    } else {
+                        list.addAll(donDatThuoc_dao.timDonDatThuocTheoKhachHangTen(txtTimKiem.getText().trim()));
+                    }
+                } else {
+                    if(data.matches("[0-9]+")) {
+                        list.retainAll(donDatThuoc_dao.timDonDatThuocTheoKhachHangSDT(txtTimKiem.getText().trim()));
+                    } else {
+                        list.retainAll(donDatThuoc_dao.timDonDatThuocTheoKhachHangTen(txtTimKiem.getText().trim()));
+                    }
+                }
+            }
+            if(ngayDatModel.isSelected()) {
+                java.util.Date utilDate = ngayDatModel.getValue();
+                Date sqlDate = new Date(utilDate.getTime());
+                if(list.isEmpty()) {
+                    list.addAll(donDatThuoc_dao.timDonThuocTheoNgay(sqlDate));
+                } else {
+                    list.retainAll(donDatThuoc_dao.timDonThuocTheoNgay(sqlDate));
+                }
+            }
+            if(!list.isEmpty()) {
+                loadDataTableDonDatThuoc(list);
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy đơn phù hợp!");
+                clear();
+            }
+        }
+    }
+
+    public void clear() {
+        txtTimKiem.requestFocus();
+        cbMaDonDat.setSelectedIndex(0);
+        ngayDatModel.setSelected(false);
+        txtTimKiem.setText("");
+        dtmChiTietDon.setRowCount(0);
+        try {
+            loadDataTableDonDatThuoc(donDatThuoc_dao.getAllDonDatThuoc());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String[] dataComboMaDon() {
+        ArrayList<DonDatThuoc> list = new ArrayList<>();
+        try {
+            list = donDatThuoc_dao.getAllDonDatThuoc();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String[] str = new String[list.size()+1];
+        str[0] = "Đơn đặt thuốc";
+        int i = 1;
+        for(DonDatThuoc x : list) {
+            str[i] = x.getMaDon();
+            i++;
+        }
+        return str;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int row = -1;
+        row = tabDon.getSelectedRow();
+        if(row > -1) {
+            String maDon = (String) dtmDon.getValueAt(row, 0);
+            loadDataTableChiTiet(chiTietDonDatThuoc_dao.getChiTiet(maDon));
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     public class DateTimeLabelFormatter  extends JFormattedTextField.AbstractFormatter {
