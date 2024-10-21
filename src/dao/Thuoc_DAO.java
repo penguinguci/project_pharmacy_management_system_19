@@ -478,11 +478,11 @@ public class Thuoc_DAO {
     public ArrayList<Thuoc> timThuocTheoTenVipProMax(String data) {
         ArrayList<Thuoc> listThuoc = new ArrayList<>();
         int soKiTu = data.length();
-        String[] tachData = data.split(" ");
+        String[] tachData = data.split("\\s+");
         if(tachData.length > 1) {
             for(Thuoc s : list) {
                 String tenThuoc = s.getTenThuoc();
-                String[] tachTen = tenThuoc.split(" "); // Cắt từng từ trong họ tên
+                String[] tachTen = tenThuoc.split("\\s+"); // Cắt từng từ trong họ tên
                 for(String x : tachTen) {
                     for(String y : tachData) {
                         if(x.equalsIgnoreCase(y)) {
@@ -497,7 +497,7 @@ public class Thuoc_DAO {
         } else {
             for(Thuoc x : list) {
                 String tenThuoc = x.getTenThuoc();
-                String[] tachTen = tenThuoc.split(" ");// Cắt từng từ trong họ tên
+                String[] tachTen = tenThuoc.split("\\s+");// Cắt từng từ trong họ tên
                 if(tachTen.length > 1){
                     for(String s : tachTen) {
                         if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập

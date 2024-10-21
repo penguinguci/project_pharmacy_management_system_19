@@ -168,11 +168,11 @@ public class NhanVien_DAO {
     public ArrayList<NhanVien> timNhanVienTheoHoTenVipProMax(String data) {
         ArrayList<NhanVien> listNV = new ArrayList<>();
         int soKiTu = data.length();
-        String[] tachData = data.split(" ");
+        String[] tachData = data.split("\\s+");
         if(tachData.length > 1) {
             for(NhanVien s : list) {
                 String hoTenKH = s.getHoNV() + " " + s.getTenNV();
-                String[] tachHoTen = hoTenKH.split(" "); // Cắt từng từ trong họ tên
+                String[] tachHoTen = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên
                 for(String x : tachHoTen) {
                     for(String y : tachData) {
                         if(x.equalsIgnoreCase(y)) {
@@ -187,7 +187,7 @@ public class NhanVien_DAO {
         } else {
             for(NhanVien x : list) {
                 String hoTenKH = x.getHoNV() + " " + x.getTenNV();
-                String[] tachHoTen = hoTenKH.split(" "); // Cắt từng từ trong họ tên
+                String[] tachHoTen = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên
                 for(String s : tachHoTen) {
                     if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
                         if(checkTrung(listNV, x.getMaNV())){

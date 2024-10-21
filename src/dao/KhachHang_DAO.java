@@ -365,11 +365,11 @@ public class KhachHang_DAO {
     public ArrayList<KhachHang> timKhachHangTheoHoTenVipProMax(String data) {
         ArrayList<KhachHang> listKH = new ArrayList<>();
         int soKiTu = data.length();
-        String[] tachData = data.split(" ");
+        String[] tachData = data.split("\\s+");
         if(tachData.length > 1 ) {
             for(KhachHang s : list) {
                 String hoTenKH = s.getHoKH() + " " + s.getTenKH();
-                String[] tachHoTen = hoTenKH.split(" "); // Cắt từng từ trong họ tên
+                String[] tachHoTen = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên
                 for(String x : tachHoTen) {
                     for(String y : tachData) {
                         if(x.equalsIgnoreCase(y)) {
@@ -384,7 +384,7 @@ public class KhachHang_DAO {
         } else {
             for(KhachHang x : list) {
                 String hoTenKH = x.getHoKH() + " " + x.getTenKH();
-                String[] tach = hoTenKH.split(" "); // Cắt từng từ trong họ tên khách hàng
+                String[] tach = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên khách hàng
                 for(String s : tach) {
                     if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
                         if(checkTrung(listKH, x.getMaKH())){

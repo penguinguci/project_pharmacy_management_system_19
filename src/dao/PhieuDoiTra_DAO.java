@@ -69,21 +69,35 @@ public class PhieuDoiTra_DAO {
         return null;
     }
 
-    public void create(PhieuDoiTra pdt) throws SQLException {
+    public boolean create(PhieuDoiTra pdt) {
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
-
-        String sql = "insert into PhieuDoiTra values(?, ?, ?, ?, ?, ?)";
-        ps = con.getConnection().prepareStatement(sql);
-        ps.setString(1, tuTaoMaPhieu());
-        ps.setString(2, pdt.getNhanVien().getMaNV());
-        ps.setBoolean(3, pdt.isLoai());
-        ps.setString(4, pdt.getHoaDon().getMaHD());
-        ps.setString(5, pdt.getLyDo());
-        ps.setDate(6, pdt.getNgayDoiTra());
-        ps.executeUpdate();
+        try {
+            String sql = "insert into PhieuDoiTra values(?, ?, ?, ?, ?, ?)";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, pdt.getMaPhieu());
+            ps.setString(2, pdt.getNhanVien().getMaNV());
+            ps.setBoolean(3, pdt.isLoai());
+            ps.setString(4, pdt.getHoaDon().getMaHD());
+            ps.setString(5, pdt.getLyDo());
+            ps.setDate(6, pdt.getNgayDoiTra());
+            int rowsAffected = ps.executeUpdate(); //Lấy số dòng bị ảnh hưởng bởi lệnh
+            if(rowsAffected > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(ps!=null) ps.close();
+                if(con!=null) con.disconnect();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
     public String tuTaoMaPhieu() {
@@ -108,5 +122,15 @@ public class PhieuDoiTra_DAO {
         } else {
             return "PDT001";
         }
+    }
+
+    public ArrayList<PhieuDoiTra> reload() {
+        try {
+            list.clear();
+            list = getAllPhieuDoiTra();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

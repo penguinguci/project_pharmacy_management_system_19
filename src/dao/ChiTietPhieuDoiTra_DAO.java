@@ -27,20 +27,39 @@ public class ChiTietPhieuDoiTra_DAO {
         return this.list;
     }
 
-    public void themVaoCSDL(String maPhieu, ArrayList<ChiTietHoaDon> data) throws SQLException {
+    public boolean themVaoCSDL(String maPhieu, ArrayList<ChiTietHoaDon> data) {
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
-        for(ChiTietHoaDon x : data) {
-            String sql = "insert into ChiTietPhieuDoiTra values(?, ?, ?, ?)";
-            ps = con.getConnection().prepareStatement(sql);
-            ps.setString(1, maPhieu);
-            ps.setString(2, x.getThuoc().getSoHieuThuoc());
-            ps.setString(3, x.getThuoc().getMaThuoc());
-            ps.setString(4, null);
-            ps.executeUpdate();
+        int count = 0;
+        try {
+            for(ChiTietHoaDon x : data) {
+                String sql = "insert into ChiTietPhieuDoiTra values(?, ?, ?, ?)";
+                ps = con.getConnection().prepareStatement(sql);
+                ps.setString(1, maPhieu);
+                ps.setString(2, x.getThuoc().getSoHieuThuoc());
+                ps.setString(3, x.getThuoc().getMaThuoc());
+                ps.setString(4, null);
+                if(ps.executeUpdate() > 0) {
+                    count++;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(ps!=null) ps.close();
+                if(con!=null) con.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        System.out.println("Thêm thành công " + data.size() + " chi tiết phiếu đổi/trả vào CSDL");
+        if(count > 0) {
+            System.out.println("Thêm thành công " + count + " chi tiết phiếu đổi/trả vào CSDL");
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -676,6 +676,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         } else if(o == btnPhieuDoiTra) {
             formDoiTra = new Form_DoiTra();
             centerPanel.add(formDoiTra, "formDoiTra");
+            formDoiTra.setNhanVienDN(getNhanVienDN());
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formDoiTra");
