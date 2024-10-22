@@ -1,10 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.ChucVu;
-import entity.DiemTichLuy;
-import entity.KhachHang;
-import entity.NhanVien;
+import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -120,7 +117,7 @@ public class NhanVien_DAO {
         return nhanVien;
     }
 
-
+    // thêm nhân viên
     public boolean createNhanVien(NhanVien nhanVien) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -155,6 +152,70 @@ public class NhanVien_DAO {
         }
         return result;
     }
+
+    public boolean deleteNhanVien(NhanVien nhanVien) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sql = "{CALL xoaNhanVienTheoTrangThaiVaMaNV(?)}";
+            callableStatement = con.prepareCall(sql);
+
+            callableStatement.setString(1, nhanVien.getMaNV());
+
+            n = callableStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                callableStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
+
+
+    //  cập nhật nhân viên
+    public boolean capNhatNV(NhanVien nhanVien) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sql = "{CALL capNhatThongTinNhanVien(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+            callableStatement = con.prepareCall(sql);
+
+            callableStatement.setString(1, nhanVien.getMaNV());
+            callableStatement.setString(2, nhanVien.getHoNV());
+            callableStatement.setString(3, nhanVien.getTenNV());
+            callableStatement.setDate(4, new java.sql.Date(nhanVien.getNgaySinh().getTime()));
+            callableStatement.setString(5, nhanVien.getSdt());
+            callableStatement.setString(6, nhanVien.getEmail());
+            callableStatement.setString(7, nhanVien.getDiaChi());
+            callableStatement.setBoolean(8, nhanVien.isGioiTinh());
+            callableStatement.setInt(9, nhanVien.getVaiTro().getMaChucVu());
+            callableStatement.setBoolean(10, nhanVien.isTrangThai());
+
+            // Thực thi thủ tục
+            n = callableStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                callableStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
+
 
     public boolean checkTrung(ArrayList<NhanVien> list, String ma) {
         for(NhanVien x : list) {
@@ -251,5 +312,59 @@ public class NhanVien_DAO {
             }
         }
         return listNV;
+    }
+
+
+    // tìm kiếm nhân viên theo ký tự
+    public ArrayList<NhanVien> timKiemNhanVienTheoKyTu(String kyTu) throws SQLException {
+        ArrayList<NhanVien> dsNV = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            con = ConnectDB.getConnection();
+
+            String sql = "{CALL timKiemNhanVienTheoKyTu(?)}";
+
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, kyTu);
+
+            rs = statement.executeQuery();
+
+            while(rs.next()){
+                NhanVien nv = new NhanVien();
+                nv.setMaNV(rs.getString("maNV"));
+                nv.setHoNV(rs.getString("hoNV"));
+                nv.setTenNV(rs.getString("tenNV"));
+                nv.setNgaySinh(rs.getDate("ngaySinh"));
+                nv.setSdt(rs.getString("SDT"));
+                if(rs.getString("email") == null){
+                    nv.setEmail("Chưa có");
+                } else {
+                    nv.setEmail(rs.getString("email"));
+                }
+                if(rs.getString("diaChi") == null){
+                    nv.setDiaChi("Chưa có");
+                } else {
+                    nv.setDiaChi(rs.getString("diaChi"));
+                }
+                nv.setGioiTinh(rs.getBoolean("gioiTinh"));
+                ChucVu cv = new ChucVu();
+                cv.setMaChucVu(rs.getInt("maChucVu"));
+                cv.setTenChucVu(rs.getString("tenChucVu"));
+                nv.setVaiTro(cv);
+                nv.setTrangThai(rs.getBoolean("trangThai"));
+
+                dsNV.add(nv);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) rs.close();
+            if (statement != null) statement.close();
+        }
+        return dsNV;
     }
 }

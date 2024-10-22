@@ -138,6 +138,9 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         // Bảng danh sách hóa đơn
         modelHD = new DefaultTableModel(new Object[]{"Mã HD", "Khách hàng", "Nhân viên", "Ngày lập hóa đơn" , "Tổng tiền"}, 0);
         table = new JTable(modelHD);
+        table.setRowHeight(30);
+        table.setFont(new Font("Arial", Font.PLAIN, 13));
+
         JScrollPane scrollPane = new JScrollPane(table);
         panelDSHoaDon.add(scrollPane, BorderLayout.CENTER);
 

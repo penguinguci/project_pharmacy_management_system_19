@@ -113,6 +113,9 @@ public class Form_QuanLyNuocSanXuat  extends JPanel implements ListSelectionList
         String[] columnNames = {"Mã nước sản xuất", "Tên nước sản xuất"};
         model = new DefaultTableModel(columnNames, 0);
         tblNuocSX = new JTable(model);
+        tblNuocSX.setRowHeight(30);
+        tblNuocSX.setFont(new Font("Arial", Font.PLAIN, 13));
+
         JScrollPane scrollPane = new JScrollPane(tblNuocSX);
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 

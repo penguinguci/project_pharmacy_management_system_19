@@ -296,7 +296,6 @@ public class Thuoc_DAO {
         ResultSet rs = null;
 
         try {
-            // Connect to the database
             con = ConnectDB.getConnection();
 
             String sql = "{CALL getDSThuocTheoTenDM(?)}";
@@ -305,7 +304,6 @@ public class Thuoc_DAO {
 
             statement.setString(1, tenDM);
 
-            // Execute the query
             rs = statement.executeQuery();
 
             while (rs.next()) {
