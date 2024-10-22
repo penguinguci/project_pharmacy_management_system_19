@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -557,17 +558,19 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
         @Override
         public Object stringToValue(String text) throws java.text.ParseException {
+            if (text.equals("Chọn ngày")) {
+                return null;
+            }
             return dateFormatter.parseObject(text);
         }
 
         @Override
         public String valueToString(Object value) throws java.text.ParseException {
             if (value != null) {
-                java.util.Calendar cal = (java.util.Calendar) value;
+                Calendar cal = (Calendar) value;
                 return dateFormatter.format(cal.getTime());
             }
-
-            return "";
+            return "Chọn ngày";
         }
     }
 }
