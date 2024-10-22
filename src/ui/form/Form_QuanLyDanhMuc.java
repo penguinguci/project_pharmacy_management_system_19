@@ -19,6 +19,7 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 public class Form_QuanLyDanhMuc  extends JPanel implements ActionListener {
+    private final JComboBox<String> cmbSearch;
     public JLabel lblSearch;
     public JLabel lblPageInfo;
     public JLabel lblMaDanhMuc;
@@ -110,6 +111,8 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ActionListener {
             lblSearch = new JLabel("Tìm kiếm:");
             txtSearch = new JTextField(30);
             txtSearch.setPreferredSize(new Dimension(100, 25));
+            String[] danhMucCode = {"DM001","DM002"};
+            cmbSearch = new JComboBox<>(danhMucCode);
 
             // Add product
             ImageIcon iconAdd = new ImageIcon("images/add.png");
@@ -133,6 +136,7 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ActionListener {
 
             pnlLeft.add(lblSearch);
             pnlLeft.add(txtSearch);
+            pnlLeft.add(cmbSearch);
 
             pnlRight.add(btnAdd);
             pnlRight.add(btnUpdate);

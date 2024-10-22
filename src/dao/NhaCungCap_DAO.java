@@ -12,6 +12,11 @@ public class NhaCungCap_DAO {
 
     public NhaCungCap_DAO(){
         list = new ArrayList<NhaCungCap>();
+        try{
+            list = getAllNhaCungCap();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<NhaCungCap> getAllNhaCungCap() throws Exception{
@@ -40,5 +45,14 @@ public class NhaCungCap_DAO {
             list.add(ncc);
         }
         return list;
+    }
+
+    public NhaCungCap timNhaCungCap(String maNhaCungCap) {
+        for(NhaCungCap ncc : list){
+            if(ncc.getMaNCC().equalsIgnoreCase(maNhaCungCap)){
+                return ncc;
+            }
+        }
+        return null;
     }
 }

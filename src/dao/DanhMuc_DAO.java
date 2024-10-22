@@ -12,6 +12,11 @@ public class DanhMuc_DAO {
 
     public DanhMuc_DAO() {
         list = new ArrayList<DanhMuc>();
+        try{
+            list = getAllDanhMuc();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<DanhMuc> getAllDanhMuc() throws Exception{
@@ -31,5 +36,14 @@ public class DanhMuc_DAO {
             list.add(d);
         }
         return this.list;
+    }
+
+    public DanhMuc timDanhMuc(String maDanhMuc){
+        for(DanhMuc d : list){
+            if(d.getMaDanhMuc().equalsIgnoreCase(maDanhMuc)){
+                return d;
+            }
+        }
+        return null;
     }
 }

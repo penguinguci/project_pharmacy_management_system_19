@@ -12,6 +12,11 @@ public class NhaSanXuat_DAO {
 
     public NhaSanXuat_DAO() {
         list = new ArrayList<NhaSanXuat>();
+        try{
+            list = getAllNhaSanXuat();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<NhaSanXuat> getAllNhaSanXuat() throws Exception{
@@ -35,5 +40,13 @@ public class NhaSanXuat_DAO {
             this.list.add(nsx);
         }
         return this.list;
+    }
+    public NhaSanXuat timNhaSanXuat(String maNhaSanXuat){
+        for(NhaSanXuat nsx : this.list){
+            if(nsx.getMaNhaSX().equalsIgnoreCase(maNhaSanXuat)){
+                return nsx;
+            }
+        }
+        return null;
     }
 }

@@ -1,33 +1,58 @@
 package ui.form;
 
-import connectDB.ConnectDB;
+import dao.KeThuoc_DAO;
 import dao.Thuoc_DAO;
-import entity.Thuoc;
+import entity.*;
+import org.jdatepicker.JDateComponentFactory;
+import org.jdatepicker.JDatePicker;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
+    public JScrollPane scrMoTa;
+    public JLabel lblMoTa;
+    public JTextArea txaMoTa;
+    public JTextField txtHamLuong;
+    public JLabel lblHamLuong;
+    public JTextField txtDangBaoChe;
+    public JLabel lblDangBaoChe;
+    public JComboBox<String> cmbTrangThai;
+    public JLabel lblTrangThai;
+    public JTextField txtGiaNhap;
+    public JLabel lblGiaNhap;
+    public JTextField txtChiDinh;
+    public JLabel lblChiDinh;
+    public JScrollPane spCongDung;
+    public JTextArea txaCongDung;
+    public JScrollPane spCachDung;
+    public JTextArea txaCachDung;
+    public JLabel lblCachDung;
+    public JTextField txtHSD;
+    public JDatePicker datePickerNgaySanXuat;
+    public JComboBox<String> cmbKeThuoc;
+    public JComboBox<String> cmbNhaCungCap;
+    public JLabel lblPricing;
+    public JLabel lblUsageDetails;
+    public JLabel lblInforProductDetails;
+    public JLabel lblSearch;
     public JComboBox<String> cmbKhuyenMai;
     public JLabel lblPageInfo;
     public JLabel lblCongDung;
     public JTextArea txtCongDung;
-    public JLabel lblHDSD;
-    public JTextArea txtHDSD;
-    public JLabel lblDKBQ;
-    public JTextArea txtDKBQ;
     public JLabel lblBaoQuan;
     public JTextField txtBaoQuan;
     public JLabel lblNgaySanXuat;
-    public JTextField txtNgaySanXuat;
     public JLabel lblHSD;
-    public JTextField txtHSD;
     public JLabel lblKeThuoc;
     public JTextField txtKeThuoc;
     public JLabel lblMaThuoc;
@@ -45,20 +70,27 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     public JTextField txtSearch;
     public JComboBox<String> cmbNhaSanXuat, cmbDanhMuc;
     public int currentPage = 1;
-    public int rowsPerPage = 10;
+    public int rowsPerPage = 10  ;
     public int totalPages;
     public int totalRows ;
     public JButton btnPrev, btnNext;
     public JButton btnFirst;
     public JButton btnLast;
     public ArrayList<Thuoc> listThuoc;
-
+    public int widthScreen ;
+    public int heightScreen ;
+    public KeThuoc_DAO ke_DAO;
+    public KeThuoc ke;
 
     public Form_QuanLyThuoc() throws Exception {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        widthScreen = screen.width-211;
+        heightScreen = screen.height-60;
+
+        setPreferredSize(new Dimension( widthScreen,heightScreen));
         //Set layout NORTH
         JPanel pContainerNorth = new JPanel();
         pContainerNorth.setLayout(new BorderLayout());
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         // Button back in NORTH
         JPanel pBack = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -71,26 +103,25 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         // Title in NORTH
         JPanel pTitle = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel lblTitle = new JLabel("Quản lí thuốc");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 50));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 40));
         pTitle.add(lblTitle);
 
-        pContainerNorth.setPreferredSize(new Dimension(1300, pTitle.getPreferredSize().height));
+        pContainerNorth.setPreferredSize(new Dimension(widthScreen, pTitle.getPreferredSize().height));
         pContainerNorth.add(pBack, BorderLayout.WEST);
         pContainerNorth.add(pTitle, BorderLayout.CENTER);
 
         // Set layout CENTER
-        JPanel pContainerCenter = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel pContainerCenter = new JPanel();
         pContainerCenter.setLayout(new BoxLayout(pContainerCenter, BoxLayout.Y_AXIS));
-        pContainerCenter.setPreferredSize(new Dimension(1300,550));
-
+        pContainerCenter.setPreferredSize(new Dimension( widthScreen,300));
 
         // List Product
         // Option
         JPanel pOption = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
         // Search
-        txtSearch = new JTextField(30);
-        txtSearch.setPreferredSize(new Dimension(50, 25));
+        lblSearch = new JLabel("Tìm kiếm:");
+        txtSearch = new JTextField(25);
+        txtSearch.setPreferredSize(new Dimension(30, 25));
 
         String[] listKhuyenMai = {"Khuyến mãi 10%","Khuyến mãi 8%"};
         cmbKhuyenMai = new JComboBox<>(listKhuyenMai);
@@ -98,6 +129,10 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         // ComboBox Nhà sản xuất
         String[] listNhaSanXuat = {"Nhà sản xuất","Nhà sản xuaất 1"};
         cmbNhaSanXuat = new JComboBox<>(listNhaSanXuat);
+
+        // ComboBox Nhà cung cấp
+        String[] listNhaCungCap = {"Công ty Dược A","Công ty Dược B"};
+        cmbNhaCungCap = new JComboBox<>(listNhaCungCap);
 
         // ComboBox Danh mục
         String[] listDanhMuc = {"Danh mục","Đau đầu","Trĩ"};
@@ -125,7 +160,6 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         btnUpdate.setFocusPainted(false);
         btnUpdate.setBorderPainted(false);
 
-
         // Delete product
         ImageIcon iconDelete = new ImageIcon("images/delete.png");
         btnDelete = new JButton(iconDelete);
@@ -136,7 +170,6 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         btnDelete.setOpaque(true);
         btnDelete.setFocusPainted(false);
         btnDelete.setBorderPainted(false);
-
 
         // Delete product
         ImageIcon iconReload = new ImageIcon("images/reload.png");
@@ -149,36 +182,35 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         btnReload.setFocusPainted(false);
         btnReload.setBorderPainted(false);
 
-
+        pOption.add(lblSearch);
         pOption.add(txtSearch);
         pOption.add(cmbKhuyenMai);
         pOption.add(cmbNhaSanXuat);
+        pOption.add(cmbNhaCungCap);
         pOption.add(cmbDanhMuc);
         pOption.add(btnAdd);
         pOption.add(btnUpdate);
         pOption.add(btnDelete);
         pOption.add(btnReload);
 
+        pOption.setPreferredSize(new Dimension(widthScreen, btnAdd.getPreferredSize().height));
         pContainerCenter.add(pOption);
 
         // Table product
-        JPanel pTableProduct = new JPanel(new BorderLayout());
+        JPanel pTableProduct = new JPanel(new FlowLayout(FlowLayout.CENTER));
         String[] hTableListProduct = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nước sản xuất", "Số lượng còn", "Thành phần", "Đơn vị tính", "Giá bán"};
         dtListProduct = new DefaultTableModel(hTableListProduct, 0);
         tProduct = new JTable(dtListProduct);
         tProduct.setRowHeight(30);
-        scrollListProduct = new JScrollPane(tProduct);
+        loadDataThuocToTable(currentPage, rowsPerPage);
+        JTableHeader jTableHeader =  tProduct.getTableHeader();
+        jTableHeader.setPreferredSize(new Dimension(widthScreen, 30));
 
-        scrollListProduct.setPreferredSize(new Dimension(screenSize.width - 100, 300));
+        scrollListProduct = new JScrollPane(tProduct);
+        scrollListProduct.setPreferredSize(new Dimension(widthScreen, 210));
         pTableProduct.add(scrollListProduct, BorderLayout.CENTER);
 
-        pContainerCenter.add(Box.createVerticalStrut(10));  // Add space
         pContainerCenter.add(pTableProduct);
-
-        // Load Data
-        ConnectDB.getInstance().connect();
-        thuocDao = new Thuoc_DAO();
-        loadDataThuoc(currentPage, rowsPerPage);
 
         // Pag
         lblPageInfo = new JLabel();
@@ -187,203 +219,323 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         btnPrev = new JButton("<");
         btnNext = new JButton(">");
         btnLast = new JButton(">>");
+        pPag.setPreferredSize(new Dimension(widthScreen, btnFirst.getPreferredSize().height));
 
         pPag.add(btnFirst);
         pPag.add(btnPrev);
+        lblPageInfo.setText("1" + "/" + totalPages);
         pPag.add(lblPageInfo);
+
         pPag.add(btnNext);
         pPag.add(btnLast);
 
-        pContainerCenter.add(Box.createVerticalStrut(10));  // Add space
         pContainerCenter.add(pPag);
 
         // Product Detail
-        JPanel pProductDetail = new JPanel(new BorderLayout()); // 10px padding
+        JPanel pProductDetail = new JPanel(); // 10px padding
+        pProductDetail.setBorder(BorderFactory.createTitledBorder("Thông tin chi tiết thuốc"));
+        pProductDetail.setPreferredSize(new Dimension(widthScreen,300));
 
-        JPanel imgProduct = new JPanel();
+        JPanel imgProduct = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ImageIcon imageIcon = new ImageIcon("images/logo.jpg");
         imgProduct.add(new JButton(imageIcon));
-        imgProduct.setPreferredSize(new Dimension(200, 100));
+        imgProduct.setPreferredSize(new Dimension(150, 150));
 
         JPanel pInforDetail = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
 
-// Labels and fields
-        lblMaThuoc = new JLabel("Mã thuốc:");
-        txtMaThuoc = new JTextField(15);
-        txtMaThuoc.setPreferredSize(new Dimension(150,25));
+        lblInforProductDetails = new JLabel("*Thông tin chi tiết thuốc:");
+        lblInforProductDetails.setFont(new Font("Arial", Font.BOLD, 16));
+        lblUsageDetails = new JLabel("*Hướng dẫn sử dụng:");
+        lblUsageDetails.setFont(new Font("Arial", Font.BOLD, 16));
+        lblPricing = new JLabel("*Định giá:");
+        lblPricing.setFont(new Font("Arial", Font.BOLD, 16));
+
+        JPanel pnlTenThuoc = new JPanel(new GridBagLayout());
+
         lblTenThuoc = new JLabel("Tên thuốc:");
-        txtTenThuoc = new JTextField(15);
-        txtTenThuoc.setPreferredSize(new Dimension(150,25));
-        lblBaoQuan = new JLabel("Bảo quản:");
-        txtBaoQuan = new JTextField(15);
-        txtBaoQuan.setPreferredSize(new Dimension(150,25));
+        lblTenThuoc.setPreferredSize(new Dimension(100,25));
+        txtTenThuoc = new JTextField();
+        txtTenThuoc.setPreferredSize(new Dimension(200,25));
+        pnlTenThuoc.add(lblTenThuoc);
+        pnlTenThuoc.add(txtTenThuoc);
 
-
-        lblNgaySanXuat = new JLabel("Ngày sản xuất:");
-        txtNgaySanXuat = new JTextField(15);
-        txtNgaySanXuat.setPreferredSize(new Dimension(150,25));
-        lblHSD = new JLabel("Hạn sử dụng:");
-        txtHSD = new JTextField(15);
-        txtHSD.setPreferredSize(new Dimension(150,25));
+        JPanel pnlKeThuoc = new JPanel(new GridBagLayout());
         lblKeThuoc = new JLabel("Kệ thuốc:");
-        txtKeThuoc = new JTextField(15);
-        txtKeThuoc.setPreferredSize(new Dimension(150,25));
+        lblKeThuoc.setPreferredSize(new Dimension(100,25));
+        cmbKeThuoc = new JComboBox<String>();
+        loadComboBoxKeThuoc();
+        cmbKeThuoc.setPreferredSize(new Dimension(200,25));
 
+        pnlKeThuoc.add(lblKeThuoc);
+        pnlKeThuoc.add(cmbKeThuoc);
+
+        JPanel pnlNgaySanXuat = new JPanel(new GridBagLayout());
+        lblNgaySanXuat = new JLabel("Ngày sản xuất:");
+        lblNgaySanXuat.setPreferredSize(new Dimension(100,25));
+        datePickerNgaySanXuat = new JDateComponentFactory().createJDatePicker();
+        pnlNgaySanXuat.add(lblNgaySanXuat);
+        pnlNgaySanXuat.add((Component) datePickerNgaySanXuat);
+
+
+        JPanel pnlHSD = new JPanel(new GridBagLayout());
+        lblHSD = new JLabel("Hạn sử dụng:");
+        lblHSD.setPreferredSize(new Dimension(100,25));
+        txtHSD = new JTextField();
+        txtHSD.setPreferredSize(new Dimension(200,25));
+
+        pnlHSD.add(lblHSD);
+        pnlHSD.add(txtHSD);
+
+
+        JPanel pnlCachDung= new JPanel(new GridBagLayout());
+        lblCachDung = new JLabel("Cách dùng:");
+        lblCachDung.setPreferredSize(new Dimension(100,25));
+        txaCachDung = new JTextArea(3,18);
+        txaCachDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
+        txaCachDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
+        spCachDung = new JScrollPane(txaCachDung);
+        pnlCachDung.add(lblCachDung);
+        pnlCachDung.add(spCachDung);
+
+        JPanel pnlBaoQuan = new JPanel(new GridBagLayout());
+        lblBaoQuan = new JLabel("Bảo quản:");
+        lblBaoQuan.setPreferredSize(new Dimension(100,25));
+        txtBaoQuan = new JTextField();
+        txtBaoQuan.setPreferredSize(new Dimension(200,25));
+        pnlBaoQuan.add(lblBaoQuan);
+        pnlBaoQuan.add(txtBaoQuan);
+
+        JPanel pnlCongDung = new JPanel(new GridBagLayout());
         lblCongDung = new JLabel("Công dụng:");
-        txtCongDung = new JTextArea(3, 15);
-        txtCongDung.setPreferredSize(new Dimension(150,25));
-        lblHDSD = new JLabel("Hướng dẫn sử dụng:");
-        txtHDSD = new JTextArea(3, 15);
-        txtHDSD.setPreferredSize(new Dimension(150,25));
-        lblDKBQ = new JLabel("Điều kiện bảo quản:");
-        txtDKBQ = new JTextArea(3, 15);
-        txtDKBQ.setPreferredSize(new Dimension(150,25));
+        lblCongDung.setPreferredSize(new Dimension(100,25));
+        txaCongDung = new JTextArea(3, 18);
+        txaCongDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
+        txaCongDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
+        spCongDung = new JScrollPane(txaCongDung);
+        pnlCongDung.add(lblCongDung);
+        pnlCongDung.add(spCongDung);
+
+        JPanel pnlChiDinh = new JPanel(new GridBagLayout());
+        lblChiDinh = new JLabel("Chỉ định:");
+        lblChiDinh.setPreferredSize(new Dimension(100,25));
+        txtChiDinh = new JTextField();
+        txtChiDinh.setPreferredSize(new Dimension(200,25));
+        pnlChiDinh.add(lblChiDinh);
+        pnlChiDinh.add(txtChiDinh);
+
+        JPanel pnlGiaNhap = new JPanel(new GridBagLayout());
+        lblGiaNhap = new JLabel("Giá nhập:");
+        lblGiaNhap.setPreferredSize(new Dimension(100,25));
+        txtGiaNhap = new JTextField();
+        txtGiaNhap.setPreferredSize(new Dimension(200,25));
+        pnlGiaNhap.add(lblGiaNhap);
+        pnlGiaNhap.add(txtGiaNhap);
+
+        JPanel pnlTrangThai= new JPanel(new GridBagLayout());
+        lblTrangThai = new JLabel("Trạng thái:");
+        lblTrangThai.setPreferredSize(new Dimension(100,25));
+        cmbTrangThai = new JComboBox<>(new String[]{"Còn","Hết"});
+        cmbTrangThai.setPreferredSize(new Dimension(200,25));
+        pnlTrangThai.add(lblTrangThai);
+        pnlTrangThai.add(cmbTrangThai);
+
+        JPanel pnlMoTa = new JPanel(new GridBagLayout());
+        lblMoTa = new JLabel("Mô tả:");
+        lblMoTa.setPreferredSize(new Dimension(100,25));
+        txaMoTa = new JTextArea(3,18);
+        txaMoTa.setPreferredSize(new Dimension(200,25));
+        txaMoTa.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
+        txaMoTa.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
+        scrMoTa = new JScrollPane(txaMoTa);
+
+        pnlMoTa.add(lblMoTa);
+        pnlMoTa.add(scrMoTa);
+
+        JPanel pnlHamLuong = new JPanel(new GridBagLayout());
+        lblHamLuong = new JLabel("Hàm lượng:");
+        lblHamLuong.setPreferredSize(new Dimension(100,25));
+        txtHamLuong = new JTextField();
+        txtHamLuong.setPreferredSize(new Dimension(200,25));
+        pnlHamLuong.add(lblHamLuong);
+        pnlHamLuong.add(txtHamLuong);
+
+        JPanel pnlDangBaoChe = new JPanel(new GridBagLayout());
+        lblDangBaoChe = new JLabel("Dạng bào chế:");
+        lblDangBaoChe.setPreferredSize(new Dimension(100,25));
+        txtDangBaoChe = new JTextField();
+        txtDangBaoChe.setPreferredSize(new Dimension(200,25));
+        pnlDangBaoChe.add(lblDangBaoChe);
+        pnlDangBaoChe.add(txtDangBaoChe);
+
+        //
+        gbc.gridx = 0; gbc.gridy = 0; pInforDetail.add(lblInforProductDetails, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; pInforDetail.add(pnlTenThuoc, gbc);
+        gbc.gridx = 1; gbc.gridy = 1; pInforDetail.add(pnlHSD, gbc);
+        gbc.gridx = 2; gbc.gridy = 1; pInforDetail.add(pnlNgaySanXuat, gbc);
+        gbc.gridx = 0; gbc.gridy = 2; pInforDetail.add(pnlKeThuoc, gbc);
+        gbc.gridx = 1; gbc.gridy = 2; pInforDetail.add(pnlBaoQuan, gbc);
+        gbc.gridx = 2; gbc.gridy = 2; pInforDetail.add(pnlHamLuong, gbc);
+        gbc.gridx = 0; gbc.gridy = 3; pInforDetail.add(pnlDangBaoChe, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4; pInforDetail.add(lblUsageDetails, gbc);
+        gbc.gridx = 0; gbc.gridy = 5; pInforDetail.add(pnlChiDinh, gbc);
+        gbc.gridx = 1; gbc.gridy = 5; pInforDetail.add(pnlTrangThai, gbc);
+        gbc.gridx = 2; gbc.gridy = 5; pInforDetail.add(pnlGiaNhap, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 6; pInforDetail.add(pnlMoTa, gbc);
+        gbc.gridx = 1; gbc.gridy = 6; pInforDetail.add(pnlCongDung, gbc);
+        gbc.gridx = 2; gbc.gridy = 6; pInforDetail.add(pnlCachDung, gbc);
 
 
-        gbc.gridx = 0; gbc.gridy = 0; pInforDetail.add(lblMaThuoc, gbc);  // Column 1, Row 1
-        gbc.gridx = 1; gbc.gridy = 0; pInforDetail.add(txtMaThuoc, gbc);  // Column 2, Row 1
-        gbc.gridx = 2; gbc.gridy = 0; pInforDetail.add(lblTenThuoc, gbc);  // Column 3, Row 1
-        gbc.gridx = 3; gbc.gridy = 0; pInforDetail.add(txtTenThuoc, gbc);  // Column 4, Row 1
-        gbc.gridx = 4; gbc.gridy = 0; pInforDetail.add(lblBaoQuan, gbc);  // Column 5, Row 1
-        gbc.gridx = 5; gbc.gridy = 0; pInforDetail.add(txtBaoQuan, gbc);  // Column 6, Row 1
 
-        gbc.gridx = 0; gbc.gridy = 1; pInforDetail.add(lblNgaySanXuat, gbc);  // Column 1, Row 2
-        gbc.gridx = 1; gbc.gridy = 1; pInforDetail.add(txtNgaySanXuat, gbc);  // Column 2, Row 2
-        gbc.gridx = 2; gbc.gridy = 1; pInforDetail.add(lblHSD, gbc);  // Column 3, Row 2
-        gbc.gridx = 3; gbc.gridy = 1; pInforDetail.add(txtHSD, gbc);  // Column 4, Row 2
-        gbc.gridx = 4; gbc.gridy = 1; pInforDetail.add(lblKeThuoc, gbc);  // Column 5, Row 2
-        gbc.gridx = 5; gbc.gridy = 1; pInforDetail.add(txtKeThuoc, gbc);  // Column 6, Row 2
-
-        gbc.gridx = 0; gbc.gridy = 2; pInforDetail.add(lblCongDung, gbc);  // Column 1, Row 3
-        gbc.gridx = 1; gbc.gridy = 2; pInforDetail.add(new JScrollPane(txtCongDung), gbc);  // Column 2, Row 3
-        gbc.gridx = 2; gbc.gridy = 2; pInforDetail.add(lblHDSD, gbc);  // Column 3, Row 3
-        gbc.gridx = 3; gbc.gridy = 2; pInforDetail.add(new JScrollPane(txtHDSD), gbc);  // Column 4, Row 3
-        gbc.gridx = 4; gbc.gridy = 2; pInforDetail.add(lblDKBQ, gbc);  // Column 5, Row 3
-        gbc.gridx = 5; gbc.gridy = 2; pInforDetail.add(new JScrollPane(txtDKBQ), gbc);  // Column 6, Row 3
-
-        pProductDetail.add(imgProduct, BorderLayout.WEST);
-        pProductDetail.add(pInforDetail, BorderLayout.CENTER);
+        pProductDetail.add(pInforDetail);
+        pProductDetail.add(imgProduct);
 
         pContainerCenter.add(pProductDetail);
 
-
         this.add(pContainerNorth, BorderLayout.NORTH);
         this.add(pContainerCenter, BorderLayout.CENTER);
+        this.add(pProductDetail, BorderLayout.SOUTH);
 
-
-        btnFirst.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentPage > 0) {
-                    currentPage = 0;  // Quay lại trang đầu
-                    try {
-                        loadDataThuoc(currentPage, rowsPerPage);
-                        lblPageInfo.setText("Trang " + (currentPage + 1) + " / " + totalPages);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        btnPrev.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(currentPage > 0){
-                    currentPage--;
-                    try{
-                        loadDataThuoc(currentPage, rowsPerPage);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
-//
-        btnNext.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(currentPage < totalPages - 1){
-                    currentPage++;
-                    try{
-                        loadDataThuoc(currentPage,rowsPerPage);
-                    }catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        btnLast.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int lastPage = totalPages - 1;
-                if (currentPage < lastPage) {
-                    currentPage = lastPage;
-                    try {
-                        loadDataThuoc(currentPage, rowsPerPage);
-                        lblPageInfo.setText("Trang " + (currentPage + 1) + " / " + totalPages);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
+        btnFirst.addActionListener(this);
+        btnPrev.addActionListener(this);
+        btnNext.addActionListener(this);
+        btnLast.addActionListener(this);
 
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
         btnUpdate.addActionListener(this);
         btnReload.addActionListener(this);
+
+        tProduct.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int row = tProduct.getSelectedRow();
+                    loadDataThuocToForm(row);
+                }
+            }
+        });
     }
 
-    public void loadDataThuoc(int currentPage, int rowsPerPage) throws Exception {
-        listThuoc = thuocDao.getAllThuoc();
-        totalRows = listThuoc.size();
+    public void loadDataThuocToTable(int currentPage, int rowsPerPage) throws Exception {
+        thuocDao = new Thuoc_DAO();
+        totalRows = thuocDao.countThuoc();
+        totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
         dtListProduct.setRowCount(0);
-        int startIndex = currentPage * rowsPerPage;
-        int endIndex = Math.min(startIndex + rowsPerPage, totalRows);
-
-        if (totalRows == 0) {
-            return;
-        }
-
-        for(int i = startIndex; i < endIndex; i++) {
-            Thuoc thuoc = listThuoc.get(i);
-            Object[] rowData = {
-                    thuoc.getMaThuoc(),
-                    thuoc.getSoHieuThuoc(),
-                    thuoc.getTenThuoc(),
-                    thuoc.getDanhMuc().getTenDanhMuc(),
-                    thuoc.getNhaCungCap().getTenNCC(),
-                    thuoc.getNuocSanXuat().getTenNuoxSX(),
-                    thuoc.getSoLuongCon(),
-                    thuoc.getThanhPhan(),
-                    thuoc.getDonViTinh(),
-                    thuoc.getGiaBan()
-            };
+        Object[][] rowsData = thuocDao.loadDataToTable(currentPage, rowsPerPage);
+        for (Object[] rowData : rowsData) {
             dtListProduct.addRow(rowData);
         }
-        totalPages = (int) Math.ceil((double) listThuoc.size() / rowsPerPage);
-
-
     }
 
+    public void loadDataThuocToForm(int row){
+        if( row != -1){
+            String maThuoc = String.valueOf(tProduct.getValueAt(row, 0));
+            Thuoc thuoc = thuocDao.getThuocByMaThuoc(maThuoc);
+            if (thuoc != null) {
+                txtTenThuoc.setText(thuoc.getTenThuoc());
+                txtHSD.setText(String.valueOf(thuoc.getHSD() + " tháng"));
+                if (thuoc.getNgaySX() != null) {
+                    int[] dates = convertStringToDatePicker(thuoc.getNgaySX());
+                    datePickerNgaySanXuat.getModel().setDate(dates[0], dates[1] - 1, dates[2]);
+                } else {
+                    datePickerNgaySanXuat.getModel().setDate( Calendar.getInstance().get(Calendar.YEAR) , Calendar.getInstance().get(Calendar.MONTH)-1, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                    System.out.println("Ngày sản xuất không có sẵn.");
+                }
+
+                try {
+                    ke_DAO = new KeThuoc_DAO();
+                    ke = ke_DAO.timKeThuoc(thuoc.getKeThuoc().getMaKe());
+                    if (ke != null) {
+                        cmbKeThuoc.setSelectedItem(ke.getTenKe());
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                txtBaoQuan.setText(thuoc.getBaoQuan());
+                txtHamLuong.setText(thuoc.getHamLuong());
+                txtDangBaoChe.setText(thuoc.getDangBaoChe());
+                txtChiDinh.setText(thuoc.getChiDinh());
+                cmbTrangThai.setSelectedItem(thuoc.isTrangThai() ? "Còn" : "Hết");
+                txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
+                txaMoTa.setText(thuoc.getMoTa());
+                txaCongDung.setText(thuoc.getCongDung());
+                txaCachDung.setText(thuoc.getCachDung());
+            } else {
+                System.out.println("Thuốc không tồn tại.");
+            }
+        }
+    }
+    public int[] convertStringToDatePicker(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        return new int[]{year, month, day};
+    }
+
+    public void loadComboBoxKeThuoc(){
+        try {
+            ke_DAO = new KeThuoc_DAO();
+            ArrayList<KeThuoc> listKeThuoc = ke_DAO.getAllKeThuoc();
+            cmbKeThuoc.removeAllItems();
+            for(KeThuoc ke : listKeThuoc){
+                cmbKeThuoc.addItem(ke.getTenKe());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
+
+        Runnable loadDataAndUpdate = () -> {
+            try {
+                loadDataThuocToTable(currentPage, rowsPerPage);
+                lblPageInfo.setText(currentPage + " / " + totalPages);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi tải dữ liệu : " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        };
+
+        if (o.equals(btnFirst) && currentPage > 1) {
+            currentPage = 1;
+            loadDataAndUpdate.run();
+        }
+
+        if (o.equals(btnLast) && currentPage < totalPages) {
+            currentPage = totalPages;
+            loadDataAndUpdate.run();
+        }
+
+        if (o.equals(btnPrev) && currentPage > 1) {
+            currentPage--;
+            loadDataAndUpdate.run();
+        }
+
+        if (o.equals(btnNext) && currentPage < totalPages) {
+            currentPage++;
+            loadDataAndUpdate.run();
+        }
+
         if(o.equals(btnAdd)){
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm thuốc", true);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             Form_NhapThuoc pnlThemThuoc = new Form_NhapThuoc();
             dialog.add(pnlThemThuoc);
-
             dialog.setSize(800,800);
             dialog.setLocationRelativeTo(null);
-//            dialog.setResizable(false);
+            dialog.setResizable(false);
             dialog.setVisible(true);
         }
     }
