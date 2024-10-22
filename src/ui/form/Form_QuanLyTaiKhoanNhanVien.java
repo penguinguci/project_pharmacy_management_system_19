@@ -258,6 +258,8 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         String[] columnNames = {"Mã NV", "Họ NV", "Tên NV", "Ngày sinh", "Giới tính", "Số ĐT", "Email", "Địa chỉ", "Vai trò", "Trạng thái"};
         model = new DefaultTableModel(columnNames, 0);
         tblNhanVien = new JTable(model);
+        tblNhanVien.setRowHeight(30);
+        tblNhanVien.setFont(new Font("Arial", Font.PLAIN, 13));
         JScrollPane scrollPane = new JScrollPane(tblNhanVien);
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 

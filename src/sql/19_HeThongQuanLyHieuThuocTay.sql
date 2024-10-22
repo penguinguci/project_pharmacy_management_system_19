@@ -757,6 +757,88 @@ END
 GO
 
 
+-- xóa nhân viên (ẩn nhân viên theo trạng thái)
+CREATE PROCEDURE xoaNhanVienTheoTrangThaiVaMaNV @maNV VARCHAR(10)
+AS 
+BEGIN
+	DECLARE @trangThai BIT
+
+	IF EXISTS (SELECT 1 FROM NhanVien WHERE maNV = @maNV)
+	BEGIN
+		SELECT @trangThai = trangThai
+		FROM NhanVien
+		WHERE maNV = @maNV
+
+		IF @trangThai = 1
+		BEGIN
+			UPDATE NhanVien
+			SET trangThai = 0
+			WHERE maNV = @maNV
+		END
+		ELSE
+		BEGIN
+			PRINT 'Trạng thái hiện tại đã là 0';
+		END
+	END
+	ELSE
+	BEGIN
+		PRINT 'Không tìm thấy nhân viên với mã này';
+	END
+END
+GO
+
+
+-- cập nhật nhân viên
+CREATE PROCEDURE capNhatThongTinNhanVien
+    @maNV VARCHAR(10),
+    @hoNV NVARCHAR(10),
+    @tenNV NVARCHAR(50),
+    @ngaySinh DATE,
+    @SDT VARCHAR(15),
+    @email VARCHAR(50),
+    @diaChi NVARCHAR(255),
+    @gioiTinh BIT,
+    @vaiTro SMALLINT,
+    @trangThai BIT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM NhanVien WHERE maNV = @maNV)
+    BEGIN
+        UPDATE NhanVien
+        SET 
+            hoNV = @hoNV,
+            tenNV = @tenNV,
+            ngaySinh = @ngaySinh,
+            SDT = @SDT,
+            email = @email,
+            diaChi = @diaChi,
+            gioiTinh = @gioiTinh,
+            vaiTro = @vaiTro,
+            trangThai = @trangThai
+        WHERE maNV = @maNV;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nhân viên với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nhân viên theo mã nhân viên, tên nhân viên, số điện thoại, email
+CREATE PROCEDURE timKiemNhanVienTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NhanVien nv
+	JOIN ChucVu cv ON nv.vaiTro = cv.maChucVu
+    WHERE (tenNV LIKE '%' + @kyTu + '%') OR (maNV LIKE '%' + @kyTu + '%')
+			OR (SDT LIKE '%' + @kyTu + '%') OR (email LIKE '%' + @kyTu + '%');
+END;
+GO
+
+
 
 -- --------- TRIGGER
 -- cập nhật điểm tích lũy sau khi thanh toán

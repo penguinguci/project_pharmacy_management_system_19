@@ -40,7 +40,7 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         this.setBackground(Color.white);
 
         lblTitle = new JLabel("Tìm kiếm khách hàng", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
 
         lblMa = new JLabel("Mã khách hàng", JLabel.CENTER);
         lblHo = new JLabel("Họ khách hàng", JLabel.CENTER);
@@ -98,6 +98,9 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Ngày sinh", "Số điện thoại", "Giới tính", "Email", "Địa chỉ","Điểm tích luỹ", "Xếp hạng"};
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
         tabKhachHang = new JTable(dtmKhachHang);
+        tabKhachHang.setRowHeight(30);
+        tabKhachHang.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrKhachHang = new JScrollPane(tabKhachHang);
         scrKhachHang.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabKhachHang.setBackground(Color.WHITE);

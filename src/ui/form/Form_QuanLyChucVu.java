@@ -95,8 +95,11 @@ public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener {
         pnlTable.setBorder(BorderFactory.createTitledBorder("Danh sách chức vụ"));
 
         String[] columnNames = {"Mã chức vụ", "Tên chức vụ"};
-        model = new DefaultTableModel(columnNames, 0);
+        model = new DefaultTableModel(columnNames, 0); 
         tblChucVu = new JTable(model);
+        tblChucVu.setRowHeight(30);
+        tblChucVu.setFont(new Font("Arial", Font.PLAIN, 13));
+
         JScrollPane scrollPane = new JScrollPane(tblChucVu);
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 

@@ -44,7 +44,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         //Tạo và định dạng các thành phần trong Form
         //Label
         lblTitle = new JLabel("Quản lý khách hàng", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblMa = new JLabel("Mã khách hàng");
         lblHo = new JLabel("Họ khách hàng");
         lblTen = new JLabel("Tên khách hàng   ");
@@ -110,6 +110,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Xếp hạng"};
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
         tabKhachHang = new JTable(dtmKhachHang);
+        tabKhachHang.setRowHeight(30);
+        tabKhachHang.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrKhachHang = new JScrollPane(tabKhachHang);
         scrKhachHang.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabKhachHang.setBackground(Color.WHITE);

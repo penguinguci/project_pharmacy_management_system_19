@@ -53,7 +53,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         //Khởi tạo các component
         //Label
         lblTitle = new JLabel("Quản lý đổi trả", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblMaPhieu = new JLabel("Mã phiếu đổi/trả   ");
         lblLyDo = new JLabel("Lý do");
         lblLoaiPhieu = new JLabel("Loại phiếu");
@@ -142,6 +142,9 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         String[] colsNameHoaDon = {"Mã hoá đơn", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
         dtmHoaDon = new DefaultTableModel(colsNameHoaDon, 0);
         tabHoaDon = new JTable(dtmHoaDon);
+        tabHoaDon.setRowHeight(30);
+        tabHoaDon.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrHoaDon = new JScrollPane(tabHoaDon);
         scrHoaDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabHoaDon.setBackground(Color.WHITE);
@@ -150,6 +153,9 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Số lượng", "Đơn vị tính", "Thành tiền"};
         dtmChiTiet = new DefaultTableModel(colsNameChiTiet, 0);
         tabChiTiet = new JTable(dtmChiTiet);
+        tabChiTiet.setRowHeight(30);
+        tabChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
+
         getScrChiTiet = new JScrollPane(tabChiTiet);
         getScrChiTiet.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabChiTiet.setBackground(Color.WHITE);
