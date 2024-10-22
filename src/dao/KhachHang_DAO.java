@@ -3,6 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.DiemTichLuy;
 import entity.KhachHang;
+import entity.NhanVien;
 import entity.PhieuNhapThuoc;
 
 import java.sql.*;
@@ -320,5 +321,121 @@ public class KhachHang_DAO {
             }
         }
         return null;
+    }
+
+    public KhachHang getOneKhachHangByMaKH(String maKH) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        KhachHang kh = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM KhachHang WHERE maKH =?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, maKH);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String hoKH = rs.getString("hoKH");
+                String tenKh = rs.getString("tenKH");
+                Date ngaySinh = rs.getDate("ngaySinh");
+                String email = rs.getString("email");
+                String diaChi = rs.getString("diaChi");
+                String SDT = rs.getString("SDT");
+                boolean gioiTinh = rs.getBoolean("gioiTinh");
+                boolean trangThai = rs.getBoolean("trangThai");
+                DiemTichLuy diemTichLuy = new DiemTichLuy(rs.getString("maDTL"));
+                kh = new KhachHang(maKH, hoKH, tenKh, ngaySinh, email, diaChi, gioiTinh, SDT, trangThai, diemTichLuy);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return kh;
+    }
+
+    public ArrayList<KhachHang> timKhachHangTheoHoTenVipProMax(String data) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        int soKiTu = data.length();
+        String[] tachData = data.split("\\s+");
+        if(tachData.length > 1 ) {
+            for(KhachHang s : list) {
+                String hoTenKH = s.getHoKH() + " " + s.getTenKH();
+                String[] tachHoTen = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên
+                for(String x : tachHoTen) {
+                    for(String y : tachData) {
+                        if(x.equalsIgnoreCase(y)) {
+                            if(checkTrung(listKH, s.getMaKH())){
+                                listKH.add(s);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            for(KhachHang x : list) {
+                String hoTenKH = x.getHoKH() + " " + x.getTenKH();
+                String[] tach = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên khách hàng
+                for(String s : tach) {
+                    if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                        if(checkTrung(listKH, x.getMaKH())){
+                            listKH.add(x);
+                        }
+                    }
+                }
+            }
+        }
+        return listKH;
+    }
+    public ArrayList<KhachHang> timKhachHangTheoSDTVipProMax(String data) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        int soKiTu = data.length();
+        for(KhachHang x : list) {
+            if(x.getSDT().substring(0, soKiTu).equalsIgnoreCase(data)) {
+                if(checkTrung(listKH, x.getMaKH())){
+                    listKH.add(x);
+                }
+            }
+        }
+        return listKH;
+    }
+    public ArrayList<KhachHang> timKhachHangTheoGioiTinh(boolean gt) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        for(KhachHang x : list) {
+            if(x.isGioiTinh() == gt) {
+                if(checkTrung(listKH, x.getMaKH())){
+                    listKH.add(x);
+                }
+            }
+        }
+        return listKH;
+    }
+    public ArrayList<KhachHang> timKhachHangTheoXepHang(String rank) {
+        ArrayList<KhachHang> listKH = new ArrayList<>();
+        for(KhachHang x : list) {
+            if(x.getDiemTichLuy().getXepHang().equalsIgnoreCase(rank)) {
+                if(checkTrung(listKH, x.getMaKH())){
+                    listKH.add(x);
+                }
+            }
+        }
+        return listKH;
+    }
+    public boolean checkTrung(ArrayList<KhachHang> list, String ma) {
+        for(KhachHang x : list) {
+            if(x.getMaKH().equalsIgnoreCase(ma)){
+                return false;
+            }
+        }
+        return true;
     }
 }

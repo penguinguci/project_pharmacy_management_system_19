@@ -1,8 +1,10 @@
 package ui.form;
 
+import dao.ChiTietHoaDon_DAO;
+import dao.ChiTietPhieuDoiTra_DAO;
 import dao.HoaDon_DAO;
-import entity.HoaDon;
-import entity.KhachHang;
+import dao.PhieuDoiTra_DAO;
+import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
@@ -13,51 +15,62 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Properties;
 
 public class Form_DoiTra  extends JPanel implements ActionListener, MouseListener {
-    private JLabel lblTitle, lblMaPhieu, lblLyDo, lblLoaiPhieu, lblMaHoaDon, lblChonNgay;
-    private JTextField txtTimKiem, txtMaPhieu, txtMaHoaDon;
+    private JLabel lblTitle, lblMaPhieu, lblLyDo, lblLoaiPhieu, lblMaHoaDon, lblChonNgay, lblThuTuThuoc;
+    private JTextField txtTimKiem, txtMaPhieu, txtMaHoaDon, txtThuTuThuoc;
     private JTextArea txtLyDo;
     private JComboBox<String> cbLoaiPhieu;
-    private String[] dataComboBox = {"Đổi", "Trả"};
+    private String[] dataComboBox = {"Loại phiếu", "Đổi", "Trả"};
     private DefaultComboBoxModel<String> dcmLoaiPhieu = new DefaultComboBoxModel<>(dataComboBox);
-    private JButton btnTimKiem, btnXacNhan, btnQuayLai;
+    private JButton btnTimKiem, btnXacNhan, btnQuayLai, btnHuy, btnLamMoi;
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
-    private JTable tabHoaDon;
-    private DefaultTableModel dtmHoaDon;
-    private JScrollPane scrHoaDon, scrLyDo;
+    private JTable tabHoaDon, tabChiTiet;
+    private DefaultTableModel dtmHoaDon, dtmChiTiet;
+    private JScrollPane scrHoaDon, scrLyDo, getScrChiTiet, scrChiTiet;
+
+    private SqlDateModel modelDate;
+    private NhanVien NhanVienDN;
 
     private HoaDon_DAO hd_dao = new HoaDon_DAO();
+    private PhieuDoiTra_DAO phieuDoiTra_dao = new PhieuDoiTra_DAO();
     private ArrayList<HoaDon> listHD = new ArrayList<HoaDon>();
+    private ArrayList<PhieuDoiTra> listPDT = new ArrayList<PhieuDoiTra>();
+    private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
+    private ChiTietPhieuDoiTra_DAO chiTietPhieuDoiTra_dao = new ChiTietPhieuDoiTra_DAO();
 
     public Form_DoiTra() {
         this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
 
         //Khởi tạo các component
-            //Label
+        //Label
         lblTitle = new JLabel("Quản lý đổi trả", JLabel.CENTER);
         lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
         lblMaPhieu = new JLabel("Mã phiếu đổi/trả   ");
         lblLyDo = new JLabel("Lý do");
         lblLoaiPhieu = new JLabel("Loại phiếu");
-        lblMaHoaDon = new JLabel("Mã hoá đơn");
+        lblMaHoaDon = new JLabel("Mã hoá đơn  ");
         lblChonNgay = new JLabel("           Ngày lập");
+        lblThuTuThuoc = new JLabel("Thuốc đổi / trả ");
 
-            //TextField
+        //TextField
         Dimension maxSize = new Dimension(300, 30);
         txtTimKiem = new JTextField(30);
         txtMaPhieu = new JTextField(30);
         txtMaHoaDon = new JTextField(30);
+        txtThuTuThuoc = new JTextField(30);
+        txtThuTuThuoc.setText("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng");
+        txtTimKiem.setText("Tìm hoá đơn theo mã");
 
-            //TextArea
+        //TextArea
         txtLyDo = new JTextArea(5, 20);
         txtLyDo.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txtLyDo.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
@@ -68,57 +81,92 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         scrLyDo.setMaximumSize(new Dimension(300, 90));
 
 
-        txtTimKiem.setMaximumSize(maxSize);
+        txtTimKiem.setPreferredSize(new Dimension(200, 25));
         txtMaPhieu.setMaximumSize(maxSize);
         txtMaHoaDon.setMaximumSize(maxSize);
+        txtThuTuThuoc.setMaximumSize(maxSize);
 
-            //Button
+        //Button
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+
         btnXacNhan = new JButton("Xác nhận");
-        btnTimKiem = new JButton("Tìm kiếm");
-        btnQuayLai = new JButton("Quay lại");
+        btnXacNhan.setBackground(new Color(65, 192, 201));
+        btnXacNhan.setForeground(Color.WHITE);
+        btnXacNhan.setOpaque(true);
+        btnXacNhan.setFocusPainted(false);
+        btnXacNhan.setBorderPainted(false);
+        btnXacNhan.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXacNhan.setPreferredSize(new Dimension(100, 35));
 
-        btnXacNhan.setBackground(new Color(106, 249, 150));
-            //Đăng kí sự kiện cho các nút
+        btnHuy = new JButton("Hủy");
+        btnHuy.setBackground(new Color(204, 0, 0));
+        btnHuy.setForeground(Color.WHITE);
+        btnHuy.setOpaque(true);
+        btnHuy.setFocusPainted(false);
+        btnHuy.setBorderPainted(false);
+        btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
+        btnHuy.setPreferredSize(new Dimension(100, 35));
+
+        btnLamMoi = new JButton("Làm mới");
+        btnLamMoi.setBackground(new Color(135, 244, 150));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setPreferredSize(new Dimension(100, 35));
+
+        btnTimKiem = new JButton("Tìm kiếm");
+
+        btnQuayLai = new JButton("Quay lại", scaledIconBack);
+        btnQuayLai.setFont(new Font("Arial", Font.BOLD, 17));
+        btnQuayLai.setContentAreaFilled(false);
+        btnQuayLai.setBorderPainted(false);
+        btnQuayLai.setFocusPainted(false);
+
+        //Đăng kí sự kiện cho các nút
         btnTimKiem.addActionListener(this);
         btnXacNhan.addActionListener(this);
+        btnHuy.addActionListener(this);
         btnQuayLai.addActionListener(this);
+        btnLamMoi.addActionListener(this);
 
-            //ComboBox
+        //ComboBox
         cbLoaiPhieu = new JComboBox<String>(dcmLoaiPhieu);
         cbLoaiPhieu.setMaximumSize(maxSize);
-        
-            //Table
-        String[] colsNameHoaDon = {"Mã khách hàng", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
+
+        //Table
+        String[] colsNameHoaDon = {"Mã hoá đơn", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
         dtmHoaDon = new DefaultTableModel(colsNameHoaDon, 0);
         tabHoaDon = new JTable(dtmHoaDon);
         scrHoaDon = new JScrollPane(tabHoaDon);
         scrHoaDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabHoaDon.setBackground(Color.WHITE);
+        renderTable(colsNameHoaDon, tabHoaDon);
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < tabHoaDon.getColumnCount(); i++) {
-            tabHoaDon.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
+        String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Số lượng", "Đơn vị tính", "Thành tiền"};
+        dtmChiTiet = new DefaultTableModel(colsNameChiTiet, 0);
+        tabChiTiet = new JTable(dtmChiTiet);
+        getScrChiTiet = new JScrollPane(tabChiTiet);
+        getScrChiTiet.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        tabChiTiet.setBackground(Color.WHITE);
+        renderTable(colsNameChiTiet, tabChiTiet);
 
-        // Set font cho tiêu đề cột
-        Font headerFont = new Font("Arial", Font.BOLD, 14);
-        for (int i = 0; i < colsNameHoaDon.length; i++) {
-            TableColumn column = tabHoaDon.getColumnModel().getColumn(i);
-            column.setHeaderRenderer((TableCellRenderer) new HeaderRenderer(headerFont));
-            column.setPreferredWidth(150);
-        }
 
-            // DatePicker
-                // Model cho JDatePicker
-        SqlDateModel model = new SqlDateModel();
+        // DatePicker
+        // Model cho JDatePicker
+        modelDate = new SqlDateModel();
         Properties properties = new Properties();
         properties.put("text.today", "Today");
         properties.put("text.month", "Month");
         properties.put("text.year", "Year");
 
-        datePanel = new JDatePanelImpl(model, properties);
-        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePanel = new JDatePanelImpl(modelDate, properties);
+        //datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker = new CustomDatePicker(datePanel, new DateLabelFormatter());
 
         // Tạo topPanel
         JPanel topPanel = new JPanel();
@@ -148,11 +196,27 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         // Tạo tablePanel thuộc centerPanel
         JPanel tablePanel = new JPanel();
         tablePanel.setBackground(Color.WHITE);
-        tablePanel.setLayout(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createTitledBorder("Danh sách hoá đơn"));
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.setBorder(BorderFactory.createTitledBorder("Thông tin quản lý"));
+
+        // Tạo các panel thuộc tablePanel
+        JPanel panelHD = new JPanel();
+        panelHD.setBackground(Color.WHITE);
+        panelHD.setLayout(new BorderLayout());
+        panelHD.setBorder(BorderFactory.createTitledBorder("Danh sách hoá đơn"));
+        panelHD.add(scrHoaDon);
+
+        JPanel panelPDT = new JPanel();
+        panelPDT.setBackground(Color.WHITE);
+        panelPDT.setLayout(new BorderLayout());
+        panelPDT.setBorder(BorderFactory.createTitledBorder("Chi tiết hoá đơn"));
+        panelPDT.add(getScrChiTiet);
 
         // Thêm các phần tử vào tablePanel
-        tablePanel.add(scrHoaDon);
+        tablePanel.add(panelHD);
+        tablePanel.add(Box.createVerticalStrut(20));
+        tablePanel.add(panelPDT);
+
 
         // Tạo inforPanel và các Box để setLayout
         JPanel inforPanel = new JPanel();
@@ -161,29 +225,37 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         inforPanel.setBorder(BorderFactory.createTitledBorder("Tạo phiếu đổi/trả"));
 
         Box boxLabel = Box.createVerticalBox();
+//        boxLabel.add(Box.createVerticalStrut(8));
+//        boxLabel.add(lblMaPhieu);
         boxLabel.add(Box.createVerticalStrut(8));
-        boxLabel.add(lblMaPhieu);
-        boxLabel.add(Box.createVerticalStrut(15));
         boxLabel.add(lblMaHoaDon);
         boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblLoaiPhieu);
         boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblLyDo);
+        boxLabel.add(Box.createVerticalStrut(85));
+        boxLabel.add(lblThuTuThuoc);
 
         Box boxTF = Box.createVerticalBox();
-        boxTF.add(txtMaPhieu);
-        boxTF.add(Box.createVerticalStrut(5));
+//        boxTF.add(txtMaPhieu);
+//        boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(txtMaHoaDon);
         boxTF.add(Box.createVerticalStrut(5));
         boxTF.add(cbLoaiPhieu);
         boxTF.add(Box.createVerticalStrut(10));
         boxTF.add(scrLyDo);
+        boxTF.add(Box.createVerticalStrut(10));
+        boxTF.add(txtThuTuThuoc);
 
         boxTF.setMaximumSize(new Dimension(300, 200));
 
         Box boxBtn = Box.createHorizontalBox();
         boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnXacNhan);
+        boxBtn.add(Box.createHorizontalStrut(30));
+        boxBtn.add(btnLamMoi);
+        boxBtn.add(Box.createHorizontalStrut(30));
+        boxBtn.add(btnHuy);
         boxBtn.add(Box.createHorizontalGlue());
 
         // Thêm các Box vào inforPanel
@@ -201,7 +273,26 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         txtMaHoaDon.setEditable(false);
 
         //Tải dữ liệu bảng
-        loadDataTable(getDataHoaDon());
+        loadDataTableHD(getDataHoaDon());
+
+        //Đăng ký sự kiện
+        tabHoaDon.addMouseListener(this);
+
+        txtThuTuThuoc.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                txtThuTuThuoc.setText("");
+            }
+        });
+
+        txtTimKiem.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                txtTimKiem.setText("");
+            }
+        });
 
         //Thêm các panel vào frame
         this.add(topPanel, BorderLayout.NORTH);
@@ -230,13 +321,40 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    public void loadDataTable(ArrayList<HoaDon> newData){
-        System.out.println(newData.size());
+    public void loadDataTableChiTiet(ArrayList<ChiTietHoaDon> newData){
+        dtmChiTiet.setRowCount(0); //Xoá dữ liệu hiện tại
+        int count = 1;
+        for(ChiTietHoaDon x: newData) {
+            double tien = 0;
+            try {
+                tien = chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(x.getHoaDon().getMaHD(), x.getThuoc().getMaThuoc());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Object[] data = {count, x.getThuoc().getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getSoLuong(), x.getDonViTinh(), tien};
+            dtmChiTiet.addRow(data);
+            count++;
+        }
+    }
+
+    public void loadDataTableHD(ArrayList<HoaDon> newData){
         dtmHoaDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(HoaDon x: newData) {
-            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap()};
+            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap(), hd_dao.getTongTienFromDataBase(x.getMaHD())};
             dtmHoaDon.addRow(data);
         }
+    }
+
+    public ArrayList<PhieuDoiTra> getDataPDT() {
+        if(!listPDT.isEmpty()) {
+            listPDT.clear();
+        }
+        try {
+            listPDT = phieuDoiTra_dao.getAllPhieuDoiTra();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return listPDT;
     }
 
     public ArrayList<HoaDon> getDataHoaDon() {
@@ -251,19 +369,173 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         return listHD;
     }
 
-    private double tinhTienHoaDon(String maHD) {
-
-        return 0;
+    public void clear() {
+        txtThuTuThuoc.setText("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng");
+        txtTimKiem.setText("Tìm hoá đơn theo mã");
+        txtMaHoaDon.setText("");
+        cbLoaiPhieu.setSelectedIndex(0);
+        txtLyDo.setText("");
+        modelDate.setSelected(false);
+        try {
+            loadDataTableHD(hd_dao.reload());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dtmChiTiet.setRowCount(0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(btnLamMoi)) {
+            clear();
+        }
+        if(e.getSource().equals(btnTimKiem)) {
+            ArrayList<HoaDon> list = new ArrayList<>();
+            if(!txtTimKiem.getText().trim().equals("")){
+                if(hd_dao.timHoaDon(txtTimKiem.getText().trim())!=null) {
+                    int c = 0;
+                    for(HoaDon x : list) {
+                        if(x.getMaHD().equalsIgnoreCase(txtTimKiem.getText().trim())) {
+                            c++;
+                        }
+                    }
+                    if(c==0) {
+                        list.add(hd_dao.timHoaDon(txtTimKiem.getText().trim()));
+                    }
+                }
+            }
+            if(modelDate.isSelected()){
+                java.util.Date utilDate = modelDate.getValue();
+                Date sqlDate = new Date(utilDate.getTime());
+                if(list.isEmpty()) {
+                    list.addAll(hd_dao.timHoaDonTheoNgayLap(sqlDate));
+                } else {
+                    list.retainAll(hd_dao.timHoaDonTheoNgayLap(sqlDate));
+                }
+            }
+            if(list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn phù hợp!");
+                try {
+                    loadDataTableHD(hd_dao.reload());
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                loadDataTableHD(list);
+            }
+        }
+        if(e.getSource().equals(btnXacNhan)) {
+            if(!txtMaHoaDon.getText().trim().equals("")){
+                if(cbLoaiPhieu.getSelectedIndex()!=0) {
+                    if(!txtThuTuThuoc.getText().trim().equals("") || txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng")){
+                        PhieuDoiTra pdt = new PhieuDoiTra();
 
+                        pdt.setMaPhieu(phieuDoiTra_dao.tuTaoMaPhieu());
+
+                        pdt.setNhanVien(getNhanVienDN());
+
+                        Date currentDate = new Date(System.currentTimeMillis());
+                        pdt.setNgayDoiTra(currentDate);
+
+                        boolean type = false; // Đổi
+                        if(cbLoaiPhieu.getSelectedIndex() == 2) {
+                            type = true;
+                        }
+                        pdt.setLoai(type);
+
+                        pdt.setHoaDon(hd_dao.timHoaDon(txtMaHoaDon.getText().trim()));
+
+                        pdt.setLyDo(txtLyDo.getText().trim());
+
+                        try {
+                            if(!phieuDoiTra_dao.create(pdt)) {
+                                JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả");
+                            } else {
+                                if(!taoListCTHDDeThemVaoPhieuDoiTra().isEmpty()) {
+                                    if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), taoListCTHDDeThemVaoPhieuDoiTra())) {
+                                        JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả");
+                                    } else {
+                                        if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
+                                            JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả");
+                                        } else {
+                                            JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
+                                            clear();
+                                        }
+                                    }
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng số thứ tự thuốc trong bảng chi tiết hoá đơn!");
+                                }
+                            }
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Nhập tối thiểu 1 thuốc cần đổi/trả!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Chưa chọn loại phiếu!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Chưa chọn hoá đơn!");
+            }
+        }
+    }
+
+    public ArrayList<ChiTietHoaDon> taoListCTHDDeThemVaoPhieuDoiTra() {
+        ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
+        if(txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng") || txtThuTuThuoc.getText().trim().equals("")){
+            try {
+                listCTHD = chiTietHoaDon_dao.getCTHDForHD(txtMaHoaDon.getText().trim());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            String[] listThuocDoiTra = txtThuTuThuoc.getText().trim().split("\\s+");
+            if(listThuocDoiTra.length > 0) {
+                for(String x : listThuocDoiTra) {
+                    int STT = Integer.parseInt(x);
+                    if(STT > dtmChiTiet.getRowCount()) {
+                        return listCTHD;
+                    }
+                    if(STT == (int)dtmChiTiet.getValueAt(STT-1, 0)) {
+                        String soHieuThuoc = (String) dtmChiTiet.getValueAt(STT-1, 1);
+                        System.out.println(soHieuThuoc);
+                        ChiTietHoaDon cthd = new ChiTietHoaDon();
+                        cthd = chiTietHoaDon_dao.getOne(txtMaHoaDon.getText().trim(), soHieuThuoc);
+                        listCTHD.add(cthd);
+                    }
+                }
+            }
+        }
+        System.out.println(listCTHD.size());
+        return listCTHD;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        int row = -1;
+        row = tabHoaDon.getSelectedRow();
+        if(row > -1) {
+            ArrayList<ChiTietHoaDon> list = new ArrayList<>();
+            try {
+                list = chiTietHoaDon_dao.getDSChiTietHD((String)dtmHoaDon.getValueAt(row, 0));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            if(!list.isEmpty()) {
+                loadDataTableChiTiet(list);
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy chi tiết hoá đơn!");
+            }
+            txtMaHoaDon.setText((String) dtmHoaDon.getValueAt(row, 0));
+        }
+    }
 
+    public boolean regexDoiTra(String data) {
+        if(data.matches("^[0-9\s]+$")){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -303,5 +575,57 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
             label.setHorizontalAlignment(JLabel.CENTER);
             return label;
         }
+    }
+
+    public void renderTable(String[] colsName, JTable table) {
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Set font cho tiêu đề cột
+        Font headerFont = new Font("Arial", Font.BOLD, 14);
+        for (int i = 0; i < colsName.length; i++) {
+            TableColumn column = table.getColumnModel().getColumn(i);
+            column.setHeaderRenderer((TableCellRenderer) new HeaderRenderer(headerFont));
+            column.setPreferredWidth(150);
+        }
+    }
+
+
+    //Set text cho datePanel
+    class CustomDatePicker extends JDatePickerImpl {
+        public CustomDatePicker(JDatePanelImpl datePanel, JFormattedTextField.AbstractFormatter formatter) {
+            super(datePanel, formatter);
+
+            // Thiết lập placeholder ban đầu
+            getJFormattedTextField().setText("Chọn ngày");
+
+            // Đăng ký sự kiện focus để xóa placeholder khi người dùng chọn
+            getJFormattedTextField().addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (getJFormattedTextField().getText().equals("Chọn ngày")) {
+                        getJFormattedTextField().setText("");  // Xóa placeholder khi focus
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (getJFormattedTextField().getText().isEmpty()) {
+                        getJFormattedTextField().setText("Chọn ngày");  // Đặt lại placeholder khi mất focus và không chọn ngày
+                    }
+                }
+            });
+        }
+    }
+
+    public void setNhanVienDN(NhanVien nv) {
+        this.NhanVienDN = nv;
+    }
+
+    public NhanVien getNhanVienDN() {
+        return this.NhanVienDN;
     }
 }

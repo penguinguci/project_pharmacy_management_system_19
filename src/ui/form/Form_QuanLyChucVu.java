@@ -1,29 +1,54 @@
 package ui.form;
 
+import dao.ChucVu_DAO;
 import entity.ChucVu;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Form_QuanLyChucVu extends JPanel {
+public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener {
     private JTextField txtTenChucVu, txtTimKiem;
-    private JButton btnThem, btnXoa, btnCapNhat, btnLamMoi, btnTimKiem;
+    private JButton btnThem, btnXoa, btnCapNhat, btnLamMoi, btnTimKiem, btnBack;
     private JTable tblChucVu;
     private DefaultTableModel model;
 
-    // Giả sử có danh sách chức vụ (để demo, bạn có thể lấy từ cơ sở dữ liệu)
-    private ArrayList<ChucVu> listChucVu;
+    public ChucVu_DAO chucVu_dao;
 
     public Form_QuanLyChucVu() {
         setLayout(new BorderLayout());
 
+        // panel tiêu để
+        JPanel panelTieuDe = new JPanel();
+
+        JPanel panelButton_left = new JPanel();
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+        panelButton_left.add(btnBack = new JButton("Quay lại", scaledIconBack));
+        btnBack.setFont(new Font("Arial", Font.BOLD, 17));
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
+
+        JLabel lblTieuDe = new JLabel("QUẢN LÝ CHỨC VỤ");
+        lblTieuDe.setFont(new Font("Arial", Font.BOLD, 20));
+
+        panelTieuDe.add(Box.createHorizontalStrut(-590));
+        panelTieuDe.add(panelButton_left, BorderLayout.WEST);
+        panelTieuDe.add(Box.createHorizontalStrut(430));
+        panelTieuDe.add(lblTieuDe, BorderLayout.CENTER);
+
         // Panel nhập thông tin chức vụ
         JPanel pnlInput = new JPanel(new GridLayout(3, 1, 10, 10));
         pnlInput.setBorder(BorderFactory.createTitledBorder("Thông tin chức vụ"));
+        pnlInput.setPreferredSize(new Dimension(getWidth(), 100));
 
         // Tên chức vụ
         JPanel pnlTenChucVu = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -32,6 +57,7 @@ public class Form_QuanLyChucVu extends JPanel {
         lblTenChucVu.setFont(new Font("Arial", Font.BOLD, 13));
         txtTenChucVu = new JTextField(30);
         txtTenChucVu.setPreferredSize(new Dimension(200, 30));
+        txtTenChucVu.setFont(new Font("Arial", Font.BOLD, 13));
         pnlTenChucVu.add(txtTenChucVu);
         pnlInput.add(pnlTenChucVu);
 
@@ -57,7 +83,7 @@ public class Form_QuanLyChucVu extends JPanel {
         // Tìm kiếm
         JPanel pnlTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT));
         txtTimKiem = new JTextField(40);
-        txtTimKiem.setPreferredSize(new Dimension(500, 30));
+        txtTimKiem.setPreferredSize(new Dimension(200, 30));
         pnlTimKiem.add(txtTimKiem);
 
         // Nút tìm kiếm
@@ -75,38 +101,42 @@ public class Form_QuanLyChucVu extends JPanel {
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 
         // Sắp xếp bố cục các panel
-        add(pnlInput, BorderLayout.NORTH);
-        add(pnlTable, BorderLayout.CENTER);
+        add(panelTieuDe, BorderLayout.NORTH);
+        add(pnlInput, BorderLayout.CENTER);
+        add(pnlTable, BorderLayout.SOUTH);
 
-        // Khởi tạo danh sách chức vụ mẫu
-        listChucVu = new ArrayList<>();
-        listChucVu.add(new ChucVu(1, "Quản lý"));
-        listChucVu.add(new ChucVu(2, "Nhân viên"));
-        listChucVu.add(new ChucVu(3, "Kế toán"));
+        // khởi tạo
+        chucVu_dao = new ChucVu_DAO();
 
-        // Hiển thị danh sách chức vụ ban đầu
+        // update data
         loadChucVuToTable();
+
+        //  thêm sự kiện
+        tblChucVu.getSelectionModel().addListSelectionListener(this);
     }
 
     // Phương thức tải chức vụ vào bảng
     private void loadChucVuToTable() {
         model.setRowCount(0); // Xóa dữ liệu hiện tại
-        for (ChucVu cv : listChucVu) {
+        for (ChucVu cv : chucVu_dao.getAllChucVu()) {
             model.addRow(new Object[]{
                     cv.getMaChucVu(), cv.getTenChucVu()
             });
         }
     }
 
-    // Phương thức lọc bảng dựa trên từ khóa tìm kiếm
-    private void filterTable(String searchTerm) {
-        model.setRowCount(0); // Xóa dữ liệu hiện tại
-        for (ChucVu cv : listChucVu) {
-            if (cv.getTenChucVu().toLowerCase().contains(searchTerm)) {
-                model.addRow(new Object[]{
-                        cv.getMaChucVu(), cv.getTenChucVu()
-                });
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting()) {
+            int row = tblChucVu.getSelectedRow();
+            if(row >= 0) {
+                fillRow(row);
             }
         }
+    }
+
+    private void fillRow(int row) {
+        txtTenChucVu.setText(model.getValueAt(row, 1).toString());
     }
 }

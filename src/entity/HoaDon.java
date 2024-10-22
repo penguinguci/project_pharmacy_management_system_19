@@ -81,17 +81,16 @@ public class HoaDon {
         this.trangThai = trangThai;
     }
 
-    public double tinhTienThue(List<ChiTietHoaDon> dsChiTietHoaDon){
+    public double tinhTienThue(ArrayList<ChiTietHoaDon> dsChiTietHoaDon){
         double tongThanhTien = 0;
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
             tongThanhTien += chiTietHoaDon.tinhThanhTien();
         }
-
         double tienThue = tongThanhTien * thue.getTyleThue();
         return tienThue;
     }
 
-    public double tinhTienKhuyenMai(List<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
+    public double tinhTienKhuyenMai(ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
         double tienKhuyenMai = 0;
 
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
@@ -111,20 +110,6 @@ public class HoaDon {
         return khachHang.tinhDiemTichLuy();
     }
 
-//    public double tinhTongTien(List<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
-//        double tienThue = tinhTienThue(dsChiTietHoaDon);
-//        double tienGiam = tinhTienGiam();
-//        double tienKhuyenMai = tinhTienKhuyenMai(dsChiTietHoaDon, dsChiTietKhuyenMai);
-//        double tongThanhTien = 0;
-//
-//        for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
-//            tongThanhTien += chiTietHoaDon.tinhThanhTien();
-//        }
-//
-//        double tongTien = tongThanhTien + tienThue - tienGiam - tienKhuyenMai;
-//
-//        return tongTien;
-//    }
 
     public double tinhTongTien(double thanhTien, double tienThue, double tienGiam, double tienKhuyenMai) {
         return thanhTien + tienThue - tienGiam - tienKhuyenMai;

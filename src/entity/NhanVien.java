@@ -85,8 +85,8 @@ public class NhanVien {
         this.gioiTinh = gioiTinh;
     }
 
-    public Date getNgaySinh() {
-        return ngaySinh;
+    public java.sql.Date getNgaySinh() {
+        return (java.sql.Date) ngaySinh;
     }
 
     public void setNgaySinh(Date ngaySinh) {

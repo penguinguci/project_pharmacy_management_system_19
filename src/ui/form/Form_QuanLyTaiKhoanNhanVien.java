@@ -1,22 +1,35 @@
 package ui.form;
 
+import dao.ChucVu_DAO;
+import dao.DangNhap_DAO;
+import dao.NhanVien_DAO;
+import entity.ChucVu;
+import entity.NhanVien;
+import entity.TaiKhoan;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
-public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
+public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectionListener, ActionListener {
     private JTextField txtHoNV, txtTenNV, txtSoDienThoai, txtEmail, txtDiaChi;
     private JComboBox<String> cbGioiTinh, cbVaiTro, cbTrangThai;
     private JDatePickerImpl dpNgaySinh;
-    private JButton btnThem, btnXoa, btnCapNhat, btnLamMoi;
+    private JButton btnThem, btnXoa, btnCapNhat, btnLamMoi, btnBack;
     private JTable tblNhanVien;
     private DefaultTableModel model;
     public UtilDateModel ngaySinhModel;
@@ -24,16 +37,41 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
     private JButton btnTimKiem;
     private JTextField txtTaiKhoan;
     private JPasswordField txtMatKhau;
+    public NhanVien_DAO nhanVien_dao;
+    public ChucVu_DAO chucVu_dao;
+    public DangNhap_DAO dangNhap_dao;
 
-    public Form_QuanLyTaiKhoanNhanVien() {
+    public Form_QuanLyTaiKhoanNhanVien() throws Exception {
         setLayout(new BorderLayout());
 
-        // Panel input
-        JLabel pnlInput = new JLabel();
+        // panel tiêu để
+        JPanel panelTieuDe = new JPanel();
 
-        // Panel input nhân viên
+        JPanel panelButton_left = new JPanel();
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+        panelButton_left.add(btnBack = new JButton("Quay lại", scaledIconBack));
+        btnBack.setFont(new Font("Arial", Font.BOLD, 17));
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
+
+        JLabel lblTieuDe = new JLabel("QUẢN LÝ TÀI KHOẢN NHÂN VIÊN");
+        lblTieuDe.setFont(new Font("Arial", Font.BOLD, 20));
+
+        panelTieuDe.add(Box.createHorizontalStrut(-480));
+        panelTieuDe.add(panelButton_left, BorderLayout.WEST);
+        panelTieuDe.add(Box.createHorizontalStrut(400));
+        panelTieuDe.add(lblTieuDe, BorderLayout.CENTER);
+
+        // Panel input
+        JPanel pnlInput = new JPanel(new BorderLayout());
+
         JPanel pnlInputNhanVien = new JPanel(new GridBagLayout());
-        pnlInputNhanVien.setBorder(BorderFactory.createTitledBorder("Thông tin tài khoản nhân viên"));
+        pnlInputNhanVien.setBorder(BorderFactory.createTitledBorder("Thông tin nhân viên"));
+        pnlInputNhanVien.setPreferredSize(new Dimension(950, 300));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 30, 5, 30);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -49,6 +87,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         txtHoNV = new JTextField(15);
         txtHoNV.setPreferredSize(new Dimension(getWidth(), 30));
         txtHoNV.setFont(new Font("Arial", Font.BOLD, 13));
+        txtHoNV.setEnabled(false);
         pnlInputNhanVien.add(txtHoNV, gbc);
 
         gbc.gridx = 2;
@@ -59,6 +98,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         txtTenNV = new JTextField(15);
         txtTenNV.setPreferredSize(new Dimension(getWidth(), 30));
         txtTenNV.setFont(new Font("Arial", Font.BOLD, 13));
+        txtTenNV.setEnabled(false);
         pnlInputNhanVien.add(txtTenNV, gbc);
 
         // Ngày sinh và Giới tính
@@ -87,6 +127,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         cbGioiTinh = new JComboBox<>(new String[]{"Nam", "Nữ"});
         cbGioiTinh.setPreferredSize(new Dimension(getWidth(), 30));
         cbGioiTinh.setFont(new Font("Arial", Font.BOLD, 13));
+        cbGioiTinh.setEnabled(false);
         pnlInputNhanVien.add(cbGioiTinh, gbc);
 
         // Số điện thoại, Email, và Địa chỉ
@@ -99,6 +140,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         txtSoDienThoai = new JTextField(15);
         txtSoDienThoai.setPreferredSize(new Dimension(getWidth(), 30));
         txtSoDienThoai.setFont(new Font("Arial", Font.BOLD, 13));
+        txtSoDienThoai.setEnabled(false);
         pnlInputNhanVien.add(txtSoDienThoai, gbc);
 
         gbc.gridx = 2;
@@ -109,6 +151,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         txtEmail = new JTextField(15);
         txtEmail.setPreferredSize(new Dimension(getWidth(), 30));
         txtEmail.setFont(new Font("Arial", Font.BOLD, 13));
+        txtEmail.setEnabled(false);
         pnlInputNhanVien.add(txtEmail, gbc);
 
         gbc.gridx = 0;
@@ -122,6 +165,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         gbc.gridwidth = 3;
         pnlInputNhanVien.add(txtDiaChi, gbc);
         txtDiaChi.setFont(new Font("Arial", Font.BOLD, 13));
+        txtDiaChi.setEnabled(false);
         gbc.gridwidth = 1;
 
         // Vai trò và Trạng thái
@@ -131,9 +175,10 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         lblVaiTro.setFont(new Font("Arial", Font.BOLD, 13));
         pnlInputNhanVien.add(lblVaiTro, gbc);
         gbc.gridx = 1;
-        cbVaiTro = new JComboBox<>(new String[]{"Nhân viên", "Quản lý"});
+        cbVaiTro = new JComboBox<>(new String[]{"Chọn vai trò"});
         cbVaiTro.setFont(new Font("Arial", Font.BOLD, 13));
         cbVaiTro.setPreferredSize(new Dimension(getWidth(), 30));
+        cbVaiTro.setEnabled(false);
         pnlInputNhanVien.add(cbVaiTro, gbc);
 
         gbc.gridx = 2;
@@ -144,35 +189,54 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         cbTrangThai = new JComboBox<>(new String[]{"Còn làm", "Nghỉ việc"});
         cbTrangThai.setFont(new Font("Arial", Font.BOLD, 13));
         cbTrangThai.setPreferredSize(new Dimension(getWidth(), 30));
+        cbTrangThai.setEnabled(false);
         pnlInputNhanVien.add(cbTrangThai, gbc);
 
-        //  các nút chức năng
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 4;
-        JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        // panel tài khoản
+        JPanel pnlInputTaiKhoan = new JPanel();
+        pnlInputTaiKhoan.setBorder(BorderFactory.createTitledBorder("Tài khoản nhân viên"));
+        pnlInputTaiKhoan.setPreferredSize(new Dimension(370, getHeight()));
+
+        Box box_InputTaiKhoan = new Box(BoxLayout.Y_AXIS);
+
+        Box box_TaiKhoan = new Box(BoxLayout.Y_AXIS);
+        box_TaiKhoan.setPreferredSize(new Dimension(210, 60));
+        JLabel lblTaiKhoan = new JLabel("Tài khoản:");
+        lblTaiKhoan.setFont(new Font("Arial", Font.BOLD, 13));
+        box_TaiKhoan.add(lblTaiKhoan);
+        box_TaiKhoan.add(Box.createVerticalStrut(10));
+        box_TaiKhoan.add(txtTaiKhoan = new JTextField(15));
+        txtTaiKhoan.setFont(new Font("Arial", Font.BOLD, 13));
+
+        Box box_MatKhau = new Box(BoxLayout.Y_AXIS);
+        box_MatKhau.setPreferredSize(new Dimension(210, 60));
+        JLabel lblMatKhau = new JLabel("Mật khẩu:");
+        lblMatKhau.setFont(new Font("Arial", Font.BOLD, 13));
+        box_MatKhau.add(lblMatKhau);
+        box_MatKhau.add(Box.createVerticalStrut(10));
+        box_MatKhau.add(txtMatKhau = new JPasswordField(15));
+        txtMatKhau.setFont(new Font("Arial", Font.BOLD, 13));
+
+        // Box nút chức năng
+        Box box_ChucNang = new Box(BoxLayout.X_AXIS);
         btnThem = new JButton("Thêm");
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
         btnXoa = new JButton("Xóa");
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
-        btnCapNhat = new JButton("Cập nhật");
-        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi = new JButton("Làm mới");
-        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
 
-        pnlButtons.add(btnThem);
-        pnlButtons.add(Box.createHorizontalStrut(10));
-        pnlButtons.add(btnXoa);
-        pnlButtons.add(Box.createHorizontalStrut(10));
-        pnlButtons.add(btnCapNhat);
-        pnlButtons.add(Box.createHorizontalStrut(10));
-        pnlButtons.add(btnLamMoi);
-        pnlInputNhanVien.add(pnlButtons, gbc);
+        box_ChucNang.add(btnThem);
+        box_ChucNang.add(Box.createHorizontalStrut(30));
+        box_ChucNang.add(btnXoa);
 
-        // panel input tài khoản
-        JPanel pnlInputTaiKhoan = new JPanel(new GridBagLayout());
+        box_InputTaiKhoan.add(Box.createVerticalStrut(10));
+        box_InputTaiKhoan.add(box_TaiKhoan);
+        box_InputTaiKhoan.add(Box.createVerticalStrut(15));
+        box_InputTaiKhoan.add(box_MatKhau);
+        box_InputTaiKhoan.add(Box.createVerticalStrut(20));
+        box_InputTaiKhoan.add(box_ChucNang);
 
-
+        pnlInputTaiKhoan.add(box_InputTaiKhoan);
 
         pnlInput.add(pnlInputNhanVien, BorderLayout.WEST);
         pnlInput.add(pnlInputTaiKhoan, BorderLayout.EAST);
@@ -198,9 +262,108 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel {
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 
         // Sắp xếp bố cục các panel
-        add(pnlInput, BorderLayout.NORTH);
-        add(pnlTable, BorderLayout.CENTER);
+        add(panelTieuDe, BorderLayout.NORTH);
+        add(pnlInput, BorderLayout.CENTER);
+        add(pnlTable, BorderLayout.SOUTH);
+
+        // khỏi tạo
+        nhanVien_dao = new NhanVien_DAO();
+        chucVu_dao = new ChucVu_DAO();
+        dangNhap_dao = new DangNhap_DAO();
+
+        updateTableNhanVien();
+        updateVaiTro();
+
+        // thêm sự kiện
+        tblNhanVien.getSelectionModel().addListSelectionListener(this);
+        btnThem.addActionListener(this);
     }
+
+    // update table
+    public void updateTableNhanVien() throws Exception {
+        ArrayList<NhanVien> dsNV = nhanVien_dao.getAllNhanVien();
+        model.setRowCount(0);
+        for(NhanVien nv : dsNV) {
+            model.addRow(new Object[]{
+                    nv.getMaNV(), nv.getHoNV(), nv.getTenNV(), nv.getNgaySinh(),
+                    nv.isGioiTinh() == true ? "Nam" : "Nữ", nv.getSdt(), nv.getEmail(), nv.getDiaChi(),
+                    nv.getVaiTro().getTenChucVu(), nv.isTrangThai() == true ? "Còn làm" : "Nghỉ việc",
+            });
+        }
+    }
+
+    // update combobox vai trò
+    public void updateVaiTro() {
+        ArrayList<ChucVu> dsCV = chucVu_dao.getAllChucVu();
+        for(ChucVu cv : dsCV) {
+            cbVaiTro.addItem(cv.getTenChucVu());
+        }
+    }
+
+
+    private void fillRow(int row) {
+        txtHoNV.setText(model.getValueAt(row, 1).toString());
+        txtTenNV.setText(model.getValueAt(row, 2).toString());
+        String dateString = model.getValueAt(row, 3).toString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date date = dateFormat.parse(dateString);
+
+            ngaySinhModel.setDate(date.getYear() + 1900, date.getMonth(), date.getDate());
+            ngaySinhModel.setSelected(true);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        cbGioiTinh.setSelectedItem(model.getValueAt(row, 4).toString());
+        txtSoDienThoai.setText(model.getValueAt(row, 5).toString());
+        txtEmail.setText(model.getValueAt(row, 6).toString());
+        txtDiaChi.setText(model.getValueAt(row, 7).toString());
+        cbVaiTro.setSelectedItem(model.getValueAt(row, 8).toString());
+        cbTrangThai.setSelectedItem(model.getValueAt(row, 9).toString());
+
+        String maNV = model.getValueAt(row, 0).toString();
+        TaiKhoan taiKhoan = dangNhap_dao.getTaiKhoanByMaNV(maNV);
+        if(taiKhoan != null) {
+            txtTaiKhoan.setText(taiKhoan.getTaiKhoan());
+            txtMatKhau.setText(taiKhoan.getMatKhau());
+        } else {
+            txtTaiKhoan.setText(model.getValueAt(row, 0).toString());
+            txtMatKhau.setText("");
+        }
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting()) {
+            int row = tblNhanVien.getSelectedRow();
+            if(row >= 0) {
+                fillRow(row);
+            }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if(o.equals(btnThem)) {
+            String taiKhoan = txtTaiKhoan.getText().trim();
+            String matKhau = new String(txtMatKhau.getPassword()).trim();
+            java.sql.Date ngayCapNhat = new java.sql.Date(System.currentTimeMillis());
+
+            if (taiKhoan.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập tài khoản!");
+                txtTaiKhoan.requestFocus();
+            } else if(matKhau.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
+                txtMatKhau.requestFocus();
+            } else {
+                TaiKhoan tk = new TaiKhoan(taiKhoan, matKhau, ngayCapNhat);
+                dangNhap_dao.createTaiKhoan(tk);
+                JOptionPane.showMessageDialog(this,"Thêm tài khoản cho nhân viên có mã " + taiKhoan + " thành công!");
+            }
+        }
+    }
+
 
     // Formatter cho JDatePicker
     public class DateTimeLabelFormatter extends JFormattedTextField.AbstractFormatter {

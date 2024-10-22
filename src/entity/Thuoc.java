@@ -1,4 +1,3 @@
-
 package entity;
 
 import java.sql.Date;
@@ -253,5 +252,4 @@ public class Thuoc {
     public void setDonGiaThuoc(DonGiaThuoc bangGiaSanPham) {
         this.donGiaThuoc = bangGiaSanPham;
     }
-
 }

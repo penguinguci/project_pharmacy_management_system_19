@@ -12,9 +12,9 @@ public class NhaCungCap_DAO {
 
     public NhaCungCap_DAO(){
         list = new ArrayList<NhaCungCap>();
-        try{
+        try {
             list = getAllNhaCungCap();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -42,15 +42,17 @@ public class NhaCungCap_DAO {
             } else {
                 ncc.setEmail(rs.getString(4));
             }
-            list.add(ncc);
+            if(timNhaCungCap(ncc.getMaNCC()) == null){
+                list.add(ncc);
+            }
         }
         return list;
     }
 
-    public NhaCungCap timNhaCungCap(String maNhaCungCap) {
-        for(NhaCungCap ncc : list){
-            if(ncc.getMaNCC().equalsIgnoreCase(maNhaCungCap)){
-                return ncc;
+    public NhaCungCap timNhaCungCap(String maNCC) {
+        for(NhaCungCap x : list) {
+            if(x.getMaNCC().equalsIgnoreCase(maNCC)) {
+                return x;
             }
         }
         return null;

@@ -51,4 +51,3 @@ public class ChiTietHoaDon {
         return soLuong * thuoc.getDonGiaThuoc().getDonGia();
     }
 }
-
