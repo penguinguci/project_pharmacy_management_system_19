@@ -34,7 +34,9 @@ public class DanhMuc_DAO {
             DanhMuc d = new DanhMuc();
             d.setMaDanhMuc(rs.getString(1));
             d.setTenDanhMuc(rs.getString(2));
-            list.add(d);
+            if(timDanhMuc(d.getMaDanhMuc()) == null) {
+                list.add(d);
+            }
         }
         return this.list;
     }

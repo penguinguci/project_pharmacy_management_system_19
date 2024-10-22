@@ -141,8 +141,8 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         Box box3 = Box.createVerticalBox();
         box3.add(btnTimKiem);
         box3.add(Box.createVerticalStrut(35));
-        box3.add(btnSua);
-        box3.add(Box.createVerticalStrut(35));
+//        box3.add(btnSua);
+//        box3.add(Box.createVerticalStrut(35));
         box3.add(btnLamMoi);
         box3.add(Box.createVerticalStrut(30));
 

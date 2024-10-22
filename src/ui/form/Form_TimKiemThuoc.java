@@ -175,8 +175,8 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         Box box3 = Box.createVerticalBox();
         box3.add(btnTimKiem);
         box3.add(Box.createVerticalStrut(35));
-        box3.add(btnSua);
-        box3.add(Box.createVerticalStrut(35));
+//        box3.add(btnSua);
+//        box3.add(Box.createVerticalStrut(35));
         box3.add(btnLamMoi);
         box3.add(Box.createVerticalStrut(30));
 
@@ -234,6 +234,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(DanhMuc x : list) {
             data[i] = x.getTenDanhMuc();
+            i++;
         }
         return data;
     }
@@ -244,6 +245,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(NhaCungCap x : list) {
             data[i] = x.getTenNCC();
+            i++;
         }
         return data;
     }
@@ -254,6 +256,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(NhaSanXuat x : list) {
             data[i] = x.getTenNhaSX();
+            i++;
         }
         return data;
     }
@@ -264,6 +267,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(NuocSanXuat x : list) {
             data[i] = x.getTenNuoxSX();
+            i++;
         }
         return data;
     }

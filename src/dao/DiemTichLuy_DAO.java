@@ -116,6 +116,7 @@ public class DiemTichLuy_DAO {
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
+        int rowsAffected = 0;
         try {
             String sql = "insert into DiemTichLuy values(?, ?, ?, ?)";
             ps = con.getConnection().prepareStatement(sql);
@@ -123,13 +124,17 @@ public class DiemTichLuy_DAO {
             ps.setString(2, dtl.getXepHang());
             ps.setDouble(3, dtl.getDiemTong());
             ps.setDouble(4, dtl.getDiemHienTai());
-            ps.executeUpdate();
+            rowsAffected = ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         } finally {
             con.disconnect();
         }
-        return dtl.getMaDTL();
+        if(rowsAffected > 0 ){
+            return dtl.getMaDTL();
+        } else {
+            return null;
+        }
     }
 
     private String tuTaoMaDiemTichLuy() {

@@ -164,8 +164,8 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
 
         Box box3 = Box.createVerticalBox();
         box3.add(btnTimKiem);
-        box3.add(Box.createVerticalStrut(35));
-        box3.add(btnSua);
+//        box3.add(Box.createVerticalStrut(35));
+//        box3.add(btnSua);
         box3.add(Box.createVerticalStrut(35));
         box3.add(btnLamMoi);
         box3.add(Box.createVerticalStrut(30));
@@ -176,37 +176,6 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         btnTimKiem.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnSua.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnLamMoi.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-//
-//        Box box4 = Box.createVerticalBox();
-//        box4.add(txtDiaChi);
-//        box4.add(Box.createVerticalStrut(20));
-//        box4.add(txtSDT);
-//        box4.add(Box.createVerticalStrut(20));
-//        box4.add(txtEmail);
-//        box4.add(Box.createVerticalStrut(20));
-//        box4.add(new JLabel(""));
-//        box4.add(Box.createVerticalStrut(45));
-//
-//        Box box5 = Box.createVerticalBox();
-//        box5.add(lblGioiTinh);
-//        box5.add(Box.createVerticalStrut(35));
-//        box5.add(lblDiemTichLuy);
-//        box5.add(Box.createVerticalStrut(35));
-//        box5.add(lblXepHang);
-//        box5.add(Box.createVerticalStrut(35));
-//        box5.add(new JLabel(""));
-//        box5.add(Box.createVerticalStrut(30));
-//
-//        Box box6 = Box.createVerticalBox();
-//        box6.add(cbGioiTinh);
-//        box6.add(Box.createVerticalStrut(20));
-//        box6.add(txtDiemTichLuy);
-//        box6.add(Box.createVerticalStrut(20));
-//        box6.add(txtXepHang);
-//        box6.add(Box.createVerticalStrut(20));
-//        box6.add(new JLabel(""));
-//        box6.add(Box.createVerticalStrut(45));
 
         centerPanel.add(Box.createHorizontalGlue());
         centerPanel.add(box1);
@@ -222,31 +191,6 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         botPanel.setBackground(Color.WHITE);
         botPanel.setLayout(new BorderLayout());
 
-//        JPanel eventPanel = new JPanel();
-//        eventPanel.setLayout(new BorderLayout());
-//        eventPanel.setBackground(Color.WHITE);
-//
-//        JPanel searchPanel = new JPanel();
-//        searchPanel.setBackground(Color.white);
-//        searchPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-//
-//        searchPanel.add(txtTimKiem);
-//        searchPanel.add(btnTimKiem);
-//
-//        JPanel buttonPanel = new JPanel();
-//        buttonPanel.setBackground(Color.WHITE);
-//        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-//
-//        buttonPanel.add(btnLamMoi);
-//        buttonPanel.add(new JLabel("     "));
-//        buttonPanel.add(btnSua);
-//        buttonPanel.add(new JLabel("     "));
-//        buttonPanel.add(btnXoa);
-//
-//        eventPanel.add(searchPanel, BorderLayout.WEST);
-//        eventPanel.add(buttonPanel, BorderLayout.CENTER);
-
-        //botPanel.add(eventPanel, BorderLayout.NORTH);
         botPanel.add(scrKhachHang, BorderLayout.CENTER);
 
         //Khoá TextField
