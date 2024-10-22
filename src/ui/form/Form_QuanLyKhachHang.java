@@ -1,5 +1,6 @@
 package ui.form;
 
+import dao.DiemTichLuy_DAO;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -36,6 +37,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
     private KhachHang_DAO kh_dao = new KhachHang_DAO();
     private ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
+    private DiemTichLuy_DAO diemTichLuy_dao = new DiemTichLuy_DAO();
 
     public Form_QuanLyKhachHang() {
         this.setLayout(new BorderLayout());
@@ -411,6 +413,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
                         String sdt = txtSDT.getText().trim();
                         khachHang.setSDT(sdt);
                         khachHang.setTrangThai(true);
+
+
 
                         java.util.Date date = model.getValue();
                         Date sqlDate = new Date(date.getTime());

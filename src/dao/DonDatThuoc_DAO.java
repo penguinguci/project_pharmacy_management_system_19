@@ -141,12 +141,11 @@ public class DonDatThuoc_DAO {
     }
 
     public boolean checkTrung(ArrayList<DonDatThuoc> list, String ma) {
-        for(DonDatThuoc x : list) {
-            if(x.getMaDon().equalsIgnoreCase(ma)){
+        for (DonDatThuoc x : list) {
+            if (x.getMaDon().equalsIgnoreCase(ma)) {
                 return false;
             }
         }
         return true;
     }
-
 }

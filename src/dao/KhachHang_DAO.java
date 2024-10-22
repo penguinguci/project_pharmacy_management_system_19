@@ -386,9 +386,11 @@ public class KhachHang_DAO {
                 String hoTenKH = x.getHoKH() + " " + x.getTenKH();
                 String[] tach = hoTenKH.split("\\s+"); // Cắt từng từ trong họ tên khách hàng
                 for(String s : tach) {
-                    if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
-                        if(checkTrung(listKH, x.getMaKH())){
-                            listKH.add(x);
+                    if(s.length()>data.length()) {
+                        if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                            if(checkTrung(listKH, x.getMaKH())){
+                                listKH.add(x);
+                            }
                         }
                     }
                 }

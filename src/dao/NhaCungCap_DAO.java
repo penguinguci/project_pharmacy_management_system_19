@@ -1,6 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.KhachHang;
 import entity.NhaCungCap;
 
 import java.sql.PreparedStatement;
@@ -56,5 +57,65 @@ public class NhaCungCap_DAO {
             }
         }
         return null;
+    }
+
+    public boolean checkTrung(ArrayList<NhaCungCap> list,String maNCC) {
+        for(NhaCungCap x : list) {
+            if(x.getMaNCC().equalsIgnoreCase(maNCC)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public ArrayList<NhaCungCap> timNCCVipProMax(String data) {
+        ArrayList<NhaCungCap> listNCC = new ArrayList<>();
+        int soKiTu = data.length();
+        String[] tachData = data.split("\\s+");
+        if(tachData.length > 1 ) {
+            for(NhaCungCap s : list) {
+                String tenNCC = s.getTenNCC();
+                String[] tachTen = tenNCC.split("\\s+"); // Cắt từng từ trong tên
+                for(String x : tachTen) {
+                    for(String y : tachData) {
+                        if(x.equalsIgnoreCase(y)) {
+                            if(checkTrung(listNCC, s.getMaNCC())){
+                                listNCC.add(s);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            for(NhaCungCap x : list) {
+                String tenNCC = x.getTenNCC();
+                String[] tach = tenNCC.split("\\s+"); // Cắt từng từ trong tên NCC
+                for(String s : tach) {
+                    if(s.length()>=data.length()) {
+                        if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                            if(checkTrung(listNCC, x.getMaNCC())){
+                                listNCC.add(x);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return listNCC;
+    }
+
+    public ArrayList<NhaCungCap> timNCCTheoEmail(String data) {
+        ArrayList<NhaCungCap> listNCC = new ArrayList<>();
+        int soLuong = data.length();
+        for(NhaCungCap x : list) {
+            String email = x.getEmail().substring(0, soLuong);
+            if(email.equalsIgnoreCase(data)) {
+                if(checkTrung(listNCC, x.getMaNCC())) {
+                    listNCC.add(x);
+                }
+            }
+        }
+        return listNCC;
     }
 }

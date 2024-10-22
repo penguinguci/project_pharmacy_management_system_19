@@ -598,11 +598,13 @@ public class Thuoc_DAO {
                 String[] tachTen = tenThuoc.split("\\s+");// Cắt từng từ trong họ tên
                 if(tachTen.length > 1){
                     for(String s : tachTen) {
-                        if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
-                            if(checkTrung(listThuoc, x.getMaThuoc())){
-                                listThuoc.add(x);
+                        if(s.length()>data.length()) {
+                            if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                                if(checkTrung(listThuoc, x.getMaThuoc())){
+                                    listThuoc.add(x);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 } else {
@@ -698,6 +700,27 @@ public class Thuoc_DAO {
             }
         }
         return list;
+    }
+
+    public String tuSinhSoHieu() {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 0;
+        try {
+            String sql = "select * from Thuoc";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()){   // Đếm số dòng của bảng thuốc trong csdl
+                count++;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        count+=1; // Tăng lên 1 đơn vị so với số hiệu cuối cùng trong csdl
+        return "S0000"+count;
     }
 
 }
