@@ -500,6 +500,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnLuuDonHang.addActionListener(this);
         btnLamMoi.addActionListener(this);
         cbxDanhMuc.addActionListener(this);
+        txtTimKiem.getDocument().addDocumentListener(this);
 
         //Lấy dữ liệu tìm kiếm khách hàng
         kh_dao = new KhachHang_DAO();
@@ -541,6 +542,20 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         panelDSThuoc.repaint();
     }
 
+    // load DS thuốc khi tìm kiếm thuốc khi nhập ký tự mã thuốc
+    public void loadThuocTheoKyTuTenVaMaTHuoc() throws Exception {
+        String kyTu = txtTimKiem.getText().toString().trim();
+        ArrayList<Thuoc> dsThuoc = thuocDao.timKiemThuocTheoKyTuTenVaMaTHuoc(kyTu);
+        panelDSThuoc.removeAll();
+        for(Thuoc thuoc : dsThuoc) {
+            ThuocPanel thuocPanel = new ThuocPanel(thuoc);
+            panelDSThuoc.add(thuocPanel);
+        }
+
+        panelDSThuoc.revalidate();
+        panelDSThuoc.repaint();
+    }
+
     // load data danh mục
     public void loadDataDanhMuc() throws Exception {
         dm_dao = new DanhMuc_DAO();
@@ -563,16 +578,31 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     @Override
     public void insertUpdate(DocumentEvent e) {
         updateTienThoi();
+        try {
+            loadThuocTheoKyTuTenVaMaTHuoc();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         updateTienThoi();
+        try {
+            loadThuocTheoKyTuTenVaMaTHuoc();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
         updateTienThoi();
+        try {
+            loadThuocTheoKyTuTenVaMaTHuoc();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 
@@ -581,7 +611,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         JLabel imageLabel, maThuocLabel, tenThuocLabel, giaLabel;
         JSpinner spinnerSoLuong;
         JComboBox<String> cboDonViThuoc;
-        String[] donViTinh = {"Viên", "Vỉ", "Hộp"};
+        String[] donViTinh = {"Chọn"};
         RoundedButton btnThemThuoc;
         Thuoc thuoc;
 
@@ -627,7 +657,8 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             add(tenThuocLabel, gbc);
 
             // Giá thuốc
-            giaLabel = new JLabel("Giá: " + String.format("%,.0f", thuoc.getDonGiaThuoc().getDonGia()) + "đ");
+//            giaLabel = new JLabel("Giá: " + String.format("%,.0f", thuoc.getDonGiaThuoc().getDonGia()) + "đ");
+            giaLabel = new JLabel();
             giaLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
             giaLabel.setForeground(new Color(0, 153, 51));
             gbc.gridy = 2;
@@ -658,9 +689,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.anchor = GridBagConstraints.WEST;
             add(lblDonVi, gbc);
 
-            cboDonViThuoc = new JComboBox<>(donViTinh);
+            cboDonViThuoc = new JComboBox<>();
             cboDonViThuoc.setFont(new Font("Tahoma", Font.PLAIN, 14));
-            cboDonViThuoc.setPreferredSize(new Dimension(70, 20));
+            cboDonViThuoc.setPreferredSize(new Dimension(70, 22));
             gbc.gridx = 2;
             add(cboDonViThuoc, gbc);
 
@@ -685,6 +716,23 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
             // add sự kiện
             btnThemThuoc.addActionListener(this);
+            cboDonViThuoc.addActionListener(this);
+
+            // update data cho combobox đơn vị
+            updateDataDonViTinhVaGia(thuoc.getMaThuoc());
+        }
+
+        // update data cho combobox đơn vị
+        public void updateDataDonViTinhVaGia(String maThuoc) {
+            ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(maThuoc);
+            cboDonViThuoc.removeAll();
+            for (DonGiaThuoc donGiaThuoc : dsDonGiaThuoc) {
+                cboDonViThuoc.addItem(donGiaThuoc.getDonViTinh());
+            }
+            String idThuoc = thuoc.getMaThuoc();
+            String donViTinh = cboDonViThuoc.getSelectedItem().toString();
+            double giaThuoc = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(idThuoc, donViTinh);
+            giaLabel.setText("Giá: " + String.format("%,.0f",  giaThuoc) + "đ");
         }
 
         // sự kiện cho giao diện panel
@@ -735,6 +783,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+            } else if (o == cboDonViThuoc) {
+                String maThuoc = thuoc.getMaThuoc();
+                String donViTinh = cboDonViThuoc.getSelectedItem().toString();
+                double giaThuoc = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(maThuoc, donViTinh);
+                giaLabel.setText("Giá: " + String.format("%,.0f", giaThuoc) + "đ");
             }
         }
 
@@ -913,7 +966,17 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         } else if(o == btnHuy) {
             xoaGioHang();
         } else if(o == btnLuuDonHang) {
-
+            if (txtTimKiemKH.getText().toString().trim().equals("")) {
+                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang();
+                dialog.add(pnlThemKhachHang);
+                dialog.setSize(700,450);
+                dialog.setMaximumSize(new Dimension(700,450));
+                dialog.setLocationRelativeTo(null);
+                dialog.setResizable(false);
+                dialog.setVisible(true);
+            }
         } else if (o == btnLamMoi) {
             xoaGioHang();
         } else if (o == cbxDanhMuc) {

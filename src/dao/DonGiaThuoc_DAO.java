@@ -88,4 +88,72 @@ public class DonGiaThuoc_DAO {
         }
         return donGiaThuoc;
     }
+
+    public ArrayList<DonGiaThuoc> layDonGiaThuocTheoMaThuoc(String maThuoc) {
+        Connection con = null;
+        CallableStatement callableStatement = null;
+        ResultSet rs = null;
+        ArrayList<DonGiaThuoc> danhSachDonGia = new ArrayList<>();
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "{call layDonGiaThuocTheoMaThuoc(?)}";
+            callableStatement = con.prepareCall(sql);
+            callableStatement.setString(1, maThuoc);
+            rs = callableStatement.executeQuery();
+
+            while (rs.next()) {
+                String maDonGia = rs.getString("maDonGia");
+                Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+                String donViTinh = rs.getString("donViTinh");
+                double donGia = rs.getDouble("donGia");
+
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+                danhSachDonGia.add(donGiaThuoc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (callableStatement != null) callableStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return danhSachDonGia;
+    }
+
+    // lấy giá thuốc theo mã thuốc và đơn vị tính
+    public double layGiaThuocTheoMaVaDV(String maThuoc, String donViTinh) {
+        Connection con = null;
+        CallableStatement callableStatement = null;
+        ResultSet rs = null;
+        double donGia = 0;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "{call layGiaThuocTheoMaVaDV(?, ?)}";
+            callableStatement = con.prepareCall(sql);
+            callableStatement.setString(1, maThuoc);
+            callableStatement.setString(2, donViTinh);
+            rs = callableStatement.executeQuery();
+
+            if (rs.next()) {
+                donGia = rs.getDouble("donGia");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (callableStatement != null) callableStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return donGia;
+    }
 }

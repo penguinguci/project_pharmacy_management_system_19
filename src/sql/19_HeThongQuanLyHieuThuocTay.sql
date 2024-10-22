@@ -723,6 +723,39 @@ END
 GO
 
 
+-- tìm kiếm thuốc theo mã thuốc, theo tên
+CREATE PROCEDURE TimKiemThuocTheoKyTuTenVaMaThuoc
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Thuoc
+    WHERE (tenThuoc LIKE '%' + @kyTu + '%') OR (maThuoc LIKE '%' + @kyTu + '%');
+END;
+GO
+
+
+-- lấy các đơn vị tính và giá của thuốc
+CREATE PROCEDURE layDonGiaThuocTheoMaThuoc @maThuoc VARCHAR(10)
+AS 
+BEGIN
+	SELECT *
+	FROM DonGiaThuoc 
+	WHERE maThuoc = @maThuoc
+END
+GO
+
+
+-- lấy giá bán thuốc theo mã thuốc và đơn vị
+CREATE PROCEDURE layGiaThuocTheoMaVaDV @maThuoc VARCHAR(10), @donViTinh NVARCHAR(50)
+AS
+BEGIN
+	SELECT donGia
+	FROM DonGiaThuoc
+	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh
+END
+GO
+
 
 
 -- --------- TRIGGER

@@ -111,7 +111,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         btnHuy.setPreferredSize(new Dimension(100, 35));
 
         btnLamMoi = new JButton("Làm mới");
-        btnLamMoi.setBackground(new Color(135, 244, 150));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
