@@ -19,18 +19,59 @@ public class ChiTietHoaDon_DAO {
     public ChiTietHoaDon_DAO() {
         list = new ArrayList<ChiTietHoaDon>();
         try {
-            thuoc_dao = new Thuoc_DAO();
-            listThuoc = new ArrayList<Thuoc>();
-            listThuoc = thuoc_dao.getAllThuoc();
-            hoaDon_dao = new HoaDon_DAO();
-            listHD = new ArrayList<HoaDon>();
-            listHD = hoaDon_dao.getAllHoaDon();
+            list = getAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<ChiTietHoaDon> getCTHDForHD(String maHD) throws SQLException {
+    public ArrayList<ChiTietHoaDon> getAll() {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            thuoc_dao = new Thuoc_DAO();
+            hoaDon_dao = new HoaDon_DAO();
+            listThuoc = thuoc_dao.getAllThuoc();
+            listHD = hoaDon_dao.getAllHoaDon();
+            String sql = "select * from ChiTietHoaDon";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ChiTietHoaDon cthd = new ChiTietHoaDon();
+
+                HoaDon hd = new HoaDon();
+                hd = hoaDon_dao.timHoaDon(rs.getString("maHD"));
+                cthd.setHoaDon(hd);
+
+                Thuoc t = new Thuoc();
+                t = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
+                cthd.setThuoc(t);
+
+                cthd.setDonViTinh(rs.getString("donViTinh"));
+                cthd.setSoLuong(rs.getInt("soLuong"));
+
+
+                list.add(cthd);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+//    public boolean checkTrung(String maHD, String soHieuThuoc) {
+//        for(ChiTietHoaDon x : list) {
+//            if(x.getHoaDon().getMaHD().equalsIgnoreCase(maHD) && x.getThuoc().getSoHieuThuoc().equalsIgnoreCase(soHieuThuoc)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
+    public ArrayList<ChiTietHoaDon> getCTHDForHD(String maHD) throws SQLException, Exception {
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
@@ -40,6 +81,9 @@ public class ChiTietHoaDon_DAO {
         ps = con.getConnection().prepareStatement(sql);
         ps.setString(1, maHD);
         rs = ps.executeQuery();
+        thuoc_dao = new Thuoc_DAO();
+        listThuoc = thuoc_dao.getAllThuoc();
+        listHD = hoaDon_dao.getAllHoaDon();
         ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<ChiTietHoaDon>();
         while(rs.next()) {
             ChiTietHoaDon cthd = new ChiTietHoaDon();
@@ -221,4 +265,38 @@ public class ChiTietHoaDon_DAO {
         return thanhTien;
     }
 
+    public ChiTietHoaDon getOne(String maHD, String soHieuThuoc) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ChiTietHoaDon cthd = new ChiTietHoaDon();
+        try {
+            thuoc_dao = new Thuoc_DAO();
+            hoaDon_dao = new HoaDon_DAO();
+            listThuoc = thuoc_dao.getAllThuoc();
+            listHD = hoaDon_dao.getAllHoaDon();
+            String sql = "select * from ChiTietHoaDon where maHD = ? and soHieuThuoc = ?";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, maHD);
+            ps.setString(2, soHieuThuoc);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                HoaDon hd = new HoaDon();
+                hd = hoaDon_dao.timHoaDon(rs.getString("maHD"));
+                cthd.setHoaDon(hd);
+
+                Thuoc t = new Thuoc();
+                t = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
+                cthd.setThuoc(t);
+
+                cthd.setDonViTinh(rs.getString("donViTinh"));
+                cthd.setSoLuong(rs.getInt("soLuong"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cthd;
+    }
 }

@@ -153,6 +153,18 @@ public class HoaDon_DAO {
         return null;
     }
 
+    public ArrayList<HoaDon> timHoaDonTheoNgayLap(Date date) {
+        ArrayList<HoaDon> list = new ArrayList<>();
+        String ngay = date.toString();
+        for(HoaDon x : this.list) {
+            String ngay2 = x.getNgayLap().toString();
+            if(ngay.equalsIgnoreCase(ngay2)) {
+                list.add(x);
+            }
+        }
+        return list;
+    }
+
     public double getTongTienFromDataBase(String maHD) {
         ConnectDB con  = new ConnectDB();
         con.connect();
@@ -558,5 +570,39 @@ public class HoaDon_DAO {
         return doanhThuTheoNgayTrongTuan;
     }
 
+    public boolean capNhatHoaDonBiDoiTra(String maHD) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "update HoaDon set trangThai = 0 where maHD = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, maHD);
+            if(ps.executeUpdate() > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps!=null) ps.close();
+                if (con!=null) con.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
+    public ArrayList<HoaDon> reload() {
+        try {
+            list.clear();
+            list = getAllHoaDon();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
