@@ -458,7 +458,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         if(o.equals(btnAdd)){
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm thuốc", true);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            Form_NhapThuoc pnlThemThuoc = new Form_NhapThuoc();
+            Form_ThemThuoc pnlThemThuoc = new Form_ThemThuoc();
             dialog.add(pnlThemThuoc);
             dialog.setSize(800,800);
             dialog.setLocationRelativeTo(null);

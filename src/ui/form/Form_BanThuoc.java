@@ -518,7 +518,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     // method để load danh sách thuốc
     public void loadThuocData() throws Exception {
         ArrayList<Thuoc> listThuoc = thuocDao.getAllThuoc();
-
+        panelDSThuoc.removeAll();
         for(Thuoc thuoc : listThuoc) {
             ThuocPanel thuocPanel = new ThuocPanel(thuoc);
             panelDSThuoc.add(thuocPanel);
@@ -882,6 +882,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         } else if(o == btnLamMoi) {
             try {
                 loadThuocData();
+                cbxDanhMuc.setSelectedIndex(0);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
