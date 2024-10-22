@@ -7,40 +7,55 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HoaDon_DAO {
-    public HoaDon_DAO() {
+    private ArrayList<HoaDon> list;
+    private KhachHang_DAO khachHang_dao;
+    private NhanVien_DAO nhanVien_dao;
+    private Thue_DAO thue_dao;
 
+    public HoaDon_DAO() {
+        list = new ArrayList<HoaDon>();
+        khachHang_dao = new KhachHang_DAO();
+        nhanVien_dao = new NhanVien_DAO();
+        thue_dao = new Thue_DAO();
     }
 
-    public ArrayList<HoaDon> getAllKhachHang() {
-        ArrayList<HoaDon> dsHD = new ArrayList<HoaDon>();
-        try {
-            ConnectDB.getInstance();
-            Connection con = ConnectDB.getConnection();
+    public ArrayList<HoaDon> getAllHoaDon() throws SQLException {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "select * from HoaDon where trangThai = 1";
+        ps = con.getConnection().prepareStatement(sql);
+        rs = ps.executeQuery();
+        while(rs.next()){
+            HoaDon hd = new HoaDon();
+            hd.setMaHD(rs.getString("maHD"));
 
-            String sql = "Select * from KhachHang order by maKH";
-            Statement statement = con.createStatement();
+            KhachHang kh = new KhachHang();
+            kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+            hd.setKhachHang(kh);
 
-            ResultSet rs = statement.executeQuery(sql);
+            NhanVien nv = new NhanVien();
+            nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
+            hd.setNhanVien(nv);
 
-            while (rs.next()) {
-               String maHD = rs.getString("maHD");
-               String hinhThucThanhToan = rs.getString("hinhThucThanhToan");
-               KhachHang khachHang = new KhachHang(rs.getString("maKhachHang"));
-               NhanVien nhanVien = new NhanVien(rs.getString("maNhanVien"));
-               Thue thue = new Thue(rs.getString("maThue"));
-               Date ngayLap = rs.getDate("ngayLap");
-               Boolean trangThai = rs.getBoolean("trangThai");
+            Thue thue = new Thue();
+            thue = thue_dao.timThue(rs.getString("maThue"));
+            hd.setThue(thue);
 
-               HoaDon hoaDon = new HoaDon(maHD, hinhThucThanhToan, khachHang, nhanVien, thue, ngayLap, trangThai);
-               dsHD.add(hoaDon);
+            hd.setNgayLap(rs.getDate("ngayLap"));
+            hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
+            hd.setTrangThai(rs.getBoolean("trangThai"));
+
+            if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
+                this.list.add(hd);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return dsHD;
+        return this.list;
     }
 
     public boolean create(HoaDon hoaDon, ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai) throws SQLException {
