@@ -1,7 +1,6 @@
 package ui.form;
 
-import dao.KeThuoc_DAO;
-import dao.Thuoc_DAO;
+import dao.*;
 import entity.*;
 import org.jdatepicker.JDateComponentFactory;
 import org.jdatepicker.JDatePicker;
@@ -45,7 +44,6 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     public JLabel lblUsageDetails;
     public JLabel lblInforProductDetails;
     public JLabel lblSearch;
-    public JComboBox<String> cmbKhuyenMai;
     public JLabel lblPageInfo;
     public JLabel lblCongDung;
     public JTextArea txtCongDung;
@@ -81,6 +79,10 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     public int heightScreen ;
     public KeThuoc_DAO ke_DAO;
     public KeThuoc ke;
+    public ChuongTrinhKhuyenMai_DAO km_DAO;
+    public NhaSanXuat_DAO nsx_DAO;
+    public DanhMuc_DAO dm_DAO;
+    public NhaCungCap_DAO ncc_DAO;
 
     public Form_QuanLyThuoc() throws Exception {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -123,20 +125,20 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         txtSearch = new JTextField(25);
         txtSearch.setPreferredSize(new Dimension(30, 25));
 
-        String[] listKhuyenMai = {"Khuyến mãi 10%","Khuyến mãi 8%"};
-        cmbKhuyenMai = new JComboBox<>(listKhuyenMai);
-
         // ComboBox Nhà sản xuất
-        String[] listNhaSanXuat = {"Nhà sản xuất","Nhà sản xuaất 1"};
-        cmbNhaSanXuat = new JComboBox<>(listNhaSanXuat);
+        cmbNhaSanXuat = new JComboBox<>();
+        cmbNhaSanXuat.addItem("Nhà sản xuất");
+        loadComboBoxNhaSX();
 
         // ComboBox Nhà cung cấp
-        String[] listNhaCungCap = {"Công ty Dược A","Công ty Dược B"};
-        cmbNhaCungCap = new JComboBox<>(listNhaCungCap);
+        cmbNhaCungCap = new JComboBox<>();
+        cmbNhaCungCap.addItem("Nhà cung cấp");
+        loadComboBoxNhaCC();
 
         // ComboBox Danh mục
-        String[] listDanhMuc = {"Danh mục","Đau đầu","Trĩ"};
-        cmbDanhMuc = new JComboBox<>(listDanhMuc);
+        cmbDanhMuc = new JComboBox<>();
+        cmbDanhMuc.addItem("Danh mục");
+        loadComboBoxDanhMuc();
 
         // Add product
         ImageIcon iconAdd = new ImageIcon("images/add.png");
@@ -184,7 +186,6 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
 
         pOption.add(lblSearch);
         pOption.add(txtSearch);
-        pOption.add(cmbKhuyenMai);
         pOption.add(cmbNhaSanXuat);
         pOption.add(cmbNhaCungCap);
         pOption.add(cmbDanhMuc);
@@ -373,8 +374,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         //
         gbc.gridx = 0; gbc.gridy = 0; pInforDetail.add(lblInforProductDetails, gbc);
         gbc.gridx = 0; gbc.gridy = 1; pInforDetail.add(pnlTenThuoc, gbc);
-        gbc.gridx = 1; gbc.gridy = 1; pInforDetail.add(pnlHSD, gbc);
-        gbc.gridx = 2; gbc.gridy = 1; pInforDetail.add(pnlNgaySanXuat, gbc);
+        gbc.gridx = 1; gbc.gridy = 1; pInforDetail.add(pnlNgaySanXuat, gbc);
+        gbc.gridx = 2; gbc.gridy = 1; pInforDetail.add(pnlHSD, gbc);
         gbc.gridx = 0; gbc.gridy = 2; pInforDetail.add(pnlKeThuoc, gbc);
         gbc.gridx = 1; gbc.gridy = 2; pInforDetail.add(pnlBaoQuan, gbc);
         gbc.gridx = 2; gbc.gridy = 2; pInforDetail.add(pnlHamLuong, gbc);
@@ -490,7 +491,42 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public void loadComboBoxNhaSX(){
+        try {
+            nsx_DAO = new NhaSanXuat_DAO();
+            ArrayList<NhaSanXuat> listNhaSX = nsx_DAO.getAllNhaSanXuat();
+            for(NhaSanXuat nsx : listNhaSX){
+                cmbNhaSanXuat.addItem(nsx.getTenNhaSX());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxNhaCC(){
+        try {
+            ncc_DAO = new NhaCungCap_DAO();
+            ArrayList<NhaCungCap> listNCC = ncc_DAO.getAllNhaCungCap();
+            for(NhaCungCap ncc : listNCC){
+                cmbNhaCungCap.addItem(ncc.getTenNCC());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxDanhMuc(){
+        try {
+            dm_DAO = new DanhMuc_DAO();
+            ArrayList<DanhMuc> listDanhMuc = dm_DAO.getAllDanhMuc();
+            for(DanhMuc dm : listDanhMuc){
+                cmbDanhMuc.addItem(dm.getTenDanhMuc());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

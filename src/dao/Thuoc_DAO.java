@@ -442,8 +442,11 @@ public class Thuoc_DAO {
                 String thanhPhan = rs.getString("thanhPhan");
                 String donViTinh = bangGiaSanPham.getDonViTinh();
                 double giaBan = bangGiaSanPham.getDonGia();
+                boolean trangThai = rs.getBoolean("trangThai");
                 Object[] rowData = {maThuoc,soHieuThuoc,tenThuoc,danhMuc.getTenDanhMuc(),nhaCungCap.getTenNCC(),nuocSanXuat.getTenNuoxSX(),soLuongCon,thanhPhan,donViTinh,giaBan};
-                rowsDataList.add(rowData);
+                if(trangThai == true){
+                    rowsDataList.add(rowData);
+                }
             }
 
             rs.close();
