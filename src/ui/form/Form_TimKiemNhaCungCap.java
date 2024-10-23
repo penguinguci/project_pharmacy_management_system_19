@@ -33,7 +33,7 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
 
         //Label
         lblTitle = new JLabel("Tìm kiếm nhà cung cấp", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
 
         lblTen = new JLabel("Tên nhà cung cấp", JLabel.CENTER);
         lblEmail = new JLabel("Email", JLabel.CENTER);
@@ -68,6 +68,9 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         String[] colsNameNCC = {"Mã nhà cung cấp", "Tên nhà cung cấp", "Email", "Địa chỉ"};
         dtmNCC = new DefaultTableModel(colsNameNCC, 0);
         tabNCC = new JTable(dtmNCC);
+        tabNCC.setRowHeight(30);
+        tabNCC.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrNCC = new JScrollPane(tabNCC);
         scrNCC.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabNCC.setBackground(Color.WHITE);
@@ -122,7 +125,7 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         centerPanel.add(box3);
         centerPanel.add(Box.createHorizontalGlue());
 
-        centerPanel.setBorder(BorderFactory.createTitledBorder("Thông tin NCC"));
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Thông tin Nhà cung cấp" ));
 
         //Tạo botPanel
         JPanel botPanel = new JPanel();

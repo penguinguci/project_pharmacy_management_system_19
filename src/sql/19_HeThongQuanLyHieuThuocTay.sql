@@ -507,7 +507,9 @@ CREATE PROCEDURE getDSChiTietHD @maHD VARCHAR(10)
 AS
 BEGIN
 	SELECT *
-	FROM ChiTietHoaDon
+	FROM ChiTietHoaDon cthd
+	JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
+	JOIN DonGiaThuoc dgt ON t.maDonGia = dgt.maDonGia
 	WHERE maHD = @maHD
 END
 GO
@@ -889,3 +891,25 @@ BEGIN
 END;
 GO
 
+
+-- cập nhật số lượng thuốc sau khi thanh toán thành công
+CREATE TRIGGER trg_UpdateSoLuongThuoc
+ON HoaDon
+AFTER UPDATE
+AS
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        WHERE i.trangThai = 1
+    )
+    BEGIN
+        UPDATE t
+        SET t.soLuongCon = t.soLuongCon - cthd.soLuong
+        FROM Thuoc t
+        INNER JOIN ChiTietHoaDon cthd ON t.maThuoc = cthd.maThuoc
+        INNER JOIN inserted i ON i.maHD = cthd.maHD
+        WHERE i.trangThai = 1;  
+    END
+END;
+GO
