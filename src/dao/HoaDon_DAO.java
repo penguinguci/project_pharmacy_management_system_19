@@ -605,4 +605,12 @@ public class HoaDon_DAO {
         }
         return list;
     }
+
+    public String generateHoaDonID() {
+        LocalDateTime now = LocalDateTime.now();
+        String timePart = now.format(DateTimeFormatter.ofPattern("HHmm")); // Lấy giờ, phút, giây (4 ký tự)
+        String randomPart = String.format("%04d", (int) (Math.random() * 10000)); // Tạo số ngẫu nhiên 4 chữ số
+        String hoaDonID = "HD" + timePart + randomPart;
+        return hoaDonID;
+    }
 }
