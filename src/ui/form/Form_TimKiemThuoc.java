@@ -51,7 +51,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
 
         //Label
         lblTitle = new JLabel("TÌM KIẾM THUỐC", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
 
         lblTen = new JLabel("Tên thuốc", JLabel.CENTER);
         lblDanhMuc = new JLabel("Danh mục", JLabel.CENTER);
@@ -116,6 +116,9 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         String[] colsNameThuoc = {"Số hiệu thuốc", "Mã thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nhà sản xuất", "Nước sản xuất", "Ngày sản xuất", "Hạn sử dụng", "Số lượng còn", "Đơn vị tính","Đơn giá"};
         dtmThuoc = new DefaultTableModel(colsNameThuoc, 0);
         tabThuoc = new JTable(dtmThuoc);
+        tabThuoc.setRowHeight(30);
+        tabThuoc.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrThuoc = new JScrollPane(tabThuoc);
         scrThuoc.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabThuoc.setBackground(Color.WHITE);
@@ -172,8 +175,8 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         Box box3 = Box.createVerticalBox();
         box3.add(btnTimKiem);
         box3.add(Box.createVerticalStrut(35));
-        box3.add(btnSua);
-        box3.add(Box.createVerticalStrut(35));
+//        box3.add(btnSua);
+//        box3.add(Box.createVerticalStrut(35));
         box3.add(btnLamMoi);
         box3.add(Box.createVerticalStrut(30));
 
@@ -231,6 +234,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(DanhMuc x : list) {
             data[i] = x.getTenDanhMuc();
+            i++;
         }
         return data;
     }
@@ -241,6 +245,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(NhaCungCap x : list) {
             data[i] = x.getTenNCC();
+            i++;
         }
         return data;
     }
@@ -251,6 +256,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(NhaSanXuat x : list) {
             data[i] = x.getTenNhaSX();
+            i++;
         }
         return data;
     }
@@ -261,6 +267,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         int i = 1;
         for(NuocSanXuat x : list) {
             data[i] = x.getTenNuoxSX();
+            i++;
         }
         return data;
     }

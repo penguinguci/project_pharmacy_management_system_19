@@ -1,5 +1,6 @@
 package ui.form;
 
+import dao.DiemTichLuy_DAO;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -31,8 +33,11 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
 
+    private SqlDateModel model;
+
     private KhachHang_DAO kh_dao = new KhachHang_DAO();
     private ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
+    private DiemTichLuy_DAO diemTichLuy_dao = new DiemTichLuy_DAO();
 
     public Form_QuanLyKhachHang() {
         this.setLayout(new BorderLayout());
@@ -41,7 +46,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         //Tạo và định dạng các thành phần trong Form
         //Label
         lblTitle = new JLabel("Quản lý khách hàng", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblMa = new JLabel("Mã khách hàng");
         lblHo = new JLabel("Họ khách hàng");
         lblTen = new JLabel("Tên khách hàng   ");
@@ -107,6 +112,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Xếp hạng"};
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
         tabKhachHang = new JTable(dtmKhachHang);
+        tabKhachHang.setRowHeight(30);
+        tabKhachHang.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrKhachHang = new JScrollPane(tabKhachHang);
         scrKhachHang.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabKhachHang.setBackground(Color.WHITE);
@@ -117,7 +125,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
         // DatePicker
         // Model cho JDatePicker
-        SqlDateModel model = new SqlDateModel();
+        model = new SqlDateModel();
         Properties properties = new Properties();
         properties.put("text.today", "Today");
         properties.put("text.month", "Month");
@@ -330,62 +338,107 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             }
         }
         if(e.getSource().equals(btnThem)) {
-            boolean gioiTinh;
-            if(cbGioiTinh.getSelectedItem() == "Nam"){
-                gioiTinh = true;
-            } else {
-                gioiTinh = false;
-            }
-            KhachHang khachHang = new KhachHang();
-            khachHang.setHoKH(txtHo.getText().trim());
-            khachHang.setTenKH(txtTen.getText().trim());
-            khachHang.setGioiTinh(gioiTinh);
-            khachHang.setEmail(txtEmail.getText().trim());
-            khachHang.setDiaChi(txtDiaChi.getText().trim());
-            String sdt = txtSDT.getText().trim();
-            khachHang.setSDT(sdt);
-            khachHang.setTrangThai(true);
-            khachHang.setNgaySinh(null);
-            try {
-                if(!kh_dao.themKhachHang(khachHang)){
-                    JOptionPane.showMessageDialog(this, "Thêm không thành công!");
+            if(regex()) {
+                if(cbGioiTinh.getSelectedIndex()!=0) {
+                    if(model.isSelected()) {
+                        boolean gioiTinh;
+                        if(cbGioiTinh.getSelectedItem() == "Nam"){
+                            gioiTinh = true;
+                        } else {
+                            gioiTinh = false;
+                        }
+                        KhachHang khachHang = new KhachHang();
+                        khachHang.setMaKH(txtMa.getText().trim());
+                        khachHang.setHoKH(txtHo.getText().trim());
+                        khachHang.setTenKH(txtTen.getText().trim());
+                        khachHang.setGioiTinh(gioiTinh);
+                        if(txtEmail.getText().trim().equals("")) {
+                            khachHang.setEmail(null);
+                        } else {
+                            khachHang.setEmail(txtEmail.getText().trim());
+                        }
+                        if(txtDiaChi.getText().trim().equals("")){
+                            khachHang.setDiaChi(null);
+                        } else {
+                            khachHang.setDiaChi(txtDiaChi.getText().trim());
+                        }
+                        String sdt = txtSDT.getText().trim();
+                        khachHang.setSDT(sdt);
+                        khachHang.setTrangThai(true);
+
+                        java.util.Date date = model.getValue();
+                        Date sqlDate = new Date(date.getTime());
+                        khachHang.setNgaySinh(sqlDate);
+                        try {
+                            if(kh_dao.themKhachHang(khachHang)){
+                                JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                                clearTable();
+                                loadDataTable(getDataKhachHang());
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Thêm không thành công!");
+                            }
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this,"Chưa chọn ngày sinh");
+                    }
                 } else {
-                    clearTable();
-                    loadDataTable(getDataKhachHang());
-                    JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                    JOptionPane.showMessageDialog(this, "Chưa chọn giới tính");
                 }
-            } catch (Exception e1) {
-                e1.printStackTrace();
             }
         }
         if(e.getSource().equals(btnSua)) {
-            boolean gioiTinh;
-            if(cbGioiTinh.getSelectedItem() == "Nam"){
-                gioiTinh = true;
-            } else {
-                gioiTinh = false;
-            }
-            KhachHang khachHang = new KhachHang();
-            khachHang.setMaKH(txtMa.getText().trim());
-            khachHang.setHoKH(txtHo.getText().trim());
-            khachHang.setTenKH(txtTen.getText().trim());
-            khachHang.setGioiTinh(gioiTinh);
-            khachHang.setEmail(txtEmail.getText().trim());
-            khachHang.setDiaChi(txtDiaChi.getText().trim());
-            String sdt = txtSDT.getText().trim();
-            khachHang.setSDT(sdt);
-            khachHang.setTrangThai(true);
-            khachHang.setNgaySinh(null);
-            try {
-                if(!kh_dao.suaKhachHang(khachHang)){
-                    JOptionPane.showMessageDialog(this, "Sửa không thành công!");
+            if(regex()) {
+                if(cbGioiTinh.getSelectedIndex()!=0) {
+                    if(model.isSelected()) {
+                        boolean gioiTinh;
+                        if(cbGioiTinh.getSelectedItem() == "Nam"){
+                            gioiTinh = true;
+                        } else {
+                            gioiTinh = false;
+                        }
+                        KhachHang khachHang = new KhachHang();
+                        khachHang.setMaKH(txtMa.getText().trim());
+                        khachHang.setHoKH(txtHo.getText().trim());
+                        khachHang.setTenKH(txtTen.getText().trim());
+                        khachHang.setGioiTinh(gioiTinh);
+                        if(txtEmail.getText().trim().equals("")) {
+                            khachHang.setEmail(null);
+                        } else {
+                            khachHang.setEmail(txtEmail.getText().trim());
+                        }
+                        if(txtDiaChi.getText().trim().equals("")){
+                            khachHang.setDiaChi(null);
+                        } else {
+                            khachHang.setDiaChi(txtDiaChi.getText().trim());
+                        }
+                        String sdt = txtSDT.getText().trim();
+                        khachHang.setSDT(sdt);
+                        khachHang.setTrangThai(true);
+
+
+
+                        java.util.Date date = model.getValue();
+                        Date sqlDate = new Date(date.getTime());
+                        khachHang.setNgaySinh(sqlDate);
+                        try {
+                            if(kh_dao.suaKhachHang(khachHang)){
+                                JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công!");
+                                clearTable();
+                                loadDataTable(getDataKhachHang());
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Cập nhật thông tin không thành công!");
+                            }
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this,"Chưa chọn ngày sinh");
+                    }
                 } else {
-                    clearTable();
-                    loadDataTable(getDataKhachHang());
-                    JOptionPane.showMessageDialog(this, "Sửa thành công!");
+                    JOptionPane.showMessageDialog(this, "Chưa chọn giới tính");
                 }
-            } catch (Exception e1) {
-                e1.printStackTrace();
             }
         }
         if(e.getSource().equals(btnLamMoi)) {
@@ -417,6 +470,34 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             txtEmail.setText(k.getEmail());
             txtDiaChi.setText(k.getDiaChi());
         }
+    }
+
+    public boolean regex() {
+        String ho = txtHo.getText().trim();
+        String ten = txtTen.getText().trim();
+        String sdt = txtSDT.getText().trim();
+        if(ho.equals("")) {
+            JOptionPane.showMessageDialog(this, "Họ không được để trống!");
+            return false;
+        } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
+            JOptionPane.showMessageDialog(this, "Họ chỉ được nhập 1 từ và chữ cái đầu tiên của từ đó phải viết hoa!");
+            return false;
+        }
+        if(ten.equals("")) {
+            JOptionPane.showMessageDialog(this, "Tên không được để trống!");
+            return false;
+        } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
+            JOptionPane.showMessageDialog(this, "Chữ cái đầu tiên của mỗi từ phải viết hoa, mỗi từ cách nhau một khoảng trắng!");
+            return false;
+        }
+        if(txtSDT.equals("")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!");
+            return false;
+        } else if(!sdt.matches("^0\\d{9}$")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!");
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -484,17 +565,19 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
         @Override
         public Object stringToValue(String text) throws java.text.ParseException {
+            if (text.equals("Chọn ngày")) {
+                return null;
+            }
             return dateFormatter.parseObject(text);
         }
 
         @Override
         public String valueToString(Object value) throws java.text.ParseException {
             if (value != null) {
-                java.util.Calendar cal = (java.util.Calendar) value;
+                Calendar cal = (Calendar) value;
                 return dateFormatter.format(cal.getTime());
             }
-
-            return "";
+            return "Chọn ngày";
         }
     }
 }

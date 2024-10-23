@@ -296,7 +296,6 @@ public class Thuoc_DAO {
         ResultSet rs = null;
 
         try {
-            // Connect to the database
             con = ConnectDB.getConnection();
 
             String sql = "{CALL getDSThuocTheoTenDM(?)}";
@@ -304,6 +303,102 @@ public class Thuoc_DAO {
             statement = con.prepareStatement(sql);
 
             statement.setString(1, tenDM);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Thuoc t = new Thuoc();
+                t.setSoHieuThuoc(rs.getString("soHieuThuoc"));
+                t.setMaThuoc(rs.getString("maThuoc"));
+                t.setTenThuoc(rs.getString("tenThuoc"));
+
+                for (DanhMuc x : listDanhMuc) {
+                    if (x.getMaDanhMuc().equalsIgnoreCase(rs.getString("maDanhMuc"))) {
+                        t.setDanhMuc(x);
+                        break;
+                    }
+                }
+
+                for (NhaCungCap x : listNCC) {
+                    if (x.getMaNCC().equalsIgnoreCase(rs.getString("maNhaCungCap"))) {
+                        t.setNhaCungCap(x);
+                        break;
+                    }
+                }
+
+                for (NhaSanXuat x : listNSX) {
+                    if (x.getMaNhaSX().equalsIgnoreCase(rs.getString("maNhaSanXuat"))) {
+                        t.setNhaSanXuat(x);
+                        break;
+                    }
+                }
+
+                for (NuocSanXuat x : listNuoc) {
+                    if (x.getMaNuocSX().equalsIgnoreCase(rs.getString("maNuocSanXuat"))) {
+                        t.setNuocSanXuat(x);
+                        break;
+                    }
+                }
+
+                for (KeThuoc x : listKe) {
+                    if (x.getMaKe().equalsIgnoreCase(rs.getString("maKe"))) {
+                        t.setKeThuoc(x);
+                        break;
+                    }
+                }
+
+                for (DonGiaThuoc x : listBangGia) {
+                    if(x.getmaDonGia().equalsIgnoreCase(rs.getString("maDonGia"))) {
+                        t.setDonGiaThuoc(x);
+                        break;
+                    }
+                }
+
+                t.setNgaySX(rs.getDate("ngaySX"));
+                t.setHSD(rs.getInt("HSD"));
+                t.setSoLuongCon(rs.getInt("soLuongCon"));
+                t.setCachDung(rs.getString("cachDung"));
+                t.setThanhPhan(rs.getString("thanhPhan"));
+                t.setBaoQuan(rs.getString("baoQuan"));
+                t.setCongDung(rs.getString("congDung"));
+                t.setChiDinh(rs.getString("chiDinh"));
+                t.setHinhAnh(rs.getString("hinhAnh"));
+                t.setMoTa(rs.getString("moTa"));
+                t.setHamLuong(rs.getString("hamLuong"));
+                t.setDangBaoChe(rs.getString("dangBaoChe"));
+                t.setGiaNhap(rs.getDouble("giaNhap"));
+                t.setTrangThai(rs.getBoolean("trangThai"));
+
+                listThuoc.add(t);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the resources
+            if (rs != null) rs.close();
+            if (statement != null) statement.close();
+        }
+
+        return listThuoc;
+    }
+
+
+    // tìm kiếm thuốc theo mã thuốc
+    public ArrayList<Thuoc> timKiemThuocTheoKyTuTenVaMaTHuoc(String maThuoc) throws Exception {
+        ArrayList<Thuoc> listThuoc = new ArrayList<Thuoc>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            // Connect to the database
+            con = ConnectDB.getConnection();
+
+            String sql = "{CALL TimKiemThuocTheoKyTuTenVaMaThuoc(?)}";
+
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, maThuoc);
 
             // Execute the query
             rs = statement.executeQuery();
@@ -383,6 +478,7 @@ public class Thuoc_DAO {
 
         return listThuoc;
     }
+
 
     public int countThuoc(){
         Connection con = null;
@@ -503,11 +599,13 @@ public class Thuoc_DAO {
                 String[] tachTen = tenThuoc.split("\\s+");// Cắt từng từ trong họ tên
                 if(tachTen.length > 1){
                     for(String s : tachTen) {
-                        if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
-                            if(checkTrung(listThuoc, x.getMaThuoc())){
-                                listThuoc.add(x);
+                        if(s.length()>data.length()) {
+                            if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                                if(checkTrung(listThuoc, x.getMaThuoc())){
+                                    listThuoc.add(x);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 } else {
@@ -603,6 +701,27 @@ public class Thuoc_DAO {
             }
         }
         return list;
+    }
+
+    public String tuSinhSoHieu() {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 0;
+        try {
+            String sql = "select * from Thuoc";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()){   // Đếm số dòng của bảng thuốc trong csdl
+                count++;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        count+=1; // Tăng lên 1 đơn vị so với số hiệu cuối cùng trong csdl
+        return "S0000"+count;
     }
 
 }

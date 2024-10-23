@@ -92,4 +92,23 @@ public class ChiTietDonDatThuoc_DAO {
         }
         return 0;
     }
+
+    public boolean xoaCTD(String maDon) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        try {
+            String sql = "delete from ChiTietDonDatThuoc where maDon = ?";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, maDon);
+            int rowsAffected = ps.executeUpdate();
+            if(rowsAffected>0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

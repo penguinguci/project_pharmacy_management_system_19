@@ -507,7 +507,9 @@ CREATE PROCEDURE getDSChiTietHD @maHD VARCHAR(10)
 AS
 BEGIN
 	SELECT *
-	FROM ChiTietHoaDon
+	FROM ChiTietHoaDon cthd
+	JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
+	JOIN DonGiaThuoc dgt ON t.maDonGia = dgt.maDonGia
 	WHERE maHD = @maHD
 END
 GO
@@ -723,6 +725,121 @@ END
 GO
 
 
+-- tìm kiếm thuốc theo mã thuốc, theo tên
+CREATE PROCEDURE TimKiemThuocTheoKyTuTenVaMaThuoc
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Thuoc
+    WHERE (tenThuoc LIKE '%' + @kyTu + '%') OR (maThuoc LIKE '%' + @kyTu + '%');
+END;
+GO
+
+
+-- lấy các đơn vị tính và giá của thuốc
+CREATE PROCEDURE layDonGiaThuocTheoMaThuoc @maThuoc VARCHAR(10)
+AS 
+BEGIN
+	SELECT *
+	FROM DonGiaThuoc 
+	WHERE maThuoc = @maThuoc
+END
+GO
+
+
+-- lấy giá bán thuốc theo mã thuốc và đơn vị
+CREATE PROCEDURE layGiaThuocTheoMaVaDV @maThuoc VARCHAR(10), @donViTinh NVARCHAR(50)
+AS
+BEGIN
+	SELECT donGia
+	FROM DonGiaThuoc
+	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh
+END
+GO
+
+
+-- xóa nhân viên (ẩn nhân viên theo trạng thái)
+CREATE PROCEDURE xoaNhanVienTheoTrangThaiVaMaNV @maNV VARCHAR(10)
+AS 
+BEGIN
+	DECLARE @trangThai BIT
+
+	IF EXISTS (SELECT 1 FROM NhanVien WHERE maNV = @maNV)
+	BEGIN
+		SELECT @trangThai = trangThai
+		FROM NhanVien
+		WHERE maNV = @maNV
+
+		IF @trangThai = 1
+		BEGIN
+			UPDATE NhanVien
+			SET trangThai = 0
+			WHERE maNV = @maNV
+		END
+		ELSE
+		BEGIN
+			PRINT 'Trạng thái hiện tại đã là 0';
+		END
+	END
+	ELSE
+	BEGIN
+		PRINT 'Không tìm thấy nhân viên với mã này';
+	END
+END
+GO
+
+
+-- cập nhật nhân viên
+CREATE PROCEDURE capNhatThongTinNhanVien
+    @maNV VARCHAR(10),
+    @hoNV NVARCHAR(10),
+    @tenNV NVARCHAR(50),
+    @ngaySinh DATE,
+    @SDT VARCHAR(15),
+    @email VARCHAR(50),
+    @diaChi NVARCHAR(255),
+    @gioiTinh BIT,
+    @vaiTro SMALLINT,
+    @trangThai BIT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM NhanVien WHERE maNV = @maNV)
+    BEGIN
+        UPDATE NhanVien
+        SET 
+            hoNV = @hoNV,
+            tenNV = @tenNV,
+            ngaySinh = @ngaySinh,
+            SDT = @SDT,
+            email = @email,
+            diaChi = @diaChi,
+            gioiTinh = @gioiTinh,
+            vaiTro = @vaiTro,
+            trangThai = @trangThai
+        WHERE maNV = @maNV;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nhân viên với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nhân viên theo mã nhân viên, tên nhân viên, số điện thoại, email
+CREATE PROCEDURE timKiemNhanVienTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NhanVien nv
+	JOIN ChucVu cv ON nv.vaiTro = cv.maChucVu
+    WHERE (tenNV LIKE '%' + @kyTu + '%') OR (maNV LIKE '%' + @kyTu + '%')
+			OR (SDT LIKE '%' + @kyTu + '%') OR (email LIKE '%' + @kyTu + '%');
+END;
+GO
+
 
 
 -- --------- TRIGGER
@@ -774,3 +891,25 @@ BEGIN
 END;
 GO
 
+
+-- cập nhật số lượng thuốc sau khi thanh toán thành công
+CREATE TRIGGER trg_UpdateSoLuongThuoc
+ON HoaDon
+AFTER UPDATE
+AS
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        WHERE i.trangThai = 1
+    )
+    BEGIN
+        UPDATE t
+        SET t.soLuongCon = t.soLuongCon - cthd.soLuong
+        FROM Thuoc t
+        INNER JOIN ChiTietHoaDon cthd ON t.maThuoc = cthd.maThuoc
+        INNER JOIN inserted i ON i.maHD = cthd.maHD
+        WHERE i.trangThai = 1;  
+    END
+END;
+GO

@@ -42,7 +42,7 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
 
         //Label
         lblTitle = new JLabel("TÌM KIẾM NHÂN VIÊN", JLabel.CENTER);
-        lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
 
         lblTen = new JLabel("Tên nhân viên", JLabel.CENTER);
         lblSDT = new JLabel("Số điện thoại", JLabel.CENTER);
@@ -91,6 +91,9 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         String[] colsNameNhanVien = {"Mã nhân viên", "Họ nhân viên", "Tên nhân viên", "Ngày sinh", "Số điện thoại", "Giới tính", "Email", "Địa chỉ", "Vai trò"};
         dtmNhanVien = new DefaultTableModel(colsNameNhanVien, 0);
         tabNhanVien = new JTable(dtmNhanVien);
+        tabNhanVien.setRowHeight(30);
+        tabNhanVien.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrNhanVien = new JScrollPane(tabNhanVien);
         scrNhanVien.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         tabNhanVien.setBackground(Color.WHITE);
@@ -138,8 +141,8 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         Box box3 = Box.createVerticalBox();
         box3.add(btnTimKiem);
         box3.add(Box.createVerticalStrut(35));
-        box3.add(btnSua);
-        box3.add(Box.createVerticalStrut(35));
+//        box3.add(btnSua);
+//        box3.add(Box.createVerticalStrut(35));
         box3.add(btnLamMoi);
         box3.add(Box.createVerticalStrut(30));
 
@@ -207,7 +210,7 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
             } else {
                 vaiTro = "Vong";
             }
-            String ngaySinh = formatDate(x.getNgaySinh());
+            String ngaySinh = formatDate((Date) x.getNgaySinh());
             Object[] data = {x.getMaNV(), x.getHoNV(), x.getTenNV(), ngaySinh, x.getSdt(), gt, x.getEmail(), x.getDiaChi(), vaiTro};
             dtmNhanVien.addRow(data);
         }
@@ -232,7 +235,7 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
             } else {
                 vaiTro = "Vong";
             }
-            String ngaySinh = formatDate(x.getNgaySinh());
+            String ngaySinh = formatDate((Date) x.getNgaySinh());
             Object[] data = {x.getMaNV(), x.getHoNV(), x.getTenNV(), ngaySinh, x.getSdt(), gt, x.getEmail(), x.getDiaChi(), vaiTro};
             dtmNhanVien.addRow(data);
         }

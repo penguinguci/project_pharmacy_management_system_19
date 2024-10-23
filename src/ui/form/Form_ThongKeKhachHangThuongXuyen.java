@@ -24,27 +24,27 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        // Khởi tạo DAO để lấy dữ liệu
+        // khởi tạo DAO để lấy dữ liệu
         khachHang_dao = new KhachHang_DAO();
         ArrayList<KhachHang> dsKhachHang = khachHang_dao.getAllKhachHang();
 
-        // Panel chứa tiêu đề
+        // panel chứa tiêu đề
         JLabel lblTitle = new JLabel("Thống Kê Khách Hàng Thường Xuyên", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
         add(lblTitle, BorderLayout.NORTH);
 
-        // Panel chứa biểu đồ
+        // panel chứa biểu đồ
         JPanel panelBieuDo = new JPanel(new GridLayout(1, 2, 20, 20));
         panelBieuDo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panelBieuDo.setBackground(Color.WHITE);
 
-        // Biểu đồ top khách hàng dựa trên tổng điểm tích lũy
+        // biểu đồ top khách hàng dựa trên tổng điểm tích lũy
         JFreeChart chartTopKhachHang = createChartTopKhachHang(dsKhachHang);
         ChartPanel chartPanelTop = new ChartPanel(chartTopKhachHang);
         chartPanelTop.setBorder(BorderFactory.createTitledBorder("Top Khách Hàng"));
 
-        // Biểu đồ tương quan giữa các hạng khách hàng
+        // biểu đồ tương quan giữa các hạng khách hàng
         JFreeChart chartXepHang = createChartXepHang(dsKhachHang);
         ChartPanel chartPanelHang = new ChartPanel(chartXepHang);
         chartPanelHang.setBorder(BorderFactory.createTitledBorder("Phân Bố Hạng Khách Hàng"));

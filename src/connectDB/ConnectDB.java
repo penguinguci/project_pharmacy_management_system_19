@@ -8,7 +8,7 @@ public class ConnectDB {
     private static Connection con = null;
     private static ConnectDB instance = new ConnectDB();
 
-    // Khởi tạo driver chỉ cần một lần
+
     static {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -17,12 +17,12 @@ public class ConnectDB {
         }
     }
 
-    // Đảm bảo chỉ có một instance duy nhất của ConnectDB
+
     public static ConnectDB getInstance() {
         return instance;
     }
 
-    // Phương thức connect khởi tạo kết nối đến cơ sở dữ liệu
+
     public void connect() {
         if (con == null || isConnectionClosed()) {
             String url = "jdbc:sqlserver://localhost:1433;databaseName=QuanLyNhaThuoc";
@@ -38,7 +38,7 @@ public class ConnectDB {
         }
     }
 
-    // Phương thức kiểm tra nếu kết nối bị đóng
+
     private boolean isConnectionClosed() {
         try {
             return con == null || con.isClosed();
@@ -48,7 +48,7 @@ public class ConnectDB {
         }
     }
 
-    // Phương thức disconnect đóng kết nối nếu tồn tại
+
     public void disconnect() {
         if (con != null && !isConnectionClosed()) {
             try {

@@ -1,12 +1,15 @@
 package ui.form;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,7 +28,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener, ActionListener {
+public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
     private JTextField txtHoNV, txtTenNV, txtSoDienThoai, txtEmail, txtDiaChi;
     private JComboBox<String> cbGioiTinh, cbVaiTro, cbTrangThai;
     private JDatePickerImpl dpNgaySinh;
@@ -186,12 +189,35 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnThem = new JButton("Thêm");
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setFocusPainted(false);
+        btnThem.setForeground(Color.WHITE);
+        btnThem.setOpaque(true);
+        btnThem.setBorderPainted(false);
+
         btnXoa = new JButton("Xóa");
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
+        btnXoa.setOpaque(true);
+        btnXoa.setFocusPainted(false);
+        btnXoa.setBorderPainted(false);
+
         btnCapNhat = new JButton("Cập nhật");
         btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setForeground(Color.WHITE);
+        btnCapNhat.setOpaque(true);
+        btnCapNhat.setFocusPainted(false);
+        btnCapNhat.setBorderPainted(false);
+
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
 
         pnlButtons.add(btnThem);
         pnlButtons.add(Box.createHorizontalStrut(10));
@@ -211,7 +237,14 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         txtTimKiem.setPreferredSize(new Dimension(100, 30));
         pnlTimKiem.add(txtTimKiem);
         btnTimKiem = new JButton("Tìm kiếm");
-        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.setBackground(new Color(65, 192, 201));
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 12));
+        btnTimKiem.setPreferredSize(new Dimension(90, 30));
+        btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.setBorderPainted(false);
+
         pnlTimKiem.add(btnTimKiem);
         pnlTable.add(pnlTimKiem, BorderLayout.NORTH);
 
@@ -219,6 +252,8 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         String[] columnNames = {"Mã NV", "Họ NV", "Tên NV", "Ngày sinh", "Giới tính", "Số ĐT", "Email", "Địa chỉ", "Vai trò", "Trạng thái"};
         model = new DefaultTableModel(columnNames, 0);
         tblNhanVien = new JTable(model);
+        tblNhanVien.setRowHeight(30);
+        tblNhanVien.setFont(new Font("Arial", Font.PLAIN, 13));
         JScrollPane scrollPane = new JScrollPane(tblNhanVien);
         pnlTable.add(scrollPane, BorderLayout.CENTER);
         scrollPane.setPreferredSize(new Dimension(getWidth(), 370));
@@ -242,6 +277,7 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         btnCapNhat.addActionListener(this);
         btnBack.addActionListener(this);
         btnLamMoi.addActionListener(this);
+        txtTimKiem.getDocument().addDocumentListener(this);
     }
 
     // update table
@@ -249,11 +285,13 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         ArrayList<NhanVien> dsNV = nhanVien_dao.getAllNhanVien();
         model.setRowCount(0);
         for(NhanVien nv : dsNV) {
-            model.addRow(new Object[]{
-                    nv.getMaNV(), nv.getHoNV(), nv.getTenNV(), nv.getNgaySinh(),
-                    nv.isGioiTinh() == true ? "Nam" : "Nữ", nv.getSdt(), nv.getEmail(), nv.getDiaChi(),
-                    nv.getVaiTro().getTenChucVu(), nv.isTrangThai() == true ? "Còn làm" : "Nghỉ việc",
-            });
+            if (nv.isTrangThai() == true) {
+                model.addRow(new Object[]{
+                        nv.getMaNV(), nv.getHoNV(), nv.getTenNV(), nv.getNgaySinh(),
+                        nv.isGioiTinh() == true ? "Nam" : "Nữ", nv.getSdt(), nv.getEmail(), nv.getDiaChi(),
+                        nv.getVaiTro().getTenChucVu(), nv.isTrangThai() == true ? "Còn làm" : "Nghỉ việc",
+                });
+            }
         }
     }
 
@@ -262,6 +300,50 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         ArrayList<ChucVu> dsCV = chucVu_dao.getAllChucVu();
         for(ChucVu cv : dsCV) {
             cbVaiTro.addItem(cv.getTenChucVu());
+        }
+    }
+
+    // danh sách nhân viên sau khi tìm kiếm
+    public void capNhatDSNVTimKiem() throws SQLException {
+        String kyTu = txtTimKiem.getText().toString().trim();
+        ArrayList<NhanVien> dsNV = nhanVien_dao.timKiemNhanVienTheoKyTu(kyTu);
+        model.setRowCount(0);
+        for (NhanVien nv : dsNV) {
+            if (nv.isTrangThai() == true) {
+                model.addRow(new Object[]{
+                        nv.getMaNV(), nv.getHoNV(), nv.getTenNV(), nv.getNgaySinh(),
+                        nv.isGioiTinh() == true ? "Nam" : "Nữ", nv.getSdt(), nv.getEmail(), nv.getDiaChi(),
+                        nv.getVaiTro().getTenChucVu(), nv.isTrangThai() == true ? "Còn làm" : "Nghỉ việc",
+                });
+            }
+        }
+    }
+
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        try {
+            capNhatDSNVTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        try {
+            capNhatDSNVTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        try {
+            capNhatDSNVTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -329,7 +411,8 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
 
                 NhanVien nhanVien = null;
                 try {
-                    nhanVien = new NhanVien(generateMaNV(chucVu), hoNV, tenNV, email, diaChi, chucVu, gioiTinh, ngaySinh, trangThai, SDT);
+                    nhanVien = new NhanVien(generateMaNV(chucVu), hoNV, tenNV, email, diaChi,
+                            chucVu, gioiTinh, ngaySinh, trangThai, SDT);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -364,9 +447,98 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
                 }
             }
         } else if (o.equals(btnXoa)) {
+            int row = tblNhanVien.getSelectedRow();
+            if(row >= 0) {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Bạn có chắc chắn muốn xóa nhân viên này không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    String maNV = tblNhanVien.getValueAt(row, 0).toString();
 
+                    NhanVien nv = new NhanVien();
+                    nv.setMaNV(maNV);
+
+                    boolean deleted = nhanVien_dao.deleteNhanVien(nv);
+                    if (deleted) {
+                        JOptionPane.showMessageDialog(this, "Xóa nhân viên thành công!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        lamMoi();
+                        model.removeRow(row);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Xóa nhân viên thất bại!",
+                                "Thông báo", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa!", "Thông báo",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         } else if (o.equals(btnCapNhat)) {
+            int row = tblNhanVien.getSelectedRow();
+            if (row >= 0) {
+                if(valiDataNv()) {
+                    String maNV = tblNhanVien.getValueAt(row, 0).toString();
+                    String hoNV = txtHoNV.getText().trim();
+                    String tenNV = txtTenNV.getText().trim();
 
+                    Date ngaySinh = (Date) dpNgaySinh.getModel().getValue();
+
+                    boolean gioiTinh = cbGioiTinh.getSelectedItem().toString().equals("Nam") ? true : false;
+
+                    String SDT = txtSoDienThoai.getText().trim();
+                    String email = txtEmail.getText().trim();
+                    String diaChi = txtDiaChi.getText().trim();
+
+                    String vaiTro = cbVaiTro.getSelectedItem().toString();
+                    ChucVu chucVu = new ChucVu();
+                    if (vaiTro.equals("Nhân viên quản lý")) {
+                        chucVu.setTenChucVu(vaiTro);
+                        chucVu.setMaChucVu(2);
+                    } else if(vaiTro.equals("Nhân viên bán thuốc")) {
+                        chucVu.setTenChucVu(vaiTro);
+                        chucVu.setMaChucVu(1);
+                    } else {
+                        chucVu.setTenChucVu(vaiTro);
+                        chucVu.setMaChucVu(0);
+                    }
+
+                    boolean trangThai = cbTrangThai.getSelectedItem().toString().equals("Còn làm") ? true : false;
+
+                    NhanVien nhanVien = null;
+                    try {
+                        nhanVien = new NhanVien(maNV, hoNV, tenNV, email, diaChi,
+                                chucVu, gioiTinh, ngaySinh, trangThai, SDT);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                   if (nhanVien_dao.capNhatNV(nhanVien)) {
+                       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                       String ngaySinhFormatted = dateFormat.format(ngaySinh);
+                       model.setValueAt(maNV, row, 0);
+                       model.setValueAt(hoNV, row, 1);
+                       model.setValueAt(tenNV, row, 2);
+                       model.setValueAt(ngaySinhFormatted, row, 3);
+                       model.setValueAt(nhanVien.isGioiTinh() == true ? "Nam" : "Nữ", row, 4);
+                       model.setValueAt(SDT, row, 5);
+                       model.setValueAt(email, row, 6);
+                       model.setValueAt(diaChi, row, 7);
+                       model.setValueAt(vaiTro, row, 8);
+                       model.setValueAt(nhanVien.isTrangThai() == true ? "Còn làm" : "Nghỉ việc", row, 9);
+                       JOptionPane.showMessageDialog(this,
+                               "Cập nhật thông tin nhân viên thành công!", "Thông báo",
+                               JOptionPane.INFORMATION_MESSAGE);
+                       lamMoi();
+                   } else {
+                       JOptionPane.showMessageDialog(this,
+                               "Cập nhật thông tin nhân viên thất bại!", "Thông báo",
+                               JOptionPane.ERROR_MESSAGE);
+                   }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần cập nhật thông tin!",
+                        "Thông báo",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         } else if (o.equals(btnLamMoi)) {
             lamMoi();
         } else if (o.equals(btnBack)) {
@@ -413,6 +585,7 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         cbTrangThai.setSelectedIndex(0);
         cbGioiTinh.setSelectedIndex(0);
         ngaySinhModel.setSelected(false);
+        tblNhanVien.clearSelection();
     }
 
     // kiểm tra thông tin
@@ -521,6 +694,7 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
 
         return true;
     }
+
 
     // Formatter cho JDatePicker
     public class DateTimeLabelFormatter extends JFormattedTextField.AbstractFormatter {

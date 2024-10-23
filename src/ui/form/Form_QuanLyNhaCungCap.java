@@ -137,6 +137,9 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         String[] columnNames = {"Mã nhà cung cấp", "Tên nhà cung cấp", "Email", "Địa chỉ"};
         model = new DefaultTableModel(columnNames, 0);
         tblNhaCC = new JTable(model);
+        tblNhaCC.setRowHeight(30);
+        tblNhaCC.setFont(new Font("Arial", Font.PLAIN, 13));
+
         JScrollPane scrollPane = new JScrollPane(tblNhaCC);
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 

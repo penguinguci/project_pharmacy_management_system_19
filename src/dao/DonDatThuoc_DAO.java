@@ -141,12 +141,63 @@ public class DonDatThuoc_DAO {
     }
 
     public boolean checkTrung(ArrayList<DonDatThuoc> list, String ma) {
-        for(DonDatThuoc x : list) {
-            if(x.getMaDon().equalsIgnoreCase(ma)){
+        for (DonDatThuoc x : list) {
+            if (x.getMaDon().equalsIgnoreCase(ma)) {
                 return false;
             }
         }
         return true;
     }
 
+    public boolean xoaDonDatThuoc(String maDon) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ChiTietDonDatThuoc_DAO ctd = new ChiTietDonDatThuoc_DAO();
+        if(!ctd.xoaCTD(maDon)){
+            return false;
+        }
+        try {
+            String sql = "delete from DonDatThuoc where maDon =?";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, maDon);
+            int rowsAffected = ps.executeUpdate();
+            if(rowsAffected>0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public ArrayList<DonDatThuoc> reload(){
+        list.clear();
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        khachHang_dao = new KhachHang_DAO();
+        try {
+            String sql = "select * from DonDatThuoc";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                DonDatThuoc don = new DonDatThuoc();
+                don.setMaDon(rs.getString("maDon"));
+                KhachHang kh = khachHang_dao.getOneKhachHangByMaKH(rs.getString("maKhachHang"));
+                don.setKhachHang(kh);
+                don.setNhanVien(new NhanVien(rs.getString("maNhanVien")));
+                don.setThoiGianDat(rs.getDate("thoiGianDat"));
+                if (timDonDatThuoc(don.getMaDon()) == null) {
+                    list.add(don);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

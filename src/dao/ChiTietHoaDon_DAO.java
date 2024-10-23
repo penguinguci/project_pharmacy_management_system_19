@@ -1,10 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.ChiTietHoaDon;
-import entity.ChiTietKhuyenMai;
-import entity.HoaDon;
-import entity.Thuoc;
+import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -162,43 +159,44 @@ public class ChiTietHoaDon_DAO {
         ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
 
         try {
-            // Lấy kết nối
             connection = con.getConnection();
 
-            // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
                 System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
-                return listCTHD; // Trả về danh sách rỗng nếu không có kết nối
+                return listCTHD;
             }
 
-            // Chuẩn bị gọi thủ tục
-            String sql = "{call getDSChiTietHD(?)}"; // Gọi thủ tục
+            String sql = "{call getDSChiTietHD(?)}";
             cstmt = connection.prepareCall(sql);
             cstmt.setString(1, maHD);
 
-            // Thực thi thủ tục và lấy kết quả
             rs = cstmt.executeQuery();
 
-            // Lặp qua kết quả và thêm vào danh sách
             while (rs.next()) {
                 ChiTietHoaDon cthd = new ChiTietHoaDon();
 
                 // Tạo đối tượng HoaDon
                 HoaDon hd = new HoaDon();
-                hd.setMaHD(rs.getString("maHD")); // Lấy mã hóa đơn từ kết quả
+                hd.setMaHD(rs.getString("maHD"));
 
-                cthd.setHoaDon(hd); // Gán hóa đơn vào chi tiết hóa đơn
+                cthd.setHoaDon(hd);
 
                 // Tạo đối tượng Thuoc
                 Thuoc thuoc = new Thuoc();
-                thuoc.setSoHieuThuoc(rs.getString("soHieuThuoc")); // Lấy số hiệu thuốc
-                thuoc.setMaThuoc(rs.getString("maThuoc")); // Lấy mã thuốc
+                thuoc.setSoHieuThuoc(rs.getString("soHieuThuoc"));
+                thuoc.setMaThuoc(rs.getString("maThuoc"));
 
-                cthd.setThuoc(thuoc); // Gán thuốc vào chi tiết hóa đơn
-                cthd.setDonViTinh(rs.getString("donViTinh")); // Lấy đơn vị tính
-                cthd.setSoLuong(rs.getInt("soLuong")); // Lấy số lượng
+                DonGiaThuoc bangGiaSanPham = new DonGiaThuoc();
+                bangGiaSanPham.setMaDonGia(rs.getString("maDonGia"));
+                bangGiaSanPham.setDonViTinh(rs.getString("donViTinh"));
+                bangGiaSanPham.setDonGia(rs.getDouble("donGia"));
+                thuoc.setDonGiaThuoc(bangGiaSanPham);
 
-                listCTHD.add(cthd); // Thêm chi tiết hóa đơn vào danh sách
+                cthd.setThuoc(thuoc);
+                cthd.setDonViTinh(rs.getString("donViTinh"));
+                cthd.setSoLuong(rs.getInt("soLuong"));
+
+                listCTHD.add(cthd);
             }
         } catch (SQLException e) {
             e.printStackTrace(); // In ra ngoại lệ nếu có
