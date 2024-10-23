@@ -18,12 +18,18 @@ public class KeThuoc_DAO {
         dao = new NhanVien_DAO();
         listNV = new ArrayList<NhanVien>();
         listNV = dao.getAllNhanVien();
+        try{
+            list = getAllKeThuoc();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<KeThuoc> getAllKeThuoc() throws Exception{
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
+        ArrayList<KeThuoc> list = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         String sql = "select * from KeThuoc";
@@ -43,4 +49,13 @@ public class KeThuoc_DAO {
         }
         return list;
     }
+    public KeThuoc timKeThuoc(String maKe) {
+        for (KeThuoc k : this.list) {
+            if(k.getMaKe().equalsIgnoreCase(maKe)){
+                return k;
+            }
+        }
+        return null;
+    }
+
 }
