@@ -121,11 +121,17 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         String[] colsnameTabDon = {"Mã đơn đặt hàng", "Mã khách hàng", "Tên khách hàng", "Số điện thoại", "Địa chỉ", "Tổng tiền", "Thời gian đặt"};
         dtmDon = new DefaultTableModel(colsnameTabDon, 0);
         tabDon = new JTable(dtmDon);
+        tabDon.setRowHeight(30);
+        tabDon.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrDon = new JScrollPane(tabDon);
 
         String[] colsnameTabChiTietDon = {"Mã đơn", "Số hiệu thuốc","Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         dtmChiTietDon = new DefaultTableModel(colsnameTabChiTietDon, 0);
         tabChiTietDon = new JTable(dtmChiTietDon);
+        tabChiTietDon.setRowHeight(30);
+        tabChiTietDon.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrChiTietDon = new JScrollPane(tabChiTietDon);
 
         // listPanel

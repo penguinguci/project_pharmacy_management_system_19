@@ -114,11 +114,17 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         String[] colsnameHoaDon = {"Mã hóa đơn", "Tên thu ngân", "Tên khách hàng", "Số điện thoại", "Ngày lập hóa đơn", "Thuế", "Tổng tiền"};
         modelHD = new DefaultTableModel(colsnameHoaDon, 0);
         tableHD = new JTable(modelHD);
+        tableHD.setRowHeight(30);
+        tableHD.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrollHD = new JScrollPane(tableHD);
 
         String[] colsnameChiTietHoaDon = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         modelChiTiet = new DefaultTableModel(colsnameChiTietHoaDon, 0);
         tableChiTiet = new JTable(modelChiTiet);
+        tableChiTiet.setRowHeight(30);
+        tableChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
+
         scrollChiTiet = new JScrollPane(tableChiTiet);
 
         // listPanel
@@ -229,9 +235,9 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                     thuoc.getMaThuoc(),
                     thuoc.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
-                    thuoc.getDonGiaThuoc().getDonViTinh(),
+                    ct.getThuoc().getDonGiaThuoc().getDonViTinh(),
                     ct.getSoLuong(),
-                    thuoc.getDonGiaThuoc().getDonGia(),
+                    ct.getThuoc().getDonGiaThuoc().getDonGia(),
                     chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, ct.getThuoc().getMaThuoc())
             });
         }

@@ -124,6 +124,9 @@ public class Form_QuanLyNhaSanXuat  extends JPanel implements ListSelectionListe
         String[] columnNames = {"Mã nhà sản xuất", "Tên nhà sản xuất", "Địa chỉ"};
         model = new DefaultTableModel(columnNames, 0);
         tblNhaSX = new JTable(model);
+        tblNhaSX.setRowHeight(30);
+        tblNhaSX.setFont(new Font("Arial", Font.PLAIN, 13));
+
         JScrollPane scrollPane = new JScrollPane(tblNhaSX);
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 
