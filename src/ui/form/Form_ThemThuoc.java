@@ -1,34 +1,42 @@
 package ui.form;
-
+import dao.*;
 import entity.*;
 import org.jdatepicker.JDateComponentFactory;
 import org.jdatepicker.JDatePicker;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
-
+import java.sql.Date;
+import java.util.ArrayList;
 
 public class Form_ThemThuoc extends JPanel {
+    public DanhMuc_DAO dm_DAO;
+    JScrollPane scrMota;
+    public JLabel lblHamLuong;
+    public JTextField txtHamLuong;
+    public JLabel lblDangBaoChe;
+    public JTextField txtDangBaoChe;
+    public JTextArea txaMoTa;
+    public JLabel lblMoTa;
     public JLabel lblInforProductDetails;
     public JLabel lblUsageDetails;
     public JLabel lblPricing;
     public JDatePicker datePickerNgaySanXuat;
-    public JDatePicker datePickerHSD;
+    public JTextField txtHSD;
     public JButton btnLuu;
     public JButton btnHuy;
     public JLabel lblTenThuoc;
     public JTextField txtTenThuoc;
     public JLabel lbldanhMuc;
-    public JComboBox<DanhMuc> cmbDanhMuc;
+    public JComboBox<String> cmbDanhMuc;
     public JLabel lblNhaCungCap;
-    public JComboBox<NhaCungCap> cmbNhaCungCap;
+    public JComboBox<String> cmbNhaCungCap;
     public JLabel lblNhaSanXuat;
-    public JComboBox<NhaSanXuat> cmbNhaSanXuat;
+    public JComboBox<String> cmbNhaSanXuat;
     public JLabel lblNuocSanXuat;
-    public JComboBox<NuocSanXuat> cmbNuocSanXuat;
+    public JComboBox<String> cmbNuocSanXuat;
     public JLabel lblKeThuoc;
-    public JComboBox<KeThuoc> cmbKeThuoc;
+    public JComboBox<String> cmbKeThuoc;
     public JLabel lblNgaySanXuat;
     public JLabel lblHSD;
     public JLabel lblDonViTinh;
@@ -37,25 +45,27 @@ public class Form_ThemThuoc extends JPanel {
     public JTextField txtSoLuongCon;
     public JLabel lblCachDung;
     public JTextArea txaCachDung;
-    public JScrollPane spCachDung;
+    public JScrollPane scrCachDung;
     public JLabel lblThanhPhan;
     public JTextField txtThanhPhan;
     public JLabel lblBaoQuan;
     public JTextField txtBaoQuan;
     public JLabel lblCongDung;
     public JTextArea txaCongDung;
-    public JScrollPane spCongDung;
+    public JScrollPane scrCongDung;
     public JLabel lblChiDinh;
     public JTextField txtChiDinh;
     public JLabel lblHinhAnh;
     public JTextField txtHinhAnh;
     public JLabel lblGiaNhap;
     public JTextField txtGiaNhap;
-    public JLabel lblGiaBan;
-    public JTextField txtGiaBan;
     public JLabel lblTrangThai;
     public JComboBox<String> cmbTrangThai;
-
+    public KeThuoc_DAO ke_DAO;
+    public NhaSanXuat_DAO nsx_DAO;
+    public NhaCungCap_DAO ncc_DAO;
+    public NuocSanXuat_DAO nuoc_DAO;
+    public DonGiaThuoc_DAO dvt_DAO;
 
     public Form_ThemThuoc() {
         setLayout(new BorderLayout());
@@ -91,7 +101,9 @@ public class Form_ThemThuoc extends JPanel {
         JPanel pnlDanhMuc = new JPanel(new GridBagLayout());
         lbldanhMuc = new JLabel("Danh mục:");
         lbldanhMuc.setPreferredSize(new Dimension(100,25));
-        cmbDanhMuc = new JComboBox<DanhMuc>();
+        cmbDanhMuc = new JComboBox<>();
+        cmbDanhMuc.addItem("");
+        loadComboBoxDanhMuc();
         cmbDanhMuc.setPreferredSize(new Dimension(200,25));
         pnlDanhMuc.add(lbldanhMuc);
         pnlDanhMuc.add(cmbDanhMuc);
@@ -99,7 +111,9 @@ public class Form_ThemThuoc extends JPanel {
         JPanel pnlNhaCungCap = new JPanel(new GridBagLayout());
         lblNhaCungCap = new JLabel("Nhà cung cấp:");
         lblNhaCungCap.setPreferredSize(new Dimension(100,25));
-        cmbNhaCungCap = new JComboBox<NhaCungCap>();
+        cmbNhaCungCap = new JComboBox<>();
+        cmbNhaCungCap.addItem("");
+        loadComboBoxNhaCC();
         cmbNhaCungCap.setPreferredSize(new Dimension(200,25));
         pnlNhaCungCap.add(lblNhaCungCap);
         pnlNhaCungCap.add(cmbNhaCungCap);
@@ -107,7 +121,9 @@ public class Form_ThemThuoc extends JPanel {
         JPanel pnlNhaSanXuat = new JPanel(new GridBagLayout());
         lblNhaSanXuat = new JLabel("Nhà cung cấp:");
         lblNhaSanXuat.setPreferredSize(new Dimension(100,25));
-        cmbNhaSanXuat = new JComboBox<NhaSanXuat>();
+        cmbNhaSanXuat = new JComboBox<>();
+        cmbNhaSanXuat.addItem("");
+        loadComboBoxNhaSX();
         cmbNhaSanXuat.setPreferredSize(new Dimension(200,25));
         pnlNhaSanXuat.add(lblNhaSanXuat);
         pnlNhaSanXuat.add(cmbNhaSanXuat);
@@ -115,7 +131,9 @@ public class Form_ThemThuoc extends JPanel {
         JPanel pnlNuocSanXuat = new JPanel(new GridBagLayout());
         lblNuocSanXuat = new JLabel("Nước sản xuất:");
         lblNuocSanXuat.setPreferredSize(new Dimension(100,25));
-        cmbNuocSanXuat = new JComboBox<NuocSanXuat>();
+        cmbNuocSanXuat = new JComboBox<>();
+        cmbNuocSanXuat.addItem("");
+        loadComboBoxNuocSX();
         cmbNuocSanXuat.setPreferredSize(new Dimension(200,25));
         pnlNuocSanXuat.add(lblNuocSanXuat);
         pnlNuocSanXuat.add(cmbNuocSanXuat);
@@ -123,7 +141,9 @@ public class Form_ThemThuoc extends JPanel {
         JPanel pnlKeThuoc = new JPanel(new GridBagLayout());
         lblKeThuoc = new JLabel("Kệ thuốc:");
         lblKeThuoc.setPreferredSize(new Dimension(100,25));
-        cmbKeThuoc = new JComboBox<KeThuoc>();
+        cmbKeThuoc = new JComboBox<>();
+        cmbKeThuoc.addItem("");
+        loadComboBoxKeThuoc();
         cmbKeThuoc.setPreferredSize(new Dimension(200,25));
         pnlKeThuoc.add(lblKeThuoc);
         pnlKeThuoc.add(cmbKeThuoc);
@@ -139,15 +159,19 @@ public class Form_ThemThuoc extends JPanel {
         JPanel pnlHSD = new JPanel(new GridBagLayout());
         lblHSD = new JLabel("Hạn sử dụng:");
         lblHSD.setPreferredSize(new Dimension(100,25));
-        datePickerHSD = new JDateComponentFactory().createJDatePicker();
+        txtHSD = new JTextField();
+        txtHSD.setPreferredSize(new Dimension(200,25));
         pnlHSD.add(lblHSD);
-        pnlHSD.add((Component) datePickerHSD);
+        pnlHSD.add(txtHSD);
 
         JPanel pnlDonViTinh= new JPanel(new GridBagLayout());
         String[] typeDonViTinh = {"Viên","Hộp","Vỉ"};
         lblDonViTinh = new JLabel("Đơn vị tính:");
         lblDonViTinh.setPreferredSize(new Dimension(100,25));
-        cmbDonViTinh = new JComboBox<>(typeDonViTinh);
+        cmbDonViTinh = new JComboBox<>();
+        cmbDonViTinh.addItem("");
+        cmbDonViTinh.setSelectedItem("");
+        loadComboBoxDonViTinh();
         cmbDonViTinh.setPreferredSize(new Dimension(200,25));
         pnlDonViTinh.add(lblDonViTinh);
         pnlDonViTinh.add(cmbDonViTinh);
@@ -166,9 +190,9 @@ public class Form_ThemThuoc extends JPanel {
         txaCachDung = new JTextArea(3,18);
         txaCachDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaCachDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
-        spCachDung = new JScrollPane(txaCachDung);
+        scrCachDung = new JScrollPane(txaCachDung);
         pnlCachDung.add(lblCachDung);
-        pnlCachDung.add(spCachDung);
+        pnlCachDung.add(scrCachDung);
 
         JPanel pnlThanhPhan = new JPanel(new GridBagLayout());
         lblThanhPhan = new JLabel("Thành phần:");
@@ -192,9 +216,9 @@ public class Form_ThemThuoc extends JPanel {
         txaCongDung = new JTextArea(3, 18);
         txaCongDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaCongDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
-        spCongDung = new JScrollPane(txaCongDung);
+        scrCongDung = new JScrollPane(txaCongDung);
         pnlCongDung.add(lblCongDung);
-        pnlCongDung.add(spCongDung);
+        pnlCongDung.add(scrCongDung);
 
         JPanel pnlChiDinh = new JPanel(new GridBagLayout());
         lblChiDinh = new JLabel("Chỉ định:");
@@ -220,13 +244,6 @@ public class Form_ThemThuoc extends JPanel {
         pnlGiaNhap.add(lblGiaNhap);
         pnlGiaNhap.add(txtGiaNhap);
 
-        JPanel pnlGiaBan= new JPanel(new GridBagLayout());
-        lblGiaBan = new JLabel("Giá bán:");
-        lblGiaBan.setPreferredSize(new Dimension(100,25));
-        txtGiaBan = new JTextField();
-        txtGiaBan.setPreferredSize(new Dimension(200,25));
-        pnlGiaBan.add(lblGiaBan);
-        pnlGiaBan.add(txtGiaBan);
 
         JPanel pnlTrangThai= new JPanel(new GridBagLayout());
         lblTrangThai = new JLabel("Trạng thái:");
@@ -236,6 +253,32 @@ public class Form_ThemThuoc extends JPanel {
         pnlTrangThai.add(lblTrangThai);
         pnlTrangThai.add(cmbTrangThai);
 
+        JPanel pnlHamLuong = new JPanel(new GridBagLayout());
+        lblHamLuong = new JLabel("Hàm lượng:");
+        lblHamLuong.setPreferredSize(new Dimension(100,25));
+        txtHamLuong = new JTextField();
+        txtHamLuong.setPreferredSize(new Dimension(200,25));
+        pnlHamLuong.add(lblHamLuong);
+        pnlHamLuong.add(txtHamLuong);
+
+        JPanel pnlDangBaoChe= new JPanel(new GridBagLayout());
+        lblDangBaoChe = new JLabel("Dạng bào chế:");
+        lblDangBaoChe.setPreferredSize(new Dimension(100,25));
+        txtDangBaoChe = new JTextField();
+        txtDangBaoChe.setPreferredSize(new Dimension(200,25));
+        pnlDangBaoChe.add(lblDangBaoChe);
+        pnlDangBaoChe.add(txtDangBaoChe);
+
+        JPanel pnlMoTa = new JPanel(new GridBagLayout());
+        lblMoTa = new JLabel("Mô tả:");
+        lblMoTa.setPreferredSize(new Dimension(100,25));
+        txaMoTa = new JTextArea(3,18);
+        txaMoTa.setPreferredSize(new Dimension(200,25));
+        txaMoTa.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
+        txaMoTa.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
+        scrMota = new JScrollPane(txaMoTa);
+        pnlMoTa.add(lblMoTa);
+        pnlMoTa.add(scrMota);
 
         //
         gbc.gridx = 0; gbc.gridy = 1; inforInputThuoc.add(lblInforProductDetails, gbc);
@@ -254,23 +297,27 @@ public class Form_ThemThuoc extends JPanel {
         gbc.gridx = 0; gbc.gridy = 6; inforInputThuoc.add(pnlDonViTinh, gbc);
         gbc.gridx = 1; gbc.gridy = 6; inforInputThuoc.add(pnlSoLuongCon, gbc);
 
-        //
-        gbc.gridx = 0; gbc.gridy = 7; inforInputThuoc.add(lblUsageDetails, gbc);
-        gbc.gridx = 0; gbc.gridy = 8; inforInputThuoc.add(pnlCongDung, gbc);
-        gbc.gridx = 1; gbc.gridy = 8; inforInputThuoc.add(pnlThanhPhan, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 9; inforInputThuoc.add(pnlBaoQuan, gbc);
-        gbc.gridx = 1; gbc.gridy = 9; inforInputThuoc.add(pnlChiDinh, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 10; inforInputThuoc.add(pnlCachDung, gbc);
+        gbc.gridx = 0; gbc.gridy = 7; inforInputThuoc.add(pnlHamLuong, gbc);
+        gbc.gridx = 1; gbc.gridy = 7; inforInputThuoc.add(pnlDangBaoChe, gbc);
 
         //
-        gbc.gridx = 0; gbc.gridy = 11; inforInputThuoc.add(lblPricing, gbc);
-        gbc.gridx = 0; gbc.gridy = 12; inforInputThuoc.add(pnlGiaNhap, gbc);
-        gbc.gridx = 1; gbc.gridy = 12; inforInputThuoc.add(pnlGiaBan, gbc);
+        gbc.gridx = 0; gbc.gridy = 8; inforInputThuoc.add(lblUsageDetails, gbc);
+        gbc.gridx = 0; gbc.gridy = 9; inforInputThuoc.add(pnlCongDung, gbc);
+        gbc.gridx = 1; gbc.gridy = 9; inforInputThuoc.add(pnlThanhPhan, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 13; inforInputThuoc.add(pnlHinhAnh, gbc);
-        gbc.gridx = 1; gbc.gridy = 13; inforInputThuoc.add(pnlTrangThai, gbc);
+        gbc.gridx = 0; gbc.gridy = 10; inforInputThuoc.add(pnlBaoQuan, gbc);
+        gbc.gridx = 1; gbc.gridy = 10; inforInputThuoc.add(pnlChiDinh, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 11; inforInputThuoc.add(pnlCachDung, gbc);
+        gbc.gridx = 1; gbc.gridy = 11; inforInputThuoc.add(pnlMoTa, gbc);
+
+        //
+        gbc.gridx = 0; gbc.gridy = 12; inforInputThuoc.add(lblPricing, gbc);
+        gbc.gridx = 0; gbc.gridy = 13; inforInputThuoc.add(pnlGiaNhap, gbc);
+        gbc.gridx = 1; gbc.gridy = 14; inforInputThuoc.add(pnlTrangThai, gbc);
+
+
+        gbc.gridx = 0; gbc.gridy = 14; inforInputThuoc.add(pnlHinhAnh, gbc);
 
         add(inforInputThuoc, BorderLayout.CENTER);
 
@@ -281,30 +328,54 @@ public class Form_ThemThuoc extends JPanel {
         pButton.add(btnHuy);
         add(pButton, BorderLayout.SOUTH);
 
-        btnLuu.addActionListener(e->{
-            String tenThuoc = txtTenThuoc.getText().trim();
-            DanhMuc danhMuc = (DanhMuc) cmbDanhMuc.getSelectedItem();
-            NhaCungCap nhaCungCap = (NhaCungCap) cmbNhaCungCap.getSelectedItem();
-            NhaSanXuat nhaSanXuat = (NhaSanXuat) cmbNhaSanXuat.getSelectedItem();
-            NuocSanXuat nuocSanXuat = (NuocSanXuat) cmbNuocSanXuat.getSelectedItem();
-            KeThuoc keThuoc = (KeThuoc) cmbKeThuoc.getSelectedItem();
-            Date ngaySanXuat = (Date) datePickerNgaySanXuat.getModel().getValue();
-            Date hanSuDung = (Date) datePickerHSD.getModel().getValue();
-            String donViTinh = (String) cmbDonViTinh.getSelectedItem();
-            int soLuongCon = Integer.parseInt(txtSoLuongCon.getText().trim());
-            String cachDung = txaCachDung.getText().trim();
-            String thanhPhan = txtThanhPhan.getText().trim();
-            String baoQuan = txtBaoQuan.getText().trim();
-            String congDung = txaCongDung.getText().trim();
-            String chiDinh = txtChiDinh.getText().trim();
-            String hinhAnh = txtHinhAnh.getText().trim();
-            double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
-            double giaBan = Double.parseDouble(txtGiaBan.getText().trim());
-            boolean trangThai = cmbTrangThai.getSelectedItem() == "Còn" ? true : false;
-
-//            Thuoc thuoc = new Thuoc("","",tenThuoc,donViTinh, cachDung, thanhPhan,  baoQuan,  congDung, chiDinh, hanSuDung,  soLuongCon,  ngaySanXuat,  giaNhap,  danhMuc,  giaBan,
-//             nhaSanXuat,  nhaCungCap,  nuocSanXuat,  keThuoc,  trangThai,  hinhAnh);
-        });
+//        btnLuu.addActionListener(e->{
+//            Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+//            DonGiaThuoc_DAO donGia_dao = new DonGiaThuoc_DAO();
+//            String maThuoc = thuoc_dao.tuSinhMaThuoc();
+//            String soHieuThuoc = thuoc_dao.tuSinhSoHieu();
+//            String tenThuoc = txtTenThuoc.getText().trim();
+//            DanhMuc danhMuc = new DanhMuc(cmbDanhMuc.getSelectedItem().toString());
+//            NhaCungCap nhaCungCap = new NhaCungCap(cmbNhaCungCap.getSelectedItem().toString());
+//
+//            NhaSanXuat nhaSanXuat = new NhaSanXuat(cmbNhaSanXuat.getSelectedItem().toString());
+//
+//            NuocSanXuat nuocSanXuat = new NuocSanXuat(cmbNuocSanXuat.getSelectedItem().toString());
+//            KeThuoc keThuoc = new KeThuoc(cmbKeThuoc.getSelectedItem().toString());
+//            Date ngaySanXuat = (Date) datePickerNgaySanXuat.getModel().getValue();
+//            int hanSuDung = Integer.parseInt(txtHSD.getText().trim());
+//            int soLuongCon = Integer.parseInt(txtSoLuongCon.getText().trim());
+//            String cachDung = txaCachDung.getText().trim();
+//            String thanhPhan = txtThanhPhan.getText().trim();
+//            String hamLuong = txtHamLuong.getText().trim();
+//            String moTa = txaMoTa.getText().trim();
+//            String dangBaoChe = txtDangBaoChe.getText().trim();
+//            String baoQuan = txtBaoQuan.getText().trim();
+//            String congDung = txaCongDung.getText().trim();
+//            String chiDinh = txtChiDinh.getText().trim();
+//            String hinhAnh = txtHinhAnh.getText().trim();
+//            double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
+//            boolean trangThai = cmbTrangThai.getSelectedItem() == "Còn" ? true : false;
+//            DonGiaThuoc donGiaThuoc = (DonGiaThuoc) cmbDonViTinh.getSelectedItem();
+//            // Tạo đối tượng giá thuốc
+//            DonGiaThuoc donGiaThuocMoi = new DonGiaThuoc(donGia_dao.tuSinhMaDonGia(), maThuoc, (Thuoc) cmbDonViTinh.getSelectedItem(), giaNhap+(giaNhap*1.2));
+//
+//            // Thêm giá thuốc vào cơ sở dữ liệu
+//            boolean themDonGiaThanhCong = donGia_dao.themDonGia(donGiaThuocMoi);
+//            if (!themDonGiaThanhCong) {
+//                JOptionPane.showMessageDialog(null, "Thêm đơn giá thuốc thất bại!");
+//                return; // Ngừng nếu thêm đơn giá thất bại
+//            }
+//
+//            Thuoc thuoc = new Thuoc(maThuoc,soHieuThuoc,tenThuoc,cachDung,thanhPhan, baoQuan, congDung, chiDinh, hanSuDung,soLuongCon,
+//                    ngaySanXuat,giaNhap,danhMuc,nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, donGiaThuoc);
+//
+//            boolean themThuocThanhCong = thuoc_dao.addThuoc(thuoc);
+//            if (themThuocThanhCong) {
+//                JOptionPane.showMessageDialog(null, "Thêm thuốc và cập nhật giá nhập thành công!");
+//            } else {
+//                JOptionPane.showMessageDialog(null, "Thêm thuốc thành công, nhưng không thể cập nhật giá nhập.");
+//            }
+//        });
         btnHuy.addActionListener(e->{
             int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy không?", "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
             if(confirm == JOptionPane.YES_OPTION){
@@ -312,5 +383,83 @@ public class Form_ThemThuoc extends JPanel {
                 dialogThemThuoc.dispose(); // Đóng JDialog
             }
         });
+
+
     }
+
+    public void loadComboBoxDanhMuc(){
+        try {
+            dm_DAO = new DanhMuc_DAO();
+            ArrayList<DanhMuc> listDanhMuc = dm_DAO.getAllDanhMuc();
+            for(DanhMuc dm : listDanhMuc){
+                cmbDanhMuc.addItem(dm.getTenDanhMuc());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxKeThuoc(){
+        try {
+            ke_DAO = new KeThuoc_DAO();
+            ArrayList<KeThuoc> listKeThuoc = ke_DAO.getAllKeThuoc();
+            for(KeThuoc ke : listKeThuoc){
+                cmbKeThuoc.addItem(ke.getTenKe());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxNhaSX(){
+        try {
+            nsx_DAO = new NhaSanXuat_DAO();
+            ArrayList<NhaSanXuat> listNhaSX = nsx_DAO.getAllNhaSanXuat();
+            for(NhaSanXuat nsx : listNhaSX){
+                cmbNhaSanXuat.addItem(nsx.getTenNhaSX());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxNhaCC(){
+        try {
+            ncc_DAO = new NhaCungCap_DAO();
+            ArrayList<NhaCungCap> listNCC = ncc_DAO.getAllNhaCungCap();
+            for(NhaCungCap ncc : listNCC){
+                cmbNhaCungCap.addItem(ncc.getTenNCC());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxNuocSX(){
+        try {
+            nuoc_DAO = new NuocSanXuat_DAO();
+            ArrayList<NuocSanXuat> listNuocSX = nuoc_DAO.getAllNuocSanXuat();
+            for(NuocSanXuat nuoc : listNuocSX){
+                cmbNuocSanXuat.addItem(nuoc.getTenNuoxSX());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadComboBoxDonViTinh(){
+        try {
+            dvt_DAO = new DonGiaThuoc_DAO();
+            ArrayList<DonGiaThuoc> listDonViTinh = dvt_DAO.getAllDonGia();
+            for(DonGiaThuoc dvt : listDonViTinh){
+                if(!dvt.getDonViTinh().equalsIgnoreCase(dvt.getDonViTinh()) && dvt.getDonViTinh() != null)
+                    cmbDonViTinh.addItem(dvt.getDonViTinh());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 }

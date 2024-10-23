@@ -524,7 +524,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         if(row > -1) {
             ArrayList<ChiTietHoaDon> list = new ArrayList<>();
             try {
-                list = chiTietHoaDon_dao.getDSChiTietHD((String)dtmHoaDon.getValueAt(row, 0));
+                list = chiTietHoaDon_dao.getCTHDForHD((String)dtmHoaDon.getValueAt(row, 0));
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
