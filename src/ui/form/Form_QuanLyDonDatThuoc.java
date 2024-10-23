@@ -1,11 +1,10 @@
 package ui.form;
 
 import dao.ChiTietDonDatThuoc_DAO;
+import dao.ChiTietHoaDon_DAO;
 import dao.DonDatThuoc_DAO;
-import entity.ChiTietDonDatThuoc;
-import entity.DonDatThuoc;
-import entity.DonGiaThuoc;
-import entity.KhachHang;
+import dao.HoaDon_DAO;
+import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -35,6 +34,8 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
     private DonDatThuoc_DAO donDatThuoc_dao = new DonDatThuoc_DAO();
     private ChiTietDonDatThuoc_DAO chiTietDonDatThuoc_dao = new ChiTietDonDatThuoc_DAO();
+    private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+    private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
 
     public Form_QuanLyDonDatThuoc() {
         setLayout(new BorderLayout());
@@ -278,7 +279,68 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                 JOptionPane.showMessageDialog(this, "Không tìm thấy đơn phù hợp!");
                 clear();
             }
+        }if(e.getSource().equals(btnThanhToan)) {
+            if(tabDon.getSelectedRow() < 0) {
+                JOptionPane.showMessageDialog(this, "Chưa chọn đơn!");
+            } else {
+                DonDatThuoc ddt = donDatThuoc_dao.timDonDatThuoc((String)dtmDon.getValueAt(tabDon.getSelectedRow(), 0));
+                if(ddt == null) {
+                    JOptionPane.showMessageDialog(this, "Không tìm thấy đơn!");
+                } else {
+                    ArrayList<ChiTietDonDatThuoc> listCTD = new ArrayList<>();
+                    listCTD = chiTietDonDatThuoc_dao.getChiTiet((String)dtmDon.getValueAt(tabDon.getSelectedRow(), 0));
+                    if(listCTD.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Không tìm thấy chi tiết đơn!");
+                    } else {
+                        HoaDon hd = new HoaDon();
+                        hd.setMaHD(hoaDon_dao.generateHoaDonID());
+                        hd.setKhachHang(ddt.getKhachHang());
+                        hd.setNhanVien(ddt.getNhanVien());
+
+                        java.util.Date date = new java.util.Date();
+                        Date sqlDate = new Date(date.getTime());
+                        hd.setNgayLap(sqlDate);
+
+                        hd.setTrangThai(true);
+                        hd.setHinhThucThanhToan("Chuyển khoản");
+
+                        Thue t = new Thue();
+                        t.setMaThue("THUE001");
+                        t.setLoaiThue("VAT");
+                        t.setTyleThue(0.1);
+                        hd.setThue(t);
+
+                        ArrayList<ChiTietHoaDon> listCTHD = chuyenCTDsangCTHD(hd, listCTD);
+                        ArrayList<ChiTietKhuyenMai> listKM = new ArrayList<>();
+
+                        try {
+                            if(hoaDon_dao.create(hd, listCTHD, listKM) && chiTietHoaDon_dao.create(hd, listCTHD) && donDatThuoc_dao.xoaDonDatThuoc(ddt.getMaDon())) {
+                                JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
+                                clear();
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Thanh toán không thành công!");
+                            }
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private ArrayList<ChiTietHoaDon> chuyenCTDsangCTHD(HoaDon hd, ArrayList<ChiTietDonDatThuoc> list) {
+        ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
+        for(ChiTietDonDatThuoc x : list) {
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon();
+            chiTietHoaDon.setThuoc(x.getThuoc());
+            chiTietHoaDon.setHoaDon(hd);
+            chiTietHoaDon.setDonViTinh(x.getDonViTinh());
+            chiTietHoaDon.setSoLuong(x.getSoLuong());
+            listCTHD.add(chiTietHoaDon);
+        }
+        System.out.println(listCTHD.size());
+        return listCTHD;
     }
 
     public void clear() {
@@ -288,7 +350,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         txtTimKiem.setText("");
         dtmChiTietDon.setRowCount(0);
         try {
-            loadDataTableDonDatThuoc(donDatThuoc_dao.getAllDonDatThuoc());
+            loadDataTableDonDatThuoc(donDatThuoc_dao.reload());
         } catch (Exception e) {
             e.printStackTrace();
         }
