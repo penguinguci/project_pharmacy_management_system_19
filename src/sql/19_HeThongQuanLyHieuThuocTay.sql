@@ -895,7 +895,7 @@ GO
 -- cập nhật số lượng thuốc sau khi thanh toán thành công
 CREATE TRIGGER trg_UpdateSoLuongThuoc
 ON HoaDon
-AFTER UPDATE
+AFTER INSERT
 AS
 BEGIN
     IF EXISTS (
@@ -907,9 +907,27 @@ BEGIN
         UPDATE t
         SET t.soLuongCon = t.soLuongCon - cthd.soLuong
         FROM Thuoc t
-        INNER JOIN ChiTietHoaDon cthd ON t.maThuoc = cthd.maThuoc
-        INNER JOIN inserted i ON i.maHD = cthd.maHD
-        WHERE i.trangThai = 1;  
+        INNER JOIN ChiTietHoaDon cthd ON t.soHieuThuoc = cthd.soHieuThuoc AND t.maThuoc = cthd.maThuoc
+        INNER JOIN HoaDon h ON h.maHD = cthd.maHD
+        INNER JOIN inserted i ON h.maHD = i.maHD
+        WHERE i.trangThai = 1 
+          AND t.soLuongCon >= cthd.soLuong; 
+        
+        IF @@ROWCOUNT = 0
+        BEGIN
+            PRINT 'Không có bản ghi nào được cập nhật.';
+        END
+        ELSE
+        BEGIN
+            PRINT 'Số lượng thuốc đã được cập nhật thành công.';
+        END
+    END
+    ELSE
+    BEGIN
+        PRINT 'Hóa đơn không có trạng thái đã thanh toán.';
     END
 END;
 GO
+
+
+

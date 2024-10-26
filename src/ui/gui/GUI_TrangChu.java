@@ -1,20 +1,22 @@
 package ui.gui;
 
-import connectDB.ConnectDB;
 import entity.NhanVien;
 import ui.form.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-public class GUI_TrangChu extends JFrame implements ActionListener{
+public class GUI_TrangChu extends JFrame implements ActionListener, MouseListener {
 
     public JPanel submenuNhanVien, submenuKhachHang, submenuThuoc, submenuNhaCungCap, submenuHoaDon, submenuThongKe;
     public JLabel jLabel_Logo;
@@ -55,9 +57,14 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     public Form_Thue formThue;
     public Form_QuanLyKhuyenMai formQuanLyKhuyenMai;
     public Form_QuanLyChucVu formQuanLyChucVu;
+    public Form_TaiKhoan formTaiKhoan;
     private NhanVien nhanVienDN;
+    public JPopupMenu popupThongBao;
+    public JPanel tamGiacPanel;
+    public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
+    public JTextArea noiDungArea;
+    public JButton btnXemCTTB;
 
-    public int role; //Set role cho GUI để bật tắt chức năng
     public GUI_TrangChu() throws Exception {
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -340,18 +347,61 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         RoundedLabel lbSoThongBao = new RoundedLabel("3", 20);
         lbSoThongBao.setBounds(20, 0, 20, 20);
-        // KHÔNG XÓA COMMNET!!!!!!!
-//        lbSoThongBao.setForeground(Color.WHITE);
-//        lbSoThongBao.setBackground(Color.RED);
-//        lbSoThongBao.setOpaque(true);
-//        lbSoThongBao.setHorizontalAlignment(SwingConstants.CENTER);
-//        lbSoThongBao.setFont(new Font("Arial", Font.BOLD, 12));
-//        lbSoThongBao.setBounds(20, 0, 20, 20);
-//        lbSoThongBao.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-//        lbSoThongBao.setVisible(true);
 
         layeredPaneThongBao.add(btnThongBao, Integer.valueOf(1)); // icon chuông ở dưới
         layeredPaneThongBao.add(lbSoThongBao, Integer.valueOf(2)); // sô tb ở trên
+
+
+        popupThongBao = new JPopupMenu();
+        popupThongBao.setPreferredSize(new Dimension(400, 500));
+
+
+        JPanel dsTBPanel = new JPanel();
+        dsTBPanel.setLayout(new BoxLayout(dsTBPanel, BoxLayout.Y_AXIS));
+
+        dsTBPanel.add(new ThongBaoPanel("Thông báo 1", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
+        dsTBPanel.add(new ThongBaoPanel("Thông báo 2", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
+        dsTBPanel.add(new ThongBaoPanel("Thông báo 3", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
+        dsTBPanel.add(new ThongBaoPanel("Thông báo 4", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
+
+        JScrollPane scrollPaneThongBao = new JScrollPane(dsTBPanel);
+//        scrollPaneThongBao.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPaneThongBao.setPreferredSize(new Dimension(380, 480));
+        scrollPaneThongBao.getVerticalScrollBar().setUnitIncrement(12);
+        scrollPaneThongBao.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JScrollBar verticalScrollBarThongBao = scrollPaneThongBao.getVerticalScrollBar();
+        verticalScrollBarThongBao.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBarThongBao.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104); // Đặt màu của thanh trượt
+                this.trackColor = Color.WHITE; // Đặt màu nền của thanh cuộn
+            }
+        });
+
+        popupThongBao.add(scrollPaneThongBao);
+
+
+        tamGiacPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2d.setColor(popupThongBao.getBackground());
+                int[] xPoints = {0, getWidth() / 2, getWidth()};
+                int[] yPoints = {getWidth(), 0,  getHeight()};
+                g2d.fillPolygon(xPoints, yPoints, 3);
+
+                g2d.setColor(Color.gray); // màu viền
+                g2d.setStroke(new BasicStroke(2)); // độ dày viền
+                g2d.drawPolygon(xPoints, yPoints, 3); // vẽ viền
+            }
+        };
+        tamGiacPanel.setPreferredSize(new Dimension(25, 15));
+        tamGiacPanel.setOpaque(false);
 
 
         // Nút User (Panel)
@@ -411,6 +461,18 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         centerPanel = new JPanel(cardLayout);
         centerPanel.setPreferredSize(new Dimension(1320, 760));
         centerPanel.setBackground(Color.WHITE);
+
+        // panel đồng hồ
+        JPanel dongHoPanel = new RoundedPanel(20);
+
+        // tạo đồng hôg
+        DigitalClock clock = new DigitalClock(20);
+        clock.start();
+        clock.setPreferredSize(new Dimension(370, 170));
+
+        dongHoPanel.add(clock, BorderLayout.NORTH);
+
+        centerPanel.add(dongHoPanel);
 
 
         // tạo các form trước và thêm vào centerPanel
@@ -491,6 +553,70 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         btnTKThuocBanCham.addActionListener(this);
         btnTKThuocSapHH.addActionListener(this);
 
+        customButtonUser.addMouseListener(this);
+
+        btnThongBao.addMouseListener(this);
+        popupThongBao.addMouseListener(this);
+        tamGiacPanel.addMouseListener(this);
+    }
+
+    // lớp tạo khung thông báo
+    public class ThongBaoPanel extends JPanel {
+
+        public ThongBaoPanel(String tieuDe, String noiDung, ImageIcon hinhAnh, String thoiGian) {
+            setLayout(new GridBagLayout());
+            setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            setPreferredSize(new Dimension(300, 150));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            // tieu de
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2; // chiem 2 cit
+            gbc.weightx = 1.0; // chiem toan bo chieu rong
+            lblTieuDe = new JLabel(tieuDe);
+            lblTieuDe.setFont(new Font("Arial", Font.BOLD, 14));
+            add(lblTieuDe, gbc);
+
+            // hinh anh
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.gridwidth = 1; // chiem 1 cot
+            lblHinhAnh = new JLabel();
+            if (hinhAnh != null) {
+                lblHinhAnh.setIcon(hinhAnh);
+            }
+            add(lblHinhAnh, gbc);
+
+            // noi dung
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.gridwidth= 1;// chiem 1 cot
+            noiDungArea = new JTextArea(noiDung);
+            noiDungArea.setLineWrap(true);
+            noiDungArea.setWrapStyleWord(true);
+            noiDungArea.setEditable(false);
+            add(noiDungArea, gbc);
+
+            // thoi gian
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.gridwidth = 2; // chiem 2 cot
+            gbc.anchor = GridBagConstraints.EAST; // can le phai
+            lblThoiGian = new JLabel(thoiGian.toString());
+            lblThoiGian.setFont(new Font("Arial", Font.ITALIC, 12));
+            add(lblThoiGian, gbc);
+
+            // btn xem chi tiet
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            gbc.gridwidth = 2; // chiem 2 cot
+            btnXemCTTB = new JButton("Xem chi tiết");
+            add(btnXemCTTB, gbc);
+        }
     }
 
     // Sự kiện
@@ -729,6 +855,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         ImageIcon scaledIconmenu = new ImageIcon(scaledImage);
 
         JButton button = new JButton(text, scaledIconmenu);
+
         button.setBackground(new Color(65, 192, 201));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
@@ -739,11 +866,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         button.setOpaque(true);
         button.setMaximumSize(new Dimension(186, 40));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        addHoverEffect(button);
+        addHoverEffectForMenuButton(button);
         return button;
     }
 
-    // Hàm tạo các nút submenu
+
+    // ham tạo các nút submenu
     private JButton createSubMenuButton(String text) {
         ImageIcon iconSubmenu = new ImageIcon("images\\sub.png");
         Image subImage = iconSubmenu.getImage();
@@ -761,29 +889,125 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
         button.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 10));
         button.setMaximumSize(new Dimension(186, 40));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        addHoverEffect(button);
+        addHoverEffectForSubMenuButton(button);
         return button;
     }
 
-    // Thêm hiệu ứng hover cho buttom
-    private void addHoverEffect(JButton button) {
+    // Thêm hiệu ứng hover cho nút menu chính
+    private void addHoverEffectForMenuButton(JButton button) {
         button.addMouseListener(new MouseAdapter() {
             Color originalBackground = button.getBackground();
+            Color hoverBackground = originalBackground.darker();
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(originalBackground.darker());
+                button.setBackground(hoverBackground);
+                button.setBorder(new RoundedBorder(15));
                 button.repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(originalBackground);
+                button.setBorder(new RoundedBorder(15));
                 button.repaint();
-
             }
         });
     }
+
+    // Thêm hiệu ứng hover cho nút submenu
+    private void addHoverEffectForSubMenuButton(JButton button) {
+        button.addMouseListener(new MouseAdapter() {
+            Color originalBackground = button.getBackground();
+            Color hoverBackground = originalBackground.brighter(); // Sáng hơn cho submenu
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(hoverBackground);
+//                button.setBorder(new RoundedBorder(15));
+                button.repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(originalBackground);
+//                button.setBorder(new RoundedBorder(15));
+                button.repaint();
+            }
+        });
+    }
+
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Object o = e.getSource();
+        if (o == customButtonUser) {
+            formTaiKhoan = new Form_TaiKhoan();
+            centerPanel.add(formTaiKhoan, "formTaiKhoan");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formTaiKhoan");
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        Object o = e.getSource();
+        if (o == btnThongBao || o == tamGiacPanel || o == popupThongBao) {
+            showPopup();
+        }
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        Object o = e.getSource();
+        if (o == btnThongBao || o == popupThongBao || o == tamGiacPanel) {
+           Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+           SwingUtilities.convertPointFromScreen(mouseLocation, btnThongBao.getParent());
+
+           boolean outsideBtnTB = !btnThongBao.getBounds().contains(mouseLocation);
+           boolean outsideTamGiac = !tamGiacPanel.getBounds().contains(mouseLocation);
+           boolean outsidePopupTB = !popupThongBao.getBounds().contains(mouseLocation);
+
+           if(outsideBtnTB && outsideTamGiac && outsidePopupTB) {
+               popupThongBao.setVisible(false);
+               tamGiacPanel.setVisible(false);
+           }
+        }
+    }
+
+    // show pupupThongBao
+    private void showPopup() {
+        Point location = btnThongBao.getLocationOnScreen();
+
+        if (!tamGiacPanel.isVisible()) {
+            getLayeredPane().add(tamGiacPanel, JLayeredPane.PALETTE_LAYER);
+        }
+
+        tamGiacPanel.setSize( 25, 15);
+
+        tamGiacPanel.setLocation(location.x + btnThongBao.getWidth() / 2 - 10,
+                location.y + btnThongBao.getHeight() - 27);
+
+        tamGiacPanel.setOpaque(true);
+        tamGiacPanel.setVisible(true);
+        tamGiacPanel.repaint();
+
+        popupThongBao.show(btnThongBao, -105, btnThongBao.getHeight() + tamGiacPanel.getHeight());
+    }
+
 
     // Lớp tạo viền bo tròn cho Label
     public class RoundedLabel extends JLabel {
@@ -858,7 +1082,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
 
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.setColor(Color.WHITE);
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+            g.drawRoundRect(x, y,   width - 1, height - 1, radius, radius);
         }
     }
 
@@ -877,9 +1101,164 @@ public class GUI_TrangChu extends JFrame implements ActionListener{
     }
 
 
+
+    public class DigitalClock extends JPanel implements Runnable {
+        private Thread thread;
+        private JLabel hourLabel, minuteLabel, secondLabel;
+        private JLabel dateLabel;
+        private int cornerRadius;
+
+        public DigitalClock(int radius) {
+            this.cornerRadius = radius;
+            setOpaque(false);
+
+            setLayout(new GridBagLayout());
+            setBackground(new Color(65, 192, 201));
+            GridBagConstraints gbc = new GridBagConstraints();
+
+            // label hiển thị giờ
+            hourLabel = new JLabel();
+            hourLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            hourLabel.setForeground(Color.BLACK);
+            hourLabel.setHorizontalAlignment(JLabel.CENTER);
+            hourLabel.setPreferredSize(new Dimension(80, 80));
+            hourLabel.setBackground(Color.white);
+            hourLabel.setOpaque(true);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(5, 5, 5, 5);
+            add(hourLabel, gbc);
+
+            //  label hiển thị phút
+            minuteLabel = new JLabel();
+            minuteLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            minuteLabel.setForeground(Color.BLACK);
+            minuteLabel.setHorizontalAlignment(JLabel.CENTER);
+            minuteLabel.setPreferredSize(new Dimension(80, 80));
+            minuteLabel.setBackground(Color.white);
+            minuteLabel.setOpaque(true);
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            add(minuteLabel, gbc);
+
+            // label hiển thị giây
+            secondLabel = new JLabel();
+            secondLabel.setFont(new Font("Arial", Font.BOLD, 36));
+            secondLabel.setForeground(Color.BLACK);
+            secondLabel.setHorizontalAlignment(JLabel.CENTER);
+            secondLabel.setPreferredSize(new Dimension(80, 80));
+            secondLabel.setBackground(Color.white);
+            secondLabel.setOpaque(true);
+            gbc.gridx = 2;
+            gbc.gridy = 0;
+            add(secondLabel, gbc);
+
+            //  label hiển thị ngày tháng năm
+            dateLabel = new JLabel();
+            dateLabel.setFont(new Font("Arial", Font.ITALIC, 20));
+            dateLabel.setHorizontalAlignment(JLabel.CENTER);
+            dateLabel.setForeground(Color.WHITE);
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.gridwidth = 3;
+            gbc.insets = new Insets(10, 5, 5, 5);
+            add(dateLabel, gbc);
+
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Dimension arcs = new Dimension(cornerRadius, cornerRadius);
+            int width = getWidth();
+            int height = getHeight();
+            Graphics2D graphics = (Graphics2D) g;
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            graphics.setColor(getBackground());
+            graphics.fillRoundRect(0, 0, width, height, arcs.width, arcs.height);
+        }
+
+        public void start() {
+            thread = new Thread(this);
+            thread.start();
+        }
+
+        public void stop() {
+            thread.interrupt();
+        }
+
+        @Override
+        public void run() {
+            while (thread != null) {
+                try {
+                    Calendar calendar = Calendar.getInstance();
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    int second = calendar.get(Calendar.SECOND);
+
+                    hourLabel.setText(String.format("%02d", hour));
+                    minuteLabel.setText(String.format("%02d", minute));
+                    secondLabel.setText(String.format("%02d", second));
+
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+                    String date = dateFormat.format(calendar.getTime());
+                    dateLabel.setText(date);
+
+                    repaint(); // Vẽ lại component
+                    Thread.sleep(1000); // Delay 1 second
+                } catch (InterruptedException ex) {
+                    break;
+                }
+            }
+        }
+
+//         Override phương thức paintComponent để vẽ nền gradient
+//        @Override
+//        protected void paintComponent(Graphics g) {
+//            super.paintComponent(g);
+//            Graphics2D g2d = (Graphics2D) g;
+//
+//            // Vẽ hình nền
+//            try {
+//                BufferedImage backgroundImage = ImageIO.read(new File(""));
+//                g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            // Tạo điểm bắt đầu và điểm kết thúc của gradient
+//            Point start = new Point(0, 0);
+//            Point end = new Point(0, getHeight());
+//
+//            // Tạo màu cho gradient
+//            Color color1 = new Color(0, 0, 0, 50);
+//            Color color2 = new Color(0, 0, 0, 50);
+//
+//            // Tạo gradient paint
+//            GradientPaint gradient = new GradientPaint(start, color1, end, color2);
+//
+//            // Vẽ nền gradient
+//            g2d.setPaint(gradient);
+//            g2d.fillRect(0, 0, getWidth(), getHeight());
+//        }
+
+    }
+
+
     public static void main(String[] args) throws Exception {
 //        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         GUI_TrangChu frame = new GUI_TrangChu();
         frame.setVisible(true);
+    }
+
+    private void setFullScreen() {
+        // Lấy kích thước của màn hình
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Rectangle bounds = ge.getMaximumWindowBounds();
+
+        // Thiết lập JFrame theo kích thước của màn hình
+        this.setBounds(bounds);
+        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);  // Đặt JFrame ở chế độ toàn màn hình
     }
 }

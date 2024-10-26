@@ -433,7 +433,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         if(e.getSource().equals(btnXacNhan)) {
             if(!txtMaHoaDon.getText().trim().equals("")){
                 if(cbLoaiPhieu.getSelectedIndex()!=0) {
-                    if(!txtThuTuThuoc.getText().trim().equals("") || txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng")){
+                    if(!txtThuTuThuoc.getText().trim().equals("") && !txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng")){
                         PhieuDoiTra pdt = new PhieuDoiTra();
 
                         pdt.setMaPhieu(phieuDoiTra_dao.tuTaoMaPhieu());
