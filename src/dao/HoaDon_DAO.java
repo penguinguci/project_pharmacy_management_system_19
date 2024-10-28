@@ -562,6 +562,44 @@ public class HoaDon_DAO {
         return doanhThuTheoNgayTrongTuan;
     }
 
+
+    // lấy danh thu của nhân viên của năm và tháng hiện tại
+    public HashMap<Integer, Double> getDoanhThuTheoNgayTrongThangHienTai(String maNV) {
+        HashMap<Integer, Double> doanhThuThang = new HashMap<>();
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        Connection connection = getConnection();
+        CallableStatement callableStatement = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "{call getDoanhThuTheoNgayTrongThangHienTai(?)}";
+            callableStatement = connection.prepareCall(sql);
+            callableStatement.setString(1, maNV);
+
+            rs = callableStatement.executeQuery();
+
+            while (rs.next()) {
+                int ngay = rs.getInt("Ngay");
+                double doanhThu = rs.getDouble("DoanhThu");
+                doanhThuThang.put(ngay, doanhThu);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (callableStatement != null) callableStatement.close();
+                if (connection != null && !connection.isClosed()) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return doanhThuThang;
+    }
+
+
     public boolean capNhatHoaDonBiDoiTra(String maHD) {
         ConnectDB con  = new ConnectDB();
         con.connect();
