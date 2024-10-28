@@ -419,7 +419,6 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                // Thêm hóa đơn vào danh sách
                 if(timHoaDon(hd.getMaHD()) == null) {
                     danhSachHoaDon.add(hd);
                 }
@@ -449,20 +448,17 @@ public class HoaDon_DAO {
         ResultSet rs = null;
 
         try {
-            // Chuẩn bị CallableStatement để gọi thủ tục
             String sql = "{call getDanhSachHoaDonTheoTuanCuaThangTrongNam(?, ?, ?)}";
             callableStatement = connection.prepareCall(sql);
             callableStatement.setInt(1, nam);
             callableStatement.setInt(2, thang);
             callableStatement.setInt(3, tuan);
 
-            // Thực thi và xử lý kết quả
             rs = callableStatement.executeQuery();
             while (rs.next()) {
                 HoaDon hd = new HoaDon();
                 hd.setMaHD(rs.getString("maHD"));
 
-                // Lấy các thông tin khác từ ResultSet
                 khachHang_dao = new KhachHang_DAO();
                 KhachHang kh = new KhachHang();
                 if(rs.getString("maKhachHang") == null) {
@@ -483,7 +479,6 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                // Thêm hóa đơn vào danh sách
                 if(timHoaDon(hd.getMaHD()) == null) {
                     danhSachHoaDon.add(hd);
                 }
@@ -511,7 +506,6 @@ public class HoaDon_DAO {
         try (Connection conn = getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            // Set parameter for the year
             stmt.setInt(1, nam);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -532,7 +526,6 @@ public class HoaDon_DAO {
         try (Connection conn = getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            // Set parameters for year and month
             stmt.setInt(1, nam);
             stmt.setInt(2, thang);
 
@@ -554,7 +547,6 @@ public class HoaDon_DAO {
         try (Connection conn = getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            // Set parameters for year, month, and week
             stmt.setInt(1, nam);
             stmt.setInt(2, thang);
             stmt.setInt(3, tuan);

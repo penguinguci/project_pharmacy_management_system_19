@@ -85,6 +85,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
         // Lấy data thuốc
         thuoc_dao = new Thuoc_DAO();
         ArrayList<Thuoc> t = new ArrayList<Thuoc>();
@@ -606,7 +607,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     }
 
 
-    // Lớp để tạo giao diện cho mỗi sản phẩm
+    // Lớp để tạo giao diện cho mỗi thuốc
     private static class ThuocPanel extends JPanel implements ActionListener {
         JLabel imageLabel, maThuocLabel, tenThuocLabel, giaLabel;
         JSpinner spinnerSoLuong;
@@ -627,7 +628,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
 
-            // Hình ảnh thuốc
+            // hình ảnh thuốc
             ImageIcon imageIcon = new ImageIcon(thuoc.getHinhAnh());
             Image image = imageIcon.getImage();
             Image scaledImageThongBao = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
@@ -640,7 +641,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.insets = new Insets(0, 0, 0, 10);
             add(imageLabel, gbc);
 
-            // Mã thuốc
+            // mã thuốc
             maThuocLabel = new JLabel(thuoc.getMaThuoc());
             maThuocLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
             gbc.gridx = 1;
@@ -649,14 +650,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.anchor = GridBagConstraints.WEST;
             add(maThuocLabel, gbc);
 
-            // Tên thuốc
+            // tên thuốc
             tenThuocLabel = new JLabel(thuoc.getTenThuoc());
             tenThuocLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
             gbc.gridy = 1;
             gbc.insets = new Insets(5, 0, 10, 0);
             add(tenThuocLabel, gbc);
 
-            // Giá thuốc
+            // giá thuốc
 //            giaLabel = new JLabel("Giá: " + String.format("%,.0f", thuoc.getDonGiaThuoc().getDonGia()) + "đ");
             giaLabel = new JLabel();
             giaLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -665,7 +666,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.insets = new Insets(-5, 0, 0, 0);
             add(giaLabel, gbc);
 
-            // Số lượng spinner
+            // số lượng spinner
             JLabel lblSoLuong = new JLabel("Số lượng:");
             lblSoLuong.setFont(new Font("Tahoma", Font.PLAIN, 14));
             gbc.gridy = 3;
@@ -680,7 +681,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.gridx = 2;
             add(spinnerSoLuong, gbc);
 
-            // Đơn vị tính
+            // dơn vị tính
             JLabel lblDonVi = new JLabel("Đơn vị:");
             lblDonVi.setFont(new Font("Tahoma", Font.PLAIN, 14));
             gbc.gridy = 4;
@@ -695,7 +696,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.gridx = 2;
             add(cboDonViThuoc, gbc);
 
-            // Button thêm
+            // button thêm
             btnThemThuoc = new RoundedButton("+ Thêm");
             btnThemThuoc.setFont(new Font("Tahoma", Font.BOLD, 14));
             btnThemThuoc.setForeground(Color.WHITE);
@@ -735,7 +736,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             giaLabel.setText("Giá: " + String.format("%,.0f",  giaThuoc) + "đ");
         }
 
-        // sự kiện cho giao diện panel
+        // sự kiện cho giao diện panel thuoc
         @Override
         public void actionPerformed(ActionEvent e) {
             Object o = e.getSource();
@@ -773,11 +774,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                             String.format("%,.0f", thanhTien) + "đ"
                     });
                 }
-                // Cập nhật lại spinner và combobox
+                // cập nhật lại spinner và combobox
                 spinnerSoLuong.setValue(1);
                 cboDonViThuoc.setSelectedIndex(0);
 
-                // Cập nhật tiền
+                // cập nhật tiền
                 try {
                     updateTien();
                 } catch (Exception ex) {
@@ -793,7 +794,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
     }
 
-    // Hàm cập nhật tiền
+    // hàm cập nhật tiền
     public static void updateTien() throws Exception {
         ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<>();
         HoaDon hoaDon = new HoaDon();
@@ -834,7 +835,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         txt_TienGiam.setText(String.format("%,.0f", tienGiam) + "đ");
 
 
-        // Tính tiền khuyến mãi
+        // tính tiền khuyến mãi
         double tienKhuyenMai = 0;
         String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
 
@@ -997,13 +998,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             return;
         }
 
-        // Kiểm tra phương thức thanh toán
         if (!rbtnTienMat.isSelected() && !rbtnViDienTu.isSelected()) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn phương thức thanh toán!");
             return;
         }
 
-        // Kiểm tra nếu chọn phương thức thanh toán là tiền mặt
         if (rbtnTienMat.isSelected()) {
             if (txtTienKhachTra.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập tiền khách đưa!");
@@ -1016,7 +1015,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     JOptionPane.showMessageDialog(this, "Tiền khách trả phải lớn hơn hoặc bằng 0!");
                     return;
                 }
-                // Thực hiện tiếp các xử lý khác nếu tiền khách đưa hợp lệ
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Tiền khách đưa phải là số!");
                 return;
@@ -1093,7 +1091,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             }
         }
 
-        // Tạo hóa đơn trong cơ sở dữ liệu
+        // create hóa đơn trong cơ sở dữ liệu
         boolean hoaDonDuocTao = hd_dao.create(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
         boolean chiTietHoaDonTao = chiTietHoaDon_dao.create(hoaDon, dsChiTietHoaDon);
 
@@ -1101,11 +1099,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
 
 
-            // In hóa đơn
+            // in hóa đơn
             HoaDonPrinter printer = new HoaDonPrinter(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
             printer.printHoaDon();
 
-            // Xóa giỏ hàng
+            // xóa giỏ hàng
             xoaGioHang();
         } else {
             JOptionPane.showMessageDialog(this, "Thanh toán thất bại, vui lòng thử lại!");
@@ -1429,7 +1427,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                         tongTienTemp += ct.tinhThanhTien();
                     }
 
-                    // Hiển thị tóm tắt thông tin hóa đơn với định dạng tiền
+                    // hiển thị tóm tắt thông tin hóa đơn với định dạng tiền
                     contentStream.beginText();
                     contentStream.newLineAtOffset(100, yPosition);
                     contentStream.showText("Tiền Thuế (VAT - 10%): " + currencyFormat.format(hoaDon.tinhTienThue(dsChiTietHoaDon)) + " đ");
@@ -1459,7 +1457,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 String fileName = "hoa_don_" + timeStamp + ".pdf";
                 String filePath = "HoaDon_PDF\\" + fileName;
 
-                // Hiển thị PDF
+                // hien PDF
                 document.save(filePath);
                 openPDF(filePath);
 
