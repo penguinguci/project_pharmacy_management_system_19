@@ -18,13 +18,14 @@ import java.util.Calendar;
 
 public class GUI_TrangChu extends JFrame implements ActionListener, MouseListener {
 
-    public JPanel submenuNhanVien, submenuKhachHang, submenuThuoc, submenuNhaCungCap, submenuHoaDon, submenuThongKe;
+    public JPanel submenuNhanVien, submenuKhachHang, submenuThuoc, submenuNhaCungCap, submenuKhuyenMai, submenuHoaDon, submenuThongKe;
     public JLabel jLabel_Logo;
     public JButton btnNhanVien, btnKhachHang, btnThuoc, btnNhaCungCap, btnHoaDon, btnThongKe;
     public JButton btnBanThuoc, btnCapNhatNV, btnTimKiemNV, btnTaiKhoan, btnCapNhatKH, btnDatThuoc, btnTimKiemKH
             , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
-            btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu;
+            btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
+            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai;
     public JButton btnDangXuat, btnThongBao;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
@@ -71,6 +72,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+        setBackground(Color.WHITE);
 
         // Set logo
         ImageIcon logo = new ImageIcon("images/logo.jpg");
@@ -156,13 +158,15 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         ImageIcon iconNhaCungCap = new ImageIcon("images/nhaCungCap.png");
         ImageIcon iconHoaDon = new ImageIcon("images/hoaDon.png");
         ImageIcon iconThongKe = new ImageIcon("images/thongKe.png");
+        ImageIcon iconKhuyenMai = new ImageIcon("images/promotions.png");
 
         // Tạo các nút menu
         btnNhanVien = createMenuButton("Nhân Viên", iconNhanVien);
-        btnNhanVien.setContentAreaFilled(false);
+//        btnNhanVien.setContentAreaFilled(false);
         btnKhachHang = createMenuButton("Khách Hàng", iconKhachHang);
         btnThuoc = createMenuButton("Thuốc", iconThuoc);
         btnNhaCungCap = createMenuButton("Nhà Cung Cấp", iconNhaCungCap);
+        btnKhuyenMai = createMenuButton("Khuyến Mãi", iconKhuyenMai);
         btnHoaDon = createMenuButton("Hóa Đơn", iconHoaDon);
         btnThongKe = createMenuButton("Thống Kê", iconThongKe);
 
@@ -213,14 +217,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnNhaSanXuat = createSubMenuButton("Nhà Sản Xuất");
         btnNuocSanXuat = createSubMenuButton("Nước Sản Xuất");
         btnDanhMuc = createSubMenuButton("Danh Mục");
-        btnKhuyenMai = createSubMenuButton("Khuyến mãi");
         btnTimKiemThuoc = createSubMenuButton("Tìm Kiếm");
 
         submenuThuoc.add(btnCapNhatThuoc);
         submenuThuoc.add(btnNhaSanXuat);
         submenuThuoc.add(btnNuocSanXuat);
         submenuThuoc.add(btnDanhMuc);
-        submenuThuoc.add(btnKhuyenMai);
         submenuThuoc.add(btnTimKiemThuoc);
 
 
@@ -235,6 +237,19 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         submenuNhaCungCap.add(btnCapNhatNCC);
         submenuNhaCungCap.add(btnTimKiemNCC);
+
+
+        // Submenu khuyến mãi
+        submenuKhuyenMai = new JPanel();
+        submenuKhuyenMai.setLayout(new BoxLayout(submenuKhuyenMai, BoxLayout.Y_AXIS));
+        submenuKhuyenMai.setBackground(new Color(65, 192, 201));
+        submenuKhuyenMai.setVisible(false);
+
+        btnCapNhatKhuyenmai = createSubMenuButton("Cập nhật");
+        btnTimKiemKhuyenMai = createSubMenuButton("Tìm kiếm");
+
+        submenuKhuyenMai.add(btnCapNhatKhuyenmai);
+        submenuKhuyenMai.add(btnTimKiemKhuyenMai);
 
 
         // Submenu Hóa đơn
@@ -286,6 +301,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         menuItemsPanel.add(btnNhaCungCap);
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuItemsPanel.add(submenuNhaCungCap);
+        menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        menuItemsPanel.add(btnKhuyenMai);
+        menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        menuItemsPanel.add(submenuKhuyenMai);
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuItemsPanel.add(btnHoaDon);
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -519,6 +538,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnKhachHang.addActionListener(this);
         btnThuoc.addActionListener(this);
         btnNhaCungCap.addActionListener(this);
+        btnKhuyenMai.addActionListener(this);
         btnHoaDon.addActionListener(this);
         btnThongKe.addActionListener(this);
         btnDangXuat.addActionListener(this);
@@ -538,11 +558,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnNhaSanXuat.addActionListener(this);
         btnNuocSanXuat.addActionListener(this);
         btnDanhMuc.addActionListener(this);
-        btnKhuyenMai.addActionListener(this);
         btnTimKiemThuoc.addActionListener(this);
 
         btnCapNhatNCC.addActionListener(this);
         btnTimKiemNCC.addActionListener(this);
+
+        btnCapNhatKhuyenmai.addActionListener(this);
+        btnTimKiemKhuyenMai.addActionListener(this);
 
         btnHDBanThuoc.addActionListener(this);
         btnPhieuDoiTra.addActionListener(this);
@@ -637,6 +659,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             repaint();
         } else if(o == btnNhaCungCap) {
             submenuNhaCungCap.setVisible(!submenuNhaCungCap.isVisible());
+            revalidate();
+            repaint();
+        } else if(o == btnKhuyenMai) {
+            submenuKhuyenMai.setVisible(!submenuKhuyenMai.isVisible());
             revalidate();
             repaint();
         } else if(o == btnHoaDon) {
@@ -761,7 +787,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyDanhMuc");
-        } else if(o == btnKhuyenMai) {
+        } else if(o == btnCapNhatKhuyenmai) {
             formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
             centerPanel.add(formQuanLyKhuyenMai, "formQuanLyKhuyenMai");
             centerPanel.revalidate();
@@ -943,7 +969,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public void mouseClicked(MouseEvent e) {
         Object o = e.getSource();
         if (o == customButtonUser) {
-            formTaiKhoan = new Form_TaiKhoan();
+            formTaiKhoan = new Form_TaiKhoan(nhanVienDN);
             centerPanel.add(formTaiKhoan, "formTaiKhoan");
             centerPanel.revalidate();
             centerPanel.repaint();

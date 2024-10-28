@@ -1,4 +1,4 @@
-﻿-- Tạo cơ sở dữ liệu
+﻿	-- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
 
@@ -548,6 +548,7 @@ END
 GO
 
 
+
 -- danh sach doanh thu các tháng trong tháng
 CREATE PROCEDURE getDoanhThuCacNgayTrongThang @nam INT, @thang INT
 AS
@@ -711,6 +712,31 @@ BEGIN
         END;
 END
 GO
+
+
+-- lấy doanh thu của nhân viên trong tháng và năm hiện tại
+CREATE PROCEDURE getDoanhThuTheoNgayTrongThangHienTai @maNV VARCHAR(10)
+AS
+BEGIN
+    DECLARE @nam INT = YEAR(GETDATE()); 
+    DECLARE @thang INT = MONTH(GETDATE()); 
+
+    SELECT 
+        DAY(hd.ngayLap) AS Ngay,
+        SUM(hd.tongTien) AS DoanhThu
+    FROM 
+        HoaDon hd
+    WHERE 
+		hd.maNhanVien = @maNV
+        AND YEAR(hd.ngayLap) = @nam 
+        AND MONTH(hd.ngayLap) = @thang
+    GROUP BY 
+        DAY(hd.ngayLap)
+    ORDER BY 
+        DAY(hd.ngayLap);
+END
+GO
+
 
 
 -- lấy danh sách thuốc theo tên danh mục
