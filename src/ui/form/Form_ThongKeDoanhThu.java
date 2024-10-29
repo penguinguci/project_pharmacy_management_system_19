@@ -48,11 +48,11 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         hoaDon_dao = new HoaDon_DAO();
 
 
-        // Phần chọn thời gian
+        //  chọn thời gian
         JPanel filterPanel = new JPanel(new FlowLayout());
         filterPanel.setBorder(BorderFactory.createTitledBorder("Chọn thời gian"));
 
-        // Khởi tạo comboBox cho thời gian và các lựa chọn
+        //  comboBox cho thời gian và các lựa chọn
         cmbThoiGian = new JComboBox<>(new String[]{"Theo tuần", "Theo tháng", "Theo năm"});
 
         cmbNam = new JComboBox<>(getYears());
@@ -77,10 +77,10 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         btnXemChiTiet.setFont(new Font("Arial", Font.BOLD, 13));
         btnXemChiTiet.setPreferredSize(new Dimension(110, 30));
 
-        // Panel dưới: chứa combo box để chọn thời gian (tuần/tháng/năm) và bảng danh sách hóa đơn
+        // panel dưới: chứa combo box để chọn thời gian (tuần/tháng/năm) và bảng danh sách hóa đơn
         JPanel bottomPanel = new JPanel(new BorderLayout());
 
-        // Panel trên: chứa biểu đồ
+        // panel trên: chứa biểu đồ
         // topPanel
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
@@ -105,13 +105,13 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
         topPanel.add(chartPanel, BorderLayout.CENTER);
 
-        // Tạo biểu đồ bằng JFreeChart
+        // tao biểu đồ bằng JFreeChart
         JFreeChart barChart = createChart();
         ChartPanel barChartPanel = new ChartPanel(barChart);
         chartPanel.add(barChartPanel, BorderLayout.CENTER);
 
 
-        // Thêm các combo box vào panel
+        // them các combo box vào panel
         filterPanel.add(new JLabel("Thống kê:"));
         filterPanel.add(cmbThoiGian);
         filterPanel.add(lblNam = new JLabel("Năm:"));
@@ -153,7 +153,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         JLabel lblDoanhThu = new JLabel("Tổng doanh thu:");
         lblDoanhThu.setFont(new Font("Arial", Font.BOLD, 20));
         panelDoanhThu.add(lblDoanhThu);
-        lblDoanhThuValue = new JLabel("100.000.000 VND");
+        lblDoanhThuValue = new JLabel("");
         lblDoanhThuValue.setFont(new Font("Arial", Font.BOLD, 20));
         panelDoanhThu.add(lblDoanhThuValue, BorderLayout.CENTER);
 
@@ -163,7 +163,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         JLabel lblLoiNhuan = new JLabel("Tổng lợi nhuận:");
         lblLoiNhuan.setFont(new Font("Arial", Font.BOLD, 20));
         panelLoiNhuan.add(lblLoiNhuan);
-        lblLoiNhuanValue = new JLabel("100.000.000 VND");
+        lblLoiNhuanValue = new JLabel("");
         lblLoiNhuanValue.setFont(new Font("Arial", Font.BOLD, 20));
         panelLoiNhuan.add(lblLoiNhuanValue, BorderLayout.CENTER);
 
@@ -271,25 +271,25 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
             }
         }
 
-        // Tạo biểu đồ cột
+        // tao biểu đồ cột
         CategoryPlot plot = new CategoryPlot();
         BarRenderer barRenderer = new BarRenderer();
 
-        // Thiết lập hiển thị nhãn giá trị trên cột
+        // hiển thị nhãn  trên cột
         barRenderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         barRenderer.setDefaultItemLabelsVisible(true);
 
-        // Tùy chọn hiển thị nhãn bên trên hoặc bên trong cột
+        // hiển thị nhãn bên trên hoặc bên trong cột
         barRenderer.setDefaultPositiveItemLabelPosition(
                 new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER)
         );
 
         plot.setDataset(0, barDataset);  // dataset 0 cho biểu đồ cột
         plot.setRenderer(0, barRenderer);  // renderer 0 cho cột
-        plot.setDomainAxis(new CategoryAxis("Tháng"));  // Trục X
-        plot.setRangeAxis(new NumberAxis("Doanh thu (VND)"));  // Trục Y
+        plot.setDomainAxis(new CategoryAxis("Tháng"));  // trục X
+        plot.setRangeAxis(new NumberAxis("Doanh thu (VND)"));  // trục Y
 
-        // Tạo biểu đồ đường
+        // tao biểu đồ đường
         DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
         HashMap<Integer, Double> doanhThuTrungBinh = hoaDon_dao.getTrungBinhDoanhThuTheoNam(nam);
 
@@ -311,7 +311,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
         plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
 
-        // Tạo biểu đồ từ plot kết hợp
+        //  biểu đồ từ plot kết hợp
         JFreeChart chart = new JFreeChart("Biểu đồ Doanh thu các tháng trong năm " + nam,
                 JFreeChart.DEFAULT_TITLE_FONT,
                 plot, true);
@@ -349,7 +349,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         repaint();
     }
 
-    // Dữ liệu cho combo box tuần
+    // du liệu cho combo box tuần
     private String[] getWeeks() {
         String[] weeks = new String[5];  // Giả sử mỗi tháng có 4-5 tuần
         for (int i = 1; i <= 5; i++) {
@@ -358,7 +358,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         return weeks;
     }
 
-    // Dữ liệu cho combo box tháng
+    // du liệu cho combo box tháng
     private String[] getMonths() {
         String[] months = new String[12];
         for (int i = 1; i <= 12; i++) {
@@ -367,7 +367,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         return months;
     }
 
-    // Dữ liệu cho combo box năm
+    // du liệu cho combo box năm
     private String[] getYears() {
         String[] years = new String[10];
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -440,15 +440,15 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
             }
         }
 
-        // Tạo biểu đồ cột
+        // tạo biểu đồ cột
         CategoryPlot plot = new CategoryPlot();
         BarRenderer barRenderer = new BarRenderer();
 
-        // Thiết lập hiển thị nhãn giá trị trên cột
+        //  hiển thị nhãn giá trị trên cột
         barRenderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         barRenderer.setDefaultItemLabelsVisible(true);
 
-        // Tùy chọn hiển thị nhãn bên trên hoặc bên trong cột
+        //  hiển thị nhãn bên trên hoặc bên trong cột
         barRenderer.setDefaultPositiveItemLabelPosition(
                 new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER)
         );
@@ -458,7 +458,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         plot.setDomainAxis(new CategoryAxis("Tháng"));  // Trục X
         plot.setRangeAxis(new NumberAxis("Doanh thu (VND)"));  // Trục Y
 
-        // Tạo biểu đồ đường
+        // tao biểu đồ đường
         DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
         HashMap<Integer, Double> doanhThuTrungBinh = hoaDon_dao.getTrungBinhDoanhThuTheoNam(year);
 
@@ -480,7 +480,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
         plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
 
-        // Tạo biểu đồ từ plot kết hợp
+        // tao biểu đồ từ plot kết hợp
         JFreeChart chart = new JFreeChart("Biểu đồ Doanh thu các tháng trong năm " + year,
                 JFreeChart.DEFAULT_TITLE_FONT,
                 plot, true);
@@ -502,7 +502,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     }
 
 
-    // Tạo biểu đồ cho tháng
+    // tao biểu đồ cho tháng
     private JFreeChart createChartForMonth(int year, int month) {
         // Dữ liệu cho biểu đồ cột (doanh thu theo ngày trong tháng)
         DefaultCategoryDataset barDataset = new DefaultCategoryDataset();
@@ -510,7 +510,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         // Lấy doanh thu theo ngày trong tháng
         HashMap<Integer, Double> doanhThuTheoThang = hoaDon_dao.getDoanhThuCacNgayTrongThang(year, month);
 
-        // Thêm dữ liệu vào dataset cho biểu đồ cột
+        // thêm dữ liệu vào dataset cho biểu đồ cột
         for (Integer ngay : doanhThuTheoThang.keySet()) {
             Double doanhThu = doanhThuTheoThang.get(ngay);
             barDataset.addValue(doanhThu, "Doanh thu", String.valueOf(ngay));
@@ -544,14 +544,14 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         plot.setDataset(1, lineDataset);  // dataset 1 cho biểu đồ đường
         plot.setRenderer(1, lineRenderer);  // renderer 1 cho đường
 
-        // Trục Y thứ hai cho biểu đồ đường
+        // truc Y thứ hai cho biểu đồ đường
         NumberAxis lineAxis = new NumberAxis("Doanh thu trung bình (VND)");
         plot.setRangeAxis(1, lineAxis);
         plot.mapDatasetToRangeAxis(1, 1);  // dataset 1 sử dụng trục Y thứ 2
 
         plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
 
-        // Tạo biểu đồ từ plot kết hợp
+        // truc biểu đồ từ plot kết hợp
         JFreeChart chart = new JFreeChart("Biểu đồ Doanh thu các ngày trong tháng " + month + "/" + year,
                 JFreeChart.DEFAULT_TITLE_FONT,
                 plot, true);
@@ -582,11 +582,11 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
             barDataset.addValue(doanhThuTuan.get(ngay), "Doanh thu", ngay);
         }
 
-        // Tạo biểu đồ cột
+        // truc biểu đồ cột
         CategoryPlot plot = new CategoryPlot();
         BarRenderer barRenderer = new BarRenderer();
 
-        // Hiển thị giá trị trên các cột
+        // hien thị giá trị trên các cột
         barRenderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         barRenderer.setDefaultItemLabelsVisible(true);
 
@@ -595,7 +595,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         plot.setDomainAxis(new CategoryAxis("Ngày trong tuần"));  // Trục X
         plot.setRangeAxis(new NumberAxis("Doanh thu (VND)"));  // Trục Y
 
-        // Tạo biểu đồ đường
+        // tao biểu đồ đường
         DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
         HashMap<String, Double> doanhThuTrungBinh = hoaDon_dao.getDoanhThuCacNgayTrongTuan(year, month, week);
 
