@@ -726,7 +726,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         // update data cho combobox đơn vị
         public void updateDataDonViTinhVaGia(String maThuoc) {
             ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(maThuoc);
-            cboDonViThuoc.removeAll();
+            cboDonViThuoc.removeAllItems();;
             for (DonGiaThuoc donGiaThuoc : dsDonGiaThuoc) {
                 cboDonViThuoc.addItem(donGiaThuoc.getDonViTinh());
             }
