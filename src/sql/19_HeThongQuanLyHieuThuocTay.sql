@@ -867,6 +867,17 @@ END;
 GO
 
 
+-- lấy danh sách thuốc theo nhà cung cấp
+CREATE PROCEDURE getDSThuocTheoNhaCC @tenNCC NVARCHAR(50)
+AS
+BEGIN
+	SELECT DISTINCT t.*, ncc.*
+	FROM Thuoc t
+	JOIN NhaCungCap ncc ON t.maNhaCungCap = ncc.maNCC
+	WHERE ncc.tenNCC = @tenNCC
+END
+GO 
+
 
 -- --------- TRIGGER
 -- cập nhật điểm tích lũy sau khi thanh toán

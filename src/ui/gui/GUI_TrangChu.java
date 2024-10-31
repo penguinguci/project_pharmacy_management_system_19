@@ -692,7 +692,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formBanThuoc");
         } else if(o == btnNhapThuocTuNCC) {
-            formNhapThuoc = new Form_NhapThuoc();
+            try {
+                formNhapThuoc = new Form_NhapThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formNhapThuoc, "formNhapThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
