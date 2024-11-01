@@ -2,6 +2,7 @@ package dao;
 
 import connectDB.ConnectDB;
 import entity.NhaCungCap;
+import entity.NhaSanXuat;
 import entity.NuocSanXuat;
 
 import java.sql.PreparedStatement;
@@ -39,6 +40,20 @@ public class NuocSanXuat_DAO {
         }
         return this.list;
     }
+
+    public NuocSanXuat getNuocSX(String tenNuocSX) {
+        try{
+            for(NuocSanXuat nuoc : list){
+                if(nuoc.getTenNuoxSX().equalsIgnoreCase(tenNuocSX)){
+                    return nuoc;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public NuocSanXuat timNuocSanXuat(String maNSX) {
         for(NuocSanXuat x : list) {

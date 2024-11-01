@@ -631,7 +631,95 @@ public class Thuoc_DAO {
         }
         return list;
     }
-
+    //    public String tuSinhSoHieu() {
+//        Connection con = ConnectDB.getConnection();
+//        String sql = "SELECT MAX(soHieuThuoc) FROM Thuoc";
+//        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+//            if (rs.next()) {
+//                String lastId = rs.getString(1);
+//                int newIdNum = Integer.parseInt(lastId.substring(1)) + 1; // Assuming ID is in format "S00001"
+//                return String.format("S%05d", newIdNum); // Formats as S00001, S00002, etc.
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return "S00001"; // Default starting value
+//    }
+//
+//    public String tuSinhMaThuoc() {
+//        Connection con = ConnectDB.getConnection();
+//        String sql = "SELECT MAX(maThuoc) FROM Thuoc";
+//        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+//            if (rs.next()) {
+//                String lastId = rs.getString(1);
+//                int newIdNum = Integer.parseInt(lastId.substring(1)) + 1;
+//                return String.format("T%03d", newIdNum);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return "T001"; // Default starting value
+//    }
+//
+//    public boolean addThuoc(Thuoc thuoc){
+//        Connection con = null;
+//        PreparedStatement psDonGiaThuoc = null;
+//        PreparedStatement psThuoc = null;
+//        boolean flag = false;
+//
+//        try{
+//            con = ConnectDB.getConnection();
+//            String query = "insert into Thuoc (soHieuThuoc, maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, " +
+//                    "HSD, soLuongCon, ngaySX, giaNhap, danhMuc, nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe,donGiaThuoc)" +
+//                    " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+//            psThuoc = con.prepareStatement(query);
+//            psThuoc.setString(1,tuSinhSoHieu());
+//            psThuoc.setString(2,tuSinhMaThuoc());
+//            psThuoc.setString(3, thuoc.getTenThuoc());
+//            psThuoc.setString(4, thuoc.getCachDung());
+//            psThuoc.setString(5, thuoc.getThanhPhan());
+//            psThuoc.setString(6, thuoc.getBaoQuan());
+//            psThuoc.setString(7, thuoc.getCongDung());
+//            psThuoc.setString(8, thuoc.getChiDinh());
+//            psThuoc.setInt(9, thuoc.getHSD());
+//            psThuoc.setInt(10,thuoc.getSoLuongCon());
+//            Date ngaySX = thuoc.getNgaySX(); // thuoc.getNgaySX() trả về java.util.Date
+//            psThuoc.setDate(11, new java.sql.Date(ngaySX.getTime()));
+//            psThuoc.setDouble(12, thuoc.getGiaNhap());
+//            psThuoc.setString(13, thuoc.getDanhMuc().getTenDanhMuc());
+//            psThuoc.setString(14, thuoc.getNhaSanXuat().getTenNhaSX());//            psThuoc.setString(15, thuoc.getNhaCungCap().getTenNCC());
+//            psThuoc.setString(16, thuoc.getNuocSanXuat().getTenNuoxSX());
+//            psThuoc.setString(17, thuoc.getKeThuoc().getTenKe());
+//            psThuoc.setBoolean(18, thuoc.isTrangThai());
+//            psThuoc.setString(19, thuoc.getHinhAnh());
+//            psThuoc.setString(20, thuoc.getMoTa());
+//            psThuoc.setString(21, thuoc.getHamLuong());
+//            psThuoc.setString(22, thuoc.getDangBaoChe());
+//            psThuoc.setDouble(23, thuoc.getDonGiaThuoc().getDonGia());
+//            psThuoc.executeUpdate();
+//            con.commit();
+//            flag = true; // Đặt flag thành true nếu không có lỗi xảy ra
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            if (con != null) {
+//                try {
+//                    con.rollback(); // Hoàn tác nếu có lỗi
+//                } catch (SQLException ex) {
+//                    ex.printStackTrace();
+//                }
+//            }
+//        } finally {
+//        // Đóng kết nối và các PreparedStatement
+//        try {
+//            if (psDonGiaThuoc != null) psDonGiaThuoc.close();
+//            if (psThuoc != null) psThuoc.close();
+//            if (con != null) con.close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//        return flag;
+//    }
     public ArrayList<Thuoc> timThuocTheoNCC(String data) {
         ArrayList<Thuoc> list = new ArrayList<>();
         for(Thuoc x : this.list) {
@@ -704,24 +792,145 @@ public class Thuoc_DAO {
     }
 
     public String tuSinhSoHieu() {
-        ConnectDB con  = new ConnectDB();
-        con.connect();
-        con.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        int count = 0;
-        try {
-            String sql = "select * from Thuoc";
-            ps = con.getConnection().prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()){   // Đếm số dòng của bảng thuốc trong csdl
-                count++;
+        Connection con = ConnectDB.getConnection();
+        String sql = "SELECT MAX(soHieuThuoc) FROM Thuoc";
+        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                String lastId = rs.getString(1);
+                int newIdNum = Integer.parseInt(lastId.substring(1)) + 1; // Assuming ID is in format "S00001"
+                return String.format("S%05d", newIdNum); // Formats as S00001, S00002, etc.
             }
-        } catch (Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        count+=1; // Tăng lên 1 đơn vị so với số hiệu cuối cùng trong csdl
-        return "S0000"+count;
+        return "S00001"; // Default starting value
     }
 
+    public String tuSinhMaThuoc() {
+        Connection con = ConnectDB.getConnection();
+        String sql = "SELECT MAX(maThuoc) FROM Thuoc";
+        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                String lastId = rs.getString(1);
+                int newIdNum = Integer.parseInt(lastId.substring(1)) + 1;
+                return String.format("T%03d", newIdNum);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "T001"; // Default starting value
+    }
+
+    public boolean addThuoc(Thuoc thuoc){
+        Connection con = null;
+        PreparedStatement psDonGiaThuoc = null;
+        PreparedStatement psThuoc = null;
+        boolean flag = false;
+
+        try{
+            con = ConnectDB.getConnection();
+            String query = "insert into Thuoc values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            psThuoc = con.prepareStatement(query);
+            psThuoc.setString(1,tuSinhSoHieu());
+            psThuoc.setString(2,tuSinhMaThuoc());
+            psThuoc.setString(3, thuoc.getTenThuoc());
+            psThuoc.setString(4, thuoc.getDanhMuc().getMaDanhMuc());
+            psThuoc.setString(5, thuoc.getNhaCungCap().getMaNCC());
+            psThuoc.setString(6, thuoc.getNhaSanXuat().getMaNhaSX());
+            psThuoc.setString(7, thuoc.getNuocSanXuat().getMaNuocSX());
+            psThuoc.setString(8, thuoc.getKeThuoc().getMaKe());
+            Date ngaySX = thuoc.getNgaySX(); // thuoc.getNgaySX() trả về java.util.Date
+            psThuoc.setDate(9, new java.sql.Date(ngaySX.getTime()));
+            psThuoc.setInt(10, thuoc.getHSD());
+            psThuoc.setString(11, thuoc.getDonGiaThuoc().getMaDonGia());
+            psThuoc.setInt(12,thuoc.getSoLuongCon());
+            psThuoc.setString(13, thuoc.getCachDung());
+            psThuoc.setString(14, thuoc.getThanhPhan());
+            psThuoc.setString(15, thuoc.getBaoQuan());
+            psThuoc.setString(16, thuoc.getCongDung());
+            psThuoc.setString(17, thuoc.getChiDinh());
+            psThuoc.setString(18, thuoc.getMoTa());
+            psThuoc.setString(19, thuoc.getHamLuong());
+            psThuoc.setString(20, thuoc.getDangBaoChe());
+            psThuoc.setString(21, thuoc.getHinhAnh());
+            psThuoc.setDouble(22, thuoc.getGiaNhap());
+            psThuoc.setBoolean(23, thuoc.isTrangThai());
+            psThuoc.executeUpdate();
+            con.commit();
+            flag = true; // Đặt flag thành true nếu không có lỗi xảy ra
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (con != null) {
+                try {
+                    con.rollback(); // Hoàn tác nếu có lỗi
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } finally {
+        // Đóng kết nối và các PreparedStatement
+            try {
+                if (psDonGiaThuoc != null) psDonGiaThuoc.close();
+                if (psThuoc != null) psThuoc.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
+
+    public boolean updateThuoc(Thuoc thuoc){
+        Connection con = null;
+        PreparedStatement ps ;
+        boolean flag = false;
+        try{
+            con = ConnectDB.getConnection();
+            String sql = "update Thuoc set tenThuoc = ?, maDanhMuc = ?, maNhaCungCap = ?, maNhaSanXuat = ?, maNuocSanXuat = ?, maKe = ?, ngaySX = ?, HSD = ?, maDonGia = ?, soLuongCon = ?, cachDung = ?, thanhPhan = ?, baoQuan = ?, congDung = ?, chiDinh = ?, moTa = ?, hamLuong = ?, dangBaoChe = ?, hinhAnh = ?, giaNhap = ?, trangThai = ? where soHieuThuoc = ? and maThuoc = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, thuoc.getTenThuoc());
+            ps.setString(2, thuoc.getDanhMuc().getMaDanhMuc());
+            ps.setString(3, thuoc.getNhaCungCap().getMaNCC());
+            ps.setString(4, thuoc.getNhaSanXuat().getMaNhaSX());
+            ps.setString(5, thuoc.getNuocSanXuat().getMaNuocSX());
+            ps.setString(6, thuoc.getKeThuoc().getMaKe());
+            Date ngaySX = thuoc.getNgaySX();
+            ps.setDate(7, new java.sql.Date(ngaySX.getTime()));
+            ps.setInt(8, thuoc.getHSD());
+            ps.setString(9, thuoc.getDonGiaThuoc().getMaDonGia());
+            ps.setInt(10, thuoc.getSoLuongCon());
+            ps.setString(11, thuoc.getCachDung());
+            ps.setString(12, thuoc.getThanhPhan());
+            ps.setString(13, thuoc.getBaoQuan());
+            ps.setString(14, thuoc.getCongDung());
+            ps.setString(15, thuoc.getChiDinh());
+            ps.setString(16, thuoc.getMoTa());
+            ps.setString(17, thuoc.getHamLuong());
+            ps.setString(18, thuoc.getDangBaoChe());
+            ps.setString(19, thuoc.getHinhAnh());
+            ps.setDouble(20, thuoc.getGiaNhap());
+            ps.setBoolean(21, thuoc.isTrangThai());
+            ps.setString(22, thuoc.getSoHieuThuoc());
+            ps.setString(23, thuoc.getMaThuoc());
+            ps.executeUpdate();
+            con.commit();
+            flag = true;
+        }catch (SQLException e){
+            e.printStackTrace();
+            if (con != null) {
+                try {
+                    con.rollback(); // Hoàn tác nếu có lỗi
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } finally {
+            try {
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
 }

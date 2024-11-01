@@ -68,7 +68,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     public JTextField txtSearch;
     public JComboBox<String> cmbNhaSanXuat, cmbDanhMuc;
     public int currentPage = 1;
-    public int rowsPerPage = 10  ;
+    public int rowsPerPage = 6  ;
     public int totalPages;
     public int totalRows ;
     public JButton btnPrev, btnNext;
@@ -259,6 +259,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblTenThuoc = new JLabel("Tên thuốc:");
         lblTenThuoc.setPreferredSize(new Dimension(100,25));
         txtTenThuoc = new JTextField();
+        txtTenThuoc.setEnabled(false);
+        txtTenThuoc.setDisabledTextColor(Color.BLACK);
         txtTenThuoc.setPreferredSize(new Dimension(200,25));
         pnlTenThuoc.add(lblTenThuoc);
         pnlTenThuoc.add(txtTenThuoc);
@@ -267,9 +269,9 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblKeThuoc = new JLabel("Kệ thuốc:");
         lblKeThuoc.setPreferredSize(new Dimension(100,25));
         cmbKeThuoc = new JComboBox<String>();
+        cmbKeThuoc.setEnabled(false);
         loadComboBoxKeThuoc();
         cmbKeThuoc.setPreferredSize(new Dimension(200,25));
-
         pnlKeThuoc.add(lblKeThuoc);
         pnlKeThuoc.add(cmbKeThuoc);
 
@@ -277,6 +279,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblNgaySanXuat = new JLabel("Ngày sản xuất:");
         lblNgaySanXuat.setPreferredSize(new Dimension(100,25));
         datePickerNgaySanXuat = new JDateComponentFactory().createJDatePicker();
+        datePickerNgaySanXuat.setTextEditable(false);
         pnlNgaySanXuat.add(lblNgaySanXuat);
         pnlNgaySanXuat.add((Component) datePickerNgaySanXuat);
 
@@ -285,8 +288,9 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblHSD = new JLabel("Hạn sử dụng:");
         lblHSD.setPreferredSize(new Dimension(100,25));
         txtHSD = new JTextField();
+        txtHSD.setEnabled(false);
+        txtHSD.setDisabledTextColor(Color.BLACK);
         txtHSD.setPreferredSize(new Dimension(200,25));
-
         pnlHSD.add(lblHSD);
         pnlHSD.add(txtHSD);
 
@@ -297,6 +301,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         txaCachDung = new JTextArea(3,18);
         txaCachDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaCachDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
+        txaCachDung.setEnabled(false);
+        txaCachDung.setDisabledTextColor(Color.BLACK);
         spCachDung = new JScrollPane(txaCachDung);
         pnlCachDung.add(lblCachDung);
         pnlCachDung.add(spCachDung);
@@ -305,6 +311,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblBaoQuan = new JLabel("Bảo quản:");
         lblBaoQuan.setPreferredSize(new Dimension(100,25));
         txtBaoQuan = new JTextField();
+        txtBaoQuan.setEnabled(false);
+        txtBaoQuan.setDisabledTextColor(Color.BLACK);
         txtBaoQuan.setPreferredSize(new Dimension(200,25));
         pnlBaoQuan.add(lblBaoQuan);
         pnlBaoQuan.add(txtBaoQuan);
@@ -313,6 +321,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblCongDung = new JLabel("Công dụng:");
         lblCongDung.setPreferredSize(new Dimension(100,25));
         txaCongDung = new JTextArea(3, 18);
+        txaCongDung.setEnabled(false);
+        txaCongDung.setDisabledTextColor(Color.BLACK);
         txaCongDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaCongDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
         spCongDung = new JScrollPane(txaCongDung);
@@ -323,6 +333,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblChiDinh = new JLabel("Chỉ định:");
         lblChiDinh.setPreferredSize(new Dimension(100,25));
         txtChiDinh = new JTextField();
+        txtChiDinh.setEnabled(false);
+        txtChiDinh.setDisabledTextColor(Color.BLACK);
         txtChiDinh.setPreferredSize(new Dimension(200,25));
         pnlChiDinh.add(lblChiDinh);
         pnlChiDinh.add(txtChiDinh);
@@ -331,6 +343,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblGiaNhap = new JLabel("Giá nhập:");
         lblGiaNhap.setPreferredSize(new Dimension(100,25));
         txtGiaNhap = new JTextField();
+        txtGiaNhap.setEnabled(false);
+        txtGiaNhap.setDisabledTextColor(Color.BLACK);
         txtGiaNhap.setPreferredSize(new Dimension(200,25));
         pnlGiaNhap.add(lblGiaNhap);
         pnlGiaNhap.add(txtGiaNhap);
@@ -339,6 +353,7 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblTrangThai = new JLabel("Trạng thái:");
         lblTrangThai.setPreferredSize(new Dimension(100,25));
         cmbTrangThai = new JComboBox<>(new String[]{"Còn","Hết"});
+        cmbTrangThai.setEnabled(false);
         cmbTrangThai.setPreferredSize(new Dimension(200,25));
         pnlTrangThai.add(lblTrangThai);
         pnlTrangThai.add(cmbTrangThai);
@@ -347,11 +362,12 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblMoTa = new JLabel("Mô tả:");
         lblMoTa.setPreferredSize(new Dimension(100,25));
         txaMoTa = new JTextArea(3,18);
+        txaMoTa.setEnabled(false);
+        txaMoTa.setDisabledTextColor(Color.BLACK);
         txaMoTa.setPreferredSize(new Dimension(200,25));
         txaMoTa.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaMoTa.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
         scrMoTa = new JScrollPane(txaMoTa);
-
         pnlMoTa.add(lblMoTa);
         pnlMoTa.add(scrMoTa);
 
@@ -359,6 +375,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblHamLuong = new JLabel("Hàm lượng:");
         lblHamLuong.setPreferredSize(new Dimension(100,25));
         txtHamLuong = new JTextField();
+        txtHamLuong.setEnabled(false);
+        txtHamLuong.setDisabledTextColor(Color.BLACK);
         txtHamLuong.setPreferredSize(new Dimension(200,25));
         pnlHamLuong.add(lblHamLuong);
         pnlHamLuong.add(txtHamLuong);
@@ -367,6 +385,8 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         lblDangBaoChe = new JLabel("Dạng bào chế:");
         lblDangBaoChe.setPreferredSize(new Dimension(100,25));
         txtDangBaoChe = new JTextField();
+        txtDangBaoChe.setEnabled(false);
+        txtDangBaoChe.setDisabledTextColor(Color.BLACK);
         txtDangBaoChe.setPreferredSize(new Dimension(200,25));
         pnlDangBaoChe.add(lblDangBaoChe);
         pnlDangBaoChe.add(txtDangBaoChe);
@@ -567,12 +587,25 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
         if(o.equals(btnAdd)){
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm thuốc", true);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            Form_NhapThuoc pnlThemThuoc = new Form_NhapThuoc();
+            Form_ThemThuoc pnlThemThuoc = new Form_ThemThuoc();
             dialog.add(pnlThemThuoc);
             dialog.setSize(800,800);
             dialog.setLocationRelativeTo(null);
             dialog.setResizable(false);
             dialog.setVisible(true);
+        }
+
+        if(o.equals(btnUpdate)){
+            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Cập nhật", true);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            Form_CapNhatThuoc pnlCapNhatThuoc = new Form_CapNhatThuoc();
+            dialog.add(pnlCapNhatThuoc);
+            dialog.setSize(800,800);
+            dialog.setLocationRelativeTo(null);
+            dialog.setResizable(false);
+            dialog.setVisible(true);
+            int row = tProduct.getSelectedRow();
+
         }
     }
 

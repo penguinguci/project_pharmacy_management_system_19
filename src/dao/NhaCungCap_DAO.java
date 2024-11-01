@@ -1,6 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.DanhMuc;
 import entity.KhachHang;
 import entity.NhaCungCap;
 
@@ -50,6 +51,18 @@ public class NhaCungCap_DAO {
         return list;
     }
 
+    public NhaCungCap getNhaCungCap(String tenNCC) {
+        try{
+            for(NhaCungCap ncc : list){
+                if(ncc.getTenNCC().equalsIgnoreCase(tenNCC)){
+                    return ncc;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
     public NhaCungCap timNhaCungCap(String maNCC) {
         for(NhaCungCap x : list) {
             if(x.getMaNCC().equalsIgnoreCase(maNCC)) {

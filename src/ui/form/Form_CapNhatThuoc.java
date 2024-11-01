@@ -1,8 +1,7 @@
 package ui.form;
+
 import dao.*;
 import entity.*;
-import org.jdatepicker.JDateComponentFactory;
-import org.jdatepicker.JDatePicker;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
@@ -15,7 +14,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class Form_ThemThuoc extends JPanel {
+public class Form_CapNhatThuoc extends JPanel {
     public DanhMuc_DAO dm_DAO = new DanhMuc_DAO();
     public JScrollPane scrMota;
     public JLabel lblHamLuong;
@@ -75,11 +74,11 @@ public class Form_ThemThuoc extends JPanel {
     public NuocSanXuat_DAO nuoc_DAO = new NuocSanXuat_DAO();
     public DonGiaThuoc_DAO dvt_DAO = new DonGiaThuoc_DAO();
 
-    public Form_ThemThuoc() {
+    public Form_CapNhatThuoc() {
         setLayout(new BorderLayout());
 
         JPanel pnlTitle = new JPanel();
-        JLabel lblTitle = new JLabel("Thêm thuốc");
+        JLabel lblTitle = new JLabel("Cập nhật thuốc");
         lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
         pnlTitle.add(lblTitle);
         add(pnlTitle, BorderLayout.NORTH);
@@ -345,69 +344,66 @@ public class Form_ThemThuoc extends JPanel {
         pButton.add(btnHuy);
         add(pButton, BorderLayout.SOUTH);
 
-        btnLuu.addActionListener(e->{
-            Thuoc_DAO thuoc_dao = new Thuoc_DAO();
-            DonGiaThuoc_DAO donGia_dao = new DonGiaThuoc_DAO();
-            String maDonGia = donGia_dao.tuSinhMaDonGia();
-            String maThuoc = thuoc_dao.tuSinhMaThuoc();
-            String soHieuThuoc = thuoc_dao.tuSinhSoHieu();
-            String tenThuoc = txtTenThuoc.getText().trim();
-            DanhMuc danhMuc = dm_DAO.getDanhMuc(cmbDanhMuc.getSelectedItem().toString());
-            NhaCungCap nhaCungCap = ncc_DAO.getNhaCungCap(cmbNhaCungCap.getSelectedItem().toString());
-            NhaSanXuat nhaSanXuat = nsx_DAO.getNSX(cmbNhaSanXuat.getSelectedItem().toString());
-            NuocSanXuat nuocSanXuat = nuoc_DAO.getNuocSX(cmbNuocSanXuat.getSelectedItem().toString());
-            KeThuoc keThuoc = ke_DAO.getKeThuoc(cmbKeThuoc.getSelectedItem().toString());
-            java.util.Date date = modelDate.getValue();
-            Date ngaySanXuat = new Date(date.getTime());
-            int hanSuDung = 0;
-            if (!txtHSD.getText().trim().isEmpty()) {
-                hanSuDung = Integer.parseInt(txtHSD.getText().trim());
-
-                // Proceed with your code using 'number'
-            } else {
-                // Handle the case where input is empty
-                System.out.println("Input is empty. Please enter a valid number.");
-            }
-            int soLuongCon = Integer.parseInt(txtSoLuongCon.getText().trim());
-            String cachDung = txaCachDung.getText().trim();
-            String thanhPhan = txtThanhPhan.getText().trim();
-            String hamLuong = txtHamLuong.getText().trim();
-            String moTa = txaMoTa.getText().trim();
-            String dangBaoChe = txtDangBaoChe.getText().trim();
-            String baoQuan = txtBaoQuan.getText().trim();
-            String congDung = txaCongDung.getText().trim();
-            String chiDinh = txtChiDinh.getText().trim();
-            String hinhAnh = txtHinhAnh.getText().trim();
-            double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
-            boolean trangThai = cmbTrangThai.getSelectedItem() == "Còn" ? true : false;
-            String donViTinh = cmbDonViTinh.getSelectedItem().toString();
-            boolean themDonGiaThanhCong = donGia_dao.themDonGia(maThuoc, donViTinh , giaNhap+(giaNhap*0.12));
-            if (!themDonGiaThanhCong) {
-                JOptionPane.showMessageDialog(null, "Thêm đơn giá thuốc thất bại!");
-                return;
-            }
-            Thuoc thuoc = new Thuoc(maThuoc,soHieuThuoc,tenThuoc,cachDung,thanhPhan, baoQuan, congDung, chiDinh, hanSuDung,soLuongCon,
-                    ngaySanXuat,giaNhap,danhMuc,nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, donGia_dao.getDonGiaByMaThuoc(maThuoc));
-            boolean themThuocThanhCong = thuoc_dao.addThuoc(thuoc);
-            if (themThuocThanhCong) {
-                JOptionPane.showMessageDialog(null, "Thêm thuốc và cập nhật giá nhập thành công!");
-                JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
-                dialogThemThuoc.dispose(); // Đóng JDialog
-            } else {
-                JOptionPane.showMessageDialog(null, "Thêm thuốc thành công, nhưng không thể cập nhật giá nhập.");
-            }
-        });
-        btnHuy.addActionListener(e->{
-            int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy không?", "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
-            if(confirm == JOptionPane.YES_OPTION){
-                JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
-                dialogThemThuoc.dispose(); // Đóng JDialog
-            }
-        });
-
-
+//        btnLuu.addActionListener(e->{
+//            Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+//            DonGiaThuoc_DAO donGia_dao = new DonGiaThuoc_DAO();
+//            String maDonGia = donGia_dao.tuSinhMaDonGia();
+//            String maThuoc = thuoc_dao.tuSinhMaThuoc();
+//            String soHieuThuoc = thuoc_dao.tuSinhSoHieu();
+//            String tenThuoc = txtTenThuoc.getText().trim();
+//            DanhMuc danhMuc = dm_DAO.getDanhMuc(cmbDanhMuc.getSelectedItem().toString());
+//            NhaCungCap nhaCungCap = ncc_DAO.getNhaCungCap(cmbNhaCungCap.getSelectedItem().toString());
+//            NhaSanXuat nhaSanXuat = nsx_DAO.getNSX(cmbNhaSanXuat.getSelectedItem().toString());
+//            NuocSanXuat nuocSanXuat = nuoc_DAO.getNuocSX(cmbNuocSanXuat.getSelectedItem().toString());
+//            KeThuoc keThuoc = ke_DAO.getKeThuoc(cmbKeThuoc.getSelectedItem().toString());
+//            java.util.Date date = modelDate.getValue();
+//            Date ngaySanXuat = new Date(date.getTime());
+//            int hanSuDung = 0;
+//            if (!txtHSD.getText().trim().isEmpty()) {
+//                hanSuDung = Integer.parseInt(txtHSD.getText().trim());
+//
+//                // Proceed with your code using 'number'
+//            } else {
+//                // Handle the case where input is empty
+//                System.out.println("Input is empty. Please enter a valid number.");
+//            }
+//            int soLuongCon = Integer.parseInt(txtSoLuongCon.getText().trim());
+//            String cachDung = txaCachDung.getText().trim();
+//            String thanhPhan = txtThanhPhan.getText().trim();
+//            String hamLuong = txtHamLuong.getText().trim();
+//            String moTa = txaMoTa.getText().trim();
+//            String dangBaoChe = txtDangBaoChe.getText().trim();
+//            String baoQuan = txtBaoQuan.getText().trim();
+//            String congDung = txaCongDung.getText().trim();
+//            String chiDinh = txtChiDinh.getText().trim();
+//            String hinhAnh = txtHinhAnh.getText().trim();
+//            double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
+//            boolean trangThai = cmbTrangThai.getSelectedItem() == "Còn" ? true : false;
+//            String donViTinh = cmbDonViTinh.getSelectedItem().toString();
+//            boolean themDonGiaThanhCong = donGia_dao.themDonGia(maThuoc, donViTinh , giaNhap+(giaNhap*0.12));
+//            if (!themDonGiaThanhCong) {
+//                JOptionPane.showMessageDialog(null, "Thêm đơn giá thuốc thất bại!");
+//                return;
+//            }
+//            Thuoc thuoc = new Thuoc(maThuoc,soHieuThuoc,tenThuoc,cachDung,thanhPhan, baoQuan, congDung, chiDinh, hanSuDung,soLuongCon,
+//                    ngaySanXuat,giaNhap,danhMuc,nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, donGia_dao.getDonGiaByMaThuoc(maThuoc));
+//            boolean themThuocThanhCong = thuoc_dao.addThuoc(thuoc);
+//            if (themThuocThanhCong) {
+//                JOptionPane.showMessageDialog(null, "Thêm thuốc và cập nhật giá nhập thành công!");
+//                JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
+//                dialogThemThuoc.dispose(); // Đóng JDialog
+//            } else {
+//                JOptionPane.showMessageDialog(null, "Thêm thuốc thành công, nhưng không thể cập nhật giá nhập.");
+//            }
+//        });
+//        btnHuy.addActionListener(e->{
+//            int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy không?", "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
+//            if(confirm == JOptionPane.YES_OPTION){
+//                JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
+//                dialogThemThuoc.dispose(); // Đóng JDialog
+//            }
+//        });
     }
-
     public void loadComboBoxDanhMuc(){
         try {
             dm_DAO = new DanhMuc_DAO();
@@ -529,5 +525,4 @@ public class Form_ThemThuoc extends JPanel {
             });
         }
     }
-
 }

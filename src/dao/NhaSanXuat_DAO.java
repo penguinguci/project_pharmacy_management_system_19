@@ -1,6 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.NhaCungCap;
 import entity.NhaSanXuat;
 
 import java.sql.PreparedStatement;
@@ -37,6 +38,18 @@ public class NhaSanXuat_DAO {
             }
         }
         return this.list;
+    }
+    public NhaSanXuat getNSX(String tenNSX) {
+        try{
+            for(NhaSanXuat nsx : list){
+                if(nsx.getTenNhaSX().equalsIgnoreCase(tenNSX)){
+                    return nsx;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public NhaSanXuat timNhaSX(String ma) {
