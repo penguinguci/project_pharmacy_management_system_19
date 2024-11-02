@@ -160,7 +160,7 @@ public class Form_DoiMatKhau extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o == btnCancel) {
-            // Xử lý hủy
+            SwingUtilities.getWindowAncestor(this).dispose();
         } else if (o == btnChangePassword) {
             // Xử lý đổi mật khẩu
         } else if (o == btnLamMoi) {

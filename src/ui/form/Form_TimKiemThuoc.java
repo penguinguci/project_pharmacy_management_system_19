@@ -357,6 +357,9 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
                 loadDataTable(data);
             }
         }
+        if (e.getSource().equals(btnQuayLai)) {
+            setVisible(false);
+        }
     }
 
     public void clearData() {

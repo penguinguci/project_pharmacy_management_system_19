@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener {
+public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener, ActionListener {
     private JTextField txtTenChucVu, txtTimKiem;
     private JButton btnThem, btnXoa, btnCapNhat, btnLamMoi, btnTimKiem, btnBack;
     private JTable tblChucVu;
@@ -116,6 +116,7 @@ public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener {
 
         //  thêm sự kiện
         tblChucVu.getSelectionModel().addListSelectionListener(this);
+        btnBack.addActionListener(this);
     }
 
     // Phương thức tải chức vụ vào bảng
@@ -141,5 +142,13 @@ public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener {
 
     private void fillRow(int row) {
         txtTenChucVu.setText(model.getValueAt(row, 1).toString());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o == btnBack) {
+            setVisible(false);
+        }
     }
 }

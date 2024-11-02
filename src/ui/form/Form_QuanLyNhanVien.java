@@ -541,8 +541,8 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
             }
         } else if (o.equals(btnLamMoi)) {
             lamMoi();
-        } else if (o.equals(btnBack)) {
-
+        } else if (o == btnBack) {
+            setVisible(false);
         }
     }
 

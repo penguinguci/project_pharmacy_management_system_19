@@ -15,6 +15,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.SQLException;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 
-public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSelectionListener {
+public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSelectionListener, ActionListener {
     public JButton btnQuayLai, btnThanhToan, btnChinhSua, btnHuy, btnTimKiemDon, btnLamMoi, btnXemHD;
     public JComboBox<String> cbxMaHD, cbThoiGianDat;
     public JLabel lblTitle;
@@ -185,6 +187,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         // thêm sự kiện
         textPlaceholder.addFocusListener(this);
         tableHD.getSelectionModel().addListSelectionListener(this);
+        btnQuayLai.addActionListener(this);
     }
 
     // update combobox mã hóa đơn
@@ -268,6 +271,14 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o == btnQuayLai) {
+            setVisible(false);
         }
     }
 

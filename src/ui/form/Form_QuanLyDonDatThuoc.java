@@ -333,6 +333,10 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                 }
             }
         }
+
+        if (e.getSource() == btnQuayLai) {
+            setVisible(false);
+        }
     }
 
     private ArrayList<ChiTietHoaDon> chuyenCTDsangCTHD(HoaDon hd, ArrayList<ChiTietDonDatThuoc> list) {
