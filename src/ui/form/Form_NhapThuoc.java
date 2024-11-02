@@ -186,6 +186,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
         btnImportExcel.addActionListener(this);
         btnExportExcel.addActionListener(this);
         cbbNhaCungCap.addActionListener(this);
+        btnBack.addActionListener(this);
     }
 
     @Override
@@ -212,6 +213,8 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
                     throw new RuntimeException(ex);
                 }
             }
+        } else if (o == btnBack) {
+            setVisible(false);
         }
     }
 

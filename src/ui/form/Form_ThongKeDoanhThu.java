@@ -192,6 +192,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         // Gán sự kiện thay đổi thời gian
         cmbThoiGian.addActionListener(e -> updateTimeOptions());
         btnThongKe.addActionListener(this);
+        btnQuayLai.addActionListener(this);
     }
 
     public void updateTongDoanhThu() {
@@ -422,7 +423,8 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                     throw new RuntimeException(ex);
                 }
             }
-
+        } else if (o == btnQuayLai) {
+            setVisible(false);
         }
     }
 

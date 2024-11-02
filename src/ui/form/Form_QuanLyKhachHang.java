@@ -445,6 +445,10 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             clearData();
             loadDataTable(getDataKhachHang());
         }
+
+        if (e.getSource().equals(btnQuayLai)) {
+            setVisible(false);
+        }
     }
 
     @Override

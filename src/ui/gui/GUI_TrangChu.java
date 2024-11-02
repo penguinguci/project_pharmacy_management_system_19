@@ -3,15 +3,12 @@ package ui.gui;
 import entity.NhanVien;
 import ui.form.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.awt.geom.Ellipse2D;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -57,6 +54,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TimKiemThuoc formTimKiemThuoc;
     public Form_Thue formThue;
     public Form_QuanLyKhuyenMai formQuanLyKhuyenMai;
+    public Form_TimKiemKhuyenMai formTimKiemKhuyenMai;
     public Form_QuanLyChucVu formQuanLyChucVu;
     public Form_TaiKhoan formTaiKhoan;
     private NhanVien nhanVienDN;
@@ -496,30 +494,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         // tạo các form trước và thêm vào centerPanel
         formBanThuoc = new Form_BanThuoc();
-//        formNhapThuoc = new Form_NhapThuoc();
-//        formDoiTra = new Form_DoiTra();
-//        formQuanLyDanhMuc = new Form_QuanLyDanhMuc();
-//        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
-//        formQuanLyHoaDon = new Form_QuanLyHoaDon();
-//        formQuanLyKhachHang = new Form_QuanLyKhachHang();
-//        formQuanLyNhaCungCap = new Form_QuanLyNhaCungCap();
-//        formQuanLyNhanVien = new Form_QuanLyNhanVien();
-//        formQuanLyNhaSanXuat = new Form_QuanLyNhaSanXuat();
-//        formQuanLyNuocSanXuat = new Form_QuanLyNuocSanXuat();
-//        formQuanLyTaiKhoanNhanVien = new Form_QuanLyTaiKhoanNhanVien();
-//        formQuanLyThuoc = new Form_QuanLyThuoc();
-//        formThongKeDoanhThu = new Form_ThongKeDoanhThu();
-//        formThongKeKhachHangThuongXuyen = new Form_ThongKeKhachHangThuongXuyen();
-//        formThongKeSPBanCham = new Form_ThongKeSPBanCham();
-//        formThongKeSPBanChay = new Form_ThongKeSPBanChay();
-//        formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
-//        formTimKiemKhachHang = new Form_TimKiemKhachHang();
-//        formTimKiemNhaCungCap = new Form_TimKiemNhaCungCap();
-//        formTimKiemNhanVien = new Form_TimKiemNhanVien();
-//        formTimKiemThuoc = new Form_TimKiemThuoc();
-//        formThue = new Form_Thue();
-//        formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
-//        formQuanLyChucVu = new Form_QuanLyChucVu();
+
 
         // Thêm top Panel vào mainContentPanel
         mainContentPanel.add(topPanel, BorderLayout.NORTH);
@@ -580,97 +555,76 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnThongBao.addMouseListener(this);
         popupThongBao.addMouseListener(this);
         tamGiacPanel.addMouseListener(this);
+
+        mainContentPanel.addMouseListener(this);
     }
 
-    // lớp tạo khung thông báo
-    public class ThongBaoPanel extends JPanel {
-
-        public ThongBaoPanel(String tieuDe, String noiDung, ImageIcon hinhAnh, String thoiGian) {
-            setLayout(new GridBagLayout());
-            setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            setPreferredSize(new Dimension(300, 150));
-
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.insets = new Insets(5, 5, 5, 5);
-
-            // tieu de
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2; // chiem 2 cit
-            gbc.weightx = 1.0; // chiem toan bo chieu rong
-            lblTieuDe = new JLabel(tieuDe);
-            lblTieuDe.setFont(new Font("Arial", Font.BOLD, 14));
-            add(lblTieuDe, gbc);
-
-            // hinh anh
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.gridwidth = 1; // chiem 1 cot
-            lblHinhAnh = new JLabel();
-            if (hinhAnh != null) {
-                lblHinhAnh.setIcon(hinhAnh);
-            }
-            add(lblHinhAnh, gbc);
-
-            // noi dung
-            gbc.gridx = 1;
-            gbc.gridy = 1;
-            gbc.gridwidth= 1;// chiem 1 cot
-            noiDungArea = new JTextArea(noiDung);
-            noiDungArea.setLineWrap(true);
-            noiDungArea.setWrapStyleWord(true);
-            noiDungArea.setEditable(false);
-            add(noiDungArea, gbc);
-
-            // thoi gian
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.gridwidth = 2; // chiem 2 cot
-            gbc.anchor = GridBagConstraints.EAST; // can le phai
-            lblThoiGian = new JLabel(thoiGian.toString());
-            lblThoiGian.setFont(new Font("Arial", Font.ITALIC, 12));
-            add(lblThoiGian, gbc);
-
-            // btn xem chi tiet
-            gbc.gridx = 0;
-            gbc.gridy = 3;
-            gbc.gridwidth = 2; // chiem 2 cot
-            btnXemCTTB = new JButton("Xem chi tiết");
-            add(btnXemCTTB, gbc);
-        }
-    }
 
     // Sự kiện
     @Override
     public void actionPerformed(ActionEvent e){
         Object o = e.getSource();
-        if (o  == btnNhanVien) {
-            submenuNhanVien.setVisible(!submenuNhanVien.isVisible());
+        if (o == btnNhanVien) {
+            if (submenuNhanVien.isVisible()) {
+                submenuNhanVien.setVisible(false); // Nếu submenu đang mở thì ẩn nó
+            } else {
+                hideAllSubmenus(); // Ẩn tất cả các submenu khác
+                submenuNhanVien.setVisible(true); // Hiện submenu Nhân viên
+            }
             revalidate();
             repaint();
-        } else if(o == btnKhachHang) {
-            submenuKhachHang.setVisible(!submenuKhachHang.isVisible());
+        } else if (o == btnKhachHang) {
+            if (submenuKhachHang.isVisible()) {
+                submenuKhachHang.setVisible(false);
+            } else {
+                hideAllSubmenus();
+                submenuKhachHang.setVisible(true);
+            }
             revalidate();
             repaint();
-        } else if(o == btnThuoc) {
-            submenuThuoc.setVisible(!submenuThuoc.isVisible());
+        } else if (o == btnThuoc) {
+            if (submenuThuoc.isVisible()) {
+                submenuThuoc.setVisible(false);
+            } else {
+                hideAllSubmenus();
+                submenuThuoc.setVisible(true);
+            }
             revalidate();
             repaint();
-        } else if(o == btnNhaCungCap) {
-            submenuNhaCungCap.setVisible(!submenuNhaCungCap.isVisible());
+        } else if (o == btnNhaCungCap) {
+            if (submenuNhaCungCap.isVisible()) {
+                submenuNhaCungCap.setVisible(false);
+            } else {
+                hideAllSubmenus();
+                submenuNhaCungCap.setVisible(true);
+            }
             revalidate();
             repaint();
-        } else if(o == btnKhuyenMai) {
-            submenuKhuyenMai.setVisible(!submenuKhuyenMai.isVisible());
+        } else if (o == btnKhuyenMai) {
+            if (submenuKhuyenMai.isVisible()) {
+                submenuKhuyenMai.setVisible(false);
+            } else {
+                hideAllSubmenus();
+                submenuKhuyenMai.setVisible(true);
+            }
             revalidate();
             repaint();
-        } else if(o == btnHoaDon) {
-            submenuHoaDon.setVisible(!submenuHoaDon.isVisible());
+        } else if (o == btnHoaDon) {
+            if (submenuHoaDon.isVisible()) {
+                submenuHoaDon.setVisible(false);
+            } else {
+                hideAllSubmenus();
+                submenuHoaDon.setVisible(true);
+            }
             revalidate();
             repaint();
-        } else if(o == btnThongKe) {
-            submenuThongKe.setVisible(!submenuThongKe.isVisible());
+        } else if (o == btnThongKe) {
+            if (submenuThongKe.isVisible()) {
+                submenuThongKe.setVisible(false);
+            } else {
+                hideAllSubmenus();
+                submenuThongKe.setVisible(true);
+            }
             revalidate();
             repaint();
         } else if(o == btnDangXuat) {
@@ -792,11 +746,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyDanhMuc");
         } else if(o == btnCapNhatKhuyenmai) {
-            formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
+            try {
+                formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
+            } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyKhuyenMai, "formQuanLyKhuyenMai");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyKhuyenMai");
+        } else if (o == btnTimKiemKhuyenMai) {
+            formTimKiemKhuyenMai = new Form_TimKiemKhuyenMai();
+            centerPanel.add(formTimKiemKhuyenMai, "formTimKiemKhuyenMai");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formTimKiemKhuyenMai");
         } else if(o == btnTimKiemThuoc) {
             formTimKiemThuoc = new Form_TimKiemThuoc();
             centerPanel.add(formTimKiemThuoc, "formTimKiemThuoc");
@@ -877,15 +841,85 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         }
     }
 
+
+    // hàmm ẩn show button menu
+    private void hideAllSubmenus() {
+        submenuNhanVien.setVisible(false);
+        submenuKhachHang.setVisible(false);
+        submenuThuoc.setVisible(false);
+        submenuNhaCungCap.setVisible(false);
+        submenuKhuyenMai.setVisible(false);
+        submenuHoaDon.setVisible(false);
+        submenuThongKe.setVisible(false);
+    }
+
+    // lớp tạo khung thông báo
+    public class ThongBaoPanel extends JPanel {
+
+        public ThongBaoPanel(String tieuDe, String noiDung, ImageIcon hinhAnh, String thoiGian) {
+            setLayout(new GridBagLayout());
+            setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            setPreferredSize(new Dimension(300, 150));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            // tieu de
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2; // chiem 2 cit
+            gbc.weightx = 1.0; // chiem toan bo chieu rong
+            lblTieuDe = new JLabel(tieuDe);
+            lblTieuDe.setFont(new Font("Arial", Font.BOLD, 14));
+            add(lblTieuDe, gbc);
+
+            // hinh anh
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.gridwidth = 1; // chiem 1 cot
+            lblHinhAnh = new JLabel();
+            if (hinhAnh != null) {
+                lblHinhAnh.setIcon(hinhAnh);
+            }
+            add(lblHinhAnh, gbc);
+
+            // noi dung
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.gridwidth= 1;// chiem 1 cot
+            noiDungArea = new JTextArea(noiDung);
+            noiDungArea.setLineWrap(true);
+            noiDungArea.setWrapStyleWord(true);
+            noiDungArea.setEditable(false);
+            add(noiDungArea, gbc);
+
+            // thoi gian
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.gridwidth = 2; // chiem 2 cot
+            gbc.anchor = GridBagConstraints.EAST; // can le phai
+            lblThoiGian = new JLabel(thoiGian.toString());
+            lblThoiGian.setFont(new Font("Arial", Font.ITALIC, 12));
+            add(lblThoiGian, gbc);
+
+            // btn xem chi tiet
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            gbc.gridwidth = 2; // chiem 2 cot
+            btnXemCTTB = new JButton("Xem chi tiết");
+            add(btnXemCTTB, gbc);
+        }
+    }
+
+
     // Hàm tạo các nút menu chính
-    private JButton createMenuButton(String text, ImageIcon imageIcon) {
+    private RippleEffectButton createMenuButton(String text, ImageIcon imageIcon) {
         Image subImage = imageIcon.getImage();
         Image scaledImage = subImage.getScaledInstance(18, 18, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconMenu = new ImageIcon(scaledImage);
 
-        ImageIcon scaledIconmenu = new ImageIcon(scaledImage);
-
-        JButton button = new JButton(text, scaledIconmenu);
-
+        RippleEffectButton button = new RippleEffectButton(text, scaledIconMenu);
         button.setBackground(new Color(65, 192, 201));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
@@ -902,15 +936,15 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
 
     // ham tạo các nút submenu
-    private JButton createSubMenuButton(String text) {
+    private RippleEffectButton createSubMenuButton(String text) {
         ImageIcon iconSubmenu = new ImageIcon("images\\sub.png");
         Image subImage = iconSubmenu.getImage();
         Image scaledImage = subImage.getScaledInstance(17, 17, Image.SCALE_SMOOTH);
 
         ImageIcon scaledIconSubmenu = new ImageIcon(scaledImage);
 
-        JButton button = new JButton(text, scaledIconSubmenu);
-        button.setBackground(new Color(57, 159, 165));
+        RippleEffectButton button = new RippleEffectButton(text, scaledIconSubmenu);
+        button.setBackground(new Color(22, 134, 159));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -923,6 +957,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         return button;
     }
 
+
     // Thêm hiệu ứng hover cho nút menu chính
     private void addHoverEffectForMenuButton(JButton button) {
         button.addMouseListener(new MouseAdapter() {
@@ -932,14 +967,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(hoverBackground);
-                button.setBorder(new RoundedBorder(15));
                 button.repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(originalBackground);
-                button.setBorder(new RoundedBorder(15));
                 button.repaint();
             }
         });
@@ -954,17 +987,69 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(hoverBackground);
-//                button.setBorder(new RoundedBorder(15));
                 button.repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(originalBackground);
-//                button.setBorder(new RoundedBorder(15));
                 button.repaint();
             }
         });
+    }
+
+
+    // lớp tạo hiệu ứng gợn sóng cho  button
+    public class RippleEffectButton extends JButton {
+        private Point clickPoint = null;
+        private int rippleRadius = 0;
+        private int alpha = 150; // Độ mờ ban đầu
+        private Timer timer;
+
+        public RippleEffectButton(String text, ImageIcon icon) {
+            super(text, icon);
+            setContentAreaFilled(false);
+            setOpaque(true);
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    clickPoint = e.getPoint();
+                    rippleRadius = 0;
+                    alpha = 150; // Đặt lại độ mờ ban đầu
+
+                    if (timer != null && timer.isRunning()) {
+                        timer.stop();
+                    }
+
+                    // Tạo hiệu ứng gợn sóng
+                    timer = new Timer(15, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            rippleRadius += 5;
+                            alpha -= 5; // giảm dần độ mờ
+                            if (rippleRadius > getWidth() || alpha <= 0) {
+                                timer.stop();
+                            }
+                            repaint();
+                        }
+                    });
+                    timer.start();
+                }
+            });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (clickPoint != null && alpha > 0) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setColor(new Color(255, 255, 255, alpha)); // Đặt màu với độ mờ hiện tại
+                g2d.setClip(new Ellipse2D.Float(clickPoint.x - rippleRadius / 2, clickPoint.y - rippleRadius / 2, rippleRadius, rippleRadius));
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+                g2d.dispose();
+            }
+        }
     }
 
 
@@ -983,7 +1068,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        // click bất kì để ẩn show menu
+        hideAllSubmenus();
+        revalidate();
+        repaint();
     }
 
     @Override
@@ -1112,9 +1200,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.setColor(Color.WHITE);
-            g.drawRoundRect(x, y,   width - 1, height - 1, radius, radius);
+//            g.drawRoundRect(x, y,   width - 1, height - 1, radius, radius);
+            g.drawRoundRect(x, y,   width - 1, height - 1, 0, 0);
         }
     }
+
+
 
     public void setNhanVienDN(NhanVien nhanVien) {
         this.nhanVienDN = nhanVien;
@@ -1235,44 +1326,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                     String date = dateFormat.format(calendar.getTime());
                     dateLabel.setText(date);
 
-                    repaint(); // Vẽ lại component
-                    Thread.sleep(1000); // Delay 1 second
+                    repaint(); // vẽ lại component
+                    Thread.sleep(1000); // delay 1 second
                 } catch (InterruptedException ex) {
                     break;
                 }
             }
         }
-
-//         Override phương thức paintComponent để vẽ nền gradient
-//        @Override
-//        protected void paintComponent(Graphics g) {
-//            super.paintComponent(g);
-//            Graphics2D g2d = (Graphics2D) g;
-//
-//            // Vẽ hình nền
-//            try {
-//                BufferedImage backgroundImage = ImageIO.read(new File(""));
-//                g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            // Tạo điểm bắt đầu và điểm kết thúc của gradient
-//            Point start = new Point(0, 0);
-//            Point end = new Point(0, getHeight());
-//
-//            // Tạo màu cho gradient
-//            Color color1 = new Color(0, 0, 0, 50);
-//            Color color2 = new Color(0, 0, 0, 50);
-//
-//            // Tạo gradient paint
-//            GradientPaint gradient = new GradientPaint(start, color1, end, color2);
-//
-//            // Vẽ nền gradient
-//            g2d.setPaint(gradient);
-//            g2d.fillRect(0, 0, getWidth(), getHeight());
-//        }
-
     }
 
 

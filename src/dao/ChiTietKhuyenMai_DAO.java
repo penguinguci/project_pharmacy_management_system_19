@@ -12,26 +12,30 @@ public class ChiTietKhuyenMai_DAO {
     public  ChiTietKhuyenMai_DAO () {}
 
     public ArrayList<ChiTietKhuyenMai> getAllChiTietKM() throws Exception{
-        ArrayList<ChiTietKhuyenMai> dsCTKM = new ArrayList<ChiTietKhuyenMai>();
+        ArrayList<ChiTietKhuyenMai> dsCTKM = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
         try {
-            ConnectDB.getInstance();
-            Connection con = ConnectDB.getConnection();
-
-            String sql = "Select * from ChiTietKhuyenMai";
-            Statement statement = con.createStatement();
-
-            ResultSet rs = statement.executeQuery(sql);
+            con = ConnectDB.getConnection();
+            String sql = "{CALL getDSCTKhuyenMai}";
+            statement = con.prepareStatement(sql);
+            rs = statement.executeQuery();
 
             while (rs.next()) {
                 String maCTKM = rs.getString("maCTKM");
+                String loaiKhuyenMai = rs.getString("loaiKhuyenMai");
                 ChuongTrinhKhuyenMai chuongTrinhKhuyenMai = new ChuongTrinhKhuyenMai();
                 chuongTrinhKhuyenMai.setMaCTKM(maCTKM);
+                chuongTrinhKhuyenMai.setLoaiKhuyenMai(loaiKhuyenMai);
 
                 String soHieuThuoc = rs.getString("soHieuThuoc");
                 String maThuoc = rs.getString("maThuoc");
+                String tenThuoc = rs.getString("tenThuoc");
                 Thuoc thuoc = new Thuoc();
                 thuoc.setMaThuoc(maThuoc);
                 thuoc.setSoHieuThuoc(soHieuThuoc);
+                thuoc.setTenThuoc(tenThuoc);
 
                 double tyLeKhuyenMai = rs.getDouble("tyLeKhuyenMai");
                 int soLuongToiThieu = rs.getInt("soLuongToiThieu");

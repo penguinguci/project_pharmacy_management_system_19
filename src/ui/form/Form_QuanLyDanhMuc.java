@@ -14,9 +14,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener {
+public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener, ActionListener {
     private JTextField txtTenDanhMuc;
     private JComboBox<String> cbGioiTinh, cbVaiTro, cbTrangThai;
     private JDatePickerImpl dpNgaySinh;
@@ -134,6 +136,7 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
 
         // thêm sự kiện
         tblDanhMuc.getSelectionModel().addListSelectionListener(this);
+        btnBack.addActionListener(this);
     }
 
     // update table
@@ -159,6 +162,14 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
             if(row >= 0) {
                 fillRow(row);
             }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o == btnBack) {
+            setVisible(false);
         }
     }
 }

@@ -502,6 +502,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnLamMoi.addActionListener(this);
         cbxDanhMuc.addActionListener(this);
         txtTimKiem.getDocument().addDocumentListener(this);
+        btnBack.addActionListener(this);
 
         //Lấy dữ liệu tìm kiếm khách hàng
         kh_dao = new KhachHang_DAO();
@@ -988,7 +989,15 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
+            } else {
+                try {
+                    loadThuocData();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
+        } else if (o == btnBack) {
+            setVisible(false);
         }
     }
 
