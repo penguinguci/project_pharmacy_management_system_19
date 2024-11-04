@@ -6,6 +6,11 @@ public class ChiTietKhuyenMai {
     private double tyLeKhuyenMai;
     private int soLuongToiThieu; //Mua soLuongToiThieu để được hưởng khuyến mãi
 
+
+    public ChiTietKhuyenMai() {
+
+    }
+
     public ChiTietKhuyenMai(ChuongTrinhKhuyenMai chuongTrinhKhuyenMai, Thuoc thuoc, double tyLeKhuyenMai, int soLuongToiThieu) {
         this.thuoc = thuoc;
         this.chuongTrinhKhuyenMai = chuongTrinhKhuyenMai;

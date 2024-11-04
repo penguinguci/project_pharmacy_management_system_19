@@ -140,4 +140,59 @@ public class ChiTietKhuyenMai_DAO {
         return dsCTKM;
     }
 
+
+    // áp dụng khuyến mãi (create chi tiết khuyến mãi)
+    public boolean createChiTietKM(ChiTietKhuyenMai chiTietKhuyenMai) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        boolean result = false;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "INSERT INTO ChiTietKhuyenMai (maCTKM, soHieuThuoc, maThuoc, tyLeKhuyenMai, soLuongToiThieu) VALUES (?, ?, ?, ?, ?)";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, chiTietKhuyenMai.getChuongTrinhKhuyenMai().getMaCTKM());
+            statement.setString(2, chiTietKhuyenMai.getThuoc().getSoHieuThuoc());
+            statement.setString(3, chiTietKhuyenMai.getThuoc().getMaThuoc());
+            statement.setDouble(4, chiTietKhuyenMai.getTyLeKhuyenMai());
+            statement.setInt(5, chiTietKhuyenMai.getSoLuongToiThieu());
+
+            int n = statement.executeUpdate();
+            result = n > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    // xóa (gỡ áp dụng khuyến mãi)
+    public boolean deleteCTKhuyenMai(ChiTietKhuyenMai ct) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement statement = null;
+        int n = 0;
+        try {
+            statement = con.prepareStatement("DELETE FROM ChiTietKhuyenMai WHERE maCTKM = ? AND soHieuThuoc = ?");
+            statement.setString(1, ct.getChuongTrinhKhuyenMai().getMaCTKM());
+            statement.setString(2, ct.getThuoc().getSoHieuThuoc());
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
+
 }

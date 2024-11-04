@@ -916,9 +916,49 @@ BEGIN
 	FROM Thuoc t
 	LEFT JOIN ChiTietKhuyenMai ctkm ON t.soHieuThuoc = ctkm.soHieuThuoc AND t.maThuoc = ctkm.maThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
+	ORDER BY ctkm.tyLeKhuyenMai DESC
 END
 GO
 
+
+-- cập nhật khuyến mãi
+CREATE PROCEDURE capNhatKhuyenMai
+	@maCTKM VARCHAR(10),
+    @mota NVARCHAR(255),
+    @loaiKhuyenMai NVARCHAR(50),
+    @ngayBatDau DATE,
+    @ngayKetThuc DATE
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM ChuongTrinhKhuyenMai WHERE maCTKM = @maCTKM)
+    BEGIN
+        UPDATE ChuongTrinhKhuyenMai
+        SET 
+           mota = @mota,
+		   loaiKhuyenMai = @loaiKhuyenMai,
+		   ngayBatDau = @ngayBatDau,
+		   ngayKetThuc = @ngayKetThuc
+        WHERE maCTKM = @maCTKM;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy khuyến mãi với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm khuyến mãi theo loại khuyến mãi, mã khuyến mãi, mô tả
+CREATE PROCEDURE timKiemKhuyenMaiTheoKyTu
+    @kyTu NVARCHAR(255)
+AS
+BEGIN
+    SELECT *
+    FROM ChuongTrinhKhuyenMai 
+    WHERE (maCTKM LIKE '%' + @kyTu + '%') OR (loaiKhuyenMai LIKE '%' + @kyTu + '%')
+			OR (mota LIKE '%' + @kyTu + '%')
+END;
+GO
 
 
 
