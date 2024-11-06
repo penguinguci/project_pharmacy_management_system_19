@@ -1,168 +1,255 @@
 package ui.form;
 
+import dao.NhaCungCap_DAO;
+import dao.Thuoc_DAO;
+import entity.DonDatThuoc;
+import entity.NhaCungCap;
+import entity.Thuoc;
+
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Form_NhapThuoc  extends JPanel {
-    private JTable table;
-    private DefaultTableModel tableModel;
-    private JButton addButton, deleteButton, updateButton, refreshButton, cancelButton;
-    private JTextField txtDrugName, txtQuantity, txtPrice, txtSupplier, txtTotalPrice;
-    private JComboBox<String> unitComboBox;
-    private JTextField txtSupplierName, txtAddress, txtPhone, txtInvoiceNumber, txtImportDate;
+public class Form_NhapThuoc extends JPanel implements ActionListener {
+    private JComboBox<String> cbbNhaCungCap, cbbThuoc, cbbDonViTinh;
+    private JTextField txtSoLuong, txtGiaNhap;
+    private JTable tblChiTietThuoc;
+    private JButton btnThemThuocMoi, btnNhapThuoc, btnLamMoi, btnImportExcel, btnExportExcel;
+    private JButton btnThem, btnXoa, btnCapNhat, btnLamMoiInput, btnBack;
+    public NhaCungCap_DAO nhaCungCap_dao;
+    public Thuoc_DAO thuoc_dao;
 
-    public Form_NhapThuoc() {
-        // Panel thông tin nhà cung cấp
-        JPanel supplierPanel = new JPanel(new GridLayout(3, 4, 10, 10));
-        supplierPanel.setBorder(BorderFactory.createTitledBorder("Thông tin nhà cung cấp"));
+    public Form_NhapThuoc() throws Exception {
+        // khởi tạo
+        nhaCungCap_dao = new NhaCungCap_DAO();
+        thuoc_dao = new Thuoc_DAO();
 
-        supplierPanel.add(new JLabel("Nhà cung cấp:"));
-        txtSupplierName = new JTextField();
-        supplierPanel.add(txtSupplierName);
+        setLayout(new BorderLayout(20, 20));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        supplierPanel.add(new JLabel("Địa chỉ:"));
-        txtAddress = new JTextField();
-        supplierPanel.add(txtAddress);
+        // Tiêu đề
+        // panel tiêu để
+        JPanel panelTieuDe = new JPanel();
 
-        supplierPanel.add(new JLabel("Điện thoại:"));
-        txtPhone = new JTextField();
-        supplierPanel.add(txtPhone);
+        JPanel panelButton_left = new JPanel();
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+        panelButton_left.add(btnBack = new JButton("Quay lại", scaledIconBack));
+        btnBack.setFont(new Font("Arial", Font.BOLD, 17));
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
 
-        supplierPanel.add(new JLabel("Số phiếu:"));
-        txtInvoiceNumber = new JTextField();
-        supplierPanel.add(txtInvoiceNumber);
+        JLabel lblTitle = new JLabel("NHẬP THUỐC TỪ NHÀ CUNG CẤP", JLabel.CENTER);
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        lblTitle.setForeground(new Color(54, 69, 79));
 
-        supplierPanel.add(new JLabel("Ngày nhập:"));
-        txtImportDate = new JTextField();
-        supplierPanel.add(txtImportDate);
+        panelTieuDe.add(Box.createHorizontalStrut(-500));
+        panelTieuDe.add(btnBack, BorderLayout.EAST);
+        panelTieuDe.add(Box.createHorizontalStrut(380));
+        panelTieuDe.add(lblTitle, BorderLayout.CENTER);
 
-        // Tạo bảng hiển thị thông tin thuốc
-        tableModel = new DefaultTableModel();
-        tableModel.setColumnIdentifiers(new Object[]{"Tên thuốc", "Đơn vị", "Số lượng", "Giá nhập", "Thành tiền"});
-        table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
+        add(panelTieuDe, BorderLayout.NORTH);
 
-        // Tạo các text field để nhập thông tin thuốc
-        txtDrugName = new JTextField(10);
-        String[] units = {"Viên", "Hộp", "Vỉ", "Ống"};
-        unitComboBox = new JComboBox<>(units);
-        txtQuantity = new JTextField(10);
-        txtPrice = new JTextField(10);
-        txtTotalPrice = new JTextField(10);
+        // Panel chứa form nhập liệu
+        JPanel pnlInput = new JPanel(new GridBagLayout());
+        pnlInput.setBorder(BorderFactory.createTitledBorder("Thông tin thuốc nhập"));
+        pnlInput.setBackground(new Color(245, 245, 245));
 
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
-        inputPanel.add(new JLabel("Tên thuốc:"));
-        inputPanel.add(txtDrugName);
-        inputPanel.add(new JLabel("Đơn vị:"));
-        inputPanel.add(unitComboBox);
-        inputPanel.add(new JLabel("Số lượng:"));
-        inputPanel.add(txtQuantity);
-        inputPanel.add(new JLabel("Giá nhập:"));
-        inputPanel.add(txtPrice);
-        inputPanel.add(new JLabel("Thành tiền:"));
-        inputPanel.add(txtTotalPrice);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Tạo các nút chức năng
-        addButton = new JButton("Thêm");
-        deleteButton = new JButton("Xóa");
-        updateButton = new JButton("Cập nhật");
-        refreshButton = new JButton("Làm mới");
-        cancelButton = new JButton("Hủy");
+        // ComboBox Nhà Cung Cấp và Thuốc trên cùng một hàng
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        pnlInput.add(new JLabel("Nhà cung cấp:"), gbc);
+        cbbNhaCungCap = new JComboBox<>(dataComboNhaCC());
+        cbbNhaCungCap.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1;
+        pnlInput.add(cbbNhaCungCap, gbc);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(updateButton);
-        buttonPanel.add(refreshButton);
-        buttonPanel.add(cancelButton);
+        gbc.gridx = 2;
+        pnlInput.add(new JLabel("Thuốc:"), gbc);
+        cbbThuoc = new JComboBox<>();
+        cbbThuoc.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 3;
+        pnlInput.add(cbbThuoc, gbc);
 
-        // Thêm bảng và các nút vào JFrame
-        setLayout(new BorderLayout());
-        add(supplierPanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-        add(inputPanel, BorderLayout.SOUTH);
-        add(buttonPanel, BorderLayout.SOUTH);
+        // ComboBox Đơn Vị Tính
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        pnlInput.add(new JLabel("Đơn vị tính:"), gbc);
+        cbbDonViTinh = new JComboBox<>(new String[] {"Chọn đơn vị tính", "Viên", "Vỉ", "Hộp"});
+        cbbDonViTinh.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1;
+        pnlInput.add(cbbDonViTinh, gbc);
 
-        // Xử lý sự kiện cho các nút
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = txtDrugName.getText();
-                String unit = (String) unitComboBox.getSelectedItem();
-                String quantity = txtQuantity.getText();
-                String price = txtPrice.getText();
-                int total = Integer.parseInt(quantity) * Integer.parseInt(price);
-                txtTotalPrice.setText(String.valueOf(total));
+        // TextField Số Lượng và Giá Nhập trên cùng một hàng
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        pnlInput.add(new JLabel("Số lượng:"), gbc);
+        txtSoLuong = new JTextField(15);
+        txtSoLuong.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 1;
+        pnlInput.add(txtSoLuong, gbc);
 
-                if (!name.isEmpty() && !quantity.isEmpty() && !price.isEmpty()) {
-                    tableModel.addRow(new Object[]{name, unit, quantity, price, total});
-                    clearInputFields();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin");
-                }
-            }
-        });
+        gbc.gridx = 2;
+        pnlInput.add(new JLabel("Giá nhập:"), gbc);
+        txtGiaNhap = new JTextField(15);
+        txtGiaNhap.setPreferredSize(new Dimension(200, 30));
+        gbc.gridx = 3;
+        pnlInput.add(txtGiaNhap, gbc);
 
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow >= 0) {
-                    tableModel.removeRow(selectedRow);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa");
-                }
-            }
-        });
+        // Panel chứa các nút Thêm, Xóa, Cập Nhật, Làm Mới cho phần nhập liệu
+        JPanel pnlInputButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        btnThem = new JButton("Thêm");
+        btnXoa = new JButton("Xóa");
+        btnCapNhat = new JButton("Cập Nhật");
+        btnLamMoiInput = new JButton("Làm Mới");
 
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow >= 0) {
-                    tableModel.setValueAt(txtDrugName.getText(), selectedRow, 0);
-                    tableModel.setValueAt(unitComboBox.getSelectedItem(), selectedRow, 1);
-                    tableModel.setValueAt(txtQuantity.getText(), selectedRow, 2);
-                    tableModel.setValueAt(txtPrice.getText(), selectedRow, 3);
-                    int total = Integer.parseInt(txtQuantity.getText()) * Integer.parseInt(txtPrice.getText());
-                    tableModel.setValueAt(total, selectedRow, 4);
-                    clearInputFields();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để cập nhật");
-                }
-            }
-        });
+        Dimension btnInputSize = new Dimension(100, 30);
+        btnThem.setPreferredSize(btnInputSize);
+        btnXoa.setPreferredSize(btnInputSize);
+        btnCapNhat.setPreferredSize(btnInputSize);
+        btnLamMoiInput.setPreferredSize(btnInputSize);
 
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearInputFields();
-            }
-        });
+        pnlInputButtons.add(btnThem);
+        pnlInputButtons.add(btnXoa);
+        pnlInputButtons.add(btnCapNhat);
+        pnlInputButtons.add(btnLamMoiInput);
 
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-//                dispose();  // Đóng cửa sổ hiện tại
-            }
-        });
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 4;
+        pnlInput.add(pnlInputButtons, gbc);
+
+        JPanel pnlCenter = new JPanel(new BorderLayout(10, 10));
+        pnlCenter.add(pnlInput, BorderLayout.NORTH);
+
+        // Table Chi tiết thuốc
+        String[] columnNames = {"Mã thuốc", "Số hiệu thuốc", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"};
+        Object[][] data = {}; // dữ liệu trống ban đầu
+        tblChiTietThuoc = new JTable(data, columnNames);
+        tblChiTietThuoc.setRowHeight(25);
+        tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        JScrollPane scrollPane = new JScrollPane(tblChiTietThuoc);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết thuốc nhập"));
+        pnlCenter.add(scrollPane, BorderLayout.CENTER);
+
+        add(pnlCenter, BorderLayout.CENTER);
+
+        // Panel chứa các nút chức năng ở bên phải
+        JPanel pnlButtons = new JPanel(new BorderLayout());
+        Box boxButtons = new Box(BoxLayout.Y_AXIS);
+
+        btnThemThuocMoi = new JButton("+ Thêm thuốc mới");
+        btnNhapThuoc = new JButton("Nhập thuốc");
+        btnLamMoi = new JButton("Làm mới");
+        btnImportExcel = new JButton("Import Excel");
+        btnExportExcel = new JButton("Export Excel");
+
+        // Điều chỉnh kích thước các nút
+        Dimension btnSize = new Dimension(140, 32);
+        btnThemThuocMoi.setPreferredSize(btnSize);
+        btnNhapThuoc.setPreferredSize(btnSize);
+        btnLamMoi.setPreferredSize(btnSize);
+        btnImportExcel.setPreferredSize(btnSize);
+        btnExportExcel.setPreferredSize(btnSize);
+
+        boxButtons.add(Box.createVerticalStrut(80));
+        boxButtons.add(btnThemThuocMoi);
+        boxButtons.add(Box.createVerticalStrut(30));
+        boxButtons.add(btnImportExcel);
+        boxButtons.add(Box.createVerticalStrut(30));
+        boxButtons.add(btnExportExcel);
+        boxButtons.add(Box.createVerticalStrut(400));
+        boxButtons.add(btnNhapThuoc);
+
+        pnlButtons.add(boxButtons);
+
+        add(pnlButtons, BorderLayout.EAST);
+
+        // thêm sự kiện
+        btnThemThuocMoi.addActionListener(this);
+        btnLamMoi.addActionListener(this);
+        btnXoa.addActionListener(this);
+        btnCapNhat.addActionListener(this);
+        btnThem.addActionListener(this);
+        btnImportExcel.addActionListener(this);
+        btnExportExcel.addActionListener(this);
+        cbbNhaCungCap.addActionListener(this);
+        btnBack.addActionListener(this);
     }
 
-    // Hàm để xóa các text field sau khi thêm hoặc cập nhật
-    private void clearInputFields() {
-        txtDrugName.setText("");
-        txtQuantity.setText("");
-        txtPrice.setText("");
-        txtTotalPrice.setText("");
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o == btnThemThuocMoi) {
+            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm thuốc", true);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            Form_ThemThuoc pnlThemThuoc = new Form_ThemThuoc();
+            dialog.add(pnlThemThuoc);
+            dialog.setSize(800,800);
+            dialog.setLocationRelativeTo(null);
+            dialog.setResizable(false);
+            dialog.setVisible(true);
+        } else if(o == cbbNhaCungCap) {
+            String tenNCC = cbbNhaCungCap.getSelectedItem().toString();
+            if (!tenNCC.equalsIgnoreCase("Chọn nhà cung cấp")) {
+                cbbThuoc.removeAllItems();
+                try {
+                    for(String t : dataComboThuoc(tenNCC)) {
+                        cbbThuoc.addItem(t);
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } else if (o == btnBack) {
+            setVisible(false);
+        }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Form_NhapThuoc form = new Form_NhapThuoc();
-            form.setVisible(true);
-        });
+    // update cbbox thuốc theo tên nhà cung cấp
+    public String[] dataComboThuoc(String tenNCC) throws Exception {
+        ArrayList<Thuoc> list = thuoc_dao.getDSThuocTheoNhaCC(tenNCC);
+        Set<String> addMaThuoc = new HashSet<>();
+        String[] str = new String[list.size() + 1];
+        str[0] = "Chọn thuốc";
+        int i = 1;
+        for(Thuoc t : list) {
+            if (!addMaThuoc.contains(t.getMaThuoc())) {
+                str[i] = t.getTenThuoc();
+                addMaThuoc.add(t.getMaThuoc());
+                i++;
+            }
+        }
+        return Arrays.copyOf(str, i);
+    }
+
+    // update cbbox nhà cungg cấp
+    public String[] dataComboNhaCC() {
+        ArrayList<NhaCungCap> list = new ArrayList<>();
+        try {
+            list = nhaCungCap_dao.getAllNhaCungCap();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String[] str = new String[list.size()+1];
+        str[0] = "Chọn nhà cung cấp";
+        int i = 1;
+        for(NhaCungCap ncc : list) {
+            str[i] = ncc.getTenNCC();
+            i++;
+        }
+        return str;
     }
 }

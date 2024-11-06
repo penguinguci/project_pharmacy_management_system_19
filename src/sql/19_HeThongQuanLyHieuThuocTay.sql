@@ -369,6 +369,15 @@ VALUES
 ('DG0005', 'T005', N'Viên', 5000),
 ('DG0006', 'T005', N'Hộp', 40000)
 
+INSERT INTO DonGiaThuoc
+VALUES
+('DG0007', 'T006', N'Hộp', 50000),
+('DG0008', 'T007', N'Hộp', 35000),
+('DG0009', 'T008', N'Hộp', 150000),
+('DG0010', 'T009', N'Hộp', 75000),
+('DG0011', 'T010', N'Viên', 5000),
+('DG0012', 'T011', N'Hộp', 40000)
+
 -- Bảng Thuoc
 INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maDonGia)
 VALUES
@@ -378,6 +387,16 @@ VALUES
 ('S00004', 'T004', N'Ibuprofen','K03', 24, 50000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png', 'DG0004'),
 ('S00005', 'T005', N'Vitamin C','K03', 36, 3000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0005'),
 ('S00006', 'T005', N'Vitamin C','K03', 36, 30000, 20, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0006')
+
+INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maDonGia)
+VALUES
+('S00007', 'T006', N'Paracetamol','K01', 60, 40000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png', 'DG0001'),
+('S00008' ,'T007', N'Aspirin','K01', 36, 25000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png', 'DG0002'),
+('S00009', 'T008', N'Amoxicillin','K02', 24, 120000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png', 'DG0003'),
+('S00010', 'T009', N'Ibuprofen','K03', 24, 50000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png', 'DG0004'),
+('S00011', 'T010', N'Vitamin C','K03', 36, 3000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0005'),
+('S00012', 'T011', N'Vitamin C','K03', 36, 30000, 20, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0006')
+
 
 -- Bảng HoaDon
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
@@ -863,6 +882,81 @@ BEGIN
 	JOIN ChucVu cv ON nv.vaiTro = cv.maChucVu
     WHERE (tenNV LIKE '%' + @kyTu + '%') OR (maNV LIKE '%' + @kyTu + '%')
 			OR (SDT LIKE '%' + @kyTu + '%') OR (email LIKE '%' + @kyTu + '%');
+END;
+GO
+
+
+-- lấy danh sách thuốc theo nhà cung cấp
+CREATE PROCEDURE getDSThuocTheoNhaCC @tenNCC NVARCHAR(50)
+AS
+BEGIN
+	SELECT DISTINCT t.*, ncc.*
+	FROM Thuoc t
+	JOIN NhaCungCap ncc ON t.maNhaCungCap = ncc.maNCC
+	WHERE ncc.tenNCC = @tenNCC
+END
+GO 
+
+
+-- lấy danh sách khuyến mãi
+CREATE PROCEDURE getDSKhuyenMai
+AS
+BEGIN
+	SELECT *
+	FROM ChuongTrinhKhuyenMai
+END
+GO
+
+
+-- lấy danh sách chi tiết khuyến mãi và thuốc
+CREATE PROCEDURE getDSCTKhuyenMai
+AS
+BEGIN
+	SELECT *
+	FROM Thuoc t
+	LEFT JOIN ChiTietKhuyenMai ctkm ON t.soHieuThuoc = ctkm.soHieuThuoc AND t.maThuoc = ctkm.maThuoc
+	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
+	ORDER BY ctkm.tyLeKhuyenMai DESC
+END
+GO
+
+
+-- cập nhật khuyến mãi
+CREATE PROCEDURE capNhatKhuyenMai
+	@maCTKM VARCHAR(10),
+    @mota NVARCHAR(255),
+    @loaiKhuyenMai NVARCHAR(50),
+    @ngayBatDau DATE,
+    @ngayKetThuc DATE
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM ChuongTrinhKhuyenMai WHERE maCTKM = @maCTKM)
+    BEGIN
+        UPDATE ChuongTrinhKhuyenMai
+        SET 
+           mota = @mota,
+		   loaiKhuyenMai = @loaiKhuyenMai,
+		   ngayBatDau = @ngayBatDau,
+		   ngayKetThuc = @ngayKetThuc
+        WHERE maCTKM = @maCTKM;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy khuyến mãi với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm khuyến mãi theo loại khuyến mãi, mã khuyến mãi, mô tả
+CREATE PROCEDURE timKiemKhuyenMaiTheoKyTu
+    @kyTu NVARCHAR(255)
+AS
+BEGIN
+    SELECT *
+    FROM ChuongTrinhKhuyenMai 
+    WHERE (maCTKM LIKE '%' + @kyTu + '%') OR (loaiKhuyenMai LIKE '%' + @kyTu + '%')
+			OR (mota LIKE '%' + @kyTu + '%')
 END;
 GO
 

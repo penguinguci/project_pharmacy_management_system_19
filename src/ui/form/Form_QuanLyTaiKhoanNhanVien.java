@@ -279,6 +279,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         // thêm sự kiện
         tblNhanVien.getSelectionModel().addListSelectionListener(this);
         btnThem.addActionListener(this);
+        btnBack.addActionListener(this);
     }
 
     // update table
@@ -363,6 +364,8 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
                 dangNhap_dao.createTaiKhoan(tk);
                 JOptionPane.showMessageDialog(this,"Thêm tài khoản cho nhân viên có mã " + taiKhoan + " thành công!");
             }
+        } else if (o == btnBack) {
+            setVisible(false);
         }
     }
 

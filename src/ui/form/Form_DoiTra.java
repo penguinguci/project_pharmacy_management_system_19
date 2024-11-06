@@ -303,6 +303,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         //Thêm các panel vào frame
         this.add(topPanel, BorderLayout.NORTH);
         this.add(centerPanel, BorderLayout.CENTER);
+
     }
 
     // Class để định dạng ngày tháng
@@ -484,6 +485,10 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
             } else {
                 JOptionPane.showMessageDialog(this, "Chưa chọn hoá đơn!");
             }
+        }
+
+        if (e.getSource() == btnQuayLai) {
+            setVisible(false);
         }
     }
 

@@ -219,6 +219,9 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         if(e.getSource().equals(btnLamMoi)) {
             clear();
         }
+        if (e.getSource().equals(btnQuayLai)) {
+            setVisible(false);
+        }
     }
 
     @Override

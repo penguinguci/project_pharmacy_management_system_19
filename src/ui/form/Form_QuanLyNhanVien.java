@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -541,8 +542,8 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
             }
         } else if (o.equals(btnLamMoi)) {
             lamMoi();
-        } else if (o.equals(btnBack)) {
-
+        } else if (o == btnBack) {
+            setVisible(false);
         }
     }
 
@@ -621,8 +622,9 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         }
 
         // Kiểm tra ngày sinh và tuổi >= 18
+        Date ngaySinhMD = (Date) dpNgaySinh.getModel().getValue();
         LocalDate today = LocalDate.now();
-        LocalDate birthDate = LocalDate.of(ngaySinhModel.getYear(), ngaySinhModel.getMonth(), ngaySinhModel.getDay());
+        LocalDate birthDate = ngaySinhMD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Period age = Period.between(birthDate, today);
         if (age.getYears() < 18) {
             JOptionPane.showMessageDialog(this,
