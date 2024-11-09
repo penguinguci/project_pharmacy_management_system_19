@@ -12,26 +12,30 @@ public class ChiTietKhuyenMai_DAO {
     public  ChiTietKhuyenMai_DAO () {}
 
     public ArrayList<ChiTietKhuyenMai> getAllChiTietKM() throws Exception{
-        ArrayList<ChiTietKhuyenMai> dsCTKM = new ArrayList<ChiTietKhuyenMai>();
+        ArrayList<ChiTietKhuyenMai> dsCTKM = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
         try {
-            ConnectDB.getInstance();
-            Connection con = ConnectDB.getConnection();
-
-            String sql = "Select * from ChiTietKhuyenMai";
-            Statement statement = con.createStatement();
-
-            ResultSet rs = statement.executeQuery(sql);
+            con = ConnectDB.getConnection();
+            String sql = "{CALL getDSCTKhuyenMai}";
+            statement = con.prepareStatement(sql);
+            rs = statement.executeQuery();
 
             while (rs.next()) {
                 String maCTKM = rs.getString("maCTKM");
+                String loaiKhuyenMai = rs.getString("loaiKhuyenMai");
                 ChuongTrinhKhuyenMai chuongTrinhKhuyenMai = new ChuongTrinhKhuyenMai();
                 chuongTrinhKhuyenMai.setMaCTKM(maCTKM);
+                chuongTrinhKhuyenMai.setLoaiKhuyenMai(loaiKhuyenMai);
 
                 String soHieuThuoc = rs.getString("soHieuThuoc");
                 String maThuoc = rs.getString("maThuoc");
+                String tenThuoc = rs.getString("tenThuoc");
                 Thuoc thuoc = new Thuoc();
                 thuoc.setMaThuoc(maThuoc);
                 thuoc.setSoHieuThuoc(soHieuThuoc);
+                thuoc.setTenThuoc(tenThuoc);
 
                 double tyLeKhuyenMai = rs.getDouble("tyLeKhuyenMai");
                 int soLuongToiThieu = rs.getInt("soLuongToiThieu");
@@ -134,6 +138,61 @@ public class ChiTietKhuyenMai_DAO {
             }
         }
         return dsCTKM;
+    }
+
+
+    // áp dụng khuyến mãi (create chi tiết khuyến mãi)
+    public boolean createChiTietKM(ChiTietKhuyenMai chiTietKhuyenMai) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        boolean result = false;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "INSERT INTO ChiTietKhuyenMai (maCTKM, soHieuThuoc, maThuoc, tyLeKhuyenMai, soLuongToiThieu) VALUES (?, ?, ?, ?, ?)";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, chiTietKhuyenMai.getChuongTrinhKhuyenMai().getMaCTKM());
+            statement.setString(2, chiTietKhuyenMai.getThuoc().getSoHieuThuoc());
+            statement.setString(3, chiTietKhuyenMai.getThuoc().getMaThuoc());
+            statement.setDouble(4, chiTietKhuyenMai.getTyLeKhuyenMai());
+            statement.setInt(5, chiTietKhuyenMai.getSoLuongToiThieu());
+
+            int n = statement.executeUpdate();
+            result = n > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    // xóa (gỡ áp dụng khuyến mãi)
+    public boolean deleteCTKhuyenMai(ChiTietKhuyenMai ct) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement statement = null;
+        int n = 0;
+        try {
+            statement = con.prepareStatement("DELETE FROM ChiTietKhuyenMai WHERE maCTKM = ? AND soHieuThuoc = ?");
+            statement.setString(1, ct.getChuongTrinhKhuyenMai().getMaCTKM());
+            statement.setString(2, ct.getThuoc().getSoHieuThuoc());
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
     }
 
 }

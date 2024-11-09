@@ -339,6 +339,9 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
                 e1.printStackTrace();
             }
         }
+        if (e.getSource().equals(btnQuayLai)) {
+            setVisible(false);
+        }
     }
 
     public void clearData() {
