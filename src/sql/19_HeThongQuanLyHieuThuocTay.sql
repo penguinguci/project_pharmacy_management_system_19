@@ -144,6 +144,7 @@ CREATE TABLE Thuoc (
 	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 );
 
+
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
     maHD VARCHAR(10) NOT NULL PRIMARY KEY,
@@ -274,6 +275,7 @@ VALUES
 (0, N'Quản trị viên'),
 (1, N'Nhân viên bán thuốc'),
 (2, N'Nhân viên quản lý')
+
 
 -- Bảng NhanVien
 INSERT INTO NhanVien (maNV, hoNV, tenNV, email, ngaySinh, SDT, diaChi, gioiTinh, vaiTro, trangThai)
@@ -960,6 +962,177 @@ BEGIN
 END;
 GO
 
+
+-- tìm kiếm chức vụ theo mã chức vụ, tên chức vụ 
+CREATE PROCEDURE timKiemChucVuTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM ChucVu 
+    WHERE (maChucVu LIKE '%' + @kyTu + '%') OR (tenChucVu LIKE '%' + @kyTu + '%')
+END;
+GO
+
+-- cập nhật chức vụ
+CREATE PROCEDURE capNhatChucVu
+	@maChucVu SMALLINT,
+    @tenChucVu NVARCHAR(50)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM ChucVu WHERE maChucVu = @maChucVu)
+    BEGIN
+        UPDATE ChucVu
+        SET 
+           tenChucVu = @tenChucVu
+        WHERE maChucVu = @maChucVu;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy chức vụ với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nhà sản xuất theo mã và tên
+CREATE PROCEDURE timKiemNhaSXTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NhaSanXuat 
+    WHERE (maNhaSX LIKE '%' + @kyTu + '%') OR (tenNhaSX LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật nhà sản xuất
+CREATE PROCEDURE capNhatNhaSX
+	@maNhaSX VARCHAR(15),
+    @tenNhaSX NVARCHAR(50),
+	@diaChi NVARCHAR(255)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM NhaSanXuat WHERE maNhaSX = @maNhaSX)
+    BEGIN
+        UPDATE NhaSanXuat
+        SET 
+           tenNhaSX = @tenNhaSX,
+		   diaChi = @diaChi
+        WHERE maNhaSX = @maNhaSX;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nhà sản xuất với mã này';
+    END
+END
+GO
+
+
+
+-- tìm kiếm danh mục theo mã và tên
+CREATE PROCEDURE timKiemDanhMucTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM DanhMuc 
+    WHERE (maDanhMuc LIKE '%' + @kyTu + '%') OR (tenDanhMuc LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật danh mục
+CREATE PROCEDURE capNhatDM
+	@maDM VARCHAR(10),
+    @tenDM NVARCHAR(50)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM DanhMuc WHERE maDanhMuc = @maDM)
+    BEGIN
+        UPDATE DanhMuc
+        SET 
+           tenDanhMuc = @tenDM
+        WHERE maDanhMuc = @maDM;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy danh mục với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nước sản xuất theo mã và tên
+CREATE PROCEDURE timKiemNuocSXTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NuocSanXuat 
+    WHERE (maNuoc LIKE '%' + @kyTu + '%') OR (tenNuoc LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật nước sản xuất
+CREATE PROCEDURE capNhatNuocSX
+	@maNuoc VARCHAR(10),
+    @tenNuoc NVARCHAR(50)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM NuocSanXuat WHERE maNuoc = @maNuoc)
+    BEGIN
+        UPDATE NuocSanXuat
+        SET 
+           tenNuoc = @tenNuoc
+        WHERE maNuoc = @maNuoc;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nước sản xuất với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nhà cung cấp  theo mã, tên. email
+CREATE PROCEDURE timKiemNhaCCTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NhaCungCap 
+    WHERE (maNCC LIKE '%' + @kyTu + '%') OR (tenNCC LIKE '%' + @kyTu + '%')
+		OR (email LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật nhà cung cấp
+CREATE PROCEDURE capNhatNhaCC
+	@maNCC VARCHAR(10),
+    @tenNCC NVARCHAR(50),
+	@email VARCHAR(50),
+	@diaChi NVARCHAR(255)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM NhaCungCap WHERE maNCC = @maNCC)
+    BEGIN
+        UPDATE NhaCungCap
+        SET 
+           tenNCC = @tenNCC,
+		   diaChi = @diaChi,
+		   email = @email
+        WHERE maNCC = @maNCC;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nhà cung cấp với mã này';
+    END
+END
+GO
 
 
 -- --------- TRIGGER

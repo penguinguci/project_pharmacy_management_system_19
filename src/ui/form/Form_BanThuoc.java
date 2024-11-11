@@ -936,6 +936,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             }
         } else if(o == btnLamMoi) {
             try {
+                xoaGioHang();
                 loadThuocData();
                 cbxDanhMuc.setSelectedIndex(0);
             } catch (Exception e1) {
@@ -968,19 +969,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         } else if(o == btnHuy) {
             xoaGioHang();
         } else if(o == btnLuuDonHang) {
-            if (txtTimKiemKH.getText().toString().trim().equals("")) {
-                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang();
-                dialog.add(pnlThemKhachHang);
-                dialog.setSize(700,450);
-                dialog.setMaximumSize(new Dimension(700,450));
-                dialog.setLocationRelativeTo(null);
-                dialog.setResizable(false);
-                dialog.setVisible(true);
-            }
-        } else if (o == btnLamMoi) {
-            xoaGioHang();
+            luuDonHang();
         } else if (o == cbxDanhMuc) {
             String tenDM = cbxDanhMuc.getSelectedItem().toString();
             if(!tenDM.equalsIgnoreCase("Chọn danh mục")) {
@@ -1001,6 +990,24 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         }
     }
 
+
+    // lưu đơn hàng
+    public void luuDonHang() {
+        if (txtTimKiemKH.getText().toString().trim().equals("")) {
+            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang();
+            dialog.add(pnlThemKhachHang);
+            dialog.setSize(700,450);
+            dialog.setMaximumSize(new Dimension(700,450));
+            dialog.setLocationRelativeTo(null);
+            dialog.setResizable(false);
+            dialog.setVisible(true);
+        }
+    }
+
+
+    // thanh toán có in
     public void thanhToan() throws Exception {
         if(modelGioHang.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trước khi thanh toán!!!");

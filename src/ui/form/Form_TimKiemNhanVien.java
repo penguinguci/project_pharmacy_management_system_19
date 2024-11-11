@@ -71,8 +71,22 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         btnQuayLai.setFocusPainted(false);
 
         btnSua = new JButton("Cập nhật");
+
         btnTimKiem = new JButton("Tìm kiếm");
+        btnTimKiem.setBackground(new Color(65, 192, 201));
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.setBorderPainted(false);
+
         btnLamMoi = new JButton("Làm mới");
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
 
         //ComboBox
         dcmGioiTinh = new DefaultComboBoxModel<>(dataComboGioiTinh);

@@ -100,9 +100,12 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnTimKiem = new JButton("Tìm kiếm");
         btnLamMoi = new JButton("Làm mới");
 
-        btnThem.setBackground(new Color(65, 192, 201));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setForeground(Color.WHITE);
         btnSua.setBackground(new Color(212, 112, 236));
-        btnXoa.setBackground(new Color(238, 156, 37));
+        btnSua.setForeground(Color.WHITE);
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
 
         btnThem.setPreferredSize(new Dimension(100, 25));
         btnXoa.setPreferredSize(new Dimension(100, 25));
@@ -225,9 +228,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnThem);
         boxBtn.add(Box.createHorizontalStrut(5));
-        boxBtn.add(btnSua);
-        boxBtn.add(Box.createHorizontalStrut(5));
         boxBtn.add(btnXoa);
+        boxBtn.add(Box.createHorizontalStrut(5));
+        boxBtn.add(btnSua);
         boxBtn.add(Box.createHorizontalGlue());
 
         // Thêm các Box vào inforPanel
