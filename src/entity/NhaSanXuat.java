@@ -9,14 +9,10 @@ public class NhaSanXuat {
         this.maNhaSX = maNhaSX;
     }
 
-    public NhaSanXuat(String tenNhaSX, String maNhaSX, String diaChi) {
+    public NhaSanXuat(String maNhaSX, String tenNhaSX, String diaChi) {
         this.tenNhaSX = tenNhaSX;
         this.maNhaSX = maNhaSX;
         this.diaChi = diaChi;
-    }
-    public NhaSanXuat(String maNhaSX, String tenNhaSX) {
-        this.maNhaSX = maNhaSX;
-        this.tenNhaSX = tenNhaSX;
     }
 
     public String getMaNhaSX() {

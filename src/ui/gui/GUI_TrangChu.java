@@ -492,10 +492,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         centerPanel.add(dongHoPanel);
 
 
-        // tạo các form trước và thêm vào centerPanel
-        formBanThuoc = new Form_BanThuoc();
-
-
         // Thêm top Panel vào mainContentPanel
         mainContentPanel.add(topPanel, BorderLayout.NORTH);
 
@@ -640,6 +636,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 }
             }
         } else if(o == btnBanThuoc) {
+            try {
+                formBanThuoc = new Form_BanThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formBanThuoc, "formBanThuoc");
             formBanThuoc.setNhanVienDN(nhanVienDN);
             centerPanel.revalidate();

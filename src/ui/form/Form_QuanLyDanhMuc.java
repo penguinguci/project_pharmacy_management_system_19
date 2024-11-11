@@ -3,22 +3,26 @@ package ui.form;
 import dao.DanhMuc_DAO;
 import dao.NhaCungCap_DAO;
 import dao.NuocSanXuat_DAO;
-import entity.DanhMuc;
-import entity.NhaCungCap;
-import entity.NuocSanXuat;
+import dao.Thuoc_DAO;
+import entity.*;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener, ActionListener {
+public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
     private JTextField txtTenDanhMuc;
     private JComboBox<String> cbGioiTinh, cbVaiTro, cbTrangThai;
     private JDatePickerImpl dpNgaySinh;
@@ -29,6 +33,7 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
     private JTextField txtTimKiem;
     private JButton btnTimKiem;
     public DanhMuc_DAO danhMuc_dao;
+    public Thuoc_DAO thuoc_dao;
 
     public Form_QuanLyDanhMuc() throws Exception {
         setLayout(new BorderLayout());
@@ -84,12 +89,35 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnThem = new JButton("Thêm");
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setFocusPainted(false);
+        btnThem.setForeground(Color.WHITE);
+        btnThem.setOpaque(true);
+        btnThem.setBorderPainted(false);
+
         btnXoa = new JButton("Xóa");
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
+        btnXoa.setOpaque(true);
+        btnXoa.setFocusPainted(false);
+        btnXoa.setBorderPainted(false);
+
         btnCapNhat = new JButton("Cập nhật");
         btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setForeground(Color.WHITE);
+        btnCapNhat.setOpaque(true);
+        btnCapNhat.setFocusPainted(false);
+        btnCapNhat.setBorderPainted(false);
+
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
 
         pnlButtons.add(btnThem);
         pnlButtons.add(Box.createHorizontalStrut(10));
@@ -109,7 +137,13 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         txtTimKiem.setPreferredSize(new Dimension(100, 30));
         pnlTimKiem.add(txtTimKiem);
         btnTimKiem = new JButton("Tìm kiếm");
-        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.setBackground(new Color(65, 192, 201));
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 12));
+        btnTimKiem.setPreferredSize(new Dimension(90, 30));
+        btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.setBorderPainted(false);
         pnlTimKiem.add(btnTimKiem);
         pnlTable.add(pnlTimKiem, BorderLayout.NORTH);
 
@@ -130,6 +164,7 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
 
         // khởi tạo
         danhMuc_dao = new DanhMuc_DAO();
+        thuoc_dao = new Thuoc_DAO();
 
         // update table
         updateTable();
@@ -137,6 +172,11 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         // thêm sự kiện
         tblDanhMuc.getSelectionModel().addListSelectionListener(this);
         btnBack.addActionListener(this);
+        btnThem.addActionListener(this);
+        btnXoa.addActionListener(this);
+        btnCapNhat.addActionListener(this);
+        btnLamMoi.addActionListener(this);
+        txtTimKiem.getDocument().addDocumentListener(this);
     }
 
     // update table
@@ -149,6 +189,49 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
             });
         }
     }
+
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        try {
+            capNhatDSDanhMucTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        try {
+            capNhatDSDanhMucTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        try {
+            capNhatDSDanhMucTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    // cập nhật ds tìm kiếm danh mục
+    public void capNhatDSDanhMucTimKiem() throws SQLException {
+        String kyTu = txtTimKiem.getText().toString().trim();
+        ArrayList<DanhMuc> dsDM = danhMuc_dao.timKiemDanhMucTheoKyTu(kyTu);
+        model.setRowCount(0);
+        for (DanhMuc dm : dsDM) {
+            model.addRow(new Object[] {
+                    dm.getMaDanhMuc(),
+                    dm.getTenDanhMuc()
+            });
+        }
+    }
+
 
     // fill row
     private void fillRow(int row) {
@@ -170,6 +253,119 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         Object o = e.getSource();
         if (o == btnBack) {
             setVisible(false);
+        } else if (o == btnLamMoi) {
+            lamMoi();
+        } else if (o == btnThem) {
+            if (validDataDM()) {
+                String tenDM = txtTenDanhMuc.getText().toString().trim();
+
+                DanhMuc danhMuc = new DanhMuc(generateDanhMucID(), tenDM);
+
+                if (danhMuc_dao.createDM(danhMuc)) {
+                    JOptionPane.showMessageDialog(this, "Thêm danh mục thành công!");
+                    model.addRow(new Object[] {
+                            danhMuc.getMaDanhMuc(),
+                            danhMuc.getTenDanhMuc()
+                    });
+                    lamMoi();
+                }
+            }
+        } else if (o == btnXoa) {
+            int row = tblDanhMuc.getSelectedRow();
+            if (row >= 0) {
+                int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa danh mục này?",
+                        "Thông báo" , JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    String maDanhMuc = tblDanhMuc.getValueAt(row, 0).toString();
+                    DanhMuc danhMuc = new DanhMuc();
+                    danhMuc.setMaDanhMuc(maDanhMuc);
+
+                    boolean found = false;
+                    try {
+                        ArrayList<Thuoc> dsThuoc = thuoc_dao.getAllThuoc();
+                        for (Thuoc thuoc : dsThuoc) {
+                            System.out.println(thuoc.getDanhMuc().getMaDanhMuc());
+                            if (thuoc.getDanhMuc().getMaDanhMuc().equals(maDanhMuc)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    if (found != true) {
+                        if (danhMuc_dao.deleteDM(danhMuc)) {
+                            model.removeRow(row);
+                            JOptionPane.showMessageDialog(this,  "Xóa danh mục thành công!");
+                            lamMoi();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa không thành công!",
+                                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Tồn tại thuốc thuộc danh mục này! Không thể xóa!",
+                                "Thông báo", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn danh mục cần xóa!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (o == btnCapNhat) {
+            int row = tblDanhMuc.getSelectedRow();
+            if (row >= 0) {
+                if (validDataDM()) {
+                    String maDM = model.getValueAt(row, 0).toString();
+                    String tenDM = txtTenDanhMuc.getText().trim();
+
+                    DanhMuc danhMuc = new DanhMuc(maDM, tenDM);
+
+                    if (danhMuc_dao.capNhatDM(danhMuc)) {
+                        model.setValueAt(danhMuc.getMaDanhMuc(), row, 0);
+                        model.setValueAt(danhMuc.getTenDanhMuc(), row, 1);
+                        JOptionPane.showMessageDialog(this, "Cập nhật danh mục thành công!");
+
+                        lamMoi();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Cập nhật thất bại!",
+                                "Thông báo", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn danh mục cần cập nhật!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
         }
+    }
+
+
+    public boolean validDataDM() {
+        String tenDM = txtTenDanhMuc.getText().toString().trim();
+
+        if (!(tenDM.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Tên danh mục không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTenDanhMuc.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // tự động tạo mã danh mục
+    private String generateDanhMucID() {
+        LocalDateTime now = LocalDateTime.now();
+        String timePart = now.format(DateTimeFormatter.ofPattern("HHmm")); // Lấy giờ, phút, giây (4 ký tự)
+        String randomPart = String.format("%04d", (int) (Math.random() * 10000)); // Tạo số ngẫu nhiên 4 chữ số
+        String dmID = "DM" + timePart + randomPart;
+        return dmID;
+    }
+
+    public void lamMoi() {
+        txtTimKiem.setText("");
+        txtTenDanhMuc.setText("");
+        tblDanhMuc.clearSelection();
     }
 }
