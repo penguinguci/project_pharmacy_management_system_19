@@ -147,9 +147,36 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         // Nút chức năng
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         btnThem = new JButton("Thêm");
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setFocusPainted(false);
+        btnThem.setForeground(Color.WHITE);
+        btnThem.setOpaque(true);
+        btnThem.setBorderPainted(false);
+
         btnXoa = new JButton("Xóa");
+        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
+        btnXoa.setOpaque(true);
+        btnXoa.setFocusPainted(false);
+        btnXoa.setBorderPainted(false);
+
         btnCapNhat = new JButton("Cập nhật");
+        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setForeground(Color.WHITE);
+        btnCapNhat.setOpaque(true);
+        btnCapNhat.setFocusPainted(false);
+        btnCapNhat.setBorderPainted(false);
+
         btnLamMoi = new JButton("Làm mới");
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
 
 
         buttonPanel.add(btnThem);
@@ -256,7 +283,20 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         JPanel detailButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
         btnApDungKM = new JButton("Áp dụng khuyến mãi");
+        btnApDungKM.setFont(new Font("Arial", Font.BOLD, 13));
+        btnApDungKM.setBackground(new Color(0, 102, 204));
+        btnApDungKM.setFocusPainted(false);
+        btnApDungKM.setForeground(Color.WHITE);
+        btnApDungKM.setOpaque(true);
+        btnApDungKM.setBorderPainted(false);
+
         btGoKMThuoc = new JButton("Gỡ khuyến mãi");
+        btGoKMThuoc.setFont(new Font("Arial", Font.BOLD, 13));
+        btGoKMThuoc.setBackground(new Color(204, 0, 0));
+        btGoKMThuoc.setForeground(Color.WHITE);
+        btGoKMThuoc.setOpaque(true);
+        btGoKMThuoc.setFocusPainted(false);
+        btGoKMThuoc.setBorderPainted(false);
 
         detailButtonPanel.add(btnApDungKM);
         detailButtonPanel.add(btGoKMThuoc);
@@ -553,7 +593,7 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn một khuyến mãi để xóa!",
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một khuyến mãi để cập nhật!",
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
             }
         } else if (o == btnApDungKM) {
