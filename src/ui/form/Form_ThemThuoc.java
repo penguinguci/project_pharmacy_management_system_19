@@ -95,6 +95,7 @@ public class Form_ThemThuoc extends JPanel {
         lblTenThuoc.setPreferredSize(new Dimension(100,25));
         txtTenThuoc = new JTextField();
         txtTenThuoc.setPreferredSize(new Dimension(200,25));
+
         pnlTenThuoc.add(lblTenThuoc);
         pnlTenThuoc.add(txtTenThuoc);
 
@@ -459,7 +460,4 @@ public class Form_ThemThuoc extends JPanel {
             throw new RuntimeException(e);
         }
     }
-
-
-
 }
