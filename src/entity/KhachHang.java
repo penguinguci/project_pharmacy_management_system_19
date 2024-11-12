@@ -22,11 +22,6 @@ public class KhachHang {
         this.maKH = maKH;
     }
 
-//    public KhachHang(String maKH, String tenKH) {
-//        this.maKH = maKH;
-//        this.tenKH = tenKH;
-//    }
-
     public KhachHang(String maKH, String hoKH, String tenKH, Date ngaySinh, String email, String diaChi,
                      boolean gioiTinh, String SDT, boolean trangThai, DiemTichLuy diemTichLuy) {
         this.maKH = maKH;

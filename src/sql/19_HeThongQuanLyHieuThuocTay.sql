@@ -1135,6 +1135,19 @@ END
 GO
 
 
+-- tìm kiếm khách hàng theo số điện thoại
+CREATE PROCEDURE timKiemKhachHangTheoSDT
+    @kyTu NVARCHAR(15)
+AS
+BEGIN
+    SELECT *
+    FROM KhachHang kh
+	JOIN DiemTichLuy dtl ON kh.maDTL = dtl.maDTL
+    WHERE (SDT LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
 -- --------- TRIGGER
 -- cập nhật điểm tích lũy sau khi thanh toán
 CREATE TRIGGER trg_CapNhatDiemTichLuy
