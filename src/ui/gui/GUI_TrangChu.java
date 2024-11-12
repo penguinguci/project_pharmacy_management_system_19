@@ -657,21 +657,29 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formNhapThuoc");
         } else if(o == btnCapNhatNV) {
-            try {
-                formQuanLyNhanVien = new Form_QuanLyNhanVien();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
+            if(nhanVienDN.getVaiTro().getMaChucVu()==1) {
+                JOptionPane.showMessageDialog(this, "Bạn không có quyền thực hiện chức năng này");
+            } else {
+                try {
+                    formQuanLyNhanVien = new Form_QuanLyNhanVien();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
+                centerPanel.revalidate();
+                centerPanel.repaint();
             }
-            centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
-            centerPanel.revalidate();
-            centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhanVien");
         } else if (o == btnChucVu) {
-            formQuanLyChucVu = new Form_QuanLyChucVu();
-            centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
-            centerPanel.revalidate();
-            centerPanel.repaint();
-            cardLayout.show(centerPanel, "formQuanLyChucVu");
+            if(nhanVienDN.getVaiTro().getMaChucVu()==1) {
+                JOptionPane.showMessageDialog(this, "Bạn không có quyền thực hiện chức năng này");
+            } else {
+                formQuanLyChucVu = new Form_QuanLyChucVu();
+                centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
+                centerPanel.revalidate();
+                centerPanel.repaint();
+                cardLayout.show(centerPanel, "formQuanLyChucVu");
+            }
         } else if(o == btnTimKiemNV) {
             formTimKiemNhanVien = new Form_TimKiemNhanVien();
             centerPanel.add(formTimKiemNhanVien, "formTimKiemNhanVien");

@@ -284,17 +284,18 @@ VALUES
 ('NV002', N'Trần', N'Thị Bình', null , '1992-07-20', 987654321, N'456 Tran Hung Dao, TP.HCM', 0, 1, 1),
 ('NV003', N'Lê', N'Văn Cao', null , '1988-03-15', 456789123, N'789 Nguyen Trai, TP.HCM', 1, 1, 1),
 ('QL001', N'Cao', N'Thành Đông', null , '1995-08-25', 321654987, N'321 Hai Ba Trung, TP.HCM', 1, 2, 1),
-('QL002', N'Võ', N'Thị Dung', null , '1985-12-11', 789123456, N'654 Cong Quynh, TP.HCM', 0, 2, 1);
+('QL002', N'Võ', N'Thị Dung', null , '1985-12-11', 789123456, N'654 Cong Quynh, TP.HCM', 0, 2, 1),
+('Admin1', N'Đặng', N'Gia Bão', null , '2004-06-09', 0123456789, N'101 Le Loi, TP.HCM', 1, 0, 1)
 
 -- Bảng TaiKhoan
 INSERT INTO TaiKhoan (taiKhoan, matKhau)
 VALUES
-('NV001', '123'),
-('NV002', '123'),
-('NV003', '123'),
-('QL001', '123'),
-('QL002', '123')
-
+('NV001', 'a665a45920422f9d'),
+('NV002', 'a665a45920422f9d'),
+('NV003', 'a665a45920422f9d'),
+('QL001', 'a665a45920422f9d'),
+('QL002', 'a665a45920422f9d'),
+('Admin1', '6b86b273ff34fce1')
 -- Bảng DiemTichLuy
 INSERT INTO DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai)
 VALUES
@@ -739,21 +740,21 @@ GO
 CREATE PROCEDURE getDoanhThuTheoNgayTrongThangHienTai @maNV VARCHAR(10)
 AS
 BEGIN
-    DECLARE @nam INT = YEAR(GETDATE()); 
-    DECLARE @thang INT = MONTH(GETDATE()); 
+    DECLARE @nam INT = YEAR(GETDATE());
+    DECLARE @thang INT = MONTH(GETDATE());
 
-    SELECT 
+    SELECT
         DAY(hd.ngayLap) AS Ngay,
         SUM(hd.tongTien) AS DoanhThu
-    FROM 
+    FROM
         HoaDon hd
-    WHERE 
+    WHERE
 		hd.maNhanVien = @maNV
-        AND YEAR(hd.ngayLap) = @nam 
+        AND YEAR(hd.ngayLap) = @nam
         AND MONTH(hd.ngayLap) = @thang
-    GROUP BY 
+    GROUP BY
         DAY(hd.ngayLap)
-    ORDER BY 
+    ORDER BY
         DAY(hd.ngayLap);
 END
 GO
@@ -786,7 +787,7 @@ GO
 
 -- lấy các đơn vị tính và giá của thuốc
 CREATE PROCEDURE layDonGiaThuocTheoMaThuoc @maThuoc VARCHAR(10)
-AS 
+AS
 BEGIN
 	SELECT *
 	FROM DonGiaThuoc 

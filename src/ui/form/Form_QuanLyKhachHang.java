@@ -355,18 +355,26 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
                         khachHang.setHoKH(txtHo.getText().trim());
                         khachHang.setTenKH(txtTen.getText().trim());
                         khachHang.setGioiTinh(gioiTinh);
+
                         if(txtEmail.getText().trim().equals("")) {
                             khachHang.setEmail(null);
                         } else {
                             khachHang.setEmail(txtEmail.getText().trim());
                         }
+
                         if(txtDiaChi.getText().trim().equals("")){
                             khachHang.setDiaChi(null);
                         } else {
                             khachHang.setDiaChi(txtDiaChi.getText().trim());
                         }
+
                         String sdt = txtSDT.getText().trim();
+
+                        if(kh_dao.searchSDT(sdt)) {
+                            JOptionPane.showMessageDialog(this, "Số điện thoại đã tồn tại trong hệ thống!");
+                        }
                         khachHang.setSDT(sdt);
+
                         khachHang.setTrangThai(true);
 
                         java.util.Date date = model.getValue();
@@ -406,21 +414,27 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
                         khachHang.setHoKH(txtHo.getText().trim());
                         khachHang.setTenKH(txtTen.getText().trim());
                         khachHang.setGioiTinh(gioiTinh);
+
                         if(txtEmail.getText().trim().equals("")) {
                             khachHang.setEmail(null);
                         } else {
                             khachHang.setEmail(txtEmail.getText().trim());
                         }
+
                         if(txtDiaChi.getText().trim().equals("")){
                             khachHang.setDiaChi(null);
                         } else {
                             khachHang.setDiaChi(txtDiaChi.getText().trim());
                         }
                         String sdt = txtSDT.getText().trim();
-                        khachHang.setSDT(sdt);
+
+                        if(kh_dao.searchSDT(sdt)) {
+                            JOptionPane.showMessageDialog(this, "Số điện thoại đã tồn tại trong hệ thống!");
+                        } else {
+                            khachHang.setSDT(sdt);
+                        }
+
                         khachHang.setTrangThai(true);
-
-
 
                         java.util.Date date = model.getValue();
                         Date sqlDate = new Date(date.getTime());

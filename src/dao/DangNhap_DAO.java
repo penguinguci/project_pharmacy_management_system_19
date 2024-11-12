@@ -5,6 +5,8 @@ import entity.ChucVu;
 import entity.NhanVien;
 import entity.TaiKhoan;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class DangNhap_DAO {
 
     public boolean checkVar(String tk, String mk) {
         for(TaiKhoan x : listTK){
-            if(x.getTaiKhoan().equalsIgnoreCase(tk) && x.getMatKhau().equalsIgnoreCase(mk))
+            if(x.getTaiKhoan().equalsIgnoreCase(tk) && x.getMatKhau().equalsIgnoreCase(hashPass(mk)))
                 return true;
         }
         return false;
@@ -137,7 +139,7 @@ public class DangNhap_DAO {
             String sql = "INSERT INTO TaiKhoan (taiKhoan, matKhau, ngayCapNhat) VALUES (?, ?, ?)";
             statement = con.prepareStatement(sql);
             statement.setString(1, taiKhoan.getTaiKhoan());
-            statement.setString(2, taiKhoan.getMatKhau());
+            statement.setString(2, hashPass(taiKhoan.getMatKhau()));
             statement.setDate(3, taiKhoan.getNgayCapNhat());
 
             int rowsAffected = statement.executeUpdate();
@@ -153,5 +155,26 @@ public class DangNhap_DAO {
             }
         }
         return result;
+    }
+
+    private String hashPass(String mk) {
+        try {
+            // Sử dụng SHA-256 để tạo hàm băm
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(mk.getBytes());
+
+            // Chuyển đổi mảng byte thành chuỗi hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            // Lấy 16/64 ký tự đầu tiên từ chuỗi hex
+            return hexString.toString().substring(0, 16);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
