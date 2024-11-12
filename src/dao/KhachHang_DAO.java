@@ -1,10 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.DiemTichLuy;
-import entity.KhachHang;
-import entity.NhanVien;
-import entity.PhieuNhapThuoc;
+import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -442,5 +439,52 @@ public class KhachHang_DAO {
             }
         }
         return true;
+    }
+
+
+    // tìm kiếm khách hàng bằng SDT (dùng thủ tục)
+    public ArrayList<KhachHang> timKiemKhachHangTheoKyTuSDT(String kyTu) throws SQLException {
+        ArrayList<KhachHang> dsKH = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "{CALL timKiemKhachHangTheoSDT(?)}";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, kyTu);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+               String maKH = rs.getString("maKH");
+               String hoKH = rs.getString("hoKH");
+               String tenKH = rs.getString("tenKH");
+               Date ngaySinh = rs.getDate("ngaySinh");
+               String email = rs.getString("email");
+               String diaChi = rs.getString("diaChi");
+               boolean gioiTinh = rs.getBoolean("gioiTinh");
+               String SDT = rs.getString("SDT");
+               boolean trangThai = rs.getBoolean("trangThai");
+
+               DiemTichLuy dtl = new DiemTichLuy();
+               dtl.setMaDTL(rs.getString("maDTL"));
+               dtl.setXepHang(rs.getString("xepHang"));
+               dtl.setDiemTong(rs.getDouble("diemTong"));
+               dtl.setDiemHienTai(rs.getDouble("diemHienTai"));
+
+               KhachHang khachHang = new KhachHang(maKH, hoKH, tenKH, ngaySinh, email, diaChi,
+                       gioiTinh, SDT, trangThai, dtl);
+
+               dsKH.add(khachHang);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) rs.close();
+            if (statement != null) statement.close();
+            if (con != null) con.close();
+        }
+        return dsKH;
     }
 }

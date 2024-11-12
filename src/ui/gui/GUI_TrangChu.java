@@ -12,6 +12,9 @@ import java.awt.geom.Ellipse2D;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class GUI_TrangChu extends JFrame implements ActionListener, MouseListener {
 
@@ -23,7 +26,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
             btnCapNhatKhuyenmai, btnTimKiemKhuyenMai;
-    public JButton btnDangXuat, btnThongBao;
+    public JButton btnDangXuat, btnThongBao, btnTroGiup;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
     public JLabel lbSoThongBao;
@@ -57,9 +60,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TimKiemKhuyenMai formTimKiemKhuyenMai;
     public Form_QuanLyChucVu formQuanLyChucVu;
     public Form_TaiKhoan formTaiKhoan;
+    public Form_TroGiup formTroGiup;
     private NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
-    public JPanel tamGiacPanel;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
     public JTextArea noiDungArea;
     public JButton btnXemCTTB;
@@ -116,6 +119,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         // Thêm hình ảnh vào JLabel
         jLabel_Logo = new JLabel(image_Logo);
         logoPanel.add(jLabel_Logo);
+        jLabel_Logo.setToolTipText("Logo");
 
 
         // Panel bên trái (menu)
@@ -346,6 +350,23 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         topPanel.setBackground(Color.WHITE);
 //        topPanel.setPreferredSize(new Dimension(1300, 60));
 
+
+        // thêm ngày tháng năm hiện tại bên trái topPanel
+        JLabel lblDate = new JLabel();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd MMMM, YYYY", new Locale("vi", "VN"));
+        String currentDate = dateFormat.format(new Date());
+        lblDate.setText(currentDate);
+        lblDate.setFont(new Font("Arial", Font.ITALIC, 20));
+        lblDate.setForeground(Color.BLACK);
+
+
+        // panel để chứa ngày tháng và căn lề bên trái
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.add(lblDate);
+
+
+
         // Nút thông báo
         JLayeredPane layeredPaneThongBao = new JLayeredPane();
         layeredPaneThongBao.setPreferredSize(new Dimension(40, 40));
@@ -400,27 +421,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         popupThongBao.add(scrollPaneThongBao);
 
 
-        tamGiacPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2d.setColor(popupThongBao.getBackground());
-                int[] xPoints = {0, getWidth() / 2, getWidth()};
-                int[] yPoints = {getWidth(), 0,  getHeight()};
-                g2d.fillPolygon(xPoints, yPoints, 3);
-
-                g2d.setColor(Color.gray); // màu viền
-                g2d.setStroke(new BasicStroke(2)); // độ dày viền
-                g2d.drawPolygon(xPoints, yPoints, 3); // vẽ viền
-            }
-        };
-        tamGiacPanel.setPreferredSize(new Dimension(25, 15));
-        tamGiacPanel.setOpaque(false);
-
-
         // Nút User (Panel)
 //        customButtonUser = new JPanel(new BorderLayout());
         customButtonUser = new RoundedPanel(20);
@@ -467,10 +467,27 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         customButtonUser.add(Box.createHorizontalStrut(5));
         customButtonUser.add(customButtonUser_Right, BorderLayout.EAST);
 
+        // button trợ giúp
+        ImageIcon iconTroGiup = new ImageIcon("images\\Alert_circle.png");
+        Image imageTroGiup = iconTroGiup.getImage();
+        Image scaledImageTroGiup = imageTroGiup.getScaledInstance(45, 45, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconTroGiup = new ImageIcon(scaledImageTroGiup);
+
+        btnTroGiup = new JButton(scaledIconTroGiup);
+        btnTroGiup.setToolTipText("Trợ giúp");
+        btnTroGiup.setBorderPainted(false);
+        btnTroGiup.setContentAreaFilled(false);
+        btnTroGiup.setFocusPainted(false);
+        btnTroGiup.setBounds(0, 0, 40, 40);
+
+
+        topPanel.add(leftPanel);
+        topPanel.add(Box.createHorizontalStrut(800));
         topPanel.add(layeredPaneThongBao);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(customButtonUser);
-        topPanel.add(Box.createHorizontalStrut(30));
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(btnTroGiup);
 
 
         // Tạo CardLayout để quản lý các form trong CENTER
@@ -550,9 +567,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         btnThongBao.addMouseListener(this);
         popupThongBao.addMouseListener(this);
-        tamGiacPanel.addMouseListener(this);
 
         mainContentPanel.addMouseListener(this);
+
+        btnTroGiup.addActionListener(this);
     }
 
 
@@ -847,6 +865,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPSapHetHan");
+        } else if(o == btnTroGiup) {
+            formTroGiup = new Form_TroGiup();
+            centerPanel.add(formTroGiup, "formTroGiup");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formTroGiup");
         }
     }
 
@@ -1091,7 +1115,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     @Override
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
-        if (o == btnThongBao || o == tamGiacPanel || o == popupThongBao) {
+        if (o == btnThongBao || o == popupThongBao) {
             showPopup();
         }
 
@@ -1100,17 +1124,15 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     @Override
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
-        if (o == btnThongBao || o == popupThongBao || o == tamGiacPanel) {
+        if (o == btnThongBao || o == popupThongBao) {
            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
            SwingUtilities.convertPointFromScreen(mouseLocation, btnThongBao.getParent());
 
            boolean outsideBtnTB = !btnThongBao.getBounds().contains(mouseLocation);
-           boolean outsideTamGiac = !tamGiacPanel.getBounds().contains(mouseLocation);
            boolean outsidePopupTB = !popupThongBao.getBounds().contains(mouseLocation);
 
-           if(outsideBtnTB && outsideTamGiac && outsidePopupTB) {
+           if(outsideBtnTB  && outsidePopupTB) {
                popupThongBao.setVisible(false);
-               tamGiacPanel.setVisible(false);
            }
         }
     }
@@ -1119,20 +1141,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     private void showPopup() {
         Point location = btnThongBao.getLocationOnScreen();
 
-        if (!tamGiacPanel.isVisible()) {
-            getLayeredPane().add(tamGiacPanel, JLayeredPane.PALETTE_LAYER);
-        }
-
-        tamGiacPanel.setSize( 25, 15);
-
-        tamGiacPanel.setLocation(location.x + btnThongBao.getWidth() / 2 - 10,
-                location.y + btnThongBao.getHeight() - 27);
-
-        tamGiacPanel.setOpaque(true);
-        tamGiacPanel.setVisible(true);
-        tamGiacPanel.repaint();
-
-        popupThongBao.show(btnThongBao, -105, btnThongBao.getHeight() + tamGiacPanel.getHeight());
+        popupThongBao.show(btnThongBao, -105, btnThongBao.getHeight() + 10);
     }
 
 

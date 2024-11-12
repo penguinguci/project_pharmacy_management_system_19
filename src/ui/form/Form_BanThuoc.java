@@ -993,16 +993,22 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
     // lưu đơn hàng
     public void luuDonHang() {
-        if (txtTimKiemKH.getText().toString().trim().equals("")) {
-            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang();
-            dialog.add(pnlThemKhachHang);
-            dialog.setSize(700,450);
-            dialog.setMaximumSize(new Dimension(700,450));
-            dialog.setLocationRelativeTo(null);
-            dialog.setResizable(false);
-            dialog.setVisible(true);
+        int gioHangSize = modelGioHang.getRowCount();
+        if (gioHangSize > 0) {
+            if (txtTimKiemKH.getText().toString().trim().equals("")) {
+                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang();
+                dialog.add(pnlThemKhachHang);
+                dialog.setSize(700,450);
+                dialog.setMaximumSize(new Dimension(700,450));
+                dialog.setLocationRelativeTo(null);
+                dialog.setResizable(false);
+                dialog.setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng thêm sản phẩm vào giỏ!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -1428,20 +1434,55 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     currencyFormat.setMaximumFractionDigits(0);
 
                     double tongTienTemp = 0;
+                    // Định nghĩa các vị trí (offset) cho các cột
+                    // header table
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(100, yPosition);
+                    contentStream.showText("Tên Thuốc");
+                    contentStream.newLineAtOffset(220, 0);
+                    contentStream.showText("Số Lượng");
+                    contentStream.newLineAtOffset(100, 0);
+                    contentStream.showText("Đơn Vị Tính");
+                    contentStream.newLineAtOffset(100, 0);
+                    contentStream.showText("Thành Tiền");
+                    contentStream.endText();
+
+                    yPosition -= 15;
+
+                    // line
+                    contentStream.moveTo(100, yPosition);
+                    contentStream.lineTo(500, yPosition);
+                    contentStream.stroke();
+                    yPosition -= 10;
+
+                    // Hiển thị các dòng chi tiết hóa đơn với các cột thẳng hàng
                     for (ChiTietHoaDon ct : dsChiTietHoaDon) {
                         contentStream.beginText();
                         contentStream.newLineAtOffset(100, yPosition);
-                        String tenThuoc = ct.getThuoc().getTenThuoc();
-                        String soLuong = String.valueOf(ct.getSoLuong());
-                        String donViTinh = ct.getDonViTinh();
-                        String thanhTien = currencyFormat.format(ct.tinhThanhTien()) + " đ";
 
-                        // Hiển thị thông tin chi tiết hóa đơn
-                        contentStream.showText(String.format("%-60s %-10s %-15s %-10s", tenThuoc, soLuong, donViTinh, thanhTien));
+                        // Tên thuốc
+                        String tenThuoc = ct.getThuoc().getTenThuoc();
+                        if (tenThuoc.length() > 30) tenThuoc = tenThuoc.substring(0, 30) + "..."; // Giới hạn độ dài tên thuốc
+                        contentStream.showText(tenThuoc);
+
+                        // Số lượng
+                        contentStream.newLineAtOffset(220, 0); // Di chuyển đến cột tiếp theo
+                        contentStream.showText(String.valueOf(ct.getSoLuong()));
+
+                        // Đơn vị tính
+                        contentStream.newLineAtOffset(100, 0); // Di chuyển đến cột tiếp theo
+                        contentStream.showText(ct.getDonViTinh());
+
+                        // Thành tiền
+                        contentStream.newLineAtOffset(100, 0); // Di chuyển đến cột tiếp theo
+                        String thanhTien = currencyFormat.format(ct.tinhThanhTien()) + " đ";
+                        contentStream.showText(thanhTien);
+
                         contentStream.endText();
                         yPosition -= 15;
-                        tongTienTemp += ct.tinhThanhTien();
                     }
+
 
                     // hiển thị tóm tắt thông tin hóa đơn với định dạng tiền
                     contentStream.beginText();

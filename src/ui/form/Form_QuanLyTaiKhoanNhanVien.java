@@ -90,7 +90,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         txtHoNV = new JTextField(15);
         txtHoNV.setPreferredSize(new Dimension(getWidth(), 30));
         txtHoNV.setFont(new Font("Arial", Font.BOLD, 13));
-        txtHoNV.setEnabled(false);
+        txtHoNV.setEditable(false);
         pnlInputNhanVien.add(txtHoNV, gbc);
 
         gbc.gridx = 2;
@@ -101,7 +101,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         txtTenNV = new JTextField(15);
         txtTenNV.setPreferredSize(new Dimension(getWidth(), 30));
         txtTenNV.setFont(new Font("Arial", Font.BOLD, 13));
-        txtTenNV.setEnabled(false);
+        txtTenNV.setEditable(false);
         pnlInputNhanVien.add(txtTenNV, gbc);
 
         // Ngày sinh và Giới tính
@@ -130,7 +130,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         cbGioiTinh = new JComboBox<>(new String[]{"Nam", "Nữ"});
         cbGioiTinh.setPreferredSize(new Dimension(getWidth(), 30));
         cbGioiTinh.setFont(new Font("Arial", Font.BOLD, 13));
-        cbGioiTinh.setEnabled(false);
+        cbGioiTinh.setEditable(false);
         pnlInputNhanVien.add(cbGioiTinh, gbc);
 
         // Số điện thoại, Email, và Địa chỉ
@@ -143,7 +143,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         txtSoDienThoai = new JTextField(15);
         txtSoDienThoai.setPreferredSize(new Dimension(getWidth(), 30));
         txtSoDienThoai.setFont(new Font("Arial", Font.BOLD, 13));
-        txtSoDienThoai.setEnabled(false);
+        txtSoDienThoai.setEditable(false);
         pnlInputNhanVien.add(txtSoDienThoai, gbc);
 
         gbc.gridx = 2;
@@ -154,7 +154,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         txtEmail = new JTextField(15);
         txtEmail.setPreferredSize(new Dimension(getWidth(), 30));
         txtEmail.setFont(new Font("Arial", Font.BOLD, 13));
-        txtEmail.setEnabled(false);
+        txtEmail.setEditable(false);
         pnlInputNhanVien.add(txtEmail, gbc);
 
         gbc.gridx = 0;
@@ -168,7 +168,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         gbc.gridwidth = 3;
         pnlInputNhanVien.add(txtDiaChi, gbc);
         txtDiaChi.setFont(new Font("Arial", Font.BOLD, 13));
-        txtDiaChi.setEnabled(false);
+        txtDiaChi.setEditable(false);
         gbc.gridwidth = 1;
 
         // Vai trò và Trạng thái
@@ -181,7 +181,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         cbVaiTro = new JComboBox<>(new String[]{"Chọn vai trò"});
         cbVaiTro.setFont(new Font("Arial", Font.BOLD, 13));
         cbVaiTro.setPreferredSize(new Dimension(getWidth(), 30));
-        cbVaiTro.setEnabled(false);
+        cbVaiTro.setEditable(false);
         pnlInputNhanVien.add(cbVaiTro, gbc);
 
         gbc.gridx = 2;
@@ -192,7 +192,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         cbTrangThai = new JComboBox<>(new String[]{"Còn làm", "Nghỉ việc"});
         cbTrangThai.setFont(new Font("Arial", Font.BOLD, 13));
         cbTrangThai.setPreferredSize(new Dimension(getWidth(), 30));
-        cbTrangThai.setEnabled(false);
+        cbTrangThai.setEditable(false);
         pnlInputNhanVien.add(cbTrangThai, gbc);
 
 
