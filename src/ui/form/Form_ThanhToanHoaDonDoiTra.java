@@ -87,6 +87,10 @@ public class Form_ThanhToanHoaDonDoiTra extends JPanel implements ActionListener
 
     private HoaDon hoaDonDoiTra;
 
+    public Form_ThanhToanHoaDonDoiTra() {
+
+    }
+
     public Form_ThanhToanHoaDonDoiTra(HoaDon hoaDon, NhanVien nhanVienDN) throws Exception {
         this.nhanVienDN = nhanVienDN;
         this.hoaDonDoiTra = hoaDon;
@@ -1009,13 +1013,18 @@ public class Form_ThanhToanHoaDonDoiTra extends JPanel implements ActionListener
             if (txtTimKiemKH.getText().toString().trim().equals("")) {
                 JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang();
-                dialog.add(pnlThemKhachHang);
-                dialog.setSize(700,450);
-                dialog.setMaximumSize(new Dimension(700,450));
-                dialog.setLocationRelativeTo(null);
-                dialog.setResizable(false);
-                dialog.setVisible(true);
+                try {
+                    Form_BanThuoc formBanThuoc = new Form_BanThuoc();
+                    Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, formBanThuoc, this);
+                    dialog.add(pnlThemKhachHang);
+                    dialog.setSize(700,450);
+                    dialog.setMaximumSize(new Dimension(700,450));
+                    dialog.setLocationRelativeTo(null);
+                    dialog.setResizable(false);
+                    dialog.setVisible(true);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         } else if (o == btnLamMoi) {
             xoaGioHang();
