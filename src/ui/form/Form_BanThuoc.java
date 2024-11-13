@@ -1007,72 +1007,64 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             if (txtTimKiemKH.getText().toString().trim().equals("")) {
                 JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, this);
+                Form_ThanhToanHoaDonDoiTra formThanhToanHoaDonDoiTra = new Form_ThanhToanHoaDonDoiTra();
+                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, this, formThanhToanHoaDonDoiTra);
                 dialog.add(pnlThemKhachHang);
                 dialog.setSize(700,450);
                 dialog.setMaximumSize(new Dimension(700,450));
                 dialog.setLocationRelativeTo(null);
                 dialog.setResizable(false);
                 dialog.setVisible(true);
+            } else {
+                // khởi tạo hóa đơn
+                DonDatThuoc donDatThuoc = new DonDatThuoc();
+                donDatThuoc.setMaDon(generateDonDatThuocID());
+
+                // lấy thông tin khách hàng
+                String SDT = txtTimKiemKH.getText().trim();
+
+                KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
+                donDatThuoc.setKhachHang(khachHang);
+
+                // lấy thông tin nhân viên
+                NhanVien nhanVien = nv_dao.getNVTheoMaNV(nhanVienDN.getMaNV());
+                donDatThuoc.setNhanVien(nhanVien);
+
+                // Ngày đặt
+                donDatThuoc.setThoiGianDat(new Date());
+
+
+                // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
+                ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat = new ArrayList<>();
+                for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+                    String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
+                    String donViTinh = modelGioHang.getValueAt(i, 1).toString();
+                    int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
+                    double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
+                    Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
+                    DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
+                    thuoc.setDonGiaThuoc(donGiaThuoc);
+                    ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong);
+                    dsChiTietDonDat.add(chiTietDon);
+                }
+
+
+                // create hóa đơn trong cơ sở dữ liệu
+                boolean donDatDuocTao = donDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
+                boolean chiTietDonDatDuocTao = chiTietDonDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
+
+                if (donDatDuocTao && chiTietDonDatDuocTao) {
+                    JOptionPane.showMessageDialog(this, "Lưu đơn đặt thuốc thành công!");
+
+                    // xóa giỏ hàng
+                    xoaGioHang();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Lưu đơn đặt thất bại, vui lòng thử lại!");
+                }
             }
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng thêm sản phẩm vào giỏ!", "Thông báo",
                     JOptionPane.INFORMATION_MESSAGE);
-        }
-
-        // khởi tạo hóa đơn
-        DonDatThuoc donDatThuoc = new DonDatThuoc();
-        donDatThuoc.setMaDon(generateDonDatThuocID());
-
-
-        // lấy thông tin khách hàng
-        String SDT = txtTimKiemKH.getText().trim();
-        if(!SDT.isEmpty()) {
-            KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
-            if (cbxDoiDiem.isSelected()) {
-                DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
-                khachHang.setDiemTichLuy(diemTichLuy);
-            } else {
-                khachHang.setDiemTichLuy(null);
-            }
-            donDatThuoc.setKhachHang(khachHang);
-        }
-
-        // lấy thông tin nhân viên
-        NhanVien nhanVien = nv_dao.getNVTheoMaNV(nhanVienDN.getMaNV());
-        donDatThuoc.setNhanVien(nhanVien);
-
-
-        // Ngày đặt
-        donDatThuoc.setThoiGianDat(new Date());
-
-
-        // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
-        ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat = new ArrayList<>();
-        for (int i = 0; i < modelGioHang.getRowCount(); i++) {
-            String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
-            String donViTinh = modelGioHang.getValueAt(i, 1).toString();
-            int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
-            double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
-            Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setDonGiaThuoc(donGiaThuoc);
-            ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong);
-            dsChiTietDonDat.add(chiTietDon);
-        }
-
-
-        // create hóa đơn trong cơ sở dữ liệu
-        boolean donDatDuocTao = donDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
-        boolean chiTietDonDatDuocTao = chiTietDonDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
-
-        if (donDatDuocTao && chiTietDonDatDuocTao) {
-            JOptionPane.showMessageDialog(this, "Lưu đơn đặt thuốc thành công!");
-
-            // xóa giỏ hàng
-            xoaGioHang();
-        } else {
-            JOptionPane.showMessageDialog(this, "Lưu đơn đặt thất bại, vui lòng thử lại!");
         }
     }
 
@@ -1084,7 +1076,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
 
         // lấy thông tin khách hàng
-        String SDT = sdt;
         if(!sdt.isEmpty()) {
             KhachHang khachHang = kh_dao.getOneKhachHangBySDT(sdt);
             donDatThuoc.setKhachHang(khachHang);
