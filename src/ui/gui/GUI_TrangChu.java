@@ -68,7 +68,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public JTextArea noiDungArea;
     public JButton btnXemCTTB;
 
-    public GUI_TrangChu() throws Exception {
+    public GUI_TrangChu(NhanVien nhanVienDN) throws Exception {
+        this.nhanVienDN = nhanVienDN;
+
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -187,13 +189,18 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTimKiemNV = createSubMenuButton("Tìm Kiếm");
         btnTaiKhoan = createSubMenuButton("Tài Khoản");
 
-        submenuNhanVien.add(btnBanThuoc);
-        submenuNhanVien.add(btnNhapThuocTuNCC);
-        submenuNhanVien.add(btnCapNhatNV);
-        submenuNhanVien.add(btnChucVu);
-        submenuNhanVien.add(btnTimKiemNV);
-        submenuNhanVien.add(btnTaiKhoan);
-
+        //Phân quyền
+        if(getNhanVienDN().getVaiTro().getMaChucVu() == 1) {
+            submenuNhanVien.add(btnBanThuoc);
+            submenuNhanVien.add(btnNhapThuocTuNCC);
+        } else {
+            submenuNhanVien.add(btnBanThuoc);
+            submenuNhanVien.add(btnNhapThuocTuNCC);
+            submenuNhanVien.add(btnCapNhatNV);
+            submenuNhanVien.add(btnChucVu);
+            submenuNhanVien.add(btnTimKiemNV);
+            submenuNhanVien.add(btnTaiKhoan);
+        }
 
         // Submenu Khách hàng
         submenuKhachHang = new JPanel();
@@ -251,9 +258,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnCapNhatKhuyenmai = createSubMenuButton("Cập nhật");
         btnTimKiemKhuyenMai = createSubMenuButton("Tìm kiếm");
 
-        submenuKhuyenMai.add(btnCapNhatKhuyenmai);
-        submenuKhuyenMai.add(btnTimKiemKhuyenMai);
-
+        //Phân quyền
+        if(getNhanVienDN().getVaiTro().getMaChucVu() == 1) {
+            submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+        } else {
+            submenuKhuyenMai.add(btnCapNhatKhuyenmai);
+            submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+        }
 
         // Submenu Hóa đơn
         submenuHoaDon = new JPanel();
@@ -288,7 +299,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuThongKe.add(btnTKThuocBanCham);
         submenuThongKe.add(btnTKThuocSapHH);
 
-
         // Thêm các nút vào panel menu
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuItemsPanel.add(btnNhanVien);
@@ -319,7 +329,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuItemsPanel.add(submenuThongKe);
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-
 
         // Panel cho nút đăng xuất
         ImageIcon iconDangXuat = new ImageIcon("images/logout.png");
@@ -1364,11 +1373,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     }
 
 
-    public static void main(String[] args) throws Exception {
-//        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        GUI_TrangChu frame = new GUI_TrangChu();
-        frame.setVisible(true);
-    }
+//    public static void main(String[] args) throws Exception {
+////        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+//        GUI_TrangChu frame = new GUI_TrangChu();
+//        frame.setVisible(true);
+//    }
 
     private void setFullScreen() {
         // Lấy kích thước của màn hình
