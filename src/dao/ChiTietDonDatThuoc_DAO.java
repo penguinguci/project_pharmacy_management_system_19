@@ -1,12 +1,12 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.ChiTietDonDatThuoc;
-import entity.DonDatThuoc;
-import entity.Thuoc;
+import entity.*;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ChiTietDonDatThuoc_DAO {
@@ -110,5 +110,50 @@ public class ChiTietDonDatThuoc_DAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean create(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat) throws SQLException {
+        // Đảm bảo kết nối được khởi tạo
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        // Kiểm tra kết nối trước khi sử dụng
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            for(ChiTietDonDatThuoc chiTietDon : dsChiTietDonDat) {
+                String sql = "INSERT INTO ChiTietDonDatThuoc (maDon, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+                statement = con.prepareStatement(sql);
+
+                statement.setString(1, donDatThuoc.getMaDon());
+                statement.setString(2, chiTietDon.getThuoc().getSoHieuThuoc());
+                statement.setString(3, chiTietDon.getThuoc().getMaThuoc());
+                statement.setString(4, chiTietDon.getDonViTinh());
+                statement.setInt(5, chiTietDon.getSoLuong());
+                statement.setDouble(6, chiTietDon.tinhThanhTien());
+
+                n = statement.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
     }
 }

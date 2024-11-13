@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.KhachHang_DAO;
 import entity.KhachHang;
+import entity.NhanVien;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
@@ -37,13 +38,18 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
     private DefaultListModel<String> listModel;
     private KhachHang_DAO khachHangDao;
     private SqlDateModel model;
+    private NhanVien nhanVienDN;
+    private Form_BanThuoc formBanThuoc;
 
     private KhachHang_DAO kh_dao = new KhachHang_DAO();
     private ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
 
-    public Form_ThemKhachHang() {
+    public Form_ThemKhachHang(NhanVien nhanVienDN, Form_BanThuoc formBanThuoc) {
         // khởi tạo
         khachHangDao = new KhachHang_DAO();
+
+        this.nhanVienDN = nhanVienDN;
+        this.formBanThuoc = formBanThuoc;
 
         setLayout(new BorderLayout());
 
@@ -262,18 +268,143 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
         } else if (o == btnLamMoi) {
             lamMoi();
         } else if (o == btnThem) {
+            if (valiDataKH()) {
+                String ho = txtHo.getText().trim();
+                String ten = txtTen.getText().trim();
+                String sdt = txtSDT.getText().trim();
+                String diaChi = txtDiaChi.getText().trim();
+                String email = txtEmail.getText().trim();
+                Date ngaySinh = (Date) datePicker.getModel().getValue();
+                boolean gioiTinh  = cbGioiTinh.getSelectedItem().toString().equals("Nam") ? true : false;;
 
+                try {
+                    String maKH = khachHangDao.tuTaoMaKH();
+                    KhachHang kh = new KhachHang();
+                    kh.setMaKH(maKH);
+                    kh.setHoKH(ho);
+                    kh.setTenKH(ten);
+
+                    if (ngaySinh == null) {
+                        kh.setNgaySinh(null);
+                    } else {
+                        kh.setNgaySinh(ngaySinh);
+                    }
+
+                    if (email.equals("")) {
+                        kh.setEmail(null);
+                    } else {
+                        kh.setEmail(email);
+                    }
+
+                    if (diaChi.equals("")) {
+                        kh.setDiaChi(null);
+                    } else {
+                        kh.setDiaChi(diaChi);
+                    }
+
+                    kh.setGioiTinh(gioiTinh);
+                    kh.setSDT(sdt);
+                    kh.setTrangThai(true);
+
+                    if (khachHangDao.themKhachHang(kh)) {
+                        JOptionPane.showMessageDialog(this, "Thêm khách hàng mới thành công!");
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            }
         } else if (o == btnLuuDon) {
-
+            try {
+               if(txtSDT.getText().isEmpty()) {
+                   JOptionPane.showMessageDialog(this, "Vui lòng tìm hoặc thêm khách hàng mới!",
+                           "Thông báo", JOptionPane.ERROR_MESSAGE);
+                   txtTimKiem.requestFocus();
+               } else {
+                   String sdt = txtSDT.getText().trim();
+                   formBanThuoc.luuDonHangSauKhiThemKH(nhanVienDN, sdt);
+               }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
 
     public boolean valiDataKH() {
-        String hoKH = txtHo.getText().trim();
-        String tenNV = txtTen.getText().trim();
+        String ho = txtHo.getText().trim();
+        String ten = txtTen.getText().trim();
         String sdt = txtSDT.getText().trim();
+        String gioiTinh = cbGioiTinh.getSelectedItem().toString();
+        String email = txtEmail.getText().trim();
+        if(ho.equals("")) {
+            JOptionPane.showMessageDialog(this, "Họ không được để trống!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtHo.requestFocus();
+            return false;
+        } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
+            JOptionPane.showMessageDialog(this, "Họ chỉ được nhập 1 từ và chữ cái đầu tiên của từ đó phải viết hoa!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtHo.requestFocus();
+            return false;
+        }
+        if(ten.equals("")) {
+            JOptionPane.showMessageDialog(this, "Tên không được để trống!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTen.requestFocus();
+            return false;
+        } else if(!ten.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
+            JOptionPane.showMessageDialog(this, "Chữ cái đầu tiên của mỗi từ phải viết hoa, mỗi từ cách nhau một khoảng trắng!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTen.requestFocus();
+            return false;
+        }
+        if (gioiTinh.equals("Giới tính")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
+        if(txtSDT.equals("")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return false;
+        } else if(!sdt.matches("^0\\d{9}$")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return false;
+        }
+
+        boolean found1 = false;
+        boolean found2 = false;
+        try {
+            ArrayList<KhachHang> dsKh = kh_dao.getAllKhachHang();
+            for (KhachHang kh : dsKh) {
+                if (kh.getSDT().equals(sdt)) {
+                    found1 = true;
+                    break;
+                }
+                if (!email.equals("") && kh.getEmail().equals(email)) {
+                    found2 = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if (found1 == true) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại số điện thoại, vui lòng nhập số khác!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return false;
+        }
+
+        if (found2 == true) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại email, vui lòng nhập email khác!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtEmail.requestFocus();
+            return false;
+        }
 
         return true;
     }
@@ -293,8 +424,12 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
             txtDiaChi.setText(kh.getDiaChi());
 
             Date ngaySinh = kh.getNgaySinh();
-            model.setDate(ngaySinh.getYear() + 1900, ngaySinh.getMonth(), ngaySinh.getDate());
-            model.setSelected(true);
+            if (ngaySinh == null) {
+                model.setSelected(false);
+            } else {
+                model.setDate(ngaySinh.getYear() + 1900, ngaySinh.getMonth(), ngaySinh.getDate());
+                model.setSelected(true);
+            }
 
             txtEmail.setText(kh.getEmail());
 
@@ -455,5 +590,14 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
             }
             return "Chọn ngày";
         }
+    }
+
+
+    public void setNhanVienDN(NhanVien nhanVien) {
+        this.nhanVienDN = nhanVien;
+    }
+
+    public NhanVien getNhanVienDN() {
+        return nhanVienDN;
     }
 }

@@ -221,7 +221,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
     public void loadDataTableDonDatThuoc(ArrayList<DonDatThuoc> newData) {
         dtmDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(DonDatThuoc x: newData) {
-            String date = formatDate(x.getThoiGianDat());
+            String date = formatDate((Date) x.getThoiGianDat());
             Object[] data = {x.getMaDon(), x.getKhachHang().getMaKH(), x.getKhachHang().getHoKH()+" "+x.getKhachHang().getTenKH(), x.getKhachHang().getSDT(), x.getKhachHang().getDiaChi(), donDatThuoc_dao.getTongTienFromDataBase(x.getMaDon()), date};
             dtmDon.addRow(data);
         }

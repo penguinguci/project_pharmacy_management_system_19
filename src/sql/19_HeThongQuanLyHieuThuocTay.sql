@@ -1,4 +1,4 @@
-﻿	-- Tạo cơ sở dữ liệu
+﻿		-- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
 

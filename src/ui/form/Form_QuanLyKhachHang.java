@@ -483,27 +483,77 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         String ho = txtHo.getText().trim();
         String ten = txtTen.getText().trim();
         String sdt = txtSDT.getText().trim();
+        String gioiTinh = cbGioiTinh.getSelectedItem().toString();
+        String email = txtEmail.getText().trim();
         if(ho.equals("")) {
-            JOptionPane.showMessageDialog(this, "Họ không được để trống!");
+            JOptionPane.showMessageDialog(this, "Họ không được để trống!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtHo.requestFocus();
             return false;
         } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
-            JOptionPane.showMessageDialog(this, "Họ chỉ được nhập 1 từ và chữ cái đầu tiên của từ đó phải viết hoa!");
+            JOptionPane.showMessageDialog(this, "Họ chỉ được nhập 1 từ và chữ cái đầu tiên của từ đó phải viết hoa!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtHo.requestFocus();
             return false;
         }
         if(ten.equals("")) {
-            JOptionPane.showMessageDialog(this, "Tên không được để trống!");
+            JOptionPane.showMessageDialog(this, "Tên không được để trống!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTen.requestFocus();
             return false;
-        } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
-            JOptionPane.showMessageDialog(this, "Chữ cái đầu tiên của mỗi từ phải viết hoa, mỗi từ cách nhau một khoảng trắng!");
+        } else if(!ten.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
+            JOptionPane.showMessageDialog(this, "Chữ cái đầu tiên của mỗi từ phải viết hoa, mỗi từ cách nhau một khoảng trắng!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTen.requestFocus();
             return false;
         }
+        if (gioiTinh.equals("Giới tính")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         if(txtSDT.equals("")) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!");
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
             return false;
         } else if(!sdt.matches("^0\\d{9}$")) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!");
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
             return false;
         }
+
+        boolean found1 = false;
+        boolean found2 = false;
+        try {
+            ArrayList<KhachHang> dsKh = kh_dao.getAllKhachHang();
+            for (KhachHang kh : dsKh) {
+                if (kh.getSDT().equals(sdt)) {
+                    found1 = true;
+                    break;
+                }
+                if (!email.equals("") && kh.getEmail().equals(email)) {
+                    found2 = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if (found1 == true) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại số điện thoại, vui lòng nhập số khác!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return false;
+        }
+
+        if (found2 == true) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại email, vui lòng nhập email khác!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtEmail.requestFocus();
+            return false;
+        }
+
         return true;
     }
 
