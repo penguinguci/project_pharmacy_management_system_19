@@ -43,6 +43,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
     private ChiTietPhieuDoiTra_DAO chiTietPhieuDoiTra_dao = new ChiTietPhieuDoiTra_DAO();
     private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
+    private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
 
     public Form_DoiTra() {
         this.setLayout(new BorderLayout());
@@ -464,9 +465,13 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
                                     if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
                                         JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
                                     } else {
-                                        JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
-                                        openFormDoiTra(hd);
-                                        clear();
+                                        if(!thuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                            JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
+                                        } else {
+                                            JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
+                                            openFormDoiTra(hd);
+                                            clear();
+                                        }
                                     }
                                 }
                             }
