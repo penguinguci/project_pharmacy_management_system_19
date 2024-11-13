@@ -1,7 +1,6 @@
 package entity;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Date;
 
 public class DonDatThuoc {
     private String maDon;
@@ -50,7 +49,7 @@ public class DonDatThuoc {
         this.thoiGianDat = thoiGianDat;
     }
 
-    public double tinhTongTien(){
-        return 0;
+    public double tinhTongTien(double tongThanhTien){
+        return tongThanhTien;
     }
 }

@@ -46,4 +46,8 @@ public class ChiTietDonDatThuoc {
     public void setSoLuong(int soLuong) {
         this.soLuong = soLuong;
     }
+
+    public double tinhThanhTien(){
+        return soLuong * thuoc.getDonGiaThuoc().getDonGia();
+    }
 }

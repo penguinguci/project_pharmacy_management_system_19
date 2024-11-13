@@ -25,7 +25,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
-            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai;
+            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc;
     public JButton btnDangXuat, btnThongBao, btnTroGiup;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
@@ -61,6 +61,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_QuanLyChucVu formQuanLyChucVu;
     public Form_TaiKhoan formTaiKhoan;
     public Form_TroGiup formTroGiup;
+    public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
     private NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
@@ -261,9 +262,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuHoaDon.setVisible(false);
 
         btnHDBanThuoc = createSubMenuButton("Bán Thuốc");
+        btnQLNhapThuoc = createSubMenuButton("Nhập thuốc");
         btnPhieuDoiTra  = createSubMenuButton("Đổi Trả");
 
         submenuHoaDon.add(btnHDBanThuoc);
+        submenuHoaDon.add(btnQLNhapThuoc);
         submenuHoaDon.add(btnPhieuDoiTra);
 
 
@@ -364,7 +367,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         leftPanel.add(lblDate);
-
+        leftPanel.setPreferredSize(new Dimension(880, 40));
 
 
         // Nút thông báo
@@ -482,7 +485,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
 
         topPanel.add(leftPanel);
-        topPanel.add(Box.createHorizontalStrut(800));
+//        topPanel.add(Box.createHorizontalStrut(790));
         topPanel.add(layeredPaneThongBao);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(customButtonUser);
@@ -555,6 +558,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTimKiemKhuyenMai.addActionListener(this);
 
         btnHDBanThuoc.addActionListener(this);
+        btnQLNhapThuoc.addActionListener(this);
         btnPhieuDoiTra.addActionListener(this);
 
         btnTKDoanhThu.addActionListener(this);
@@ -871,6 +875,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formTroGiup");
+        } else if (o == btnQLNhapThuoc) {
+            formQuanLyNhapThuoc = new Form_QuanLyNhapThuoc();
+            centerPanel.add(formQuanLyNhapThuoc, "formQuanLyNhapThuoc");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyNhapThuoc");
         }
     }
 
