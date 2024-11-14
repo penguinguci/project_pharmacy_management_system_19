@@ -193,6 +193,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
                 submenuNhanVien.add(btnBanThuoc);
                 submenuNhanVien.add(btnNhapThuocTuNCC);
+            } else {
+                submenuNhanVien.add(btnBanThuoc);
+                submenuNhanVien.add(btnNhapThuocTuNCC);
+                submenuNhanVien.add(btnCapNhatNV);
+                submenuNhanVien.add(btnChucVu);
+                submenuNhanVien.add(btnTimKiemNV);
+                submenuNhanVien.add(btnTaiKhoan);
             }
         } else {
             submenuNhanVien.add(btnBanThuoc);
@@ -262,6 +269,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         //Phân quyền
         if(nhanVienDN != null) {
             if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+            } else {
+                submenuKhuyenMai.add(btnCapNhatKhuyenmai);
                 submenuKhuyenMai.add(btnTimKiemKhuyenMai);
             }
         } else {
@@ -691,29 +701,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formNhapThuoc");
         } else if(o == btnCapNhatNV) {
-            if(nhanVienDN.getVaiTro().getMaChucVu()==1) {
-                JOptionPane.showMessageDialog(this, "Bạn không có quyền thực hiện chức năng này");
-            } else {
-                try {
-                    formQuanLyNhanVien = new Form_QuanLyNhanVien();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-                centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
-                centerPanel.revalidate();
-                centerPanel.repaint();
+            try {
+                formQuanLyNhanVien = new Form_QuanLyNhanVien();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
+            centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
+            centerPanel.revalidate();
+            centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhanVien");
         } else if (o == btnChucVu) {
-            if(nhanVienDN.getVaiTro().getMaChucVu()==1) {
-                JOptionPane.showMessageDialog(this, "Bạn không có quyền thực hiện chức năng này");
-            } else {
-                formQuanLyChucVu = new Form_QuanLyChucVu();
-                centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
-                centerPanel.revalidate();
-                centerPanel.repaint();
-                cardLayout.show(centerPanel, "formQuanLyChucVu");
-            }
+            formQuanLyChucVu = new Form_QuanLyChucVu();
+            centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyChucVu");
         } else if(o == btnTimKiemNV) {
             formTimKiemNhanVien = new Form_TimKiemNhanVien();
             centerPanel.add(formTimKiemNhanVien, "formTimKiemNhanVien");
