@@ -493,7 +493,7 @@ public class Form_ThanhToanHoaDonDoiTra extends JPanel implements ActionListener
         panelThanhToanButton.add(btnThanhToan);
         panelThanhToanButton.add(btnThanhToanKhongIn);
         panelThanhToanButton.add(btnHuy);
-        panelThanhToanButton.add(btnLuuDonHang);
+        //panelThanhToanButton.add(btnLuuDonHang);
 
 
         // Sử dụng BoxLayout cho panelRight để điều chỉnh chiều cao tự động
@@ -1318,7 +1318,6 @@ public class Form_ThanhToanHoaDonDoiTra extends JPanel implements ActionListener
         txtSDTKH.setText("");
         txtTenKhachHang.setText("");
         txtGiaTriDiemTL.setText("");
-        txtTimKiemKH.setText("");
     }
 
 
