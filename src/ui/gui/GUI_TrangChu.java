@@ -62,14 +62,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TaiKhoan formTaiKhoan;
     public Form_TroGiup formTroGiup;
     public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
-    private NhanVien nhanVienDN;
+    private static NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
     public JTextArea noiDungArea;
     public JButton btnXemCTTB;
 
-    public GUI_TrangChu(NhanVien nhanVienDN) throws Exception {
-        this.nhanVienDN = nhanVienDN;
+    public GUI_TrangChu() throws Exception {
 
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -190,9 +189,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTaiKhoan = createSubMenuButton("Tài Khoản");
 
         //Phân quyền
-        if(getNhanVienDN().getVaiTro().getMaChucVu() == 1) {
-            submenuNhanVien.add(btnBanThuoc);
-            submenuNhanVien.add(btnNhapThuocTuNCC);
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuNhanVien.add(btnBanThuoc);
+                submenuNhanVien.add(btnNhapThuocTuNCC);
+            }
         } else {
             submenuNhanVien.add(btnBanThuoc);
             submenuNhanVien.add(btnNhapThuocTuNCC);
@@ -259,8 +260,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTimKiemKhuyenMai = createSubMenuButton("Tìm kiếm");
 
         //Phân quyền
-        if(getNhanVienDN().getVaiTro().getMaChucVu() == 1) {
-            submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+            }
         } else {
             submenuKhuyenMai.add(btnCapNhatKhuyenmai);
             submenuKhuyenMai.add(btnTimKiemKhuyenMai);
@@ -1244,8 +1247,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
 
 
-    public void setNhanVienDN(NhanVien nhanVien) {
-        this.nhanVienDN = nhanVien;
+    public static void setNhanVienDN(NhanVien nhanVien) {
+        nhanVienDN = nhanVien;
     }
 
     public NhanVien getNhanVienDN() {
@@ -1373,11 +1376,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     }
 
 
-//    public static void main(String[] args) throws Exception {
-////        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-//        GUI_TrangChu frame = new GUI_TrangChu();
-//        frame.setVisible(true);
-//    }
+    public static void main(String[] args) throws Exception {
+//        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        GUI_TrangChu frame = new GUI_TrangChu();
+        frame.setVisible(true);
+    }
 
     private void setFullScreen() {
         // Lấy kích thước của màn hình
