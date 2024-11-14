@@ -1,5 +1,6 @@
 package ui.gui;
 
+import entity.ChiTietHoaDon;
 import entity.NhanVien;
 import ui.form.*;
 
@@ -11,6 +12,7 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -62,14 +64,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TaiKhoan formTaiKhoan;
     public Form_TroGiup formTroGiup;
     public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
-    private NhanVien nhanVienDN;
+    private static NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
     public JTextArea noiDungArea;
     public JButton btnXemCTTB;
 
-    public GUI_TrangChu(NhanVien nhanVienDN) throws Exception {
-        this.nhanVienDN = nhanVienDN;
+    public GUI_TrangChu() throws Exception {
 
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -190,9 +191,18 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTaiKhoan = createSubMenuButton("Tài Khoản");
 
         //Phân quyền
-        if(getNhanVienDN().getVaiTro().getMaChucVu() == 1) {
-            submenuNhanVien.add(btnBanThuoc);
-            submenuNhanVien.add(btnNhapThuocTuNCC);
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuNhanVien.add(btnBanThuoc);
+                submenuNhanVien.add(btnNhapThuocTuNCC);
+            } else {
+                submenuNhanVien.add(btnBanThuoc);
+                submenuNhanVien.add(btnNhapThuocTuNCC);
+                submenuNhanVien.add(btnCapNhatNV);
+                submenuNhanVien.add(btnChucVu);
+                submenuNhanVien.add(btnTimKiemNV);
+                submenuNhanVien.add(btnTaiKhoan);
+            }
         } else {
             submenuNhanVien.add(btnBanThuoc);
             submenuNhanVien.add(btnNhapThuocTuNCC);
@@ -259,8 +269,13 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTimKiemKhuyenMai = createSubMenuButton("Tìm kiếm");
 
         //Phân quyền
-        if(getNhanVienDN().getVaiTro().getMaChucVu() == 1) {
-            submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+            } else {
+                submenuKhuyenMai.add(btnCapNhatKhuyenmai);
+                submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+            }
         } else {
             submenuKhuyenMai.add(btnCapNhatKhuyenmai);
             submenuKhuyenMai.add(btnTimKiemKhuyenMai);
@@ -688,29 +703,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formNhapThuoc");
         } else if(o == btnCapNhatNV) {
-            if(nhanVienDN.getVaiTro().getMaChucVu()==1) {
-                JOptionPane.showMessageDialog(this, "Bạn không có quyền thực hiện chức năng này");
-            } else {
-                try {
-                    formQuanLyNhanVien = new Form_QuanLyNhanVien();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-                centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
-                centerPanel.revalidate();
-                centerPanel.repaint();
+            try {
+                formQuanLyNhanVien = new Form_QuanLyNhanVien();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
+            centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
+            centerPanel.revalidate();
+            centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhanVien");
         } else if (o == btnChucVu) {
-            if(nhanVienDN.getVaiTro().getMaChucVu()==1) {
-                JOptionPane.showMessageDialog(this, "Bạn không có quyền thực hiện chức năng này");
-            } else {
-                formQuanLyChucVu = new Form_QuanLyChucVu();
-                centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
-                centerPanel.revalidate();
-                centerPanel.repaint();
-                cardLayout.show(centerPanel, "formQuanLyChucVu");
-            }
+            formQuanLyChucVu = new Form_QuanLyChucVu();
+            centerPanel.add(formQuanLyChucVu, "formQuanLyChucVu");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyChucVu");
         } else if(o == btnTimKiemNV) {
             formTimKiemNhanVien = new Form_TimKiemNhanVien();
             centerPanel.add(formTimKiemNhanVien, "formTimKiemNhanVien");
@@ -735,6 +742,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             cardLayout.show(centerPanel, "formQuanLyKhachHang");
         } else if(o == btnDatThuoc) {
             formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
+            formQuanLyDonDatThuoc.setTrangChu(this);
             centerPanel.add(formQuanLyDonDatThuoc, "formQuanLyDonDatThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
@@ -789,7 +797,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             try {
                 formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
             } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                throw new RuntimeException(ex);
             }
             centerPanel.add(formQuanLyKhuyenMai, "formQuanLyKhuyenMai");
             centerPanel.revalidate();
@@ -1144,15 +1152,15 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
         if (o == btnThongBao || o == popupThongBao) {
-           Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-           SwingUtilities.convertPointFromScreen(mouseLocation, btnThongBao.getParent());
+            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(mouseLocation, btnThongBao.getParent());
 
-           boolean outsideBtnTB = !btnThongBao.getBounds().contains(mouseLocation);
-           boolean outsidePopupTB = !popupThongBao.getBounds().contains(mouseLocation);
+            boolean outsideBtnTB = !btnThongBao.getBounds().contains(mouseLocation);
+            boolean outsidePopupTB = !popupThongBao.getBounds().contains(mouseLocation);
 
-           if(outsideBtnTB  && outsidePopupTB) {
-               popupThongBao.setVisible(false);
-           }
+            if(outsideBtnTB  && outsidePopupTB) {
+                popupThongBao.setVisible(false);
+            }
         }
     }
 
@@ -1244,8 +1252,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
 
 
-    public void setNhanVienDN(NhanVien nhanVien) {
-        this.nhanVienDN = nhanVien;
+    public static void setNhanVienDN(NhanVien nhanVien) {
+        nhanVienDN = nhanVien;
     }
 
     public NhanVien getNhanVienDN() {
@@ -1258,7 +1266,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         textVaiTro.setText(vaiTro);
     }
 
-
+    // mở form_BanThuoc
+    public void openFormBanThuoc(ArrayList<ChiTietHoaDon> dsCTHD) {
+        try {
+            formBanThuoc = new Form_BanThuoc();
+            formBanThuoc.capNhatGioHangSauDonDat(dsCTHD);
+            formBanThuoc.updateTien();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        centerPanel.add(formBanThuoc, "formBanThuoc");
+        formBanThuoc.setNhanVienDN(nhanVienDN);
+        centerPanel.revalidate();
+        centerPanel.repaint();
+        cardLayout.show(centerPanel, "formBanThuoc");
+    }
 
     public class DigitalClock extends JPanel implements Runnable {
         private Thread thread;
@@ -1373,11 +1395,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     }
 
 
-//    public static void main(String[] args) throws Exception {
-////        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-//        GUI_TrangChu frame = new GUI_TrangChu();
-//        frame.setVisible(true);
-//    }
+    public static void main(String[] args) throws Exception {
+//        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        GUI_TrangChu frame = new GUI_TrangChu();
+        frame.setVisible(true);
+    }
 
     private void setFullScreen() {
         // Lấy kích thước của màn hình
@@ -1388,4 +1410,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         this.setBounds(bounds);
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);  // Đặt JFrame ở chế độ toàn màn hình
     }
+
+
 }
