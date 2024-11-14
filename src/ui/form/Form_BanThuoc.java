@@ -1838,4 +1838,15 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         return nhanVienDN;
     }
 
+    public void capNhatGioHangSauDonDat(ArrayList<ChiTietHoaDon> dsCTHD) {
+        for (ChiTietHoaDon ct : dsCTHD) {
+            modelGioHang.addRow(new Object[]{
+                    ct.getThuoc().getTenThuoc(),
+                    ct.getThuoc().getDonGiaThuoc().getDonViTinh(),
+                    ct.getSoLuong(),
+                    ct.getThuoc().getDonGiaThuoc().getDonGia(),
+                    ct.tinhThanhTien()
+            });
+        }
+    }
 }
