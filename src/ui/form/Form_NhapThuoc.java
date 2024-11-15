@@ -7,6 +7,7 @@ import entity.NhaCungCap;
 import entity.Thuoc;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -162,13 +163,27 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
         pnlCenter.add(pnlInput, BorderLayout.NORTH);
 
         // Table Chi tiết thuốc
-        String[] columnNames = {"Mã thuốc", "Số hiệu thuốc", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"};
+        String[] columnNames = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"};
         Object[][] data = {}; // dữ liệu trống ban đầu
         tblChiTietThuoc = new JTable(data, columnNames);
         tblChiTietThuoc.setRowHeight(25);
         tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         JScrollPane scrollPane = new JScrollPane(tblChiTietThuoc);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết thuốc nhập"));
+
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         pnlCenter.add(scrollPane, BorderLayout.CENTER);
 
         add(pnlCenter, BorderLayout.CENTER);

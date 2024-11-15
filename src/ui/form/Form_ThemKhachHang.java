@@ -325,6 +325,7 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
                } else {
                    String sdt = txtSDT.getText().trim();
                    formBanThuoc.luuDonHangSauKhiThemKH(nhanVienDN, sdt);
+                   lamMoi();
                }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);

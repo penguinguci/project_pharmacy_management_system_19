@@ -19,6 +19,7 @@ import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -142,6 +143,20 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         table.setFont(new Font("Arial", Font.PLAIN, 13));
 
         JScrollPane scrollPane = new JScrollPane(table);
+
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         panelDSHoaDon.add(scrollPane, BorderLayout.CENTER);
 
 

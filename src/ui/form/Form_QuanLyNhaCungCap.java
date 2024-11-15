@@ -16,6 +16,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -181,6 +182,20 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         tblNhaCC.setFont(new Font("Arial", Font.PLAIN, 13));
 
         JScrollPane scrollPane = new JScrollPane(tblNhaCC);
+
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 
         // Sắp xếp bố cục các panel
