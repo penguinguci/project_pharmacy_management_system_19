@@ -1,9 +1,6 @@
 package ui.form;
 
-import dao.ChiTietDonDatThuoc_DAO;
-import dao.ChiTietHoaDon_DAO;
-import dao.DonDatThuoc_DAO;
-import dao.HoaDon_DAO;
+import dao.*;
 import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -38,8 +35,11 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
     private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
     private GUI_TrangChu trangChu;
+    public KhachHang_DAO khachHang_dao;
 
     public Form_QuanLyDonDatThuoc() {
+        khachHang_dao = new KhachHang_DAO();
+
         setLayout(new BorderLayout());
 
         // tiêu đề
@@ -317,17 +317,85 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                         thuoc.setTenThuoc(tenThuoc);
                         thuoc.setDonGiaThuoc(donGiaThuoc);
 
-                        // Tạo một đối tượng ChiTietHoaDon và thêm vào danh sách
+                        // create một đối tượng ChiTietHoaDon và thêm vào danh sách
                         ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
                         dsCTHD.add(chiTietHoaDon);
                     }
 
-                    trangChu.openFormBanThuoc(dsCTHD);
+                    String sdt = tabDon.getValueAt(row,3).toString();
+                    KhachHang khachHang = khachHang_dao.getOneKhachHangBySDT(sdt);
+
+                    String maDon = tabDon.getValueAt(row, 0).toString();
+                    trangChu.openFormBanThuoc(dsCTHD, maDon, khachHang);
+
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để thanh toán!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        if (e.getSource() == btnChinhSua) {
+            int row = tabDon.getSelectedRow();
+            if (row >= 0) {
+                try {
+                    ArrayList<ChiTietHoaDon> dsCTHD = new ArrayList<>();
+                    for (int i = 0; i < tabChiTietDon.getRowCount(); i++) {
+                        // Lấy giá trị của từng ô trong mỗi dòng
+                        String maDon = tabChiTietDon.getValueAt(i, 0).toString(); // Mã đơn
+                        String soHieuThuoc = tabChiTietDon.getValueAt(i, 1).toString(); // Số hiệu thuốc
+                        String maThuoc = tabChiTietDon.getValueAt(i, 2).toString(); // Mã thuốc
+                        String tenThuoc = tabChiTietDon.getValueAt(i, 3).toString(); // Tên thuốc
+                        String donViTinh = tabChiTietDon.getValueAt(i, 4).toString(); // Đơn vị tính
+                        int soLuong = Integer.parseInt(tabChiTietDon.getValueAt(i, 5).toString()); // Số lượng
+                        double donGia = Double.parseDouble(tabChiTietDon.getValueAt(i, 6).toString()); // Đơn giá
+                        double thanhTien = Double.parseDouble(tabChiTietDon.getValueAt(i, 7).toString()); // Thành tiền
+
+                        HoaDon hoaDon = new HoaDon();
+
+                        DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                        donGiaThuoc.setDonGia(donGia);
+                        donGiaThuoc.setDonViTinh(donViTinh);
+
+                        Thuoc thuoc = new Thuoc();
+                        thuoc.setSoHieuThuoc(soHieuThuoc);
+                        thuoc.setMaThuoc(maThuoc);
+                        thuoc.setTenThuoc(tenThuoc);
+                        thuoc.setDonGiaThuoc(donGiaThuoc);
+
+                        // create một đối tượng ChiTietHoaDon và thêm vào danh sách
+                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+                        dsCTHD.add(chiTietHoaDon);
+                    }
+
+                    String sdt = tabDon.getValueAt(row,3).toString();
+                    KhachHang khachHang = khachHang_dao.getOneKhachHangBySDT(sdt);
+
+                    String maDon = tabDon.getValueAt(row, 0).toString();
+                    trangChu.openFormBanThuoc(dsCTHD, maDon, khachHang);
+
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để sửa!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        if (e.getSource() == btnHuy) {
+            int row = tabDon.getSelectedRow();
+            if (row >= 0) {
+                String maDon = tabDon.getValueAt(row, 0).toString();
+
+                if (donDatThuoc_dao.xoaDonDatThuoc(maDon)) {
+                    JOptionPane.showMessageDialog(this, "Hủy đơn thuốc thành công!");
+                    clear();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để hủy!",
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -362,6 +430,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         } catch (Exception e) {
             e.printStackTrace();
         }
+        tabDon.clearSelection();
     }
 
     public String[] dataComboMaDon() {
