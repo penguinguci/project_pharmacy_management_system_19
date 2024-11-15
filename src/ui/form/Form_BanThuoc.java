@@ -86,6 +86,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public ChiTietDonDatThuoc_DAO chiTietDonDatThuocDao;
     public String maDon;
     public KhachHang khachHangNew;
+    JMenuItem itemXoa, itemXoaAll;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -212,6 +213,23 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         scrollCart.setPreferredSize(new Dimension(420, 310)); // Kích thước cố định cho scrollCart
         scrollCart.setMaximumSize(new Dimension(420, 310)); // Đặt kích thước tối đa để không bị vượt quá
 
+
+        // jpopup menu
+        JPopupMenu popupMenuGioHang = new JPopupMenu();
+        popupMenuGioHang.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // menuitem xóa
+        itemXoa = new JMenuItem("Xóa");
+        itemXoa.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // menuitem xóa tất cả
+        itemXoaAll = new JMenuItem("Xóa tất cả");
+        itemXoaAll.setFont(new Font("Arial", Font.BOLD, 14));
+
+        popupMenuGioHang.add(itemXoa);
+        popupMenuGioHang.add(itemXoaAll);
+
+        tbGioHang.setComponentPopupMenu(popupMenuGioHang);
 
         // Panel chứa thông tin khách hàng thành viên và điểm tích lũy
         JPanel panelKhachHang = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -510,6 +528,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         cbxDanhMuc.addActionListener(this);
         txtTimKiem.getDocument().addDocumentListener(this);
         btnBack.addActionListener(this);
+
+        itemXoa.addActionListener(this);
+        itemXoaAll.addActionListener(this);
 
         //Lấy dữ liệu tìm kiếm khách hàng
         kh_dao = new KhachHang_DAO();
@@ -998,6 +1019,25 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             }
         } else if (o == btnBack) {
             setVisible(false);
+        } else if (o == itemXoa) {
+            int selectedRow = tbGioHang.getSelectedRow();
+            if (selectedRow != -1) {
+                modelGioHang.removeRow(selectedRow);
+                try {
+                    updateTien();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                updateTienThoi();
+            }
+        } else if (o == itemXoaAll) {
+            modelGioHang.setRowCount(0);
+            updateTienThoi();
+            try {
+                updateTien();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
