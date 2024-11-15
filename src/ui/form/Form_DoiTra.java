@@ -7,6 +7,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -145,7 +146,20 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         tabHoaDon.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrHoaDon = new JScrollPane(tabHoaDon);
+
         scrHoaDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrHoaDon.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar = scrHoaDon.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabHoaDon.setBackground(Color.WHITE);
         renderTable(colsNameHoaDon, tabHoaDon);
 
@@ -156,7 +170,20 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         tabChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
 
         getScrChiTiet = new JScrollPane(tabChiTiet);
+
         getScrChiTiet.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        getScrChiTiet.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = getScrChiTiet.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabChiTiet.setBackground(Color.WHITE);
         renderTable(colsNameChiTiet, tabChiTiet);
 

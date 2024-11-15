@@ -5,6 +5,7 @@ import entity.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -120,7 +121,20 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         tabThuoc.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrThuoc = new JScrollPane(tabThuoc);
+
         scrThuoc.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrThuoc.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrThuoc.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabThuoc.setBackground(Color.WHITE);
         renderTable(colsNameThuoc, tabThuoc);
 

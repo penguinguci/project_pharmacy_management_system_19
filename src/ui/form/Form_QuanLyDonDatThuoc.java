@@ -8,6 +8,7 @@ import org.jdatepicker.impl.UtilDateModel;
 import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -128,6 +129,19 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
         scrDon = new JScrollPane(tabDon);
 
+        scrDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrDon.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar = scrDon.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         String[] colsnameTabChiTietDon = {"Mã đơn", "Số hiệu thuốc","Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         dtmChiTietDon = new DefaultTableModel(colsnameTabChiTietDon, 0);
         tabChiTietDon = new JTable(dtmChiTietDon);
@@ -135,6 +149,19 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         tabChiTietDon.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrChiTietDon = new JScrollPane(tabChiTietDon);
+
+        scrChiTietDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrChiTietDon.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrChiTietDon.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
 
         // listPanel
         JPanel listPanel = new JPanel();

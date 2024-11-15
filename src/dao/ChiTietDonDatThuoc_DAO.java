@@ -156,4 +156,45 @@ public class ChiTietDonDatThuoc_DAO {
 
         return n > 0;
     }
+
+
+    //  cập nhật chi tiet đơn đặt thuốc
+    public boolean capNhatTatCaChiTietDonDatThuoc(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsCTDD) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sqlXoa = "{CALL capNhatTatCaChiTietDonDatThuoc(?)}";
+            callableStatement = con.prepareCall(sqlXoa);
+            callableStatement.setString(1, donDatThuoc.getMaDon());
+            callableStatement.executeUpdate();
+            callableStatement.close();
+
+            for (ChiTietDonDatThuoc ct : dsCTDD) {
+                String sqlThem = "INSERT INTO ChiTietDonDatThuoc (maDon, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+                callableStatement = con.prepareCall(sqlThem);
+
+                callableStatement.setString(1, donDatThuoc.getMaDon());
+                callableStatement.setString(2, ct.getThuoc().getSoHieuThuoc());
+                callableStatement.setString(3, ct.getThuoc().getMaThuoc());
+                callableStatement.setString(4, ct.getDonViTinh());
+                callableStatement.setInt(5, ct.getSoLuong());
+                callableStatement.setDouble(6, ct.tinhThanhTien());
+
+                n += callableStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (callableStatement != null) callableStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
 }

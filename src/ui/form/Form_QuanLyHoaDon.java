@@ -13,6 +13,7 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -121,6 +122,19 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
 
         scrollHD = new JScrollPane(tableHD);
 
+        scrollHD.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollHD.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar = scrollHD.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         String[] colsnameChiTietHoaDon = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         modelChiTiet = new DefaultTableModel(colsnameChiTietHoaDon, 0);
         tableChiTiet = new JTable(modelChiTiet);
@@ -128,6 +142,19 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         tableChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrollChiTiet = new JScrollPane(tableChiTiet);
+
+        scrollChiTiet.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollChiTiet.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollChiTiet.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
 
         // listPanel
         JPanel listPanel = new JPanel();
