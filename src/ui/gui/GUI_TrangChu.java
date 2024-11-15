@@ -1,6 +1,7 @@
 package ui.gui;
 
 import entity.ChiTietHoaDon;
+import entity.KhachHang;
 import entity.NhanVien;
 import ui.form.*;
 
@@ -1267,10 +1268,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     }
 
     // mở form_BanThuoc
-    public void openFormBanThuoc(ArrayList<ChiTietHoaDon> dsCTHD) {
+    public void openFormBanThuoc(ArrayList<ChiTietHoaDon> dsCTHD, String maDon, KhachHang khachHang) {
         try {
             formBanThuoc = new Form_BanThuoc();
-            formBanThuoc.capNhatGioHangSauDonDat(dsCTHD);
+            formBanThuoc.capNhatGioHangSauDonDat(dsCTHD, maDon);
+            formBanThuoc.updateKhachHangSauDonDat(khachHang);
             formBanThuoc.updateTien();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
