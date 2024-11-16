@@ -3,7 +3,6 @@ package ui.form;
 import dao.*;
 import entity.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -16,8 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -417,7 +414,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
             if(x.getNgaySX() != null) {
                 date = formatDate(x.getNgaySX());
             }
-            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
             dtmThuoc.addRow(data);
         }
     }
@@ -429,7 +426,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
             if(x.getNgaySX() != null) {
                 date = formatDate(x.getNgaySX());
             }
-            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
             dtmThuoc.addRow(data);
         }
     }

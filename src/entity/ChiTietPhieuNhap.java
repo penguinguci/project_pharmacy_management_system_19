@@ -1,20 +1,26 @@
 package entity;
 
+import java.util.Date;
+
 public class ChiTietPhieuNhap {
     private PhieuNhapThuoc phieuNhapThuoc;
     private Thuoc thuoc;
-    private int soLuong;
+    private int soLuongNhap;
     private String donViTinh;
     private double donGiaNhap;
+    private int HSD;
+    private java.sql.Date ngaySX;
 
     public ChiTietPhieuNhap() {}
 
-    public ChiTietPhieuNhap(PhieuNhapThuoc phieuNhapThuoc, Thuoc thuoc, int soLuong, String donViTinh, double donGiaNhap) {
+    public ChiTietPhieuNhap(PhieuNhapThuoc phieuNhapThuoc, Thuoc thuoc, int soLuongNhap, String donViTinh, double donGiaNhap, java.sql.Date ngaySX, int HSD) {
         this.phieuNhapThuoc = phieuNhapThuoc;
         this.thuoc = thuoc;
-        this.soLuong = soLuong;
+        this.soLuongNhap = soLuongNhap;
         this.donViTinh = donViTinh;
         this.donGiaNhap = donGiaNhap;
+        this.ngaySX = ngaySX;
+        this.HSD = HSD;
     }
 
     public PhieuNhapThuoc getPhieuNhapThuoc() {
@@ -33,12 +39,12 @@ public class ChiTietPhieuNhap {
         this.thuoc = thuoc;
     }
 
-    public int getSoLuong() {
-        return soLuong;
+    public int getSoLuongNhap() {
+        return soLuongNhap;
     }
 
-    public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
+    public void setSoLuongNhap(int soLuongNhap) {
+        this.soLuongNhap = soLuongNhap;
     }
 
     public String getDonViTinh() {
@@ -58,6 +64,22 @@ public class ChiTietPhieuNhap {
     }
 
     public double tinhThanhTien(){
-        return this.soLuong * this.donGiaNhap;
+        return this.soLuongNhap * this.donGiaNhap;
+    }
+
+    public int getHSD() {
+        return HSD;
+    }
+
+    public void setHSD(int HSD) {
+        this.HSD = HSD;
+    }
+
+    public Date getNgaySX() {
+        return ngaySX;
+    }
+
+    public void setNgaySX(java.sql.Date ngaySX) {
+        this.ngaySX = ngaySX;
     }
 }

@@ -845,6 +845,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             cardLayout.show(centerPanel, "formQuanLyHoaDon");
         } else if(o == btnPhieuDoiTra) {
             formDoiTra = new Form_DoiTra();
+            formDoiTra.setTrangChu(this);
             centerPanel.add(formDoiTra, "formDoiTra");
             formDoiTra.setNhanVienDN(getNhanVienDN());
             centerPanel.revalidate();

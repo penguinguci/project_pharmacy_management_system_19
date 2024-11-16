@@ -100,7 +100,7 @@ public class Thuoc_DAO {
             }
             t.setNgaySX(rs.getDate("ngaySX"));
             t.setHSD(rs.getInt("HSD"));
-            t.setSoLuongCon(rs.getInt("soLuongCon"));
+            t.setTongSoLuong(rs.getInt("soLuongCon"));
             if (rs.getString("cachDung") == null) {
                 t.setCachDung("Chưa có");
             } else {
@@ -356,7 +356,7 @@ public class Thuoc_DAO {
 
                 t.setNgaySX(rs.getDate("ngaySX"));
                 t.setHSD(rs.getInt("HSD"));
-                t.setSoLuongCon(rs.getInt("soLuongCon"));
+                t.setTongSoLuong(rs.getInt("soLuongCon"));
                 t.setCachDung(rs.getString("cachDung"));
                 t.setThanhPhan(rs.getString("thanhPhan"));
                 t.setBaoQuan(rs.getString("baoQuan"));
@@ -453,7 +453,7 @@ public class Thuoc_DAO {
 
                 t.setNgaySX(rs.getDate("ngaySX"));
                 t.setHSD(rs.getInt("HSD"));
-                t.setSoLuongCon(rs.getInt("soLuongCon"));
+                t.setTongSoLuong(rs.getInt("soLuongCon"));
                 t.setCachDung(rs.getString("cachDung"));
                 t.setThanhPhan(rs.getString("thanhPhan"));
                 t.setBaoQuan(rs.getString("baoQuan"));
@@ -788,7 +788,7 @@ public class Thuoc_DAO {
 
                 t.setNgaySX(rs.getDate("ngaySX"));
                 t.setHSD(rs.getInt("HSD"));
-                t.setSoLuongCon(rs.getInt("soLuongCon"));
+                t.setTongSoLuong(rs.getInt("soLuongCon"));
                 t.setCachDung(rs.getString("cachDung"));
                 t.setThanhPhan(rs.getString("thanhPhan"));
                 t.setBaoQuan(rs.getString("baoQuan"));
