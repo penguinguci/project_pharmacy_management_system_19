@@ -20,6 +20,13 @@ public class ChiTietKhuyenMai {
         this.chiTietLoThuoc = chiTietLoThuoc;
     }
 
+    public ChiTietKhuyenMai(ChuongTrinhKhuyenMai chuongTrinhKhuyenMai, Thuoc thuoc, double tyLeKhuyenMai, int soLuongToiThieu) {
+        this.thuoc = thuoc;
+        this.chuongTrinhKhuyenMai = chuongTrinhKhuyenMai;
+        this.tyLeKhuyenMai = tyLeKhuyenMai;
+        this.soLuongToiThieu = soLuongToiThieu;
+    }
+
 
     public Thuoc getThuoc() {
         return thuoc;

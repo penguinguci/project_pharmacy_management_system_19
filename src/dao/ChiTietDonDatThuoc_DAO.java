@@ -13,6 +13,7 @@ public class ChiTietDonDatThuoc_DAO {
     private ArrayList<ChiTietDonDatThuoc> list;
     private Thuoc_DAO thuoc_dao;
     private DonDatThuoc_DAO donDatThuoc_dao;
+    private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
     public ChiTietDonDatThuoc_DAO() {
         list = new ArrayList<ChiTietDonDatThuoc>();
@@ -31,6 +32,7 @@ public class ChiTietDonDatThuoc_DAO {
         ResultSet rs = null;
         thuoc_dao = new Thuoc_DAO();
         donDatThuoc_dao = new DonDatThuoc_DAO();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         try {
             String sql = "select * from ChiTietDonDatThuoc";
             ps = con.getConnection().prepareStatement(sql);
@@ -39,11 +41,12 @@ public class ChiTietDonDatThuoc_DAO {
                 ChiTietDonDatThuoc ct = new ChiTietDonDatThuoc();
                 DonDatThuoc don = donDatThuoc_dao.timDonDatThuoc(rs.getString("maDon"));
                 ct.setDonDatThuoc(don);
-                Thuoc t = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
-                ct.setThuoc(t);
-                ct.setDonViTinh(t.getDonGiaThuoc().getDonViTinh());
+
+                ct.setThuoc(thuoc_dao.timThuoc(rs.getString("maThuoc")));
+                ct.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
+                ct.setDonViTinh(rs.getString("donViTinh"));
                 ct.setSoLuong(rs.getInt("soLuong"));
-                if(timCTD(ct.getDonDatThuoc().getMaDon(), ct.getThuoc().getSoHieuThuoc()) == null) {
+                if(timCTD(ct.getDonDatThuoc().getMaDon(), ct.getChiTietLoThuoc().getSoHieuThuoc()) == null) {
                     list.add(ct);
                 }
             }
@@ -55,7 +58,7 @@ public class ChiTietDonDatThuoc_DAO {
 
     public ChiTietDonDatThuoc timCTD(String ma, String soHieu) {
         for(ChiTietDonDatThuoc x : list) {
-            if(x.getDonDatThuoc().getMaDon().equalsIgnoreCase(ma) && x.getThuoc().getSoHieuThuoc().equalsIgnoreCase(soHieu)){
+            if(x.getDonDatThuoc().getMaDon().equalsIgnoreCase(ma) && x.getChiTietLoThuoc().getSoHieuThuoc().equalsIgnoreCase(soHieu)){
                 return x;
             }
         }
@@ -133,7 +136,7 @@ public class ChiTietDonDatThuoc_DAO {
                 statement = con.prepareStatement(sql);
 
                 statement.setString(1, donDatThuoc.getMaDon());
-                statement.setString(2, chiTietDon.getThuoc().getSoHieuThuoc());
+                statement.setString(2, chiTietDon.getChiTietLoThuoc().getSoHieuThuoc());
                 statement.setString(3, chiTietDon.getThuoc().getMaThuoc());
                 statement.setString(4, chiTietDon.getDonViTinh());
                 statement.setInt(5, chiTietDon.getSoLuong());
@@ -178,7 +181,7 @@ public class ChiTietDonDatThuoc_DAO {
                 callableStatement = con.prepareCall(sqlThem);
 
                 callableStatement.setString(1, donDatThuoc.getMaDon());
-                callableStatement.setString(2, ct.getThuoc().getSoHieuThuoc());
+                callableStatement.setString(2, ct.getChiTietLoThuoc().getSoHieuThuoc());
                 callableStatement.setString(3, ct.getThuoc().getMaThuoc());
                 callableStatement.setString(4, ct.getDonViTinh());
                 callableStatement.setInt(5, ct.getSoLuong());

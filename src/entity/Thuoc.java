@@ -3,8 +3,7 @@ package entity;
 import java.sql.Date;
 
 public class Thuoc {
-    private String maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;
-    private int HSD; //Đơn vị tính = tháng
+    private String maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;//Đơn vị tính = tháng
     private int tongSoLuong;
     private DanhMuc danhMuc;
     private NhaSanXuat nhaSanXuat;
@@ -21,7 +20,7 @@ public class Thuoc {
 
     public Thuoc(String maThuoc, String tenThuoc,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
-                 int HSD, int tongSoLuong, DanhMuc danhMuc,
+                 int tongSoLuong, DanhMuc danhMuc,
                  NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe) {
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
@@ -30,7 +29,6 @@ public class Thuoc {
         this.baoQuan = baoQuan;
         this.congDung = congDung;
         this.chiDinh = chiDinh;
-        this.HSD = HSD;
         this.tongSoLuong = tongSoLuong;
         this.danhMuc = danhMuc;
         this.nhaSanXuat = nhaSanXuat;
@@ -43,12 +41,10 @@ public class Thuoc {
         this.hamLuong = hamLuong;
         this.dangBaoChe = dangBaoChe;
     }
-    public Thuoc(String maThuoc, String tenThuoc,
-                 int HSD, int tongSoLuong, DanhMuc danhMuc,
+    public Thuoc(String maThuoc, String tenThuoc, int tongSoLuong, DanhMuc danhMuc,
                  NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh) {
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
-        this.HSD = HSD;
         this.tongSoLuong = tongSoLuong;
         this.danhMuc = danhMuc;
         this.nhaSanXuat = nhaSanXuat;
@@ -137,14 +133,6 @@ public class Thuoc {
 
     public void setChiDinh(String chiDinh) {
         this.chiDinh = chiDinh;
-    }
-
-    public int getHSD() {
-        return HSD;
-    }
-
-    public void setHSD(int HSD) {
-        this.HSD = HSD;
     }
 
     public int getTongSoLuong() {
