@@ -38,7 +38,7 @@ public class ChiTietPhieuDoiTra_DAO {
                 String sql = "insert into ChiTietPhieuDoiTra values(?, ?, ?, ?)";
                 ps = con.getConnection().prepareStatement(sql);
                 ps.setString(1, maPhieu);
-                ps.setString(2, x.getThuoc().getSoHieuThuoc());
+                ps.setString(2, x.getChiTietLoThuoc().getSoHieuThuoc());
                 ps.setString(3, x.getThuoc().getMaThuoc());
                 ps.setString(4, null);
                 if(ps.executeUpdate() > 0) {

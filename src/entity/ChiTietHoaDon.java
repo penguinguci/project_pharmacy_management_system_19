@@ -3,16 +3,18 @@ package entity;
 public class ChiTietHoaDon {
     private HoaDon hoaDon;
     private Thuoc thuoc;
+    private ChiTietLoThuoc chiTietLoThuoc;
     private String donViTinh;
     private int soLuong;
 
     public ChiTietHoaDon() {}
 
-    public ChiTietHoaDon(HoaDon hoaDon, Thuoc thuoc, String donViTinh, int soLuong) {
+    public ChiTietHoaDon(HoaDon hoaDon, Thuoc thuoc, String donViTinh, int soLuong, ChiTietLoThuoc chiTietLoThuoc) {
         this.hoaDon = hoaDon;
         this.thuoc = thuoc;
         this.donViTinh = donViTinh;
         this.soLuong = soLuong;
+        this.chiTietLoThuoc = chiTietLoThuoc;
     }
 
     public Thuoc getThuoc() {
@@ -48,6 +50,14 @@ public class ChiTietHoaDon {
     }
 
     public double tinhThanhTien(){
-        return soLuong * thuoc.getDonGiaThuoc().getDonGia();
+        return soLuong * chiTietLoThuoc.getDonGiaThuoc().getDonGia();
+    }
+
+    public ChiTietLoThuoc getChiTietLoThuoc() {
+        return chiTietLoThuoc;
+    }
+
+    public void setChiTietLoThuoc(ChiTietLoThuoc chiTietLoThuoc) {
+        this.chiTietLoThuoc = chiTietLoThuoc;
     }
 }

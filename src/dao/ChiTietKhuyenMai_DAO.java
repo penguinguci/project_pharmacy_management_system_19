@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ChiTietKhuyenMai_DAO {
+    private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public  ChiTietKhuyenMai_DAO () {}
 
     public ArrayList<ChiTietKhuyenMai> getAllChiTietKM() throws Exception{
@@ -29,12 +30,10 @@ public class ChiTietKhuyenMai_DAO {
                 chuongTrinhKhuyenMai.setMaCTKM(maCTKM);
                 chuongTrinhKhuyenMai.setLoaiKhuyenMai(loaiKhuyenMai);
 
-                String soHieuThuoc = rs.getString("soHieuThuoc");
                 String maThuoc = rs.getString("maThuoc");
                 String tenThuoc = rs.getString("tenThuoc");
                 Thuoc thuoc = new Thuoc();
                 thuoc.setMaThuoc(maThuoc);
-                thuoc.setSoHieuThuoc(soHieuThuoc);
                 thuoc.setTenThuoc(tenThuoc);
 
                 double tyLeKhuyenMai = rs.getDouble("tyLeKhuyenMai");
@@ -73,7 +72,6 @@ public class ChiTietKhuyenMai_DAO {
                 String maThuoc = rs.getString("maThuoc");
                 Thuoc thuoc = new Thuoc();
                 thuoc.setMaThuoc(maThuoc);
-                thuoc.setSoHieuThuoc(soHieuThuoc);
 
                 double tyLeKhuyenMai = rs.getDouble("tyLeKhuyenMai");
                 int soLuongToiThieu = rs.getInt("soLuongToiThieu");
@@ -115,7 +113,6 @@ public class ChiTietKhuyenMai_DAO {
 
                 Thuoc thuoc = new Thuoc();
                 thuoc.setMaThuoc(maThuoc);
-                thuoc.setSoHieuThuoc(soHieuThuoc);
 
                 double tyLeKhuyenMai = rs.getDouble("tyLeKhuyenMai");
                 int soLuongToiThieu = rs.getInt("soLuongToiThieu");
@@ -152,7 +149,6 @@ public class ChiTietKhuyenMai_DAO {
             String sql = "INSERT INTO ChiTietKhuyenMai (maCTKM, soHieuThuoc, maThuoc, tyLeKhuyenMai, soLuongToiThieu) VALUES (?, ?, ?, ?, ?)";
             statement = con.prepareStatement(sql);
             statement.setString(1, chiTietKhuyenMai.getChuongTrinhKhuyenMai().getMaCTKM());
-            statement.setString(2, chiTietKhuyenMai.getThuoc().getSoHieuThuoc());
             statement.setString(3, chiTietKhuyenMai.getThuoc().getMaThuoc());
             statement.setDouble(4, chiTietKhuyenMai.getTyLeKhuyenMai());
             statement.setInt(5, chiTietKhuyenMai.getSoLuongToiThieu());
@@ -181,7 +177,6 @@ public class ChiTietKhuyenMai_DAO {
         try {
             statement = con.prepareStatement("DELETE FROM ChiTietKhuyenMai WHERE maCTKM = ? AND soHieuThuoc = ?");
             statement.setString(1, ct.getChuongTrinhKhuyenMai().getMaCTKM());
-            statement.setString(2, ct.getThuoc().getSoHieuThuoc());
             n = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

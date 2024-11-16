@@ -5,6 +5,7 @@ import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -45,6 +46,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private ChiTietPhieuDoiTra_DAO chiTietPhieuDoiTra_dao = new ChiTietPhieuDoiTra_DAO();
     private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+
+    private GUI_TrangChu trangChu;
 
     public Form_DoiTra() {
         this.setLayout(new BorderLayout());
@@ -496,7 +499,15 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
                                             JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
                                         } else {
                                             JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
-                                            openFormDoiTra(hd);
+                                            int result = JOptionPane.showConfirmDialog(
+                                                    null, // Không có thành phần cha
+                                                    "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
+                                                    "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
+                                                    JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
+                                            );
+                                            if (result == JOptionPane.YES_OPTION) {
+                                                trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
+                                            }
                                             clear();
                                         }
                                     }
@@ -679,5 +690,13 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
 
     public NhanVien getNhanVienDN() {
         return this.NhanVienDN;
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.trangChu = trangChu;
+    }
+
+    public GUI_TrangChu getTrangChu() {
+        return trangChu;
     }
 }
