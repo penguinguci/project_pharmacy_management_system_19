@@ -7,6 +7,7 @@ import entity.NhaCungCap;
 import entity.Thuoc;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -117,9 +118,36 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
 
         Dimension btnInputSize = new Dimension(100, 30);
         btnThem.setPreferredSize(btnInputSize);
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setFocusPainted(false);
+        btnThem.setForeground(Color.WHITE);
+        btnThem.setOpaque(true);
+        btnThem.setBorderPainted(false);
+
         btnXoa.setPreferredSize(btnInputSize);
+        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
+        btnXoa.setOpaque(true);
+        btnXoa.setFocusPainted(false);
+        btnXoa.setBorderPainted(false);
+
         btnCapNhat.setPreferredSize(btnInputSize);
+        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setForeground(Color.WHITE);
+        btnCapNhat.setOpaque(true);
+        btnCapNhat.setFocusPainted(false);
+        btnCapNhat.setBorderPainted(false);
+
         btnLamMoiInput.setPreferredSize(btnInputSize);
+        btnLamMoiInput.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoiInput.setBackground(new Color(251, 185, 91));
+        btnLamMoiInput.setForeground(Color.WHITE);
+        btnLamMoiInput.setOpaque(true);
+        btnLamMoiInput.setFocusPainted(false);
+        btnLamMoiInput.setBorderPainted(false);
 
         pnlInputButtons.add(btnThem);
         pnlInputButtons.add(btnXoa);
@@ -135,13 +163,27 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
         pnlCenter.add(pnlInput, BorderLayout.NORTH);
 
         // Table Chi tiết thuốc
-        String[] columnNames = {"Mã thuốc", "Số hiệu thuốc", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"};
+        String[] columnNames = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"};
         Object[][] data = {}; // dữ liệu trống ban đầu
         tblChiTietThuoc = new JTable(data, columnNames);
         tblChiTietThuoc.setRowHeight(25);
         tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         JScrollPane scrollPane = new JScrollPane(tblChiTietThuoc);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết thuốc nhập"));
+
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         pnlCenter.add(scrollPane, BorderLayout.CENTER);
 
         add(pnlCenter, BorderLayout.CENTER);
@@ -151,16 +193,41 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
         Box boxButtons = new Box(BoxLayout.Y_AXIS);
 
         btnThemThuocMoi = new JButton("+ Thêm thuốc mới");
+        btnThemThuocMoi.setFont(new Font("Arial", Font.BOLD, 12));
+        btnThemThuocMoi.setBackground(new Color(0, 102, 204));
+        btnThemThuocMoi.setFocusPainted(false);
+        btnThemThuocMoi.setForeground(Color.WHITE);
+        btnThemThuocMoi.setOpaque(true);
+        btnThemThuocMoi.setBorderPainted(false);
+
         btnNhapThuoc = new JButton("Nhập thuốc");
-        btnLamMoi = new JButton("Làm mới");
+        btnNhapThuoc.setFont(new Font("Arial", Font.BOLD, 13));
+        btnNhapThuoc.setBackground(new Color(0, 102, 204));
+        btnNhapThuoc.setFocusPainted(false);
+        btnNhapThuoc.setForeground(Color.WHITE);
+        btnNhapThuoc.setOpaque(true);
+        btnNhapThuoc.setBorderPainted(false);
+
         btnImportExcel = new JButton("Import Excel");
+        btnImportExcel.setBackground(new Color(0, 102, 0));
+        btnImportExcel.setForeground(Color.WHITE);
+        btnImportExcel.setOpaque(true);
+        btnImportExcel.setFocusPainted(false);
+        btnImportExcel.setBorderPainted(false);
+        btnImportExcel.setFont(new Font("Arial", Font.BOLD, 12));
+
         btnExportExcel = new JButton("Export Excel");
+        btnExportExcel.setBackground(new Color(0, 102, 0));
+        btnExportExcel.setForeground(Color.WHITE);
+        btnExportExcel.setOpaque(true);
+        btnExportExcel.setFocusPainted(false);
+        btnExportExcel.setBorderPainted(false);
+        btnExportExcel.setFont(new Font("Arial", Font.BOLD, 12));
 
         // Điều chỉnh kích thước các nút
         Dimension btnSize = new Dimension(140, 32);
         btnThemThuocMoi.setPreferredSize(btnSize);
         btnNhapThuoc.setPreferredSize(btnSize);
-        btnLamMoi.setPreferredSize(btnSize);
         btnImportExcel.setPreferredSize(btnSize);
         btnExportExcel.setPreferredSize(btnSize);
 
@@ -179,10 +246,10 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
 
         // thêm sự kiện
         btnThemThuocMoi.addActionListener(this);
-        btnLamMoi.addActionListener(this);
         btnXoa.addActionListener(this);
         btnCapNhat.addActionListener(this);
         btnThem.addActionListener(this);
+        btnLamMoiInput.addActionListener(this);
         btnImportExcel.addActionListener(this);
         btnExportExcel.addActionListener(this);
         cbbNhaCungCap.addActionListener(this);

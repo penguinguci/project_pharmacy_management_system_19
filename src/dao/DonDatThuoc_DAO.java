@@ -1,13 +1,9 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.DonDatThuoc;
-import entity.KhachHang;
-import entity.NhanVien;
+import entity.*;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 import static connectDB.ConnectDB.getConnection;
@@ -199,5 +195,89 @@ public class DonDatThuoc_DAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // tạo đơn đặt thuốc
+    public boolean create(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat) throws SQLException {
+        // Đảm bảo kết nối được khởi tạo
+        ConnectDB.getInstance();
+        Connection con = getConnection();
+
+        // Kiểm tra kết nối trước khi sử dụng
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            // Câu lệnh SQL chèn dữ liệu hóa đơn vào bảng HoaDon
+            String sql = "INSERT INTO DonDatThuoc (maDon, maKhachHang, maNhanVien, thoiGianDat, tongTien) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+
+            statement = con.prepareStatement(sql);
+            statement.setString(1, donDatThuoc.getMaDon());
+            statement.setString(2, donDatThuoc.getKhachHang().getMaKH());
+
+            statement.setString(3, donDatThuoc.getNhanVien().getMaNV());
+            statement.setDate(4, new java.sql.Date(donDatThuoc.getThoiGianDat().getTime()));
+
+            double tongTien = donDatThuoc.tinhTongTien(
+                    dsChiTietDonDat.stream().mapToDouble(ChiTietDonDatThuoc::tinhThanhTien).sum()
+            );
+
+            statement.setDouble(5, tongTien);
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
+    //  cập nhật đơn đặt thuốc
+    public boolean capNhatDonDatThuoc(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsCTDD) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sql = "{CALL CapNhatDonDatThuoc(?, ?, ?, ?, ?)}";
+            callableStatement = con.prepareCall(sql);
+
+            callableStatement.setString(1, donDatThuoc.getMaDon());
+            callableStatement.setString(2, donDatThuoc.getKhachHang().getMaKH());
+            callableStatement.setString(3, donDatThuoc.getNhanVien().getMaNV());
+            callableStatement.setDate(4, new java.sql.Date(donDatThuoc.getThoiGianDat().getTime()));
+
+            double tongTien = donDatThuoc.tinhTongTien(
+                    dsCTDD.stream().mapToDouble(ChiTietDonDatThuoc::tinhThanhTien).sum()
+            );
+
+            callableStatement.setDouble(5, tongTien);
+
+            n = callableStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                callableStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
     }
 }

@@ -1,15 +1,14 @@
 package ui.form;
 
-import dao.ChiTietHoaDon_DAO;
-import dao.ChiTietPhieuDoiTra_DAO;
-import dao.HoaDon_DAO;
-import dao.PhieuDoiTra_DAO;
+import dao.*;
 import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -45,6 +44,10 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private ArrayList<PhieuDoiTra> listPDT = new ArrayList<PhieuDoiTra>();
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
     private ChiTietPhieuDoiTra_DAO chiTietPhieuDoiTra_dao = new ChiTietPhieuDoiTra_DAO();
+    private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
+    private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+
+    private GUI_TrangChu trangChu;
 
     public Form_DoiTra() {
         this.setLayout(new BorderLayout());
@@ -59,15 +62,15 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         lblLoaiPhieu = new JLabel("Loại phiếu");
         lblMaHoaDon = new JLabel("Mã hoá đơn  ");
         lblChonNgay = new JLabel("           Ngày lập");
-        lblThuTuThuoc = new JLabel("Thuốc đổi / trả ");
+//        lblThuTuThuoc = new JLabel("Thuốc đổi / trả ");
 
         //TextField
         Dimension maxSize = new Dimension(300, 30);
         txtTimKiem = new JTextField(30);
         txtMaPhieu = new JTextField(30);
         txtMaHoaDon = new JTextField(30);
-        txtThuTuThuoc = new JTextField(30);
-        txtThuTuThuoc.setText("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng");
+//        txtThuTuThuoc = new JTextField(30);
+//        txtThuTuThuoc.setText("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng");
         txtTimKiem.setText("Tìm hoá đơn theo mã");
 
         //TextArea
@@ -84,7 +87,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         txtTimKiem.setPreferredSize(new Dimension(200, 25));
         txtMaPhieu.setMaximumSize(maxSize);
         txtMaHoaDon.setMaximumSize(maxSize);
-        txtThuTuThuoc.setMaximumSize(maxSize);
+//        txtThuTuThuoc.setMaximumSize(maxSize);
 
         //Button
         ImageIcon iconBack = new ImageIcon("images\\back.png");
@@ -146,18 +149,44 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         tabHoaDon.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrHoaDon = new JScrollPane(tabHoaDon);
+
         scrHoaDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrHoaDon.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar = scrHoaDon.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabHoaDon.setBackground(Color.WHITE);
         renderTable(colsNameHoaDon, tabHoaDon);
 
-        String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Số lượng", "Đơn vị tính", "Thành tiền"};
+        String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Tên thuốc","Số lượng", "Đơn vị tính", "Thành tiền"};
         dtmChiTiet = new DefaultTableModel(colsNameChiTiet, 0);
         tabChiTiet = new JTable(dtmChiTiet);
         tabChiTiet.setRowHeight(30);
         tabChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
 
         getScrChiTiet = new JScrollPane(tabChiTiet);
+
         getScrChiTiet.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        getScrChiTiet.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = getScrChiTiet.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabChiTiet.setBackground(Color.WHITE);
         renderTable(colsNameChiTiet, tabChiTiet);
 
@@ -239,8 +268,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         boxLabel.add(lblLoaiPhieu);
         boxLabel.add(Box.createVerticalStrut(20));
         boxLabel.add(lblLyDo);
-        boxLabel.add(Box.createVerticalStrut(85));
-        boxLabel.add(lblThuTuThuoc);
+//        boxLabel.add(Box.createVerticalStrut(85));
+//        boxLabel.add(lblThuTuThuoc);
 
         Box boxTF = Box.createVerticalBox();
 //        boxTF.add(txtMaPhieu);
@@ -250,8 +279,8 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         boxTF.add(cbLoaiPhieu);
         boxTF.add(Box.createVerticalStrut(10));
         boxTF.add(scrLyDo);
-        boxTF.add(Box.createVerticalStrut(10));
-        boxTF.add(txtThuTuThuoc);
+//        boxTF.add(Box.createVerticalStrut(10));
+//        boxTF.add(txtThuTuThuoc);
 
         boxTF.setMaximumSize(new Dimension(300, 200));
 
@@ -284,13 +313,13 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         //Đăng ký sự kiện
         tabHoaDon.addMouseListener(this);
 
-        txtThuTuThuoc.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                txtThuTuThuoc.setText("");
-            }
-        });
+//        txtThuTuThuoc.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                super.mouseClicked(e);
+//                txtThuTuThuoc.setText("");
+//            }
+//        });
 
         txtTimKiem.addMouseListener(new MouseAdapter() {
             @Override
@@ -338,7 +367,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Object[] data = {count, x.getThuoc().getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getSoLuong(), x.getDonViTinh(), tien};
+            Object[] data = {count, x.getThuoc().getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(),x.getSoLuong(), x.getDonViTinh(), tien};
             dtmChiTiet.addRow(data);
             count++;
         }
@@ -377,7 +406,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     }
 
     public void clear() {
-        txtThuTuThuoc.setText("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng");
+//        txtThuTuThuoc.setText("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng");
         txtTimKiem.setText("Tìm hoá đơn theo mã");
         txtMaHoaDon.setText("");
         cbLoaiPhieu.setSelectedIndex(0);
@@ -434,7 +463,6 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         if(e.getSource().equals(btnXacNhan)) {
             if(!txtMaHoaDon.getText().trim().equals("")){
                 if(cbLoaiPhieu.getSelectedIndex()!=0) {
-                    if(!txtThuTuThuoc.getText().trim().equals("") && !txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng")){
                         PhieuDoiTra pdt = new PhieuDoiTra();
 
                         pdt.setMaPhieu(phieuDoiTra_dao.tuTaoMaPhieu());
@@ -449,36 +477,45 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
                             type = true;
                         }
                         pdt.setLoai(type);
-
-                        pdt.setHoaDon(hd_dao.timHoaDon(txtMaHoaDon.getText().trim()));
-
+                        HoaDon hd = hd_dao.timHoaDon(txtMaHoaDon.getText().trim());
+                        if(hd!=null) {
+                            pdt.setHoaDon(hd);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn!");
+                        }
                         pdt.setLyDo(txtLyDo.getText().trim());
 
                         try {
                             if(!phieuDoiTra_dao.create(pdt)) {
-                                JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả");
+                                JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả!");
                             } else {
-                                if(!taoListCTHDDeThemVaoPhieuDoiTra().isEmpty()) {
-                                    if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), taoListCTHDDeThemVaoPhieuDoiTra())) {
-                                        JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả");
+                                if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                    JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả!");
+                                } else {
+                                    if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
+                                        JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
                                     } else {
-                                        if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
-                                            JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả");
+                                        if(!thuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                            JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
                                         } else {
                                             JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
+                                            int result = JOptionPane.showConfirmDialog(
+                                                    null, // Không có thành phần cha
+                                                    "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
+                                                    "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
+                                                    JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
+                                            );
+                                            if (result == JOptionPane.YES_OPTION) {
+                                                trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
+                                            }
                                             clear();
                                         }
                                     }
-                                } else {
-                                    JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng số thứ tự thuốc trong bảng chi tiết hoá đơn!");
                                 }
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Nhập tối thiểu 1 thuốc cần đổi/trả!");
-                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Chưa chọn loại phiếu!");
                 }
@@ -492,35 +529,35 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    public ArrayList<ChiTietHoaDon> taoListCTHDDeThemVaoPhieuDoiTra() {
-        ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
-        if(txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng") || txtThuTuThuoc.getText().trim().equals("")){
-            try {
-                listCTHD = chiTietHoaDon_dao.getCTHDForHD(txtMaHoaDon.getText().trim());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            String[] listThuocDoiTra = txtThuTuThuoc.getText().trim().split("\\s+");
-            if(listThuocDoiTra.length > 0) {
-                for(String x : listThuocDoiTra) {
-                    int STT = Integer.parseInt(x);
-                    if(STT > dtmChiTiet.getRowCount()) {
-                        return listCTHD;
-                    }
-                    if(STT == (int)dtmChiTiet.getValueAt(STT-1, 0)) {
-                        String soHieuThuoc = (String) dtmChiTiet.getValueAt(STT-1, 1);
-                        System.out.println(soHieuThuoc);
-                        ChiTietHoaDon cthd = new ChiTietHoaDon();
-                        cthd = chiTietHoaDon_dao.getOne(txtMaHoaDon.getText().trim(), soHieuThuoc);
-                        listCTHD.add(cthd);
-                    }
-                }
-            }
-        }
-        System.out.println(listCTHD.size());
-        return listCTHD;
-    }
+//    public ArrayList<ChiTietHoaDon> taoListCTHDDeThemVaoPhieuDoiTra() {
+//        ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
+//        if(txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng") || txtThuTuThuoc.getText().trim().equals("")){
+//            try {
+//                listCTHD = chiTietHoaDon_dao.getCTHDForHD(txtMaHoaDon.getText().trim());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            String[] listThuocDoiTra = txtThuTuThuoc.getText().trim().split("\\s+");
+//            if(listThuocDoiTra.length > 0) {
+//                for(String x : listThuocDoiTra) {
+//                    int STT = Integer.parseInt(x);
+//                    if(STT > dtmChiTiet.getRowCount()) {
+//                        return listCTHD;
+//                    }
+//                    if(STT == (int)dtmChiTiet.getValueAt(STT-1, 0)) {
+//                        String soHieuThuoc = (String) dtmChiTiet.getValueAt(STT-1, 1);
+//                        System.out.println(soHieuThuoc);
+//                        ChiTietHoaDon cthd = new ChiTietHoaDon();
+//                        cthd = chiTietHoaDon_dao.getOne(txtMaHoaDon.getText().trim(), soHieuThuoc);
+//                        listCTHD.add(cthd);
+//                    }
+//                }
+//            }
+//        }
+//        System.out.println(listCTHD.size());
+//        return listCTHD;
+//    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -632,11 +669,34 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         }
     }
 
+    private void openFormDoiTra(HoaDon hoaDon) {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Đổi trả", true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        try {
+            Form_ThanhToanHoaDonDoiTra panel = new Form_ThanhToanHoaDonDoiTra(hoaDon, getNhanVienDN());
+            dialog.add(panel);
+            dialog.setSize(1350,800);
+            dialog.setLocationRelativeTo(null);
+            dialog.setResizable(false);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setNhanVienDN(NhanVien nv) {
         this.NhanVienDN = nv;
     }
 
     public NhanVien getNhanVienDN() {
         return this.NhanVienDN;
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.trangChu = trangChu;
+    }
+
+    public GUI_TrangChu getTrangChu() {
+        return trangChu;
     }
 }

@@ -1,4 +1,4 @@
-﻿	-- Tạo cơ sở dữ liệu
+﻿-- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
 
@@ -144,6 +144,7 @@ CREATE TABLE Thuoc (
 	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 );
 
+
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
     maHD VARCHAR(10) NOT NULL PRIMARY KEY,
@@ -275,6 +276,7 @@ VALUES
 (1, N'Nhân viên bán thuốc'),
 (2, N'Nhân viên quản lý')
 
+
 -- Bảng NhanVien
 INSERT INTO NhanVien (maNV, hoNV, tenNV, email, ngaySinh, SDT, diaChi, gioiTinh, vaiTro, trangThai)
 VALUES
@@ -282,17 +284,18 @@ VALUES
 ('NV002', N'Trần', N'Thị Bình', null , '1992-07-20', 987654321, N'456 Tran Hung Dao, TP.HCM', 0, 1, 1),
 ('NV003', N'Lê', N'Văn Cao', null , '1988-03-15', 456789123, N'789 Nguyen Trai, TP.HCM', 1, 1, 1),
 ('QL001', N'Cao', N'Thành Đông', null , '1995-08-25', 321654987, N'321 Hai Ba Trung, TP.HCM', 1, 2, 1),
-('QL002', N'Võ', N'Thị Dung', null , '1985-12-11', 789123456, N'654 Cong Quynh, TP.HCM', 0, 2, 1);
+('QL002', N'Võ', N'Thị Dung', null , '1985-12-11', 789123456, N'654 Cong Quynh, TP.HCM', 0, 2, 1),
+('Admin1', N'Đặng', N'Gia Bão', null , '2004-06-09', 0123456789, N'101 Le Loi, TP.HCM', 1, 0, 1)
 
 -- Bảng TaiKhoan
 INSERT INTO TaiKhoan (taiKhoan, matKhau)
 VALUES
-('NV001', '123'),
-('NV002', '123'),
-('NV003', '123'),
-('QL001', '123'),
-('QL002', '123')
-
+('NV001', 'a665a45920422f9d'),
+('NV002', 'a665a45920422f9d'),
+('NV003', 'a665a45920422f9d'),
+('QL001', 'a665a45920422f9d'),
+('QL002', 'a665a45920422f9d'),
+('Admin1', '6b86b273ff34fce1')
 -- Bảng DiemTichLuy
 INSERT INTO DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai)
 VALUES
@@ -737,21 +740,21 @@ GO
 CREATE PROCEDURE getDoanhThuTheoNgayTrongThangHienTai @maNV VARCHAR(10)
 AS
 BEGIN
-    DECLARE @nam INT = YEAR(GETDATE()); 
-    DECLARE @thang INT = MONTH(GETDATE()); 
+    DECLARE @nam INT = YEAR(GETDATE());
+    DECLARE @thang INT = MONTH(GETDATE());
 
-    SELECT 
+    SELECT
         DAY(hd.ngayLap) AS Ngay,
         SUM(hd.tongTien) AS DoanhThu
-    FROM 
+    FROM
         HoaDon hd
-    WHERE 
+    WHERE
 		hd.maNhanVien = @maNV
-        AND YEAR(hd.ngayLap) = @nam 
+        AND YEAR(hd.ngayLap) = @nam
         AND MONTH(hd.ngayLap) = @thang
-    GROUP BY 
+    GROUP BY
         DAY(hd.ngayLap)
-    ORDER BY 
+    ORDER BY
         DAY(hd.ngayLap);
 END
 GO
@@ -784,7 +787,7 @@ GO
 
 -- lấy các đơn vị tính và giá của thuốc
 CREATE PROCEDURE layDonGiaThuocTheoMaThuoc @maThuoc VARCHAR(10)
-AS 
+AS
 BEGIN
 	SELECT *
 	FROM DonGiaThuoc 
@@ -958,6 +961,228 @@ BEGIN
     WHERE (maCTKM LIKE '%' + @kyTu + '%') OR (loaiKhuyenMai LIKE '%' + @kyTu + '%')
 			OR (mota LIKE '%' + @kyTu + '%')
 END;
+GO
+
+
+-- tìm kiếm chức vụ theo mã chức vụ, tên chức vụ 
+CREATE PROCEDURE timKiemChucVuTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM ChucVu 
+    WHERE (maChucVu LIKE '%' + @kyTu + '%') OR (tenChucVu LIKE '%' + @kyTu + '%')
+END;
+GO
+
+-- cập nhật chức vụ
+CREATE PROCEDURE capNhatChucVu
+	@maChucVu SMALLINT,
+    @tenChucVu NVARCHAR(50)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM ChucVu WHERE maChucVu = @maChucVu)
+    BEGIN
+        UPDATE ChucVu
+        SET 
+           tenChucVu = @tenChucVu
+        WHERE maChucVu = @maChucVu;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy chức vụ với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nhà sản xuất theo mã và tên
+CREATE PROCEDURE timKiemNhaSXTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NhaSanXuat 
+    WHERE (maNhaSX LIKE '%' + @kyTu + '%') OR (tenNhaSX LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật nhà sản xuất
+CREATE PROCEDURE capNhatNhaSX
+	@maNhaSX VARCHAR(15),
+    @tenNhaSX NVARCHAR(50),
+	@diaChi NVARCHAR(255)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM NhaSanXuat WHERE maNhaSX = @maNhaSX)
+    BEGIN
+        UPDATE NhaSanXuat
+        SET 
+           tenNhaSX = @tenNhaSX,
+		   diaChi = @diaChi
+        WHERE maNhaSX = @maNhaSX;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nhà sản xuất với mã này';
+    END
+END
+GO
+
+
+
+-- tìm kiếm danh mục theo mã và tên
+CREATE PROCEDURE timKiemDanhMucTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM DanhMuc 
+    WHERE (maDanhMuc LIKE '%' + @kyTu + '%') OR (tenDanhMuc LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật danh mục
+CREATE PROCEDURE capNhatDM
+	@maDM VARCHAR(10),
+    @tenDM NVARCHAR(50)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM DanhMuc WHERE maDanhMuc = @maDM)
+    BEGIN
+        UPDATE DanhMuc
+        SET 
+           tenDanhMuc = @tenDM
+        WHERE maDanhMuc = @maDM;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy danh mục với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nước sản xuất theo mã và tên
+CREATE PROCEDURE timKiemNuocSXTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NuocSanXuat 
+    WHERE (maNuoc LIKE '%' + @kyTu + '%') OR (tenNuoc LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật nước sản xuất
+CREATE PROCEDURE capNhatNuocSX
+	@maNuoc VARCHAR(10),
+    @tenNuoc NVARCHAR(50)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM NuocSanXuat WHERE maNuoc = @maNuoc)
+    BEGIN
+        UPDATE NuocSanXuat
+        SET 
+           tenNuoc = @tenNuoc
+        WHERE maNuoc = @maNuoc;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nước sản xuất với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm nhà cung cấp  theo mã, tên. email
+CREATE PROCEDURE timKiemNhaCCTheoKyTu
+    @kyTu NVARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM NhaCungCap 
+    WHERE (maNCC LIKE '%' + @kyTu + '%') OR (tenNCC LIKE '%' + @kyTu + '%')
+		OR (email LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật nhà cung cấp
+CREATE PROCEDURE capNhatNhaCC
+	@maNCC VARCHAR(10),
+    @tenNCC NVARCHAR(50),
+	@email VARCHAR(50),
+	@diaChi NVARCHAR(255)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM NhaCungCap WHERE maNCC = @maNCC)
+    BEGIN
+        UPDATE NhaCungCap
+        SET 
+           tenNCC = @tenNCC,
+		   diaChi = @diaChi,
+		   email = @email
+        WHERE maNCC = @maNCC;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy nhà cung cấp với mã này';
+    END
+END
+GO
+
+
+-- tìm kiếm khách hàng theo số điện thoại
+CREATE PROCEDURE timKiemKhachHangTheoSDT
+    @kyTu NVARCHAR(15)
+AS
+BEGIN
+    SELECT *
+    FROM KhachHang kh
+	JOIN DiemTichLuy dtl ON kh.maDTL = dtl.maDTL
+    WHERE (SDT LIKE '%' + @kyTu + '%')
+END;
+GO
+
+
+-- cập nhật đơn đặt thuốc
+CREATE PROCEDURE capNhatDonDatThuoc
+	@maDon VARCHAR(10),
+    @maKhachHang NVARCHAR(10),
+	@maNhanVien VARCHAR(10),
+	@thoiGianDat DATE,
+	@tongTien FLOAT(10)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM DonDatThuoc WHERE maDon = @maDon)
+    BEGIN
+        UPDATE DonDatThuoc
+        SET 
+			maKhachHang = @maKhachHang,
+			maNhanVien = @maNhanVien,
+			thoiGianDat = @thoiGianDat,
+			tongTien = @tongTien
+        WHERE maDon = @maDon;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy đơn đặt thuốc với mã này';
+    END
+END
+GO
+
+
+-- xóa các chi tiết
+CREATE PROCEDURE capNhatTatCaChiTietDonDatThuoc
+    @maDon VARCHAR(10)
+AS
+BEGIN
+    DELETE FROM ChiTietDonDatThuoc WHERE maDon = @maDon;
+END
 GO
 
 

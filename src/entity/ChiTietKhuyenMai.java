@@ -3,12 +3,21 @@ package entity;
 public class ChiTietKhuyenMai {
     private ChuongTrinhKhuyenMai chuongTrinhKhuyenMai;
     private Thuoc thuoc;
+    private ChiTietLoThuoc chiTietLoThuoc;
     private double tyLeKhuyenMai;
     private int soLuongToiThieu; //Mua soLuongToiThieu để được hưởng khuyến mãi
 
 
     public ChiTietKhuyenMai() {
 
+    }
+
+    public ChiTietKhuyenMai(ChuongTrinhKhuyenMai chuongTrinhKhuyenMai, Thuoc thuoc, double tyLeKhuyenMai, int soLuongToiThieu, ChiTietLoThuoc chiTietLoThuoc) {
+        this.thuoc = thuoc;
+        this.chuongTrinhKhuyenMai = chuongTrinhKhuyenMai;
+        this.tyLeKhuyenMai = tyLeKhuyenMai;
+        this.soLuongToiThieu = soLuongToiThieu;
+        this.chiTietLoThuoc = chiTietLoThuoc;
     }
 
     public ChiTietKhuyenMai(ChuongTrinhKhuyenMai chuongTrinhKhuyenMai, Thuoc thuoc, double tyLeKhuyenMai, int soLuongToiThieu) {
@@ -49,5 +58,13 @@ public class ChiTietKhuyenMai {
 
     public void setSoLuongToiThieu(int soLuongToiThieu) {
         this.soLuongToiThieu = soLuongToiThieu;
+    }
+
+    public ChiTietLoThuoc getChiTietLoThuoc() {
+        return chiTietLoThuoc;
+    }
+
+    public void setChiTietLoThuoc(ChiTietLoThuoc chiTietLoThuoc) {
+        this.chiTietLoThuoc = chiTietLoThuoc;
     }
 }

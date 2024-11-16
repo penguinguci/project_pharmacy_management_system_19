@@ -1,17 +1,18 @@
 package entity;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class PhieuNhapThuoc {
     private String maPhieuNhap;
     private NhanVien nhanVien;
-    private LocalDate ngayLapPhieu;
+    private Date ngayLapPhieu;
     private NhaCungCap nhaCungCap;
 
     public PhieuNhapThuoc() {}
 
-    public PhieuNhapThuoc(String maPhieuNhap, NhanVien nhanVien, LocalDate ngayLapPhieu,
+    public PhieuNhapThuoc(String maPhieuNhap, NhanVien nhanVien, Date ngayLapPhieu,
                           NhaCungCap nhaCungCap) {
         this.maPhieuNhap = maPhieuNhap;
         this.nhanVien = nhanVien;
@@ -35,11 +36,11 @@ public class PhieuNhapThuoc {
         this.nhanVien = nhanVien;
     }
 
-    public LocalDate getNgayLapPhieu() {
+    public Date getNgayLapPhieu() {
         return ngayLapPhieu;
     }
 
-    public void setNgayLapPhieu(LocalDate ngayLapPhieu) {
+    public void setNgayLapPhieu(Date ngayLapPhieu) {
         this.ngayLapPhieu = ngayLapPhieu;
     }
 

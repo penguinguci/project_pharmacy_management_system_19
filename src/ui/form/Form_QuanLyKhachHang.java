@@ -8,6 +8,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -100,9 +101,12 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnTimKiem = new JButton("Tìm kiếm");
         btnLamMoi = new JButton("Làm mới");
 
-        btnThem.setBackground(new Color(65, 192, 201));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setForeground(Color.WHITE);
         btnSua.setBackground(new Color(212, 112, 236));
-        btnXoa.setBackground(new Color(238, 156, 37));
+        btnSua.setForeground(Color.WHITE);
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
 
         btnThem.setPreferredSize(new Dimension(100, 25));
         btnXoa.setPreferredSize(new Dimension(100, 25));
@@ -116,7 +120,20 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         tabKhachHang.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrKhachHang = new JScrollPane(tabKhachHang);
+
         scrKhachHang.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrKhachHang.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrKhachHang.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabKhachHang.setBackground(Color.WHITE);
 
         //ComboBox
@@ -225,9 +242,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnThem);
         boxBtn.add(Box.createHorizontalStrut(5));
-        boxBtn.add(btnSua);
-        boxBtn.add(Box.createHorizontalStrut(5));
         boxBtn.add(btnXoa);
+        boxBtn.add(Box.createHorizontalStrut(5));
+        boxBtn.add(btnSua);
         boxBtn.add(Box.createHorizontalGlue());
 
         // Thêm các Box vào inforPanel
@@ -352,18 +369,26 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
                         khachHang.setHoKH(txtHo.getText().trim());
                         khachHang.setTenKH(txtTen.getText().trim());
                         khachHang.setGioiTinh(gioiTinh);
+
                         if(txtEmail.getText().trim().equals("")) {
                             khachHang.setEmail(null);
                         } else {
                             khachHang.setEmail(txtEmail.getText().trim());
                         }
+
                         if(txtDiaChi.getText().trim().equals("")){
                             khachHang.setDiaChi(null);
                         } else {
                             khachHang.setDiaChi(txtDiaChi.getText().trim());
                         }
+
                         String sdt = txtSDT.getText().trim();
+
+                        if(kh_dao.searchSDT(sdt)) {
+                            JOptionPane.showMessageDialog(this, "Số điện thoại đã tồn tại trong hệ thống!");
+                        }
                         khachHang.setSDT(sdt);
+
                         khachHang.setTrangThai(true);
 
                         java.util.Date date = model.getValue();
@@ -403,21 +428,27 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
                         khachHang.setHoKH(txtHo.getText().trim());
                         khachHang.setTenKH(txtTen.getText().trim());
                         khachHang.setGioiTinh(gioiTinh);
+
                         if(txtEmail.getText().trim().equals("")) {
                             khachHang.setEmail(null);
                         } else {
                             khachHang.setEmail(txtEmail.getText().trim());
                         }
+
                         if(txtDiaChi.getText().trim().equals("")){
                             khachHang.setDiaChi(null);
                         } else {
                             khachHang.setDiaChi(txtDiaChi.getText().trim());
                         }
                         String sdt = txtSDT.getText().trim();
-                        khachHang.setSDT(sdt);
+
+                        if(kh_dao.searchSDT(sdt)) {
+                            JOptionPane.showMessageDialog(this, "Số điện thoại đã tồn tại trong hệ thống!");
+                        } else {
+                            khachHang.setSDT(sdt);
+                        }
+
                         khachHang.setTrangThai(true);
-
-
 
                         java.util.Date date = model.getValue();
                         Date sqlDate = new Date(date.getTime());
@@ -480,27 +511,77 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         String ho = txtHo.getText().trim();
         String ten = txtTen.getText().trim();
         String sdt = txtSDT.getText().trim();
+        String gioiTinh = cbGioiTinh.getSelectedItem().toString();
+        String email = txtEmail.getText().trim();
         if(ho.equals("")) {
-            JOptionPane.showMessageDialog(this, "Họ không được để trống!");
+            JOptionPane.showMessageDialog(this, "Họ không được để trống!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtHo.requestFocus();
             return false;
         } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
-            JOptionPane.showMessageDialog(this, "Họ chỉ được nhập 1 từ và chữ cái đầu tiên của từ đó phải viết hoa!");
+            JOptionPane.showMessageDialog(this, "Họ chỉ được nhập 1 từ và chữ cái đầu tiên của từ đó phải viết hoa!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtHo.requestFocus();
             return false;
         }
         if(ten.equals("")) {
-            JOptionPane.showMessageDialog(this, "Tên không được để trống!");
+            JOptionPane.showMessageDialog(this, "Tên không được để trống!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTen.requestFocus();
             return false;
-        } else if(!ho.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
-            JOptionPane.showMessageDialog(this, "Chữ cái đầu tiên của mỗi từ phải viết hoa, mỗi từ cách nhau một khoảng trắng!");
+        } else if(!ten.matches("[A-Z\\p{L}][a-z\\p{L}]+(\\s[A-Z\\p{L}][a-z\\p{L}]+)*")) {
+            JOptionPane.showMessageDialog(this, "Chữ cái đầu tiên của mỗi từ phải viết hoa, mỗi từ cách nhau một khoảng trắng!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTen.requestFocus();
             return false;
         }
+        if (gioiTinh.equals("Giới tính")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         if(txtSDT.equals("")) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!");
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
             return false;
         } else if(!sdt.matches("^0\\d{9}$")) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!");
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
             return false;
         }
+
+        boolean found1 = false;
+        boolean found2 = false;
+        try {
+            ArrayList<KhachHang> dsKh = kh_dao.getAllKhachHang();
+            for (KhachHang kh : dsKh) {
+                if (kh.getSDT().equals(sdt)) {
+                    found1 = true;
+                    break;
+                }
+                if (!email.equals("") && kh.getEmail().equals(email)) {
+                    found2 = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if (found1 == true) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại số điện thoại, vui lòng nhập số khác!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return false;
+        }
+
+        if (found2 == true) {
+            JOptionPane.showMessageDialog(this, "Đã tồn tại email, vui lòng nhập email khác!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtEmail.requestFocus();
+            return false;
+        }
+
         return true;
     }
 

@@ -5,6 +5,7 @@ import entity.KhachHang;
 import entity.NhaCungCap;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -72,7 +73,20 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         tabNCC.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrNCC = new JScrollPane(tabNCC);
+
         scrNCC.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrNCC.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrNCC.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         tabNCC.setBackground(Color.WHITE);
         renderTable(colsNameNCC, tabNCC);
 

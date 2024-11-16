@@ -3,22 +3,31 @@ package ui.form;
 import dao.ChucVu_DAO;
 import dao.NhaCungCap_DAO;
 import dao.NhanVien_DAO;
+import dao.Thuoc_DAO;
 import entity.NhaCungCap;
+import entity.NhaSanXuat;
+import entity.Thuoc;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListener, ActionListener {
+public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
     private JTextField txtTenNCC, txtTenNV, txtSoDienThoai, txtEmail, txtDiaChi;
     private JComboBox<String> cbGioiTinh, cbVaiTro, cbTrangThai;
     private JDatePickerImpl dpNgaySinh;
@@ -29,6 +38,7 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
     private JTextField txtTimKiem;
     private JButton btnTimKiem;
     public NhaCungCap_DAO nhaCungCap_dao;
+    public Thuoc_DAO thuoc_dao;
 
     public Form_QuanLyNhaCungCap() throws Exception {
         setLayout(new BorderLayout());
@@ -106,12 +116,35 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnThem = new JButton("Thêm");
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setBackground(new Color(0, 102, 204));
+        btnThem.setFocusPainted(false);
+        btnThem.setForeground(Color.WHITE);
+        btnThem.setOpaque(true);
+        btnThem.setBorderPainted(false);
+
         btnXoa = new JButton("Xóa");
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setForeground(Color.WHITE);
+        btnXoa.setOpaque(true);
+        btnXoa.setFocusPainted(false);
+        btnXoa.setBorderPainted(false);
+
         btnCapNhat = new JButton("Cập nhật");
         btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setForeground(Color.WHITE);
+        btnCapNhat.setOpaque(true);
+        btnCapNhat.setFocusPainted(false);
+        btnCapNhat.setBorderPainted(false);
+
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
 
         pnlButtons.add(btnThem);
         pnlButtons.add(Box.createHorizontalStrut(10));
@@ -131,7 +164,13 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         txtTimKiem.setPreferredSize(new Dimension(100, 30));
         pnlTimKiem.add(txtTimKiem);
         btnTimKiem = new JButton("Tìm kiếm");
-        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.setBackground(new Color(65, 192, 201));
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 12));
+        btnTimKiem.setPreferredSize(new Dimension(90, 30));
+        btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.setBorderPainted(false);
         pnlTimKiem.add(btnTimKiem);
         pnlTable.add(pnlTimKiem, BorderLayout.NORTH);
 
@@ -143,6 +182,20 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         tblNhaCC.setFont(new Font("Arial", Font.PLAIN, 13));
 
         JScrollPane scrollPane = new JScrollPane(tblNhaCC);
+
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         pnlTable.add(scrollPane, BorderLayout.CENTER);
 
         // Sắp xếp bố cục các panel
@@ -152,6 +205,7 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
 
         // khởi tạo
         nhaCungCap_dao = new NhaCungCap_DAO();
+        thuoc_dao = new Thuoc_DAO();
 
         // update table
         updateTable();
@@ -159,6 +213,11 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         // thêm sự kiện
         tblNhaCC.getSelectionModel().addListSelectionListener(this);
         btnBack.addActionListener(this);
+        btnCapNhat.addActionListener(this);
+        btnThem.addActionListener(this);
+        btnXoa.addActionListener(this);
+        btnLamMoi.addActionListener(this);
+        txtTimKiem.getDocument().addDocumentListener(this);
     }
 
     // update table
@@ -168,6 +227,50 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         for(NhaCungCap ncc : dsNCC) {
             model.addRow(new Object[] {
                     ncc.getMaNCC(), ncc.getTenNCC(), ncc.getEmail(), ncc.getDiaChi()
+            });
+        }
+    }
+
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        try {
+            capNhatDSNhaCCTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        try {
+            capNhatDSNhaCCTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        try {
+            capNhatDSNhaCCTimKiem();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    // cập nhật ds tìm kiếm nhà CC
+    public void capNhatDSNhaCCTimKiem() throws SQLException {
+        String kyTu = txtTimKiem.getText().toString().trim();
+        ArrayList<NhaCungCap> dsNCC = nhaCungCap_dao.timKiemNhaSXTheoKyTu(kyTu);
+        model.setRowCount(0);
+        for (NhaCungCap ncc : dsNCC) {
+            model.addRow(new Object[] {
+                    ncc.getMaNCC(),
+                    ncc.getTenNCC(),
+                    ncc.getEmail(),
+                    ncc.getDiaChi()
             });
         }
     }
@@ -194,6 +297,151 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         Object o = e.getSource();
         if (o == btnBack) {
             setVisible(false);
+        } else if (o == btnLamMoi) {
+            lamMoi();
+        } else if (o == btnThem) {
+            if (valiDataNhaCC()) {
+                String tenNCC = txtTenNCC.getText().trim();
+                String email = txtEmail.getText().trim();
+                String diaChi = txtDiaChi.getText().trim();
+
+                NhaCungCap ncc = new NhaCungCap(generateNhaCCID(), tenNCC, diaChi, email);
+
+                if (nhaCungCap_dao.createNhaCC(ncc)) {
+                    JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thành công!");
+                    model.addRow(new Object[] {
+                            ncc.getMaNCC(),
+                            ncc.getTenNCC(),
+                            ncc.getEmail(),
+                            ncc.getDiaChi()
+                    });
+                    lamMoi();
+                }
+            }
+        } else if (o == btnXoa) {
+            int row = tblNhaCC.getSelectedRow();
+            if (row >= 0) {
+                int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhà cung cấp này!",
+                        "Thông báo", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    String maNCC = tblNhaCC.getValueAt(row, 0).toString();
+                    NhaCungCap ncc = new NhaCungCap();
+                    ncc.setMaNCC(maNCC);
+
+                    boolean found = false;
+                    try {
+                        ArrayList<Thuoc> dsThuoc = thuoc_dao.getAllThuoc();
+                        for (Thuoc thuoc : dsThuoc) {
+                            if (thuoc.getNhaCungCap().getMaNCC().equals(maNCC)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    if (found != true) {
+                        if (nhaCungCap_dao.deleteNhaCC(ncc)) {
+                            JOptionPane.showMessageDialog(this, "Xóa nhà cung cấp thành công!");
+                            model.removeRow(row);
+                            try {
+                                lamMoi();
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xóa không thành công!",
+                                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Tồn tại thuốc thuộc nhà cung cấp này! Không thể xóa!",
+                                "Thông báo", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp cấn xóa!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (o == btnCapNhat) {
+            int row = tblNhaCC.getSelectedRow();
+            if (row >= 0) {
+                if (valiDataNhaCC()) {
+                    String maNCC = tblNhaCC.getValueAt(row, 0).toString();
+                    String tenNCC = txtTenNCC.getText().trim();
+                    String email = txtEmail.getText().trim();
+                    String diaChi = txtDiaChi.getText().trim();
+
+                    NhaCungCap ncc = new NhaCungCap(maNCC, tenNCC, diaChi, email);
+
+                    if (nhaCungCap_dao.capNhatNhaCC(ncc)) {
+                        model.setValueAt(ncc.getMaNCC(), row, 0);
+                        model.setValueAt(ncc.getTenNCC(), row, 1);
+                        model.setValueAt(ncc.getEmail(), row, 2);
+                        model.setValueAt(ncc.getDiaChi(), row, 3);
+                        JOptionPane.showMessageDialog(this, "Cập nhật nhà cung cấp thành công!");
+                        try {
+                            lamMoi();
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Cập nhật thất bại!",
+                                "Thông báo", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp cần cập nhật!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
         }
+    }
+
+
+    // tự động tạo mã nhà CC
+    private String generateNhaCCID() {
+        LocalDateTime now = LocalDateTime.now();
+        String timePart = now.format(DateTimeFormatter.ofPattern("HHmm")); // Lấy giờ, phút, giây (4 ký tự)
+        String randomPart = String.format("%03d", (int) (Math.random() * 1000)); // Tạo số ngẫu nhiên 4 chữ số
+        String nccID = "NCC" + timePart + randomPart;
+        return nccID;
+    }
+
+
+    public boolean valiDataNhaCC() {
+        String tenNCC = txtTenNCC.getText().trim();
+        String email = txtEmail.getText().trim();
+        String diaChi = txtDiaChi.getText().trim();
+
+        if (!(tenNCC.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtTenNCC.requestFocus();
+            return false;
+        }
+
+        if (!(email.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Email nhà cung cấp không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtEmail.requestFocus();
+            return false;
+        }
+
+        if (!(diaChi.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Địa chỉ nhà cung cấp không được để trống!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtDiaChi.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    public void lamMoi() {
+        txtTimKiem.setText("");
+        txtTenNCC.setText("");
+        txtDiaChi.setText("");
+        txtEmail.setText("");
+        tblNhaCC.clearSelection();
     }
 }

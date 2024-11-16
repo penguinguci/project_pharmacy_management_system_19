@@ -1,5 +1,7 @@
 package ui.gui;
 
+import entity.ChiTietHoaDon;
+import entity.KhachHang;
 import entity.NhanVien;
 import ui.form.*;
 
@@ -11,7 +13,11 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class GUI_TrangChu extends JFrame implements ActionListener, MouseListener {
 
@@ -22,8 +28,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
-            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai;
-    public JButton btnDangXuat, btnThongBao;
+            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc;
+    public JButton btnDangXuat, btnThongBao, btnTroGiup;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
     public JLabel lbSoThongBao;
@@ -57,14 +63,16 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TimKiemKhuyenMai formTimKiemKhuyenMai;
     public Form_QuanLyChucVu formQuanLyChucVu;
     public Form_TaiKhoan formTaiKhoan;
-    private NhanVien nhanVienDN;
+    public Form_TroGiup formTroGiup;
+    public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
+    private static NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
-    public JPanel tamGiacPanel;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
     public JTextArea noiDungArea;
     public JButton btnXemCTTB;
 
     public GUI_TrangChu() throws Exception {
+
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,6 +124,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         // Thêm hình ảnh vào JLabel
         jLabel_Logo = new JLabel(image_Logo);
         logoPanel.add(jLabel_Logo);
+        jLabel_Logo.setToolTipText("Logo");
 
 
         // Panel bên trái (menu)
@@ -182,13 +191,27 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTimKiemNV = createSubMenuButton("Tìm Kiếm");
         btnTaiKhoan = createSubMenuButton("Tài Khoản");
 
-        submenuNhanVien.add(btnBanThuoc);
-        submenuNhanVien.add(btnNhapThuocTuNCC);
-        submenuNhanVien.add(btnCapNhatNV);
-        submenuNhanVien.add(btnChucVu);
-        submenuNhanVien.add(btnTimKiemNV);
-        submenuNhanVien.add(btnTaiKhoan);
-
+        //Phân quyền
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuNhanVien.add(btnBanThuoc);
+                submenuNhanVien.add(btnNhapThuocTuNCC);
+            } else {
+                submenuNhanVien.add(btnBanThuoc);
+                submenuNhanVien.add(btnNhapThuocTuNCC);
+                submenuNhanVien.add(btnCapNhatNV);
+                submenuNhanVien.add(btnChucVu);
+                submenuNhanVien.add(btnTimKiemNV);
+                submenuNhanVien.add(btnTaiKhoan);
+            }
+        } else {
+            submenuNhanVien.add(btnBanThuoc);
+            submenuNhanVien.add(btnNhapThuocTuNCC);
+            submenuNhanVien.add(btnCapNhatNV);
+            submenuNhanVien.add(btnChucVu);
+            submenuNhanVien.add(btnTimKiemNV);
+            submenuNhanVien.add(btnTaiKhoan);
+        }
 
         // Submenu Khách hàng
         submenuKhachHang = new JPanel();
@@ -246,9 +269,18 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnCapNhatKhuyenmai = createSubMenuButton("Cập nhật");
         btnTimKiemKhuyenMai = createSubMenuButton("Tìm kiếm");
 
-        submenuKhuyenMai.add(btnCapNhatKhuyenmai);
-        submenuKhuyenMai.add(btnTimKiemKhuyenMai);
-
+        //Phân quyền
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+                submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+            } else {
+                submenuKhuyenMai.add(btnCapNhatKhuyenmai);
+                submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+            }
+        } else {
+            submenuKhuyenMai.add(btnCapNhatKhuyenmai);
+            submenuKhuyenMai.add(btnTimKiemKhuyenMai);
+        }
 
         // Submenu Hóa đơn
         submenuHoaDon = new JPanel();
@@ -257,9 +289,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuHoaDon.setVisible(false);
 
         btnHDBanThuoc = createSubMenuButton("Bán Thuốc");
+        btnQLNhapThuoc = createSubMenuButton("Nhập thuốc");
         btnPhieuDoiTra  = createSubMenuButton("Đổi Trả");
 
         submenuHoaDon.add(btnHDBanThuoc);
+        submenuHoaDon.add(btnQLNhapThuoc);
         submenuHoaDon.add(btnPhieuDoiTra);
 
 
@@ -280,7 +314,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuThongKe.add(btnTKThuocBanChay);
         submenuThongKe.add(btnTKThuocBanCham);
         submenuThongKe.add(btnTKThuocSapHH);
-
 
         // Thêm các nút vào panel menu
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -313,7 +346,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         menuItemsPanel.add(submenuThongKe);
         menuItemsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-
         // Panel cho nút đăng xuất
         ImageIcon iconDangXuat = new ImageIcon("images/logout.png");
 
@@ -345,6 +377,23 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         topPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, 60));
         topPanel.setBackground(Color.WHITE);
 //        topPanel.setPreferredSize(new Dimension(1300, 60));
+
+
+        // thêm ngày tháng năm hiện tại bên trái topPanel
+        JLabel lblDate = new JLabel();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd MMMM, YYYY", new Locale("vi", "VN"));
+        String currentDate = dateFormat.format(new Date());
+        lblDate.setText(currentDate);
+        lblDate.setFont(new Font("Arial", Font.ITALIC, 20));
+        lblDate.setForeground(Color.BLACK);
+
+
+        // panel để chứa ngày tháng và căn lề bên trái
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.add(lblDate);
+        leftPanel.setPreferredSize(new Dimension(880, 40));
+
 
         // Nút thông báo
         JLayeredPane layeredPaneThongBao = new JLayeredPane();
@@ -400,27 +449,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         popupThongBao.add(scrollPaneThongBao);
 
 
-        tamGiacPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2d.setColor(popupThongBao.getBackground());
-                int[] xPoints = {0, getWidth() / 2, getWidth()};
-                int[] yPoints = {getWidth(), 0,  getHeight()};
-                g2d.fillPolygon(xPoints, yPoints, 3);
-
-                g2d.setColor(Color.gray); // màu viền
-                g2d.setStroke(new BasicStroke(2)); // độ dày viền
-                g2d.drawPolygon(xPoints, yPoints, 3); // vẽ viền
-            }
-        };
-        tamGiacPanel.setPreferredSize(new Dimension(25, 15));
-        tamGiacPanel.setOpaque(false);
-
-
         // Nút User (Panel)
 //        customButtonUser = new JPanel(new BorderLayout());
         customButtonUser = new RoundedPanel(20);
@@ -467,10 +495,27 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         customButtonUser.add(Box.createHorizontalStrut(5));
         customButtonUser.add(customButtonUser_Right, BorderLayout.EAST);
 
+        // button trợ giúp
+        ImageIcon iconTroGiup = new ImageIcon("images\\Alert_circle.png");
+        Image imageTroGiup = iconTroGiup.getImage();
+        Image scaledImageTroGiup = imageTroGiup.getScaledInstance(45, 45, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconTroGiup = new ImageIcon(scaledImageTroGiup);
+
+        btnTroGiup = new JButton(scaledIconTroGiup);
+        btnTroGiup.setToolTipText("Trợ giúp");
+        btnTroGiup.setBorderPainted(false);
+        btnTroGiup.setContentAreaFilled(false);
+        btnTroGiup.setFocusPainted(false);
+        btnTroGiup.setBounds(0, 0, 40, 40);
+
+
+        topPanel.add(leftPanel);
+//        topPanel.add(Box.createHorizontalStrut(790));
         topPanel.add(layeredPaneThongBao);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(customButtonUser);
-        topPanel.add(Box.createHorizontalStrut(30));
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(btnTroGiup);
 
 
         // Tạo CardLayout để quản lý các form trong CENTER
@@ -490,10 +535,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         dongHoPanel.add(clock, BorderLayout.NORTH);
 
         centerPanel.add(dongHoPanel);
-
-
-        // tạo các form trước và thêm vào centerPanel
-        formBanThuoc = new Form_BanThuoc();
 
 
         // Thêm top Panel vào mainContentPanel
@@ -542,6 +583,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTimKiemKhuyenMai.addActionListener(this);
 
         btnHDBanThuoc.addActionListener(this);
+        btnQLNhapThuoc.addActionListener(this);
         btnPhieuDoiTra.addActionListener(this);
 
         btnTKDoanhThu.addActionListener(this);
@@ -554,9 +596,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         btnThongBao.addMouseListener(this);
         popupThongBao.addMouseListener(this);
-        tamGiacPanel.addMouseListener(this);
 
         mainContentPanel.addMouseListener(this);
+
+        btnTroGiup.addActionListener(this);
     }
 
 
@@ -640,6 +683,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 }
             }
         } else if(o == btnBanThuoc) {
+            try {
+                formBanThuoc = new Form_BanThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            formBanThuoc.setTrangChu(this);
             centerPanel.add(formBanThuoc, "formBanThuoc");
             formBanThuoc.setNhanVienDN(nhanVienDN);
             centerPanel.revalidate();
@@ -695,6 +744,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             cardLayout.show(centerPanel, "formQuanLyKhachHang");
         } else if(o == btnDatThuoc) {
             formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
+            formQuanLyDonDatThuoc.setTrangChu(this);
             centerPanel.add(formQuanLyDonDatThuoc, "formQuanLyDonDatThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
@@ -749,7 +799,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             try {
                 formQuanLyKhuyenMai = new Form_QuanLyKhuyenMai();
             } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                throw new RuntimeException(ex);
             }
             centerPanel.add(formQuanLyKhuyenMai, "formQuanLyKhuyenMai");
             centerPanel.revalidate();
@@ -795,6 +845,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             cardLayout.show(centerPanel, "formQuanLyHoaDon");
         } else if(o == btnPhieuDoiTra) {
             formDoiTra = new Form_DoiTra();
+            formDoiTra.setTrangChu(this);
             centerPanel.add(formDoiTra, "formDoiTra");
             formDoiTra.setNhanVienDN(getNhanVienDN());
             centerPanel.revalidate();
@@ -838,6 +889,18 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPSapHetHan");
+        } else if(o == btnTroGiup) {
+            formTroGiup = new Form_TroGiup();
+            centerPanel.add(formTroGiup, "formTroGiup");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formTroGiup");
+        } else if (o == btnQLNhapThuoc) {
+            formQuanLyNhapThuoc = new Form_QuanLyNhapThuoc();
+            centerPanel.add(formQuanLyNhapThuoc, "formQuanLyNhapThuoc");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyNhapThuoc");
         }
     }
 
@@ -1082,7 +1145,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     @Override
     public void mouseEntered(MouseEvent e) {
         Object o = e.getSource();
-        if (o == btnThongBao || o == tamGiacPanel || o == popupThongBao) {
+        if (o == btnThongBao || o == popupThongBao) {
             showPopup();
         }
 
@@ -1091,18 +1154,16 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     @Override
     public void mouseExited(MouseEvent e) {
         Object o = e.getSource();
-        if (o == btnThongBao || o == popupThongBao || o == tamGiacPanel) {
-           Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-           SwingUtilities.convertPointFromScreen(mouseLocation, btnThongBao.getParent());
+        if (o == btnThongBao || o == popupThongBao) {
+            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(mouseLocation, btnThongBao.getParent());
 
-           boolean outsideBtnTB = !btnThongBao.getBounds().contains(mouseLocation);
-           boolean outsideTamGiac = !tamGiacPanel.getBounds().contains(mouseLocation);
-           boolean outsidePopupTB = !popupThongBao.getBounds().contains(mouseLocation);
+            boolean outsideBtnTB = !btnThongBao.getBounds().contains(mouseLocation);
+            boolean outsidePopupTB = !popupThongBao.getBounds().contains(mouseLocation);
 
-           if(outsideBtnTB && outsideTamGiac && outsidePopupTB) {
-               popupThongBao.setVisible(false);
-               tamGiacPanel.setVisible(false);
-           }
+            if(outsideBtnTB  && outsidePopupTB) {
+                popupThongBao.setVisible(false);
+            }
         }
     }
 
@@ -1110,20 +1171,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     private void showPopup() {
         Point location = btnThongBao.getLocationOnScreen();
 
-        if (!tamGiacPanel.isVisible()) {
-            getLayeredPane().add(tamGiacPanel, JLayeredPane.PALETTE_LAYER);
-        }
-
-        tamGiacPanel.setSize( 25, 15);
-
-        tamGiacPanel.setLocation(location.x + btnThongBao.getWidth() / 2 - 10,
-                location.y + btnThongBao.getHeight() - 27);
-
-        tamGiacPanel.setOpaque(true);
-        tamGiacPanel.setVisible(true);
-        tamGiacPanel.repaint();
-
-        popupThongBao.show(btnThongBao, -105, btnThongBao.getHeight() + tamGiacPanel.getHeight());
+        popupThongBao.show(btnThongBao, -105, btnThongBao.getHeight() + 10);
     }
 
 
@@ -1207,8 +1255,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
 
 
-    public void setNhanVienDN(NhanVien nhanVien) {
-        this.nhanVienDN = nhanVien;
+    public static void setNhanVienDN(NhanVien nhanVien) {
+        nhanVienDN = nhanVien;
     }
 
     public NhanVien getNhanVienDN() {
@@ -1221,6 +1269,32 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         textVaiTro.setText(vaiTro);
     }
 
+    // mở form_BanThuoc
+    public void openFormBanThuoc(ArrayList<ChiTietHoaDon> dsCTHD, String maDon, KhachHang khachHang) {
+        try {
+            formBanThuoc = new Form_BanThuoc();
+            formBanThuoc.capNhatGioHangSauDonDat(dsCTHD, maDon);
+            formBanThuoc.updateKhachHangSauDonDat(khachHang);
+            formBanThuoc.updateTien();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        centerPanel.add(formBanThuoc, "formBanThuoc");
+        formBanThuoc.setNhanVienDN(nhanVienDN);
+        centerPanel.revalidate();
+        centerPanel.repaint();
+        cardLayout.show(centerPanel, "formBanThuoc");
+    }
+
+
+    // mở form_QuanlyDonDatThuoc
+//    public void openFormQuanlyDonDatThuoc() {
+//        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
+//        centerPanel.add(formQuanLyDonDatThuoc, "formQuanLyDonDatThuoc");
+//        centerPanel.revalidate();
+//        centerPanel.repaint();
+//        cardLayout.show(centerPanel, "formQuanLyDonDatThuoc");
+//    }
 
 
     public class DigitalClock extends JPanel implements Runnable {
@@ -1351,4 +1425,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         this.setBounds(bounds);
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);  // Đặt JFrame ở chế độ toàn màn hình
     }
+
+
 }

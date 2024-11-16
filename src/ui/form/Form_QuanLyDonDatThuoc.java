@@ -1,15 +1,14 @@
 package ui.form;
 
-import dao.ChiTietDonDatThuoc_DAO;
-import dao.ChiTietHoaDon_DAO;
-import dao.DonDatThuoc_DAO;
-import dao.HoaDon_DAO;
+import dao.*;
 import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,8 +35,12 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
     private ChiTietDonDatThuoc_DAO chiTietDonDatThuoc_dao = new ChiTietDonDatThuoc_DAO();
     private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
+    private GUI_TrangChu trangChu;
+    public KhachHang_DAO khachHang_dao;
 
     public Form_QuanLyDonDatThuoc() {
+        khachHang_dao = new KhachHang_DAO();
+
         setLayout(new BorderLayout());
 
         // tiêu đề
@@ -126,6 +129,19 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
         scrDon = new JScrollPane(tabDon);
 
+        scrDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrDon.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar = scrDon.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         String[] colsnameTabChiTietDon = {"Mã đơn", "Số hiệu thuốc","Mã thuốc", "Tên thuốc", "Đơn vị tính", "Số lượng", "Đơn giá", "Thành tiền"};
         dtmChiTietDon = new DefaultTableModel(colsnameTabChiTietDon, 0);
         tabChiTietDon = new JTable(dtmChiTietDon);
@@ -133,6 +149,19 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         tabChiTietDon.setFont(new Font("Arial", Font.PLAIN, 13));
 
         scrChiTietDon = new JScrollPane(tabChiTietDon);
+
+        scrChiTietDon.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrChiTietDon.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrChiTietDon.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
 
         // listPanel
         JPanel listPanel = new JPanel();
@@ -221,7 +250,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
     public void loadDataTableDonDatThuoc(ArrayList<DonDatThuoc> newData) {
         dtmDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(DonDatThuoc x: newData) {
-            String date = formatDate(x.getThoiGianDat());
+            String date = formatDate((Date) x.getThoiGianDat());
             Object[] data = {x.getMaDon(), x.getKhachHang().getMaKH(), x.getKhachHang().getHoKH()+" "+x.getKhachHang().getTenKH(), x.getKhachHang().getSDT(), x.getKhachHang().getDiaChi(), donDatThuoc_dao.getTongTienFromDataBase(x.getMaDon()), date};
             dtmDon.addRow(data);
         }
@@ -285,52 +314,116 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                 JOptionPane.showMessageDialog(this, "Không tìm thấy đơn phù hợp!");
                 clear();
             }
-        }if(e.getSource().equals(btnThanhToan)) {
-            if(tabDon.getSelectedRow() < 0) {
-                JOptionPane.showMessageDialog(this, "Chưa chọn đơn!");
-            } else {
-                DonDatThuoc ddt = donDatThuoc_dao.timDonDatThuoc((String)dtmDon.getValueAt(tabDon.getSelectedRow(), 0));
-                if(ddt == null) {
-                    JOptionPane.showMessageDialog(this, "Không tìm thấy đơn!");
-                } else {
-                    ArrayList<ChiTietDonDatThuoc> listCTD = new ArrayList<>();
-                    listCTD = chiTietDonDatThuoc_dao.getChiTiet((String)dtmDon.getValueAt(tabDon.getSelectedRow(), 0));
-                    if(listCTD.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Không tìm thấy chi tiết đơn!");
-                    } else {
-                        HoaDon hd = new HoaDon();
-                        hd.setMaHD(hoaDon_dao.generateHoaDonID());
-                        hd.setKhachHang(ddt.getKhachHang());
-                        hd.setNhanVien(ddt.getNhanVien());
+        }
 
-                        java.util.Date date = new java.util.Date();
-                        Date sqlDate = new Date(date.getTime());
-                        hd.setNgayLap(sqlDate);
+        if(e.getSource().equals(btnThanhToan)) {
+            int row = tabDon.getSelectedRow();
+            if (row >= 0) {
+                try {
+                    ArrayList<ChiTietHoaDon> dsCTHD = new ArrayList<>();
+                    for (int i = 0; i < tabChiTietDon.getRowCount(); i++) {
+                        // Lấy giá trị của từng ô trong mỗi dòng
+                        String maDon = tabChiTietDon.getValueAt(i, 0).toString(); // Mã đơn
+                        String soHieuThuoc = tabChiTietDon.getValueAt(i, 1).toString(); // Số hiệu thuốc
+                        String maThuoc = tabChiTietDon.getValueAt(i, 2).toString(); // Mã thuốc
+                        String tenThuoc = tabChiTietDon.getValueAt(i, 3).toString(); // Tên thuốc
+                        String donViTinh = tabChiTietDon.getValueAt(i, 4).toString(); // Đơn vị tính
+                        int soLuong = Integer.parseInt(tabChiTietDon.getValueAt(i, 5).toString()); // Số lượng
+                        double donGia = Double.parseDouble(tabChiTietDon.getValueAt(i, 6).toString()); // Đơn giá
+                        double thanhTien = Double.parseDouble(tabChiTietDon.getValueAt(i, 7).toString()); // Thành tiền
 
-                        hd.setTrangThai(true);
-                        hd.setHinhThucThanhToan("Chuyển khoản");
+                        HoaDon hoaDon = new HoaDon();
 
-                        Thue t = new Thue();
-                        t.setMaThue("THUE001");
-                        t.setLoaiThue("VAT");
-                        t.setTyleThue(0.1);
-                        hd.setThue(t);
+                        DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                        donGiaThuoc.setDonGia(donGia);
+                        donGiaThuoc.setDonViTinh(donViTinh);
 
-                        ArrayList<ChiTietHoaDon> listCTHD = chuyenCTDsangCTHD(hd, listCTD);
-                        ArrayList<ChiTietKhuyenMai> listKM = new ArrayList<>();
+                        Thuoc thuoc = new Thuoc();
+                        thuoc.setSoHieuThuoc(soHieuThuoc);
+                        thuoc.setMaThuoc(maThuoc);
+                        thuoc.setTenThuoc(tenThuoc);
+                        thuoc.setDonGiaThuoc(donGiaThuoc);
 
-                        try {
-                            if(hoaDon_dao.create(hd, listCTHD, listKM) && chiTietHoaDon_dao.create(hd, listCTHD) && donDatThuoc_dao.xoaDonDatThuoc(ddt.getMaDon())) {
-                                JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
-                                clear();
-                            } else {
-                                JOptionPane.showMessageDialog(this, "Thanh toán không thành công!");
-                            }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
+                        // create một đối tượng ChiTietHoaDon và thêm vào danh sách
+                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+                        dsCTHD.add(chiTietHoaDon);
                     }
+
+                    String sdt = tabDon.getValueAt(row,3).toString();
+                    KhachHang khachHang = khachHang_dao.getOneKhachHangBySDT(sdt);
+
+                    String maDon = tabDon.getValueAt(row, 0).toString();
+                    trangChu.openFormBanThuoc(dsCTHD, maDon, khachHang);
+
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
                 }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để thanh toán!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        if (e.getSource() == btnChinhSua) {
+            int row = tabDon.getSelectedRow();
+            if (row >= 0) {
+                try {
+                    ArrayList<ChiTietHoaDon> dsCTHD = new ArrayList<>();
+                    for (int i = 0; i < tabChiTietDon.getRowCount(); i++) {
+                        // Lấy giá trị của từng ô trong mỗi dòng
+                        String maDon = tabChiTietDon.getValueAt(i, 0).toString(); // Mã đơn
+                        String soHieuThuoc = tabChiTietDon.getValueAt(i, 1).toString(); // Số hiệu thuốc
+                        String maThuoc = tabChiTietDon.getValueAt(i, 2).toString(); // Mã thuốc
+                        String tenThuoc = tabChiTietDon.getValueAt(i, 3).toString(); // Tên thuốc
+                        String donViTinh = tabChiTietDon.getValueAt(i, 4).toString(); // Đơn vị tính
+                        int soLuong = Integer.parseInt(tabChiTietDon.getValueAt(i, 5).toString()); // Số lượng
+                        double donGia = Double.parseDouble(tabChiTietDon.getValueAt(i, 6).toString()); // Đơn giá
+                        double thanhTien = Double.parseDouble(tabChiTietDon.getValueAt(i, 7).toString()); // Thành tiền
+
+                        HoaDon hoaDon = new HoaDon();
+
+                        DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                        donGiaThuoc.setDonGia(donGia);
+                        donGiaThuoc.setDonViTinh(donViTinh);
+
+                        Thuoc thuoc = new Thuoc();
+                        thuoc.setSoHieuThuoc(soHieuThuoc);
+                        thuoc.setMaThuoc(maThuoc);
+                        thuoc.setTenThuoc(tenThuoc);
+                        thuoc.setDonGiaThuoc(donGiaThuoc);
+
+                        // create một đối tượng ChiTietHoaDon và thêm vào danh sách
+                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+                        dsCTHD.add(chiTietHoaDon);
+                    }
+
+                    String sdt = tabDon.getValueAt(row,3).toString();
+                    KhachHang khachHang = khachHang_dao.getOneKhachHangBySDT(sdt);
+
+                    String maDon = tabDon.getValueAt(row, 0).toString();
+                    trangChu.openFormBanThuoc(dsCTHD, maDon, khachHang);
+
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để sửa!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        if (e.getSource() == btnHuy) {
+            int row = tabDon.getSelectedRow();
+            if (row >= 0) {
+                String maDon = tabDon.getValueAt(row, 0).toString();
+
+                if (donDatThuoc_dao.xoaDonDatThuoc(maDon)) {
+                    JOptionPane.showMessageDialog(this, "Hủy đơn thuốc thành công!");
+                    clear();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để hủy!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -364,6 +457,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         } catch (Exception e) {
             e.printStackTrace();
         }
+        tabDon.clearSelection();
     }
 
     public String[] dataComboMaDon() {
@@ -434,5 +528,13 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
             }
             return "Chọn ngày";
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.trangChu = trangChu;
+    }
+
+    public GUI_TrangChu getTrangChu() {
+        return trangChu;
     }
 }

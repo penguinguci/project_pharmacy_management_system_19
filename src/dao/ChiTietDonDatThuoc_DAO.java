@@ -1,18 +1,19 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.ChiTietDonDatThuoc;
-import entity.DonDatThuoc;
-import entity.Thuoc;
+import entity.*;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ChiTietDonDatThuoc_DAO {
     private ArrayList<ChiTietDonDatThuoc> list;
     private Thuoc_DAO thuoc_dao;
     private DonDatThuoc_DAO donDatThuoc_dao;
+    private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
     public ChiTietDonDatThuoc_DAO() {
         list = new ArrayList<ChiTietDonDatThuoc>();
@@ -31,6 +32,7 @@ public class ChiTietDonDatThuoc_DAO {
         ResultSet rs = null;
         thuoc_dao = new Thuoc_DAO();
         donDatThuoc_dao = new DonDatThuoc_DAO();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         try {
             String sql = "select * from ChiTietDonDatThuoc";
             ps = con.getConnection().prepareStatement(sql);
@@ -39,11 +41,12 @@ public class ChiTietDonDatThuoc_DAO {
                 ChiTietDonDatThuoc ct = new ChiTietDonDatThuoc();
                 DonDatThuoc don = donDatThuoc_dao.timDonDatThuoc(rs.getString("maDon"));
                 ct.setDonDatThuoc(don);
-                Thuoc t = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
-                ct.setThuoc(t);
-                ct.setDonViTinh(t.getDonGiaThuoc().getDonViTinh());
+
+                ct.setThuoc(thuoc_dao.timThuoc(rs.getString("maThuoc")));
+                ct.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
+                ct.setDonViTinh(rs.getString("donViTinh"));
                 ct.setSoLuong(rs.getInt("soLuong"));
-                if(timCTD(ct.getDonDatThuoc().getMaDon(), ct.getThuoc().getSoHieuThuoc()) == null) {
+                if(timCTD(ct.getDonDatThuoc().getMaDon(), ct.getChiTietLoThuoc().getSoHieuThuoc()) == null) {
                     list.add(ct);
                 }
             }
@@ -55,7 +58,7 @@ public class ChiTietDonDatThuoc_DAO {
 
     public ChiTietDonDatThuoc timCTD(String ma, String soHieu) {
         for(ChiTietDonDatThuoc x : list) {
-            if(x.getDonDatThuoc().getMaDon().equalsIgnoreCase(ma) && x.getThuoc().getSoHieuThuoc().equalsIgnoreCase(soHieu)){
+            if(x.getDonDatThuoc().getMaDon().equalsIgnoreCase(ma) && x.getChiTietLoThuoc().getSoHieuThuoc().equalsIgnoreCase(soHieu)){
                 return x;
             }
         }
@@ -110,5 +113,91 @@ public class ChiTietDonDatThuoc_DAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean create(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat) throws SQLException {
+        // Đảm bảo kết nối được khởi tạo
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        // Kiểm tra kết nối trước khi sử dụng
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            for(ChiTietDonDatThuoc chiTietDon : dsChiTietDonDat) {
+                String sql = "INSERT INTO ChiTietDonDatThuoc (maDon, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+                statement = con.prepareStatement(sql);
+
+                statement.setString(1, donDatThuoc.getMaDon());
+                statement.setString(2, chiTietDon.getChiTietLoThuoc().getSoHieuThuoc());
+                statement.setString(3, chiTietDon.getThuoc().getMaThuoc());
+                statement.setString(4, chiTietDon.getDonViTinh());
+                statement.setInt(5, chiTietDon.getSoLuong());
+                statement.setDouble(6, chiTietDon.tinhThanhTien());
+
+                n = statement.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
+
+    //  cập nhật chi tiet đơn đặt thuốc
+    public boolean capNhatTatCaChiTietDonDatThuoc(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsCTDD) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sqlXoa = "{CALL capNhatTatCaChiTietDonDatThuoc(?)}";
+            callableStatement = con.prepareCall(sqlXoa);
+            callableStatement.setString(1, donDatThuoc.getMaDon());
+            callableStatement.executeUpdate();
+            callableStatement.close();
+
+            for (ChiTietDonDatThuoc ct : dsCTDD) {
+                String sqlThem = "INSERT INTO ChiTietDonDatThuoc (maDon, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+                callableStatement = con.prepareCall(sqlThem);
+
+                callableStatement.setString(1, donDatThuoc.getMaDon());
+                callableStatement.setString(2, ct.getChiTietLoThuoc().getSoHieuThuoc());
+                callableStatement.setString(3, ct.getThuoc().getMaThuoc());
+                callableStatement.setString(4, ct.getDonViTinh());
+                callableStatement.setInt(5, ct.getSoLuong());
+                callableStatement.setDouble(6, ct.tinhThanhTien());
+
+                n += callableStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (callableStatement != null) callableStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
     }
 }

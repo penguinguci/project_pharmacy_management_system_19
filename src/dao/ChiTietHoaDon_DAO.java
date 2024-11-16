@@ -12,6 +12,7 @@ public class ChiTietHoaDon_DAO {
     private ArrayList<Thuoc> listThuoc;
     private HoaDon_DAO hoaDon_dao;
     private ArrayList<HoaDon> listHD;
+    private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
     public ChiTietHoaDon_DAO() {
         list = new ArrayList<ChiTietHoaDon>();
@@ -33,6 +34,7 @@ public class ChiTietHoaDon_DAO {
             hoaDon_dao = new HoaDon_DAO();
             listThuoc = thuoc_dao.getAllThuoc();
             listHD = hoaDon_dao.getAllHoaDon();
+            chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
             String sql = "select * from ChiTietHoaDon";
             ps = con.getConnection().prepareStatement(sql);
             rs = ps.executeQuery();
@@ -44,11 +46,13 @@ public class ChiTietHoaDon_DAO {
                 cthd.setHoaDon(hd);
 
                 Thuoc t = new Thuoc();
-                t = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
+                t = thuoc_dao.timThuoc(rs.getString("maThuoc"));
                 cthd.setThuoc(t);
 
                 cthd.setDonViTinh(rs.getString("donViTinh"));
                 cthd.setSoLuong(rs.getInt("soLuong"));
+
+                cthd.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
 
 
                 list.add(cthd);
@@ -81,6 +85,7 @@ public class ChiTietHoaDon_DAO {
         thuoc_dao = new Thuoc_DAO();
         listThuoc = thuoc_dao.getAllThuoc();
         listHD = hoaDon_dao.getAllHoaDon();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<ChiTietHoaDon>();
         while(rs.next()) {
             ChiTietHoaDon cthd = new ChiTietHoaDon();
@@ -90,8 +95,10 @@ public class ChiTietHoaDon_DAO {
             cthd.setHoaDon(hd);
 
             Thuoc thuoc = new Thuoc();
-            thuoc = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
+            thuoc = thuoc_dao.timThuoc(rs.getString("maThuoc"));
             cthd.setThuoc(thuoc);
+
+            cthd.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
 
             cthd.setDonViTinh(rs.getString("donViTinh"));
             cthd.setSoLuong(rs.getInt("soLuong"));
@@ -122,7 +129,7 @@ public class ChiTietHoaDon_DAO {
                 statement = con.prepareStatement(sql);
 
                 statement.setString(1, hoaDon.getMaHD());
-                statement.setString(2, chiTietHoaDon.getThuoc().getSoHieuThuoc());
+                statement.setString(2, chiTietHoaDon.getChiTietLoThuoc().getSoHieuThuoc());
                 statement.setString(3, chiTietHoaDon.getThuoc().getMaThuoc());
                 statement.setString(4, chiTietHoaDon.getDonViTinh());
                 statement.setInt(5, chiTietHoaDon.getSoLuong());
@@ -183,14 +190,12 @@ public class ChiTietHoaDon_DAO {
 
                 // Tạo đối tượng Thuoc
                 Thuoc thuoc = new Thuoc();
-                thuoc.setSoHieuThuoc(rs.getString("soHieuThuoc"));
                 thuoc.setMaThuoc(rs.getString("maThuoc"));
 
                 DonGiaThuoc bangGiaSanPham = new DonGiaThuoc();
                 bangGiaSanPham.setMaDonGia(rs.getString("maDonGia"));
                 bangGiaSanPham.setDonViTinh(rs.getString("donViTinh"));
                 bangGiaSanPham.setDonGia(rs.getDouble("donGia"));
-                thuoc.setDonGiaThuoc(bangGiaSanPham);
 
                 cthd.setThuoc(thuoc);
                 cthd.setDonViTinh(rs.getString("donViTinh"));
@@ -275,6 +280,7 @@ public class ChiTietHoaDon_DAO {
             hoaDon_dao = new HoaDon_DAO();
             listThuoc = thuoc_dao.getAllThuoc();
             listHD = hoaDon_dao.getAllHoaDon();
+            chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
             String sql = "select * from ChiTietHoaDon where maHD = ? and soHieuThuoc = ?";
             ps = con.getConnection().prepareStatement(sql);
             ps.setString(1, maHD);
@@ -286,8 +292,10 @@ public class ChiTietHoaDon_DAO {
                 cthd.setHoaDon(hd);
 
                 Thuoc t = new Thuoc();
-                t = thuoc_dao.getThuocBySoHieu(rs.getString("soHieuThuoc"));
+                t = thuoc_dao.getThuocBySoHieu(rs.getString("maThuoc"));
                 cthd.setThuoc(t);
+
+                cthd.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
 
                 cthd.setDonViTinh(rs.getString("donViTinh"));
                 cthd.setSoLuong(rs.getInt("soLuong"));

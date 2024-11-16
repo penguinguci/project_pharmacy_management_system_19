@@ -3,17 +3,13 @@ package entity;
 import java.sql.Date;
 
 public class Thuoc {
-    private String soHieuThuoc, maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;
-    private int HSD; //Đơn vị tính = tháng
-    private int soLuongCon;
-    private Date ngaySX;
-    private double giaNhap;
+    private String maThuoc, tenThuoc, cachDung, thanhPhan, baoQuan, congDung, chiDinh, hinhAnh, moTa, hamLuong, dangBaoChe;//Đơn vị tính = tháng
+    private int tongSoLuong;
     private DanhMuc danhMuc;
     private NhaSanXuat nhaSanXuat;
     private NhaCungCap nhaCungCap;
     private NuocSanXuat nuocSanXuat;
     private KeThuoc keThuoc;
-    private DonGiaThuoc donGiaThuoc;
     private boolean trangThai;
 
     public Thuoc(){}
@@ -22,11 +18,10 @@ public class Thuoc {
         this.maThuoc = maThuoc;
     }
 
-    public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
+    public Thuoc(String maThuoc, String tenThuoc,
                  String cachDung, String thanhPhan, String baoQuan, String congDung, String chiDinh,
-                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe, DonGiaThuoc donGiaThuoc) {
-        this.soHieuThuoc = soHieuThuoc;
+                 int tongSoLuong, DanhMuc danhMuc,
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, String moTa, String hamLuong, String dangBaoChe) {
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
         this.cachDung = cachDung;
@@ -34,10 +29,7 @@ public class Thuoc {
         this.baoQuan = baoQuan;
         this.congDung = congDung;
         this.chiDinh = chiDinh;
-        this.HSD = HSD;
-        this.soLuongCon = soLuongCon;
-        this.ngaySX = ngaySX;
-        this.giaNhap = giaNhap;
+        this.tongSoLuong = tongSoLuong;
         this.danhMuc = danhMuc;
         this.nhaSanXuat = nhaSanXuat;
         this.nhaCungCap = nhaCungCap;
@@ -48,18 +40,12 @@ public class Thuoc {
         this.moTa = moTa;
         this.hamLuong = hamLuong;
         this.dangBaoChe = dangBaoChe;
-        this.donGiaThuoc =donGiaThuoc;
     }
-    public Thuoc(String soHieuThuoc, String maThuoc, String tenThuoc,
-                 int HSD, int soLuongCon, Date ngaySX, double giaNhap, DanhMuc danhMuc,
-                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh, DonGiaThuoc donGiaThuoc) {
-        this.soHieuThuoc = soHieuThuoc;
+    public Thuoc(String maThuoc, String tenThuoc, int tongSoLuong, DanhMuc danhMuc,
+                 NhaSanXuat nhaSanXuat, NhaCungCap nhaCungCap, NuocSanXuat nuocSanXuat, KeThuoc keThuoc, boolean trangThai, String hinhAnh) {
         this.maThuoc = maThuoc;
         this.tenThuoc = tenThuoc;
-        this.HSD = HSD;
-        this.soLuongCon = soLuongCon;
-        this.ngaySX = ngaySX;
-        this.giaNhap = giaNhap;
+        this.tongSoLuong = tongSoLuong;
         this.danhMuc = danhMuc;
         this.nhaSanXuat = nhaSanXuat;
         this.nhaCungCap = nhaCungCap;
@@ -67,7 +53,6 @@ public class Thuoc {
         this.keThuoc = keThuoc;
         this.trangThai = trangThai;
         this.hinhAnh = hinhAnh;
-        this.donGiaThuoc = donGiaThuoc;
     }
 
     public String getMoTa() {
@@ -92,14 +77,6 @@ public class Thuoc {
 
     public void setDangBaoChe(String dangBaoChe) {
         this.dangBaoChe = dangBaoChe;
-    }
-
-    public String getSoHieuThuoc() {
-        return soHieuThuoc;
-    }
-
-    public void setSoHieuThuoc(String soHieuThuoc) {
-        this.soHieuThuoc = soHieuThuoc;
     }
 
     public String getMaThuoc() {
@@ -158,36 +135,12 @@ public class Thuoc {
         this.chiDinh = chiDinh;
     }
 
-    public int getHSD() {
-        return HSD;
+    public int getTongSoLuong() {
+        return tongSoLuong;
     }
 
-    public void setHSD(int HSD) {
-        this.HSD = HSD;
-    }
-
-    public int getSoLuongCon() {
-        return soLuongCon;
-    }
-
-    public void setSoLuongCon(int soLuongCon) {
-        this.soLuongCon = soLuongCon;
-    }
-
-    public Date getNgaySX() {
-        return ngaySX;
-    }
-
-    public void setNgaySX(Date ngaySX) {
-        this.ngaySX = ngaySX;
-    }
-
-    public double getGiaNhap() {
-        return giaNhap;
-    }
-
-    public void setGiaNhap(double giaNhap) {
-        this.giaNhap = giaNhap;
+    public void setTongSoLuong(int tongSoLuong) {
+        this.tongSoLuong = tongSoLuong;
     }
 
     public DanhMuc getDanhMuc() {
@@ -246,10 +199,4 @@ public class Thuoc {
         this.hinhAnh = hinhAnh;
     }
 
-    public DonGiaThuoc getDonGiaThuoc() {
-        return donGiaThuoc;
-    }
-    public void setDonGiaThuoc(DonGiaThuoc bangGiaSanPham) {
-        this.donGiaThuoc = bangGiaSanPham;
-    }
 }
