@@ -1149,6 +1149,44 @@ END;
 GO
 
 
+-- cập nhật đơn đặt thuốc
+CREATE PROCEDURE capNhatDonDatThuoc
+	@maDon VARCHAR(10),
+    @maKhachHang NVARCHAR(10),
+	@maNhanVien VARCHAR(10),
+	@thoiGianDat DATE,
+	@tongTien FLOAT(10)
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM DonDatThuoc WHERE maDon = @maDon)
+    BEGIN
+        UPDATE DonDatThuoc
+        SET 
+			maKhachHang = @maKhachHang,
+			maNhanVien = @maNhanVien,
+			thoiGianDat = @thoiGianDat,
+			tongTien = @tongTien
+        WHERE maDon = @maDon;
+    END
+    ELSE
+    BEGIN
+        PRINT 'Không tìm thấy đơn đặt thuốc với mã này';
+    END
+END
+GO
+
+
+-- xóa các chi tiết
+CREATE PROCEDURE capNhatTatCaChiTietDonDatThuoc
+    @maDon VARCHAR(10)
+AS
+BEGIN
+    DELETE FROM ChiTietDonDatThuoc WHERE maDon = @maDon;
+END
+GO
+
+
+
 -- --------- TRIGGER
 -- cập nhật điểm tích lũy sau khi thanh toán
 CREATE TRIGGER trg_CapNhatDiemTichLuy

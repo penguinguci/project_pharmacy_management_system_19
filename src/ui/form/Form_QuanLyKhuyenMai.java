@@ -15,6 +15,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -206,6 +207,21 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         tblChuongTrinhKhuyenMai.setFont(new Font("Arial", Font.PLAIN, 13));
         JScrollPane promoScrollPane = new JScrollPane(tblChuongTrinhKhuyenMai);
         promoScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách chương trình khuyến mãi"));
+
+        promoScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        promoScrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar = promoScrollPane.getVerticalScrollBar();
+        verticalScrollBar.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
+
         promoScrollPane.setPreferredSize(new Dimension(getWidth(), 390));
         panelSouth.add(promoScrollPane, BorderLayout.CENTER);
 
@@ -310,6 +326,20 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         tblChiTietKhuyenMai.setFont(new Font("Arial", Font.PLAIN, 13));
         JScrollPane detailScrollPane = new JScrollPane(tblChiTietKhuyenMai);
         detailScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách chi tiết khuyến mãi"));
+
+        detailScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        detailScrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = detailScrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         rightPanel.add(detailScrollPane, BorderLayout.SOUTH);
 
         // Thêm các panel vào giao diện chính

@@ -688,6 +688,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+            formBanThuoc.setTrangChu(this);
             centerPanel.add(formBanThuoc, "formBanThuoc");
             formBanThuoc.setNhanVienDN(nhanVienDN);
             centerPanel.revalidate();
@@ -1283,6 +1284,17 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         centerPanel.repaint();
         cardLayout.show(centerPanel, "formBanThuoc");
     }
+
+
+    // mở form_QuanlyDonDatThuoc
+//    public void openFormQuanlyDonDatThuoc() {
+//        formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
+//        centerPanel.add(formQuanLyDonDatThuoc, "formQuanLyDonDatThuoc");
+//        centerPanel.revalidate();
+//        centerPanel.repaint();
+//        cardLayout.show(centerPanel, "formQuanLyDonDatThuoc");
+//    }
+
 
     public class DigitalClock extends JPanel implements Runnable {
         private Thread thread;

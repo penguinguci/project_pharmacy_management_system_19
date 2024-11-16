@@ -8,6 +8,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -86,6 +87,8 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public ChiTietDonDatThuoc_DAO chiTietDonDatThuocDao;
     public String maDon;
     public KhachHang khachHangNew;
+    public JMenuItem itemXoa, itemXoaAll;
+    private GUI_TrangChu trangChu;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -209,9 +212,40 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         }
 
         JScrollPane scrollCart = new JScrollPane(tbGioHang);
+
+        scrollCart.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollCart.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = scrollCart.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         scrollCart.setPreferredSize(new Dimension(420, 310)); // Kích thước cố định cho scrollCart
         scrollCart.setMaximumSize(new Dimension(420, 310)); // Đặt kích thước tối đa để không bị vượt quá
 
+
+        // jpopup menu
+        JPopupMenu popupMenuGioHang = new JPopupMenu();
+        popupMenuGioHang.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // menuitem xóa
+        itemXoa = new JMenuItem("Xóa");
+        itemXoa.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // menuitem xóa tất cả
+        itemXoaAll = new JMenuItem("Xóa tất cả");
+        itemXoaAll.setFont(new Font("Arial", Font.BOLD, 14));
+
+        popupMenuGioHang.add(itemXoa);
+        popupMenuGioHang.add(itemXoaAll);
+
+        tbGioHang.setComponentPopupMenu(popupMenuGioHang);
 
         // Panel chứa thông tin khách hàng thành viên và điểm tích lũy
         JPanel panelKhachHang = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -510,6 +544,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         cbxDanhMuc.addActionListener(this);
         txtTimKiem.getDocument().addDocumentListener(this);
         btnBack.addActionListener(this);
+
+        itemXoa.addActionListener(this);
+        itemXoaAll.addActionListener(this);
 
         //Lấy dữ liệu tìm kiếm khách hàng
         kh_dao = new KhachHang_DAO();
@@ -998,6 +1035,25 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             }
         } else if (o == btnBack) {
             setVisible(false);
+        } else if (o == itemXoa) {
+            int selectedRow = tbGioHang.getSelectedRow();
+            if (selectedRow != -1) {
+                modelGioHang.removeRow(selectedRow);
+                try {
+                    updateTien();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                updateTienThoi();
+            }
+        } else if (o == itemXoaAll) {
+            modelGioHang.setRowCount(0);
+            updateTienThoi();
+            try {
+                updateTien();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
@@ -1006,21 +1062,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public void luuDonHang() throws Exception {
         int gioHangSize = modelGioHang.getRowCount();
         if (gioHangSize > 0) {
-            if (txtTimKiemKH.getText().toString().trim().equals("")) {
-                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                Form_ThanhToanHoaDonDoiTra formThanhToanHoaDonDoiTra = new Form_ThanhToanHoaDonDoiTra();
-                Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, this, formThanhToanHoaDonDoiTra);
-                dialog.add(pnlThemKhachHang);
-                dialog.setSize(700,450);
-                dialog.setMaximumSize(new Dimension(700,450));
-                dialog.setLocationRelativeTo(null);
-                dialog.setResizable(false);
-                dialog.setVisible(true);
-            } else {
+            // cập nhật đơn đặt thuốc sau khi sửa giỏ hàng
+            if (maDon != null) {
                 // khởi tạo hóa đơn
                 DonDatThuoc donDatThuoc = new DonDatThuoc();
-                donDatThuoc.setMaDon(generateDonDatThuocID());
+                donDatThuoc.setMaDon(maDon);
 
                 // lấy thông tin khách hàng
                 String SDT = txtTimKiemKH.getText().trim();
@@ -1034,7 +1080,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
                 // Ngày đặt
                 donDatThuoc.setThoiGianDat(new Date());
-
 
                 // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
                 ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat = new ArrayList<>();
@@ -1050,18 +1095,74 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     dsChiTietDonDat.add(chiTietDon);
                 }
 
+                boolean donDatCapNhat = donDatThuocDao.capNhatDonDatThuoc(donDatThuoc, dsChiTietDonDat);
+                boolean ctDonDatCapNhat = chiTietDonDatThuocDao.capNhatTatCaChiTietDonDatThuoc(donDatThuoc, dsChiTietDonDat);
 
-                // create hóa đơn trong cơ sở dữ liệu
-                boolean donDatDuocTao = donDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
-                boolean chiTietDonDatDuocTao = chiTietDonDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
-
-                if (donDatDuocTao && chiTietDonDatDuocTao) {
-                    JOptionPane.showMessageDialog(this, "Lưu đơn đặt thuốc thành công!");
-
-                    // xóa giỏ hàng
-                    xoaGioHang();
+                if (donDatCapNhat && ctDonDatCapNhat) {
+                    JOptionPane.showMessageDialog(this, "Cập nhật đơn đặt thuốc thành công!");
+//                    trangChu.openFormQuanlyDonDatThuoc();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Lưu đơn đặt thất bại, vui lòng thử lại!");
+                    JOptionPane.showMessageDialog(this, "Cập nhật đơn đặt thuốc thất bại!",
+                            "Thông báo", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                if (txtTimKiemKH.getText().toString().trim().equals("")) {
+                    JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
+                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    Form_ThanhToanHoaDonDoiTra formThanhToanHoaDonDoiTra = new Form_ThanhToanHoaDonDoiTra();
+                    Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, this, formThanhToanHoaDonDoiTra);
+                    dialog.add(pnlThemKhachHang);
+                    dialog.setSize(700,450);
+                    dialog.setMaximumSize(new Dimension(700,450));
+                    dialog.setLocationRelativeTo(null);
+                    dialog.setResizable(false);
+                    dialog.setVisible(true);
+                } else {
+                    // khởi tạo hóa đơn
+                    DonDatThuoc donDatThuoc = new DonDatThuoc();
+                    donDatThuoc.setMaDon(generateDonDatThuocID());
+
+                    // lấy thông tin khách hàng
+                    String SDT = txtTimKiemKH.getText().trim();
+
+                    KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
+                    donDatThuoc.setKhachHang(khachHang);
+
+                    // lấy thông tin nhân viên
+                    NhanVien nhanVien = nv_dao.getNVTheoMaNV(nhanVienDN.getMaNV());
+                    donDatThuoc.setNhanVien(nhanVien);
+
+                    // Ngày đặt
+                    donDatThuoc.setThoiGianDat(new Date());
+
+
+                    // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
+                    ArrayList<ChiTietDonDatThuoc> dsChiTietDonDat = new ArrayList<>();
+                    for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+                        String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
+                        String donViTinh = modelGioHang.getValueAt(i, 1).toString();
+                        int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
+                        double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
+                        Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
+                        DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
+                        thuoc.setDonGiaThuoc(donGiaThuoc);
+                        ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong);
+                        dsChiTietDonDat.add(chiTietDon);
+                    }
+
+
+                    // create hóa đơn trong cơ sở dữ liệu
+                    boolean donDatDuocTao = donDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
+                    boolean chiTietDonDatDuocTao = chiTietDonDatThuocDao.create(donDatThuoc, dsChiTietDonDat);
+
+                    if (donDatDuocTao && chiTietDonDatDuocTao) {
+                        JOptionPane.showMessageDialog(this, "Lưu đơn đặt thuốc thành công!");
+
+                        // xóa giỏ hàng
+                        xoaGioHang();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Lưu đơn đặt thất bại, vui lòng thử lại!");
+                    }
                 }
             }
         } else {
@@ -1665,8 +1766,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         }
     }
 
-
-
     // Placeholder cho thanh tìm kiếm
     public class JPlaceholderTextField extends JTextField {
         private static final long serialVersionUID = 1L;
@@ -1874,5 +1973,13 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             txtSDTKH.setText(khachHangNew.getSDT());
             txtTenKhachHang.setText(khachHangNew.getHoKH() + " " + khachHangNew.getTenKH());
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.trangChu = trangChu;
+    }
+
+    public GUI_TrangChu getTrangChu() {
+        return trangChu;
     }
 }

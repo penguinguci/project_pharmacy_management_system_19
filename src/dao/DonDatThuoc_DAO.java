@@ -246,39 +246,38 @@ public class DonDatThuoc_DAO {
         return n > 0;
     }
 
-//    //  cập nhật nhân viên
-//    public boolean capNhatDonDatThuoc(DonDatThuoc donDatThuoc) {
-//        ConnectDB.getInstance();
-//        Connection con = ConnectDB.getConnection();
-//        PreparedStatement callableStatement = null;
-//        int n = 0;
-//
-//        try {
-//            String sql = "{CALL capNhatDonDatThuoc(?, ?, ?, ?, ?)}";
-//            callableStatement = con.prepareCall(sql);
-//
-//            callableStatement.setString(1, donDatThuoc.getMaDon());
-//            callableStatement.setString(2, donDatThuoc.getKhachHang().getMaKH());
-//            callableStatement.setString(3, donDatThuoc.getNhanVien().getMaNV());
-//            callableStatement.setDate(4, new java.sql.Date(donDatThuoc.getThoiGianDat().getTime()));
-//            callableStatement.setString(5, donDatThuoc.get());
-//            callableStatement.setString(6, nhanVien.getEmail());
-//            callableStatement.setString(7, nhanVien.getDiaChi());
-//            callableStatement.setBoolean(8, nhanVien.isGioiTinh());
-//            callableStatement.setInt(9, nhanVien.getVaiTro().getMaChucVu());
-//            callableStatement.setBoolean(10, nhanVien.isTrangThai());
-//
-//            // Thực thi thủ tục
-//            n = callableStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                callableStatement.close();
-//            } catch (SQLException e2) {
-//                e2.printStackTrace();
-//            }
-//        }
-//        return n > 0;
-//    }
+    //  cập nhật đơn đặt thuốc
+    public boolean capNhatDonDatThuoc(DonDatThuoc donDatThuoc, ArrayList<ChiTietDonDatThuoc> dsCTDD) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sql = "{CALL CapNhatDonDatThuoc(?, ?, ?, ?, ?)}";
+            callableStatement = con.prepareCall(sql);
+
+            callableStatement.setString(1, donDatThuoc.getMaDon());
+            callableStatement.setString(2, donDatThuoc.getKhachHang().getMaKH());
+            callableStatement.setString(3, donDatThuoc.getNhanVien().getMaNV());
+            callableStatement.setDate(4, new java.sql.Date(donDatThuoc.getThoiGianDat().getTime()));
+
+            double tongTien = donDatThuoc.tinhTongTien(
+                    dsCTDD.stream().mapToDouble(ChiTietDonDatThuoc::tinhThanhTien).sum()
+            );
+
+            callableStatement.setDouble(5, tongTien);
+
+            n = callableStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                callableStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
 }
