@@ -215,6 +215,8 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         textPlaceholder.addFocusListener(this);
         tableHD.getSelectionModel().addListSelectionListener(this);
         btnQuayLai.addActionListener(this);
+        btnLamMoi.addActionListener(this);
+        btnXemHD.addActionListener(this);
     }
 
     // update combobox mã hóa đơn
@@ -263,11 +265,11 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
             Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(ct.getThuoc().getMaThuoc());
             modelChiTiet.addRow(new Object[] {
                     thuoc.getMaThuoc(),
-                    thuoc.getSoHieuThuoc(),
+//                    thuoc.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
-                    ct.getThuoc().getDonGiaThuoc().getDonViTinh(),
+//                    ct.getThuoc().getDonGiaThuoc().getDonViTinh(),
                     ct.getSoLuong(),
-                    ct.getThuoc().getDonGiaThuoc().getDonGia(),
+//                    ct.getThuoc().getDonGiaThuoc().getDonGia(),
                     chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, ct.getThuoc().getMaThuoc())
             });
         }

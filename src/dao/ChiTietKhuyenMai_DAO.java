@@ -2,6 +2,7 @@ package dao;
 
 import connectDB.ConnectDB;
 import entity.ChiTietKhuyenMai;
+import entity.ChiTietLoThuoc;
 import entity.ChuongTrinhKhuyenMai;
 import entity.Thuoc;
 
@@ -39,7 +40,10 @@ public class ChiTietKhuyenMai_DAO {
                 double tyLeKhuyenMai = rs.getDouble("tyLeKhuyenMai");
                 int soLuongToiThieu = rs.getInt("soLuongToiThieu");
 
-                ChiTietKhuyenMai chiTietKhuyenMai = new ChiTietKhuyenMai(chuongTrinhKhuyenMai, thuoc, tyLeKhuyenMai, soLuongToiThieu);
+                chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+                ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(rs.getString("maDonGia"), rs.getString("maThuoc"));
+
+                ChiTietKhuyenMai chiTietKhuyenMai = new ChiTietKhuyenMai(chuongTrinhKhuyenMai, thuoc, tyLeKhuyenMai, soLuongToiThieu, chiTietLoThuoc);
 
                 dsCTKM.add(chiTietKhuyenMai);
             }
@@ -152,6 +156,7 @@ public class ChiTietKhuyenMai_DAO {
             statement.setString(3, chiTietKhuyenMai.getThuoc().getMaThuoc());
             statement.setDouble(4, chiTietKhuyenMai.getTyLeKhuyenMai());
             statement.setInt(5, chiTietKhuyenMai.getSoLuongToiThieu());
+            statement.setString(2, chiTietKhuyenMai.getChiTietLoThuoc().getSoHieuThuoc());
 
             int n = statement.executeUpdate();
             result = n > 0;
@@ -177,6 +182,7 @@ public class ChiTietKhuyenMai_DAO {
         try {
             statement = con.prepareStatement("DELETE FROM ChiTietKhuyenMai WHERE maCTKM = ? AND soHieuThuoc = ?");
             statement.setString(1, ct.getChuongTrinhKhuyenMai().getMaCTKM());
+            statement.setString(2, ct.getChiTietLoThuoc().getSoHieuThuoc());
             n = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

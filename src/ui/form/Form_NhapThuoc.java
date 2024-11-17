@@ -150,8 +150,11 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
         btnLamMoiInput.setBorderPainted(false);
 
         pnlInputButtons.add(btnThem);
+        pnlInputButtons.add(Box.createHorizontalStrut(15));
         pnlInputButtons.add(btnXoa);
+        pnlInputButtons.add(Box.createHorizontalStrut(15));
         pnlInputButtons.add(btnCapNhat);
+        pnlInputButtons.add(Box.createHorizontalStrut(15));
         pnlInputButtons.add(btnLamMoiInput);
 
         gbc.gridx = 0;
@@ -282,8 +285,96 @@ public class Form_NhapThuoc extends JPanel implements ActionListener {
             }
         } else if (o == btnBack) {
             setVisible(false);
+        } else if (o == btnLamMoi) {
+            lamMoi();
+        } else if (o == btnThem) {
+            if (valiDataNhapThuoc()) {
+                String nhaCungCap = cbbNhaCungCap.getSelectedItem().toString();
+                String tenThuoc = cbbThuoc.getSelectedItem().toString();
+                String donViTinh = cbbDonViTinh.getSelectedItem().toString();
+                int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
+                double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
+
+
+            }
         }
     }
+
+
+    public boolean valiDataNhapThuoc() {
+        String nhaCungCap = cbbNhaCungCap.getSelectedItem().toString();
+        String thuoc = cbbThuoc.getSelectedItem().toString();
+        String donViTinh = cbbDonViTinh.getSelectedItem().toString();
+        String soLuong = txtSoLuong.getText().trim();
+        String giaNhap = txtGiaNhap.getText().trim();
+
+        if (nhaCungCap.equals("Chọn nhà cung cấp")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (thuoc.equals("Chọn thuốc")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thuốc!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (donViTinh.equals("Chọn đơn vị tính")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn đơn vị tính!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!(soLuong.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSoLuong.requestFocus();
+            return false;
+        }
+
+        try {
+            int soLuongInt = Integer.parseInt(soLuong);
+            if (soLuongInt <= 0) {
+                JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+                txtSoLuong.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtSoLuong.requestFocus();
+            return false;
+        }
+
+        if (!(giaNhap.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá nhập!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtGiaNhap.requestFocus();
+            return false;
+        }
+
+        double giaNhapDouble = Double.parseDouble(giaNhap);
+        if (giaNhapDouble <= 0) {
+            JOptionPane.showMessageDialog(this, "Giá nhập phải lớn hơn 0!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtGiaNhap.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    public void lamMoi() {
+        cbbThuoc.setSelectedIndex(0);
+        cbbNhaCungCap.setSelectedIndex(0);
+        cbbDonViTinh.setSelectedIndex(0);
+        txtSoLuong.setText("");
+        txtGiaNhap.setText("");
+        tblChiTietThuoc.clearSelection();
+    }
+
 
     // update cbbox thuốc theo tên nhà cung cấp
     public String[] dataComboThuoc(String tenNCC) throws Exception {

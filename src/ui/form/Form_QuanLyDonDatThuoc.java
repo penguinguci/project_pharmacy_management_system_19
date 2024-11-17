@@ -37,9 +37,13 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
     private GUI_TrangChu trangChu;
     public KhachHang_DAO khachHang_dao;
+    public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    public DonGiaThuoc_DAO donGiaThuoc_dao;
 
     public Form_QuanLyDonDatThuoc() {
         khachHang_dao = new KhachHang_DAO();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+        donGiaThuoc_dao = new DonGiaThuoc_DAO();
 
         setLayout(new BorderLayout());
 
@@ -259,7 +263,18 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
     public void loadDataTableChiTiet(ArrayList<ChiTietDonDatThuoc> newData) {
         dtmChiTietDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(ChiTietDonDatThuoc x: newData) {
-            Object[] data = {x.getDonDatThuoc().getMaDon(), x.getThuoc().getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDonGiaThuoc().getDonViTinh(), x.getSoLuong(), x.getThuoc().getDonGiaThuoc().getDonGia(), chiTietDonDatThuoc_dao.getThanhTienFromDataBase(x.getDonDatThuoc().getMaDon(), x.getThuoc().getSoHieuThuoc())};
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(x.getThuoc().getMaThuoc(), x.getDonViTinh());
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), x.getThuoc().getMaThuoc());
+            Object[] data = {
+                    x.getDonDatThuoc().getMaDon(),
+                    chiTietLoThuoc.getSoHieuThuoc(),
+                    x.getThuoc().getMaThuoc(),
+                    x.getThuoc().getTenThuoc(),
+                    x.getDonViTinh(),
+                    x.getSoLuong(),
+                    donGiaThuoc.getDonGia(),
+                    chiTietDonDatThuoc_dao.getThanhTienFromDataBase(x.getDonDatThuoc().getMaDon(),
+                            chiTietLoThuoc.getSoHieuThuoc())};
             dtmChiTietDon.addRow(data);
         }
     }
@@ -339,13 +354,16 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                         donGiaThuoc.setDonViTinh(donViTinh);
 
                         Thuoc thuoc = new Thuoc();
-                        thuoc.setSoHieuThuoc(soHieuThuoc);
                         thuoc.setMaThuoc(maThuoc);
                         thuoc.setTenThuoc(tenThuoc);
-                        thuoc.setDonGiaThuoc(donGiaThuoc);
+
+                        ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc();
+                        chiTietLoThuoc.setSoHieuThuoc(soHieuThuoc);
+                        chiTietLoThuoc.setThuoc(thuoc);
+                        chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
 
                         // create một đối tượng ChiTietHoaDon và thêm vào danh sách
-                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
                         dsCTHD.add(chiTietHoaDon);
                     }
 
@@ -387,13 +405,16 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                         donGiaThuoc.setDonViTinh(donViTinh);
 
                         Thuoc thuoc = new Thuoc();
-                        thuoc.setSoHieuThuoc(soHieuThuoc);
                         thuoc.setMaThuoc(maThuoc);
                         thuoc.setTenThuoc(tenThuoc);
-                        thuoc.setDonGiaThuoc(donGiaThuoc);
+
+                        ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc();
+                        chiTietLoThuoc.setSoHieuThuoc(soHieuThuoc);
+                        chiTietLoThuoc.setThuoc(thuoc);
+                        chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
 
                         // create một đối tượng ChiTietHoaDon và thêm vào danh sách
-                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+                        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
                         dsCTHD.add(chiTietHoaDon);
                     }
 

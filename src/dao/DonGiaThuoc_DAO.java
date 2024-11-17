@@ -30,13 +30,13 @@ public class DonGiaThuoc_DAO {
             rs = ps.executeQuery();
             while (rs.next()) {
                 DonGiaThuoc bangGiaSanPham = new DonGiaThuoc();
-                bangGiaSanPham.setmaDonGia(rs.getString("maDonGia"));
+                bangGiaSanPham.setMaDonGia(rs.getString("maDonGia"));
                 Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
                 bangGiaSanPham.setThuoc(thuoc);
                 bangGiaSanPham.setDonViTinh(rs.getString("donViTinh"));
                 bangGiaSanPham.setDonGia(rs.getDouble("donGia"));
 
-                if(timBangGia(bangGiaSanPham.getmaDonGia()) == null) {
+                if(timBangGia(bangGiaSanPham.getMaDonGia()) == null) {
                     list.add(bangGiaSanPham);
                 }
             }
@@ -48,7 +48,7 @@ public class DonGiaThuoc_DAO {
 
     public DonGiaThuoc timBangGia(String maDonGia) {
         for(DonGiaThuoc x : list) {
-            if(x.getmaDonGia().equals(maDonGia)){
+            if(x.getMaDonGia().equals(maDonGia)){
                 return x;
             }
         }
@@ -56,16 +56,17 @@ public class DonGiaThuoc_DAO {
     }
 
 
-    public DonGiaThuoc getDonGiaByMaThuoc(String idThuoc) {
+    public DonGiaThuoc getDonGiaByMaThuocVaDonViTinh(String idThuoc, String dvt) {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         DonGiaThuoc donGiaThuoc = null;
         try {
             con = ConnectDB.getConnection();
-            String sql = "SELECT * FROM DonGiaThuoc WHERE maThuoc = ?";
+            String sql = "SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE t.maThuoc = ? AND dg.donViTinh = ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, idThuoc);
+            statement.setString(2, dvt);
             rs = statement.executeQuery();
 
             if (rs.next()) {

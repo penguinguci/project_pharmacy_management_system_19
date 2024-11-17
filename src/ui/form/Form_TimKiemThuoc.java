@@ -329,33 +329,33 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
                     data.retainAll(thuoc_dao.timThuocTheoNuocSX((String) cbNuocSX.getSelectedItem()));
                 }
             }
-            if(cbKhoangGia.getSelectedIndex()!=0) {
-                if (cbKhoangGia.getSelectedIndex() == 1) {
-                    if (data.isEmpty()) {
-                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
-                    } else {
-                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
-                    }
-                } else if (cbKhoangGia.getSelectedIndex() == 2) {
-                    if (data.isEmpty()) {
-                        data.addAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
-                    } else {
-                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
-                    }
-                } else if (cbKhoangGia.getSelectedIndex() == 3) {
-                    if (data.isEmpty()) {
-                        data.addAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
-                    } else {
-                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
-                    }
-                } else {
-                    if (data.isEmpty()) {
-                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
-                    } else {
-                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
-                    }
-                }
-            }
+//            if(cbKhoangGia.getSelectedIndex()!=0) {
+//                if (cbKhoangGia.getSelectedIndex() == 1) {
+//                    if (data.isEmpty()) {
+//                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
+//                    } else {
+//                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
+//                    }
+//                } else if (cbKhoangGia.getSelectedIndex() == 2) {
+//                    if (data.isEmpty()) {
+//                        data.addAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
+//                    } else {
+//                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
+//                    }
+//                } else if (cbKhoangGia.getSelectedIndex() == 3) {
+//                    if (data.isEmpty()) {
+//                        data.addAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
+//                    } else {
+//                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
+//                    }
+//                } else {
+//                    if (data.isEmpty()) {
+//                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
+//                    } else {
+//                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
+//                    }
+//                }
+//            }
             if(data.isEmpty()){
                 JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc phù hợp!");
                 try {
@@ -409,26 +409,26 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
 
     public void loadDataTable(ArrayList<Thuoc> newData) {
         dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
-        for(Thuoc x: newData) {
-            String date = "Chưa cập nhật";
-            if(x.getNgaySX() != null) {
-                date = formatDate(x.getNgaySX());
-            }
-            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
-            dtmThuoc.addRow(data);
-        }
+//        for(Thuoc x: newData) {
+//            String date = "Chưa cập nhật";
+//            if(x.getNgaySX() != null) {
+//                date = formatDate(x.getNgaySX());
+//            }
+//            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+//            dtmThuoc.addRow(data);
+//        }
     }
 
     public void loadDataTable(HashSet<Thuoc> newData) {
         dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
-        for(Thuoc x: newData) {
-            String date = "Chưa cập nhật";
-            if(x.getNgaySX() != null) {
-                date = formatDate(x.getNgaySX());
-            }
-            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
-            dtmThuoc.addRow(data);
-        }
+//        for(Thuoc x: newData) {
+//            String date = "Chưa cập nhật";
+//            if(x.getNgaySX() != null) {
+//                date = formatDate(x.getNgaySX());
+//            }
+//            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+//            dtmThuoc.addRow(data);
+//        }
     }
 
     public void renderTable(String[] colsName, JTable table) {

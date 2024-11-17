@@ -367,7 +367,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Object[] data = {count, x.getThuoc().getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(),x.getSoLuong(), x.getDonViTinh(), tien};
+            Object[] data = {count, x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(),x.getSoLuong(), x.getDonViTinh(), tien};
             dtmChiTiet.addRow(data);
             count++;
         }
@@ -495,21 +495,21 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
                                     if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
                                         JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
                                     } else {
-                                        if(!thuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
-                                            JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
-                                        } else {
-                                            JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
-                                            int result = JOptionPane.showConfirmDialog(
-                                                    null, // Không có thành phần cha
-                                                    "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
-                                                    "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
-                                                    JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
-                                            );
-                                            if (result == JOptionPane.YES_OPTION) {
-                                                trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
-                                            }
-                                            clear();
-                                        }
+//                                        if(!thuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+//                                            JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
+//                                        } else {
+//                                            JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
+//                                            int result = JOptionPane.showConfirmDialog(
+//                                                    null, // Không có thành phần cha
+//                                                    "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
+//                                                    "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
+//                                                    JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
+//                                            );
+//                                            if (result == JOptionPane.YES_OPTION) {
+//                                                trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
+//                                            }
+//                                            clear();
+//                                        }
                                     }
                                 }
                             }
@@ -669,20 +669,6 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    private void openFormDoiTra(HoaDon hoaDon) {
-        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Đổi trả", true);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        try {
-            Form_ThanhToanHoaDonDoiTra panel = new Form_ThanhToanHoaDonDoiTra(hoaDon, getNhanVienDN());
-            dialog.add(panel);
-            dialog.setSize(1350,800);
-            dialog.setLocationRelativeTo(null);
-            dialog.setResizable(false);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void setNhanVienDN(NhanVien nv) {
         this.NhanVienDN = nv;
