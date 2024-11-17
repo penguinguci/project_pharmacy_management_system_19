@@ -89,6 +89,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public KhachHang khachHangNew;
     public JMenuItem itemXoa, itemXoaAll;
     private GUI_TrangChu trangChu;
+    public static ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -100,6 +101,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
         donDatThuocDao = new DonDatThuoc_DAO();
         chiTietDonDatThuocDao = new ChiTietDonDatThuoc_DAO();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
 
         // Panel Content Center
         JPanel panelContentCenter = new JPanel(new BorderLayout());
@@ -771,7 +773,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         // update data cho combobox đơn vị
         public void updateDataDonViTinhVaGia(String maThuoc) {
             ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(maThuoc);
-            cboDonViThuoc.removeAllItems();;
+            cboDonViThuoc.removeAllItems();
             for (DonGiaThuoc donGiaThuoc : dsDonGiaThuoc) {
                 cboDonViThuoc.addItem(donGiaThuoc.getDonViTinh());
             }
@@ -788,7 +790,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             if(o == btnThemThuoc) {
                 int soLuong = (int) spinnerSoLuong.getValue();
                 String donVi = cboDonViThuoc.getSelectedItem().toString();
-                double giaBan = thuoc.getDonGiaThuoc().getDonGia();
+                double giaBan = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(thuoc.getMaThuoc(), donVi);
                 boolean found = false;
 
                 for(int i = 0; i < modelGioHang.getRowCount(); i++) {
@@ -851,9 +853,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             tongTienTemp += (soLuong * giaBanThuoc);
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setDonGiaThuoc(donGiaThuoc);
-            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+            chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
 
@@ -1089,9 +1092,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
                     double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
                     Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-                    DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-                    thuoc.setDonGiaThuoc(donGiaThuoc);
-                    ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong);
+                    DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
+                    ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+                    chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+                    ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong, chiTietLoThuoc);
                     dsChiTietDonDat.add(chiTietDon);
                 }
 
@@ -1109,8 +1113,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 if (txtTimKiemKH.getText().toString().trim().equals("")) {
                     JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khách hàng", true);
                     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                    Form_ThanhToanHoaDonDoiTra formThanhToanHoaDonDoiTra = new Form_ThanhToanHoaDonDoiTra();
-                    Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, this, formThanhToanHoaDonDoiTra);
+                    Form_ThemKhachHang pnlThemKhachHang = new Form_ThemKhachHang(nhanVienDN, this);
                     dialog.add(pnlThemKhachHang);
                     dialog.setSize(700,450);
                     dialog.setMaximumSize(new Dimension(700,450));
@@ -1144,9 +1147,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                         int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
                         double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
                         Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-                        DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-                        thuoc.setDonGiaThuoc(donGiaThuoc);
-                        ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong);
+                        DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
+                        ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+                        chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+                        ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong, chiTietLoThuoc);
                         dsChiTietDonDat.add(chiTietDon);
                     }
 
@@ -1201,9 +1205,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setDonGiaThuoc(donGiaThuoc);
-            ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong);
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+            chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+            ChiTietDonDatThuoc chiTietDon = new ChiTietDonDatThuoc(donDatThuoc, thuoc, donViTinh, soLuong, chiTietLoThuoc);
             dsChiTietDonDat.add(chiTietDon);
         }
 
@@ -1305,13 +1310,12 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setDonGiaThuoc(donGiaThuoc);
-            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+            chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
-
-        System.out.println(dsChiTietHoaDon.size());
 
         ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
         String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
@@ -1428,13 +1432,13 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuoc(thuoc.getMaThuoc());
-            thuoc.setDonGiaThuoc(donGiaThuoc);
-            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong);
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+            chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
 
-        System.out.println(dsChiTietHoaDon.size());
 
         ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
         String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
@@ -1660,7 +1664,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     currencyFormat.setMaximumFractionDigits(0);
 
                     double tongTienTemp = 0;
-                    // Loop through each product in the invoice and format accordingly
                     for (ChiTietHoaDon ct : dsChiTietHoaDon) {
                         String tenThuoc = ct.getThuoc().getTenThuoc();
                         if (tenThuoc.length() > 30) tenThuoc = tenThuoc.substring(0, 30) + "..."; // Limit name length
@@ -1674,7 +1677,13 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                         contentStream.newLineAtOffset(75, 0);
                         contentStream.showText(String.valueOf(ct.getSoLuong()));
                         contentStream.newLineAtOffset(50, 0);
-                        String donGia = currencyFormat.format(ct.getThuoc().getDonGiaThuoc().getDonGia()) + " đ";
+
+                        DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(ct.getThuoc().getMaThuoc(), ct.getDonViTinh());
+                        ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc();
+                        chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+                        ct.setChiTietLoThuoc(chiTietLoThuoc);
+
+                        String donGia = currencyFormat.format(donGiaThuoc.getDonGia()) + " đ";
                         contentStream.showText(donGia);
                         contentStream.newLineAtOffset(75, 0);
                         String thanhTien = currencyFormat.format(ct.tinhThanhTien()) + " đ";
@@ -1953,11 +1962,12 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public void capNhatGioHangSauDonDat(ArrayList<ChiTietHoaDon> dsCTHD, String maDon) {
         this.maDon = maDon;
         for (ChiTietHoaDon ct : dsCTHD) {
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(ct.getThuoc().getMaThuoc(), ct.getDonViTinh());
             modelGioHang.addRow(new Object[]{
                     ct.getThuoc().getTenThuoc(),
-                    ct.getThuoc().getDonGiaThuoc().getDonViTinh(),
+                    donGiaThuoc.getDonViTinh(),
                     ct.getSoLuong(),
-                    ct.getThuoc().getDonGiaThuoc().getDonGia(),
+                    donGiaThuoc.getDonGia(),
                     ct.tinhThanhTien()
             });
         }

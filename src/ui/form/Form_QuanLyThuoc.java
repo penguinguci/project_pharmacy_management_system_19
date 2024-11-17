@@ -453,43 +453,43 @@ public class Form_QuanLyThuoc  extends JPanel implements ActionListener {
     }
 
     public void loadDataThuocToForm(int row){
-        if( row != -1){
-            String maThuoc = String.valueOf(tProduct.getValueAt(row, 0));
-            Thuoc thuoc = thuocDao.getThuocByMaThuoc(maThuoc);
-            if (thuoc != null) {
-                txtTenThuoc.setText(thuoc.getTenThuoc());
-                txtHSD.setText(String.valueOf(thuoc.getHSD() + " tháng"));
-                if (thuoc.getNgaySX() != null) {
-                    int[] dates = convertStringToDatePicker(thuoc.getNgaySX());
-                    datePickerNgaySanXuat.getModel().setDate(dates[0], dates[1] - 1, dates[2]);
-                } else {
-                    datePickerNgaySanXuat.getModel().setDate( Calendar.getInstance().get(Calendar.YEAR) , Calendar.getInstance().get(Calendar.MONTH)-1, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-                    System.out.println("Ngày sản xuất không có sẵn.");
-                }
-
-                try {
-                    ke_DAO = new KeThuoc_DAO();
-                    ke = ke_DAO.timKeThuoc(thuoc.getKeThuoc().getMaKe());
-                    if (ke != null) {
-                        cmbKeThuoc.setSelectedItem(ke.getTenKe());
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-                txtBaoQuan.setText(thuoc.getBaoQuan());
-                txtHamLuong.setText(thuoc.getHamLuong());
-                txtDangBaoChe.setText(thuoc.getDangBaoChe());
-                txtChiDinh.setText(thuoc.getChiDinh());
-                cmbTrangThai.setSelectedItem(thuoc.isTrangThai() ? "Còn" : "Hết");
-                txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
-                txaMoTa.setText(thuoc.getMoTa());
-                txaCongDung.setText(thuoc.getCongDung());
-                txaCachDung.setText(thuoc.getCachDung());
-            } else {
-                System.out.println("Thuốc không tồn tại.");
-            }
-        }
+//        if( row != -1){
+//            String maThuoc = String.valueOf(tProduct.getValueAt(row, 0));
+//            Thuoc thuoc = thuocDao.getThuocByMaThuoc(maThuoc);
+//            if (thuoc != null) {
+//                txtTenThuoc.setText(thuoc.getTenThuoc());
+//                txtHSD.setText(String.valueOf(thuoc.getHSD() + " tháng"));
+//                if (thuoc.getNgaySX() != null) {
+//                    int[] dates = convertStringToDatePicker(thuoc.getNgaySX());
+//                    datePickerNgaySanXuat.getModel().setDate(dates[0], dates[1] - 1, dates[2]);
+//                } else {
+//                    datePickerNgaySanXuat.getModel().setDate( Calendar.getInstance().get(Calendar.YEAR) , Calendar.getInstance().get(Calendar.MONTH)-1, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+//                    System.out.println("Ngày sản xuất không có sẵn.");
+//                }
+//
+//                try {
+//                    ke_DAO = new KeThuoc_DAO();
+//                    ke = ke_DAO.timKeThuoc(thuoc.getKeThuoc().getMaKe());
+//                    if (ke != null) {
+//                        cmbKeThuoc.setSelectedItem(ke.getTenKe());
+//                    }
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//                txtBaoQuan.setText(thuoc.getBaoQuan());
+//                txtHamLuong.setText(thuoc.getHamLuong());
+//                txtDangBaoChe.setText(thuoc.getDangBaoChe());
+//                txtChiDinh.setText(thuoc.getChiDinh());
+//                cmbTrangThai.setSelectedItem(thuoc.isTrangThai() ? "Còn" : "Hết");
+//                txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
+//                txaMoTa.setText(thuoc.getMoTa());
+//                txaCongDung.setText(thuoc.getCongDung());
+//                txaCachDung.setText(thuoc.getCachDung());
+//            } else {
+//                System.out.println("Thuốc không tồn tại.");
+//            }
+//        }
     }
     public int[] convertStringToDatePicker(Date date){
         Calendar cal = Calendar.getInstance();

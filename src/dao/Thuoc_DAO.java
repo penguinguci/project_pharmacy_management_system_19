@@ -50,98 +50,83 @@ public class Thuoc_DAO {
     }
 
     public ArrayList<Thuoc> getAllThuoc() throws Exception{
-        ConnectDB con  = new ConnectDB();
-        con.connect();
-        con.getConnection();
-        PreparedStatement ps = null;
+        ArrayList<Thuoc> listThuoc = new ArrayList<Thuoc>();
+        Connection con = null;
+        PreparedStatement statement = null;
         ResultSet rs = null;
-        //Gọi bảng Nhân Viên
-        String sql = "select * from Thuoc";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()) {
-            Thuoc t = new Thuoc();
-            t.setMaThuoc(rs.getString("maThuoc"));
-            t.setTenThuoc(rs.getString("tenThuoc"));
-            for (DanhMuc x : listDanhMuc) {
-                if (x.getMaDanhMuc().equalsIgnoreCase(rs.getString("maDanhMuc"))) {
-                    t.setDanhMuc(x);
-                    break;
+
+        try {
+            con = ConnectDB.getConnection();
+
+            String sql = "select * from Thuoc";
+
+            statement = con.prepareStatement(sql);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Thuoc t = new Thuoc();
+                t.setMaThuoc(rs.getString("maThuoc"));
+                t.setTenThuoc(rs.getString("tenThuoc"));
+
+                for (DanhMuc x : listDanhMuc) {
+                    if (x.getMaDanhMuc().equalsIgnoreCase(rs.getString("maDanhMuc"))) {
+                        t.setDanhMuc(x);
+                        break;
+                    }
                 }
-            }
-            for (NhaCungCap x : listNCC) {
-                if (x.getMaNCC().equalsIgnoreCase(rs.getString("maNhaCungCap"))) {
-                    t.setNhaCungCap(x);
-                    break;
+
+                for (NhaCungCap x : listNCC) {
+                    if (x.getMaNCC().equalsIgnoreCase(rs.getString("maNhaCungCap"))) {
+                        t.setNhaCungCap(x);
+                        break;
+                    }
                 }
-            }
-            for (NhaSanXuat x : listNSX) {
-                if (x.getMaNhaSX().equalsIgnoreCase(rs.getString("maNhaSanXuat"))) {
-                    t.setNhaSanXuat(x);
-                    break;
+
+                for (NhaSanXuat x : listNSX) {
+                    if (x.getMaNhaSX().equalsIgnoreCase(rs.getString("maNhaSanXuat"))) {
+                        t.setNhaSanXuat(x);
+                        break;
+                    }
                 }
-            }
-            for (NuocSanXuat x : listNuoc) {
-                if (x.getMaNuocSX().equalsIgnoreCase(rs.getString("maNuocSanXuat"))) {
-                    t.setNuocSanXuat(x);
-                    break;
+
+                for (NuocSanXuat x : listNuoc) {
+                    if (x.getMaNuocSX().equalsIgnoreCase(rs.getString("maNuocSanXuat"))) {
+                        t.setNuocSanXuat(x);
+                        break;
+                    }
                 }
-            }
-            for (KeThuoc x : listKe) {
-                if (x.getMaKe().equalsIgnoreCase(rs.getString("maKe"))) {
-                    t.setKeThuoc(x);
-                    break;
+
+                for (KeThuoc x : listKe) {
+                    if (x.getMaKe().equalsIgnoreCase(rs.getString("maKe"))) {
+                        t.setKeThuoc(x);
+                        break;
+                    }
                 }
-            }
-            t.setTongSoLuong(rs.getInt("soLuongCon"));
-            if (rs.getString("cachDung") == null) {
-                t.setCachDung("Chưa có");
-            } else {
+
+                t.setTongSoLuong(rs.getInt("tongSoLuong"));
                 t.setCachDung(rs.getString("cachDung"));
-            }
-            if (rs.getString("thanhPhan") == null) {
-                t.setThanhPhan("Chưa có");
-            } else {
                 t.setThanhPhan(rs.getString("thanhPhan"));
-            }
-            if (rs.getString("baoQuan") == null) {
-                t.setBaoQuan("Chưa có");
-            } else {
                 t.setBaoQuan(rs.getString("baoQuan"));
-            }
-            if (rs.getString("congDung") == null) {
-                t.setCongDung("Chưa có");
-            } else {
                 t.setCongDung(rs.getString("congDung"));
-            }
-            if (rs.getString("chiDinh") == null) {
-                t.setChiDinh("Chưa có");
-            } else {
                 t.setChiDinh(rs.getString("chiDinh"));
-            }
-            if (rs.getString("hinhAnh") == null) {
-                t.setHinhAnh("Chưa có");
-            } else{
                 t.setHinhAnh(rs.getString("hinhAnh"));
-            }
-            if(rs.getString("moTa") == null) {
-                t.setMoTa("Chưa có");
-            } else {
                 t.setMoTa(rs.getString("moTa"));
-            }
-            if(rs.getString("hamLuong") == null) {
-                t.setHamLuong("Chưa có");
-            } else {
                 t.setHamLuong(rs.getString("hamLuong"));
-            }
-            if(rs.getString("dangBaoChe") == null) {
-                t.setDangBaoChe("Chưa có");
-            } else {
                 t.setDangBaoChe(rs.getString("dangBaoChe"));
+                t.setTrangThai(rs.getBoolean("trangThai"));
+
+                listThuoc.add(t);
             }
-            t.setTrangThai(rs.getBoolean("trangThai"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the resources
+            if (rs != null) rs.close();
+            if (statement != null) statement.close();
         }
-        return list;
+
+        return listThuoc;
     }
 
     public ArrayList<Thuoc> getThuocByDanhMuc(String danhMuc) throws Exception{

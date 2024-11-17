@@ -86,8 +86,7 @@ public class HoaDon {
         for (ChiTietHoaDon chiTietHoaDon : dsChiTietHoaDon) {
             tongThanhTien += chiTietHoaDon.tinhThanhTien();
         }
-        double tienThue = tongThanhTien * thue.getTyleThue();
-        return tienThue;
+        return tongThanhTien * thue.getTyleThue();
     }
 
     public double tinhTienKhuyenMai(ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai){
