@@ -1,4 +1,4 @@
-﻿USE master
+USE master
 -- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
@@ -1285,15 +1285,6 @@ BEGIN
         WHERE trangThai = 1 AND maKhachHang IS NOT NULL
     )
     BEGIN
-        -- Đặt điểm tích lũy hiện tại về 0 trước khi cập nhật, chỉ nếu maDTL khác null
-        UPDATE DiemTichLuy
-        SET diemHienTai = 0
-        FROM DiemTichLuy dtl
-        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
-        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
-        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
-
-        -- Cập nhật điểm tích lũy tổng và điểm tích lũy hiện tại, chỉ nếu maDTL khác null
         UPDATE DiemTichLuy
         SET diemTong = diemTong + (hd.tongTien * 0.01),
             diemHienTai = diemHienTai + (hd.tongTien * 0.01)
