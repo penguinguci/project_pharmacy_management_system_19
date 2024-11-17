@@ -33,22 +33,20 @@ public class ChiTietDonDatThuoc_DAO {
         thuoc_dao = new Thuoc_DAO();
         donDatThuoc_dao = new DonDatThuoc_DAO();
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+        ChiTietDonDatThuoc ct = null;
         try {
-            String sql = "select * from ChiTietDonDatThuoc";
+            String sql = "SELECT * FROM ChiTietDonDatThuoc";
             ps = con.getConnection().prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                ChiTietDonDatThuoc ct = new ChiTietDonDatThuoc();
                 DonDatThuoc don = donDatThuoc_dao.timDonDatThuoc(rs.getString("maDon"));
-                ct.setDonDatThuoc(don);
+                Thuoc thuoc = thuoc_dao.timThuoc(rs.getString("maThuoc"));
+                ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc"));
+                String donViTinh = rs.getString("donViTinh");
+                int soLuong = rs.getInt("soLuong");
 
-                ct.setThuoc(thuoc_dao.timThuoc(rs.getString("maThuoc")));
-                ct.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
-                ct.setDonViTinh(rs.getString("donViTinh"));
-                ct.setSoLuong(rs.getInt("soLuong"));
-                if(timCTD(ct.getDonDatThuoc().getMaDon(), ct.getChiTietLoThuoc().getSoHieuThuoc()) == null) {
-                    list.add(ct);
-                }
+                ct = new ChiTietDonDatThuoc(don, thuoc, donViTinh, soLuong, chiTietLoThuoc);
+                list.add(ct);
             }
         } catch (Exception e) {
             e.printStackTrace();

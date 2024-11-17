@@ -1,11 +1,7 @@
 package ui.form;
 
-import dao.ChiTietKhuyenMai_DAO;
-import dao.ChuongTrinhKhuyenMai_DAO;
-import dao.KhuyenMai_DAO;
-import entity.ChiTietKhuyenMai;
-import entity.ChuongTrinhKhuyenMai;
-import entity.Thuoc;
+import dao.*;
+import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -46,12 +42,16 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
     public KhuyenMai_DAO khuyenMaiDao;
     public ChiTietKhuyenMai_DAO chiTietKhuyenMai_dao;
     public UtilDateModel ngayBatDauModel, ngayKetThucModel;
+    public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    public DonGiaThuoc_DAO donGiaThuoc_dao;
 
     public Form_QuanLyKhuyenMai() throws Exception {
         // khởi tạo
         chuongTrinhKhuyenMai_dao = new ChuongTrinhKhuyenMai_DAO();
         chiTietKhuyenMai_dao = new ChiTietKhuyenMai_DAO();
         khuyenMaiDao = new KhuyenMai_DAO();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+        donGiaThuoc_dao = new DonGiaThuoc_DAO();
 
         setLayout(new BorderLayout());
 
@@ -391,9 +391,10 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
             String loaiKM = ct.getChuongTrinhKhuyenMai().getLoaiKhuyenMai();
             String tyLeKM = String.format("%.2f", ct.getTyLeKhuyenMai());
             String soLuongTT = String.valueOf(ct.getSoLuongToiThieu());
+
             modelCTKhuyenMai.addRow(new Object[] {
                     ct.getThuoc().getMaThuoc(),
-                    ct.getThuoc().getSoHieuThuoc(),
+                    ct.getChiTietLoThuoc().getSoHieuThuoc(),
                     ct.getThuoc().getTenThuoc(),
                     loaiKM == null ? "" : loaiKM,
                     Double.parseDouble(tyLeKM) == 0.0 ? "" : tyLeKM,
@@ -645,7 +646,6 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
 
                     Thuoc thuoc = new Thuoc();
                     thuoc.setMaThuoc(maThuoc);
-                    thuoc.setSoHieuThuoc(soHieuThuoc);
                     thuoc.setTenThuoc(tenThuoc);
 
                     ChuongTrinhKhuyenMai chuongTrinhKhuyenMai = null;
@@ -661,7 +661,11 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
                         throw new RuntimeException(ex);
                     }
 
-                    ChiTietKhuyenMai chiTietKhuyenMai = new ChiTietKhuyenMai(chuongTrinhKhuyenMai, thuoc, tyLeKM, soLuongTT);
+                    ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc();
+                    chiTietLoThuoc.setThuoc(thuoc);
+                    chiTietLoThuoc.setSoHieuThuoc(soHieuThuoc);
+
+                    ChiTietKhuyenMai chiTietKhuyenMai = new ChiTietKhuyenMai(chuongTrinhKhuyenMai, thuoc, tyLeKM, soLuongTT, chiTietLoThuoc);
 
                     if (chiTietKhuyenMai_dao.createChiTietKM(chiTietKhuyenMai)) {
                         JOptionPane.showMessageDialog(this, "Áp dụng khuyến mãi thành công");
@@ -705,12 +709,12 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
                     }
 
                     String soHieuThuoc = modelCTKhuyenMai.getValueAt(row, 1).toString();
-                    Thuoc thuoc = new Thuoc();
-                    thuoc.setSoHieuThuoc(soHieuThuoc);
+                    ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc();
+                    chiTietLoThuoc.setSoHieuThuoc(soHieuThuoc);
 
                     ChiTietKhuyenMai chiTietKhuyenMai = new ChiTietKhuyenMai();
                     chiTietKhuyenMai.setChuongTrinhKhuyenMai(chuongTrinhKhuyenMai);
-                    chiTietKhuyenMai.setThuoc(thuoc);
+                    chiTietKhuyenMai.setChiTietLoThuoc(chiTietLoThuoc);
 
                     if (chiTietKhuyenMai_dao.deleteCTKhuyenMai(chiTietKhuyenMai)) {
                         JOptionPane.showMessageDialog(this, "Gỡ khuyến mãi thành công!");

@@ -40,18 +40,16 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
     private SqlDateModel model;
     private NhanVien nhanVienDN;
     private Form_BanThuoc formBanThuoc;
-    private Form_ThanhToanHoaDonDoiTra formThanhToanHoaDonDoiTra;
 
     private KhachHang_DAO kh_dao = new KhachHang_DAO();
     private ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
 
-    public Form_ThemKhachHang(NhanVien nhanVienDN, Form_BanThuoc formBanThuoc, Form_ThanhToanHoaDonDoiTra formThanhToanHoaDonDoiTra) {
+    public Form_ThemKhachHang(NhanVien nhanVienDN, Form_BanThuoc formBanThuoc) {
         // khởi tạo
         khachHangDao = new KhachHang_DAO();
 
         this.nhanVienDN = nhanVienDN;
         this.formBanThuoc = formBanThuoc;
-        this.formThanhToanHoaDonDoiTra = formThanhToanHoaDonDoiTra;
 
         setLayout(new BorderLayout());
 

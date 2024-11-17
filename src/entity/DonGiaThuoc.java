@@ -16,13 +16,6 @@ public class DonGiaThuoc {
         this.donGia = donGia;
     }
 
-    public String getmaDonGia() {
-        return maDonGia;
-    }
-
-    public void setmaDonGia(String maDonGia) {
-        this.maDonGia = maDonGia;
-    }
 
     public String getDonViTinh() {
         return donViTinh;

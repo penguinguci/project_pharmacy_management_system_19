@@ -1,13 +1,12 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.ChiTietDonDatThuoc;
-import entity.ChiTietLoThuoc;
-import entity.DonDatThuoc;
-import entity.Thuoc;
+import entity.*;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ChiTietLoThuoc_DAO {
@@ -69,5 +68,49 @@ public class ChiTietLoThuoc_DAO {
             }
         }
         return true;
+    }
+
+
+    public ChiTietLoThuoc getCTLoThuocTheoMaDGVaMaThuoc(String maDonGia, String maThuoc) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        ChiTietLoThuoc chiTietLoThuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "{CALL getCTLoThuocTheoMaDGVaMaThuoc(?, ?)}";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, maDonGia);
+            statement.setString(2, maThuoc);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String soHieuThuoc = rs.getString("soHieuThuoc");
+
+                Thuoc thuoc = new Thuoc();
+                thuoc.setMaThuoc(rs.getString("maThuoc"));
+
+                LoThuoc loThuoc = new LoThuoc();
+                loThuoc.setMaLoThuoc(rs.getString("maLoThuoc"));
+
+                int soLuongCon = rs.getInt("soLuongCon");
+
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                donGiaThuoc.setMaDonGia("maDonGia");
+
+                chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuongCon, donGiaThuoc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return chiTietLoThuoc;
     }
 }
