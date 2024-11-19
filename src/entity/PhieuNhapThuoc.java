@@ -1,8 +1,6 @@
 package entity;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Date;
 
 public class PhieuNhapThuoc {
     private String maPhieuNhap;
@@ -52,11 +50,7 @@ public class PhieuNhapThuoc {
         this.nhaCungCap = nhaCungCap;
     }
 
-    public double tinhTongTien(ArrayList<ChiTietPhieuNhap> dsCTPN){
-        double tongTien = 0;
-        for (ChiTietPhieuNhap ctpn : dsCTPN) {
-            tongTien += ctpn.tinhThanhTien();
-        }
-        return tongTien;
+    public double tinhTongTien(double tongThanhTien){
+        return tongThanhTien;
     }
 }

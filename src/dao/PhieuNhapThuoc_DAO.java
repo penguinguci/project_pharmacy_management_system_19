@@ -3,9 +3,13 @@ package dao;
 import connectDB.ConnectDB;
 import entity.*;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import static connectDB.ConnectDB.getConnection;
 
 public class PhieuNhapThuoc_DAO {
     private ArrayList<PhieuNhapThuoc> list;
@@ -67,5 +71,69 @@ public class PhieuNhapThuoc_DAO {
             }
         }
         return true;
+    }
+
+    public boolean create(PhieuNhapThuoc phieuNhapThuoc, ArrayList<ChiTietPhieuNhap> dsCTPhieuNhap) throws SQLException {
+        // Đảm bảo kết nối được khởi tạo
+        ConnectDB.getInstance();
+        Connection con = getConnection();
+
+        // Kiểm tra kết nối trước khi sử dụng
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "INSERT INTO PhieuNhapThuoc (maPhieuNhap, maNhanVien, ngayLapPhieu, maNhaCungCap, tongTien) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+
+            statement = con.prepareStatement(sql);
+            statement.setString(1, phieuNhapThuoc.getMaPhieuNhap());
+            statement.setString(2, phieuNhapThuoc.getNhanVien().getMaNV());
+            statement.setDate(3, new java.sql.Date(phieuNhapThuoc.getNgayLapPhieu().getTime()));
+            statement.setString(4, phieuNhapThuoc.getNhaCungCap().getMaNCC());
+
+            double tongTien = phieuNhapThuoc.tinhTongTien(
+                    dsCTPhieuNhap.stream().mapToDouble(ChiTietPhieuNhap::tinhThanhTien).sum()
+            );
+            statement.setDouble(5, tongTien);
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return n > 0;
+    }
+
+    public double getTongTienPhieuNhap(String maPhieuNhap) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select tongTien from PhieuNhapThuoc where maPhieuNhap = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, maPhieuNhap);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getDouble("tongTien");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

@@ -1,11 +1,7 @@
 package ui.form;
 
-import dao.ChiTietHoaDon_DAO;
-import dao.HoaDon_DAO;
-import dao.Thuoc_DAO;
-import entity.ChiTietHoaDon;
-import entity.HoaDon;
-import entity.Thuoc;
+import dao.*;
+import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -41,8 +37,13 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
     public HoaDon_DAO hoaDon_dao;
     public ChiTietHoaDon_DAO chiTietHoaDon_dao;
     public Thuoc_DAO thuoc_dao;
+    public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    public DonGiaThuoc_DAO donGiaThuoc_dao;
 
     public Form_QuanLyHoaDon() throws Exception {
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+        donGiaThuoc_dao = new DonGiaThuoc_DAO();
+
         setLayout(new BorderLayout());
 
         // tiêu đề
@@ -261,16 +262,19 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         String maHD = modelHD.getValueAt(row, 0).toString();
         ArrayList<ChiTietHoaDon> dsCTHD = chiTietHoaDon_dao.getDSChiTietHD(maHD);
         modelChiTiet.setRowCount(0);
+
         for (ChiTietHoaDon ct: dsCTHD) {
             Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(ct.getThuoc().getMaThuoc());
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), ct.getDonViTinh());
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), thuoc.getMaThuoc());
             modelChiTiet.addRow(new Object[] {
                     thuoc.getMaThuoc(),
-//                    thuoc.getSoHieuThuoc(),
+                    chiTietLoThuoc.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
-//                    ct.getThuoc().getDonGiaThuoc().getDonViTinh(),
+                    ct.getDonViTinh(),
                     ct.getSoLuong(),
-//                    ct.getThuoc().getDonGiaThuoc().getDonGia(),
-                    chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, ct.getThuoc().getMaThuoc())
+                    donGiaThuoc.getDonGia(),
+                    chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, thuoc.getMaThuoc())
             });
         }
     }

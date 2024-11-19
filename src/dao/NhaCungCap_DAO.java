@@ -1,14 +1,12 @@
 package dao;
 
 import connectDB.ConnectDB;
+import entity.DiemTichLuy;
 import entity.KhachHang;
 import entity.NhaCungCap;
 import entity.NhaSanXuat;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class NhaCungCap_DAO {
@@ -235,5 +233,42 @@ public class NhaCungCap_DAO {
             }
         }
         return n > 0;
+    }
+
+
+    // lấy nhà cung cấp theo tên nhà cung cấp
+    public NhaCungCap getNCCTheoTen(String tenNCC) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        NhaCungCap ncc = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM NhaCungCap WHERE tenNCC like ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, tenNCC);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maNCC = rs.getString("maNCC");
+                String tenNcc = rs.getString("tenNCC");
+                String diaChi = rs.getString("diaChi");
+                String email = rs.getString("email");
+
+                ncc = new NhaCungCap(maNCC, tenNcc, diaChi, email);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return ncc;
     }
 }

@@ -113,4 +113,52 @@ public class ChiTietLoThuoc_DAO {
         }
         return chiTietLoThuoc;
     }
+
+
+    public boolean create(LoThuoc loThuoc, ArrayList<ChiTietLoThuoc> dsCTLoThuoc) throws SQLException {
+        // Đảm bảo kết nối được khởi tạo
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        // Kiểm tra kết nối trước khi sử dụng
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            for(ChiTietLoThuoc ctLoThuoc : dsCTLoThuoc) {
+                String sql = "INSERT INTO ChiTietLoThuoc (soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia) " +
+                        "VALUES (?, ?, ?, ?, ?)";
+                statement = con.prepareStatement(sql);
+
+                statement.setString(1, ctLoThuoc.getSoHieuThuoc());
+                statement.setString(2, ctLoThuoc.getThuoc().getMaThuoc());
+                statement.setString(3, loThuoc.getMaLoThuoc());
+                statement.setInt(4, ctLoThuoc.getSoLuongCon());
+                if (ctLoThuoc.getDonGiaThuoc() == null) {
+                    statement.setString(5, null);
+                } else {
+                    statement.setString(5, ctLoThuoc.getDonGiaThuoc().getMaDonGia());
+                }
+
+                n = statement.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return n > 0;
+    }
 }
