@@ -141,7 +141,6 @@ CREATE TABLE Thuoc (
 );
 
 
-
 -- Bảng PhieuNhapThuoc
 CREATE TABLE PhieuNhapThuoc (
     maPhieuNhap VARCHAR(20) NOT NULL PRIMARY KEY,
@@ -159,7 +158,7 @@ CREATE TABLE ChiTietPhieuNhap (
 	maThuoc VARCHAR(20) NOT NULL,
 	donViTinh NVARCHAR(20) NOT NULL,
 	ngaySanXuat DATE NOT NULL,
-	HSD INT NOT NULL,
+	HSD DATE NOT NULL,
     donGiaNhap FLOAT(10) NOT NULL,
 	soLuongNhap INT NOT NULL,
     thanhTien FLOAT(10) NOT NULL,
@@ -407,7 +406,6 @@ VALUES
 ('DG010', 'T009', N'Hộp', 75000),
 ('DG011', 'T010', N'Viên', 5000)
 
-SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE dg.maThuoc = 'T005' AND dg.donViTinh = N'Hộp'
 
 -- Bảng Thuoc
 INSERT INTO Thuoc (maThuoc, tenThuoc, maKe, tongSoLuong, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
@@ -435,12 +433,12 @@ VALUES
 
 INSERT INTO ChiTietPhieuNhap(maPhieuNhap, maThuoc, donViTinh, ngaySanXuat, HSD, donGiaNhap, soLuongNhap, thanhTien)
 VALUES
-('PN001', 'T001', 'Hộp', '2024-1-1', 36, 40000, 50, 2000000),
-('PN001', 'T002', 'Hộp', '2024-1-1', 36, 25000, 40, 1000000),
-('PN002', 'T004', 'Hộp', '2024-1-1', 36, 50000, 50, 2500000),
-('PN002', 'T005', 'Hộp', '2024-1-1', 36, 30000, 20, 600000),
-('PN002', 'T005', 'Viên', '2024-1-1', 36, 3000, 300, 900000),
-('PN003', 'T003', 'Hộp', '2024-1-1', 36, 100000, 50, 5000000)
+('PN001', 'T001', 'Hộp', '2024-1-1', '2025-12-1', 40000, 50, 2000000),
+('PN001', 'T002', 'Hộp', '2024-1-1', '2025-7-1', 25000, 40, 1000000),
+('PN002', 'T004', 'Hộp', '2024-1-1', '2025-8-1', 50000, 50, 2500000),
+('PN002', 'T005', 'Hộp', '2024-1-1', '2026-1-1', 30000, 20, 600000),
+('PN002', 'T005', 'Viên', '2024-1-1', '2025-12-1', 3000, 300, 900000),
+('PN003', 'T003', 'Hộp', '2024-1-1', '2026-3-1', 100000, 50, 5000000)
 
 
 INSERT INTO LoThuoc(maLoThuoc, maPhieuNhap, ngayNhap, tongTien)
@@ -1270,6 +1268,16 @@ END
 GO
 
 
+-- lấy DS chi tiết phiếu nhập theo mã phiếu nhập
+CREATE PROCEDURE getDSCTPNTheoMaPN @maPhieuNhap VARCHAR(20)
+AS
+BEGIN
+	SELECT *
+	FROM ChiTietPhieuNhap
+	WHERE maPhieuNhap = @maPhieuNhap
+END
+GO
+
 
 -- --------- TRIGGER
 -- cập nhật điểm tích lũy sau khi thanh toán
@@ -1285,15 +1293,6 @@ BEGIN
         WHERE trangThai = 1 AND maKhachHang IS NOT NULL
     )
     BEGIN
-        -- Đặt điểm tích lũy hiện tại về 0 trước khi cập nhật, chỉ nếu maDTL khác null
-        UPDATE DiemTichLuy
-        SET diemHienTai = 0
-        FROM DiemTichLuy dtl
-        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
-        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
-        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
-
-        -- Cập nhật điểm tích lũy tổng và điểm tích lũy hiện tại, chỉ nếu maDTL khác null
         UPDATE DiemTichLuy
         SET diemTong = diemTong + (hd.tongTien * 0.01),
             diemHienTai = diemHienTai + (hd.tongTien * 0.01)

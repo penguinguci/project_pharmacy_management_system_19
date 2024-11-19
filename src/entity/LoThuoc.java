@@ -5,11 +5,11 @@ import java.util.Date;
 public class LoThuoc {
     private String maLoThuoc;
     private PhieuNhapThuoc phieuNhapThuoc;
-    private java.sql.Date ngayNhapThuoc;
+    private Date ngayNhapThuoc;
 
     public LoThuoc() {};
 
-    public LoThuoc(String maLoThuoc, PhieuNhapThuoc phieuNhapThuoc, java.sql.Date ngayNhapThuoc) {
+    public LoThuoc(String maLoThuoc, PhieuNhapThuoc phieuNhapThuoc, Date ngayNhapThuoc) {
         this.maLoThuoc = maLoThuoc;
         this.phieuNhapThuoc = phieuNhapThuoc;
         this.ngayNhapThuoc = ngayNhapThuoc;
@@ -35,7 +35,11 @@ public class LoThuoc {
         return ngayNhapThuoc;
     }
 
-    public void setNgayNhapThuoc(java.sql.Date ngayNhapThuoc) {
+    public void setNgayNhapThuoc(Date ngayNhapThuoc) {
         this.ngayNhapThuoc = ngayNhapThuoc;
+    }
+
+    public double tinhTongTien(double tongTien) {
+        return tongTien;
     }
 }

@@ -1,5 +1,6 @@
 package entity;
 
+
 import java.util.Date;
 
 public class ChiTietPhieuNhap {
@@ -8,12 +9,12 @@ public class ChiTietPhieuNhap {
     private int soLuongNhap;
     private String donViTinh;
     private double donGiaNhap;
-    private int HSD;
-    private java.sql.Date ngaySX;
+    private Date HSD;
+    private Date ngaySX;
 
     public ChiTietPhieuNhap() {}
 
-    public ChiTietPhieuNhap(PhieuNhapThuoc phieuNhapThuoc, Thuoc thuoc, int soLuongNhap, String donViTinh, double donGiaNhap, java.sql.Date ngaySX, int HSD) {
+    public ChiTietPhieuNhap(PhieuNhapThuoc phieuNhapThuoc, Thuoc thuoc, int soLuongNhap, String donViTinh, double donGiaNhap, Date ngaySX, Date HSD) {
         this.phieuNhapThuoc = phieuNhapThuoc;
         this.thuoc = thuoc;
         this.soLuongNhap = soLuongNhap;
@@ -67,11 +68,11 @@ public class ChiTietPhieuNhap {
         return this.soLuongNhap * this.donGiaNhap;
     }
 
-    public int getHSD() {
+    public Date getHSD() {
         return HSD;
     }
 
-    public void setHSD(int HSD) {
+    public void setHSD(Date HSD) {
         this.HSD = HSD;
     }
 
