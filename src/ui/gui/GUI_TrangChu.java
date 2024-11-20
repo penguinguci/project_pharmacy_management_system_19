@@ -28,7 +28,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
-            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc;
+            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc, btnQLLoThuoc;
     public JButton btnDangXuat, btnThongBao, btnTroGiup;
     public JPanel customButtonUser, buttonPanelUser;
     public JLabel textVaiTro, textUser;
@@ -65,6 +65,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TaiKhoan formTaiKhoan;
     public Form_TroGiup formTroGiup;
     public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
+    public Form_QuanLyLoThuoc formQuanLyLoThuoc;
     private static NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
@@ -235,16 +236,19 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuThuoc.setVisible(false);
 
         btnCapNhatThuoc = createSubMenuButton("Cập Nhật");
+        btnTimKiemThuoc = createSubMenuButton("Tìm Kiếm");
         btnNhaSanXuat = createSubMenuButton("Nhà Sản Xuất");
         btnNuocSanXuat = createSubMenuButton("Nước Sản Xuất");
         btnDanhMuc = createSubMenuButton("Danh Mục");
-        btnTimKiemThuoc = createSubMenuButton("Tìm Kiếm");
+        btnQLLoThuoc = createSubMenuButton("Lô thuốc");
+
 
         submenuThuoc.add(btnCapNhatThuoc);
+        submenuThuoc.add(btnTimKiemThuoc);
         submenuThuoc.add(btnNhaSanXuat);
         submenuThuoc.add(btnNuocSanXuat);
         submenuThuoc.add(btnDanhMuc);
-        submenuThuoc.add(btnTimKiemThuoc);
+        submenuThuoc.add(btnQLLoThuoc);
 
 
         // Submenu Nhà cung cấp
@@ -575,6 +579,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnNuocSanXuat.addActionListener(this);
         btnDanhMuc.addActionListener(this);
         btnTimKiemThuoc.addActionListener(this);
+        btnQLLoThuoc.addActionListener(this);
 
         btnCapNhatNCC.addActionListener(this);
         btnTimKiemNCC.addActionListener(this);
@@ -701,6 +706,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 throw new RuntimeException(ex);
             }
             centerPanel.add(formNhapThuoc, "formNhapThuoc");
+            formNhapThuoc.setNhanVienDN(nhanVienDN);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formNhapThuoc");
@@ -896,11 +902,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formTroGiup");
         } else if (o == btnQLNhapThuoc) {
-            formQuanLyNhapThuoc = new Form_QuanLyNhapThuoc();
+            try {
+                formQuanLyNhapThuoc = new Form_QuanLyNhapThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyNhapThuoc, "formQuanLyNhapThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhapThuoc");
+        } else if (o ==btnQLLoThuoc) {
+            formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+            centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyLoThuoc");
         }
     }
 
