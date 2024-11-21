@@ -202,10 +202,10 @@ public class GUI_DangNhap extends JFrame implements ActionListener, KeyListener 
                 try {
                     NhanVien nhanVien = log.getNVByTaiKhoan(tk);
                     this.setVisible(false);
+                    GUI_TrangChu.setNhanVienDN(nhanVien);
                     GUI_TrangChu frame = new GUI_TrangChu();
                     frame.setVisible(true);
                     frame.updateUser(nhanVien.getVaiTro().getTenChucVu(), nhanVien.getHoNV(), nhanVien.getTenNV());
-                    frame.setNhanVienDN(nhanVien);
                 } catch (Exception e1){
                     e1.printStackTrace();
                 }
