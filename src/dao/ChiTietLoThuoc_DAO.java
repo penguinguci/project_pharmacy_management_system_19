@@ -45,6 +45,9 @@ public class ChiTietLoThuoc_DAO {
                 ctLo.setThuoc(thuoc_dao.timThuoc(rs.getString("maThuoc")));
                 ctLo.setDonGiaThuoc(donGiaThuoc_dao.timBangGia(rs.getString("maDonGia")));
                 ctLo.setLoThuoc(loThuoc_dao.timLoThuoc(rs.getString("maLoThuoc")));
+                if(checkTrung(ctLo.getSoHieuThuoc())) {
+                    list.add(ctLo);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,5 +163,56 @@ public class ChiTietLoThuoc_DAO {
             }
         }
         return n > 0;
+    }
+
+    public boolean traThuocVeKho(ArrayList<ChiTietHoaDon> listCTHD) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        int rowsAffected = 0;
+        for(ChiTietHoaDon x : listCTHD) {
+            try {
+                String sql = "update ChiTietLoThuoc set soLuongCon = soLuongCon + ? where soHieuThuoc = ?";
+                ps = con.getConnection().prepareStatement(sql);
+                ps.setString(1, String.valueOf(x.getSoLuong()));
+                ps.setString(2, x.getChiTietLoThuoc().getSoHieuThuoc());
+                rowsAffected = ps.executeUpdate();
+
+                if(rowsAffected <= 0) {
+                    System.out.println("Lỗi cập nhật số lượng còn của chi tiết lô");
+                    return false;
+                }
+
+                rowsAffected = 0;
+
+                String sql2 = "update Thuoc set tongSoLuong = tongSoLuong + ? where maThuoc = ?";
+                ps = con.getConnection().prepareStatement(sql2);
+                ps.setString(1, String.valueOf(x.getSoLuong()));
+                ps.setString(2, x.getThuoc().getMaThuoc());
+                rowsAffected = ps.executeUpdate();
+
+                if(rowsAffected <= 0) {
+                    System.out.println("Lỗi cập nhật tổng số lượng của thuốc");
+                    return false;
+                }
+//                if(!x.getThuoc().isTrangThai()) { //Nếu thuốc đang bị ẩn thì hiện lại
+//                    moThuoc(x.getThuoc());
+//                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        reload();
+        return true;
+    }
+
+    private void reload() {
+        list.clear();
+        try {
+            list = getAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

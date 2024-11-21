@@ -746,35 +746,6 @@ public class Thuoc_DAO {
         return listThuoc;
     }
 
-//    public boolean traThuocVeKho(ArrayList<ChiTietHoaDon> listCTHD) {
-//        ConnectDB con  = new ConnectDB();
-//        con.connect();
-//        con.getConnection();
-//        PreparedStatement ps = null;
-//        int rowsAffected = 0;
-//        for(ChiTietHoaDon x : listCTHD) {
-//            try {
-//                String sql = "update Thuoc set soLuongCon = soLuongCon + ? where soHieuThuoc = ?";
-//                ps = con.getConnection().prepareStatement(sql);
-//                ps.setString(1, String.valueOf(x.getSoLuong()));
-//                ps.setString(2, x.getThuoc().getSoHieuThuoc());
-//                rowsAffected = ps.executeUpdate();
-//
-//                if(rowsAffected <= 0) {
-//                    return false;
-//                }
-//
-//                if(!x.getThuoc().isTrangThai()) { //Nếu thuốc đang bị ẩn thì hiện lại
-//                    moThuoc(x.getThuoc());
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        reload();
-//        return true;
-//    }
-
     //Hiện lại thuốc bị ẩn
     public boolean moThuoc(Thuoc t) {
         ConnectDB con  = new ConnectDB();
