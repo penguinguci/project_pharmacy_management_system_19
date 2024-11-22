@@ -231,13 +231,17 @@ public class DonGiaThuoc_DAO {
         boolean flag = false;
         try{
             con = ConnectDB.getConnection();
-            String sql = "Update Thuoc set donViTinh = ?, donGia = ? where maDonGia = ?";
+            String sql = "Update DonGiaThuoc set donViTinh = ?, donGia = ? where maDonGia = ?";
             ps = con.prepareStatement(sql);
             ps.setString(1, donGiaThuoc.getDonViTinh());
             ps.setDouble(2, donGiaThuoc.getDonGia());
             ps.setString(3, donGiaThuoc.getMaDonGia());
             flag = ps.executeUpdate() > 0;
-            con.commit();
+            if (flag) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
         }catch (SQLException e1){
             e1.printStackTrace();
             if(con != null){
@@ -250,4 +254,7 @@ public class DonGiaThuoc_DAO {
         }
         return flag;
     }
+
+
+
 }

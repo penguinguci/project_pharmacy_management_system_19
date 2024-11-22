@@ -525,7 +525,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         // Tạo CardLayout để quản lý các form trong CENTER
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
-        centerPanel.setPreferredSize(new Dimension(1320, 760));
+
+        centerPanel.setPreferredSize(new Dimension(widthOfMainContentPanel-5, screenSize.height - topPanel.getPreferredSize().height));
         centerPanel.setBackground(Color.WHITE);
 
         // panel đồng hồ
@@ -693,9 +694,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
-            formBanThuoc.setTrangChu(this);
+//            formBanThuoc.setTrangChu(this);
             centerPanel.add(formBanThuoc, "formBanThuoc");
-            formBanThuoc.setNhanVienDN(nhanVienDN);
+//            formBanThuoc.setNhanVienDN(nhanVienDN);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formBanThuoc");
@@ -750,7 +751,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             cardLayout.show(centerPanel, "formQuanLyKhachHang");
         } else if(o == btnDatThuoc) {
             formQuanLyDonDatThuoc = new Form_QuanLyDonDatThuoc();
-            formQuanLyDonDatThuoc.setTrangChu(this);
+//            formQuanLyDonDatThuoc.setTrangChu(this);
             centerPanel.add(formQuanLyDonDatThuoc, "formQuanLyDonDatThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();
@@ -851,9 +852,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             cardLayout.show(centerPanel, "formQuanLyHoaDon");
         } else if(o == btnPhieuDoiTra) {
             formDoiTra = new Form_DoiTra();
-            formDoiTra.setTrangChu(this);
+//            formDoiTra.setTrangChu(this);
             centerPanel.add(formDoiTra, "formDoiTra");
-            formDoiTra.setNhanVienDN(getNhanVienDN());
+//            formDoiTra.setNhanVienDN(getNhanVienDN());
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formDoiTra");
@@ -1289,14 +1290,14 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public void openFormBanThuoc(ArrayList<ChiTietHoaDon> dsCTHD, String maDon, KhachHang khachHang) {
         try {
             formBanThuoc = new Form_BanThuoc();
-            formBanThuoc.capNhatGioHangSauDonDat(dsCTHD, maDon);
-            formBanThuoc.updateKhachHangSauDonDat(khachHang);
-            formBanThuoc.updateTien();
+//            formBanThuoc.capNhatGioHangSauDonDat(dsCTHD, maDon);
+//            formBanThuoc.updateKhachHangSauDonDat(khachHang);
+//            formBanThuoc.updateTien();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
         centerPanel.add(formBanThuoc, "formBanThuoc");
-        formBanThuoc.setNhanVienDN(nhanVienDN);
+//        formBanThuoc.setNhanVienDN(nhanVienDN);
         centerPanel.revalidate();
         centerPanel.repaint();
         cardLayout.show(centerPanel, "formBanThuoc");

@@ -268,5 +268,41 @@ public class ChiTietHoaDon_DAO {
         return thanhTien;
     }
 
+    public ChiTietHoaDon getOne(String maHD, String soHieuThuoc) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ChiTietHoaDon cthd = new ChiTietHoaDon();
+        try {
+            thuoc_dao = new Thuoc_DAO();
+            hoaDon_dao = new HoaDon_DAO();
+            listThuoc = thuoc_dao.getAllThuoc();
+            listHD = hoaDon_dao.getAllHoaDon();
+            chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+            String sql = "select * from ChiTietHoaDon where maHD = ? and soHieuThuoc = ?";
+            ps = con.getConnection().prepareStatement(sql);
+            ps.setString(1, maHD);
+            ps.setString(2, soHieuThuoc);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                HoaDon hd = new HoaDon();
+                hd = hoaDon_dao.timHoaDon(rs.getString("maHD"));
+                cthd.setHoaDon(hd);
 
+                Thuoc t = new Thuoc();
+                t = thuoc_dao.getThuocByMaThuoc(rs.getString("maThuoc"));
+                cthd.setThuoc(t);
+
+                cthd.setChiTietLoThuoc(chiTietLoThuoc_dao.timChiTietLoThuoc(rs.getString("soHieuThuoc")));
+
+                cthd.setDonViTinh(rs.getString("donViTinh"));
+                cthd.setSoLuong(rs.getInt("soLuong"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cthd;
+    }
 }

@@ -16,6 +16,11 @@ public class NhaSanXuat_DAO {
 
     public NhaSanXuat_DAO() {
         list = new ArrayList<NhaSanXuat>();
+        try {
+            list = getAllNhaSanXuat();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<NhaSanXuat> getAllNhaSanXuat() throws Exception{

@@ -10,6 +10,7 @@ import org.jdatepicker.impl.SqlDateModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -23,226 +24,164 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Properties;
 
-public class Form_ThemThuoc extends JPanel {
-    public String hinhAnhString;
-    public byte[] hinhAnhBytes;
+public class Form_ThemThuoc extends JPanel implements ActionListener {
+    public JPanel pnlShowImage, pnlWapperImage;
+    public JLabel imageLabel;
+    public ImageIcon imageIcon;
     public JLabel lblTitle;
-    public JButton btnFileChooser;
     public DanhMuc_DAO dm_DAO = new DanhMuc_DAO();
     public JScrollPane scrMota;
-    public JLabel lblHamLuong;
-    public JTextField txtHamLuong;
-    public JLabel lblDangBaoChe;
-    public JTextField txtDangBaoChe;
-    public JTextArea txaMoTa;
-    public JLabel lblMoTa;
-    public JLabel lblInforProductDetails;
-    public JLabel lblUsageDetails;
-    public JLabel lblPricing;
-    private JDatePanelImpl datePanel;
-    public JDatePickerImpl datePickerNgaySanXuat;
-    private SqlDateModel modelDate;
-    public JTextField txtHSD;
-    public JButton btnLuu;
-    public JButton btnHuy;
-    public JLabel lblTenThuoc;
-    public JTextField txtTenThuoc;
-    public JLabel lbldanhMuc;
-    public JComboBox<String> cmbDanhMuc;
-    public JLabel lblNhaCungCap;
-    public JComboBox<String> cmbNhaCungCap;
-    public JLabel lblNhaSanXuat;
-    public JComboBox<String> cmbNhaSanXuat;
-    public JLabel lblNuocSanXuat;
-    public JComboBox<String> cmbNuocSanXuat;
-    public JLabel lblKeThuoc;
-    public JComboBox<String> cmbKeThuoc;
-    public JLabel lblNgaySanXuat;
-    public JLabel lblHSD;
-    public JLabel lblDonViTinh;
-    public JComboBox<String> cmbDonViTinh;
-    public JLabel lblSoLuongCon;
-    public JTextField txtSoLuongCon;
-    public JLabel lblCachDung;
-    public JTextArea txaCachDung;
-    public JScrollPane scrCachDung;
-    public JLabel lblThanhPhan;
-    public JTextField txtThanhPhan;
-    public JLabel lblBaoQuan;
-    public JTextField txtBaoQuan;
-    public JLabel lblCongDung;
-    public JTextArea txaCongDung;
-    public JScrollPane scrCongDung;
-    public JLabel lblChiDinh;
-    public JTextField txtChiDinh;
-    public JLabel lblHinhAnh;
-    public JTextField txtHinhAnh;
-    public JLabel lblGiaNhap;
-    public JTextField txtGiaNhap;
-    public JLabel lblTrangThai;
-    public JComboBox<String> cmbTrangThai;
-//    public KeThuoc_DAO ke_DAO = new KeThuoc_DAO();
+    public JLabel lblTenThuoc, lblHamLuong, lblDangBaoChe, lblMoTa, lbldanhMuc, lblNhaCungCap, lblNhaSanXuat, lblNuocSanXuat, lblKeThuoc, lblTongSoLuong, lblCachDung,
+            lblThanhPhan, lblBaoQuan, lblCongDung,  lblChiDinh, lblHinhAnh;
+    public JTextField txtTenThuoc, txtHamLuong, txtDangBaoChe, txtThanhPhan, txtBaoQuan, txtTongSoLuong, txtChiDinh, txtHinhAnh, txtGiaNhap;
+    public JLabel lblInforProductDetails, lblUsageDetails;
+    public JButton btnLuu, btnHuy;
+    public JComboBox<String> cmbDanhMuc, cmbNhaCungCap, cmbNhaSanXuat, cmbNuocSanXuat, cmbKeThuoc;
+    public JTextArea txaCachDung, txaCongDung, txaMoTa;
+    public JScrollPane scrCachDung, scrCongDung;
+    public KeThuoc_DAO ke_DAO = new KeThuoc_DAO();
     public NhaSanXuat_DAO nsx_DAO = new NhaSanXuat_DAO();
     public NhaCungCap_DAO ncc_DAO = new NhaCungCap_DAO();
     public NuocSanXuat_DAO nuoc_DAO = new NuocSanXuat_DAO();
     public DonGiaThuoc_DAO dvt_DAO = new DonGiaThuoc_DAO();
     public byte[] bytes;
+    public String hinhAnhString;
+    public byte[] hinhAnhBytes;
+    public JButton btnFileChooser;
+    public boolean isCanceled;
+
 
     public Form_ThemThuoc() {
         setLayout(new BorderLayout());
 
         JPanel pnlTitle = new JPanel();
-        lblTitle = new JLabel("Thêm thuốc");
+        lblTitle = new JLabel("THÊM THUỐC", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
+        lblTitle.setForeground(new Color(54, 69, 79));
         pnlTitle.add(lblTitle);
         add(pnlTitle, BorderLayout.NORTH);
 
         JPanel inforInputThuoc = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 40, 10, 40);
+        gbc.insets = new Insets(18, 18, 18, 18);
 
-// Labels and fields
-        lblInforProductDetails = new JLabel("*Thông tin chi tiết thuốc:");
+
+        lblInforProductDetails = new JLabel("* Thông tin thuốc:");
         lblInforProductDetails.setFont(new Font("Arial", Font.BOLD, 16));
-        lblUsageDetails = new JLabel("*Hướng dẫn sử dụng:");
+        lblUsageDetails = new JLabel("Thuộc tính:");
         lblUsageDetails.setFont(new Font("Arial", Font.BOLD, 16));
-        lblPricing = new JLabel("*Định giá:");
-        lblPricing.setFont(new Font("Arial", Font.BOLD, 16));
 
         JPanel pnlTenThuoc = new JPanel(new GridBagLayout());
-
         lblTenThuoc = new JLabel("Tên thuốc:");
-        lblTenThuoc.setPreferredSize(new Dimension(100,25));
+        lblTenThuoc.setPreferredSize(new Dimension(100,30));
+        lblTenThuoc.setFont(new Font("Arial", Font.BOLD, 13));
         txtTenThuoc = new JTextField();
-        txtTenThuoc.setPreferredSize(new Dimension(200,25));
+        txtTenThuoc.setPreferredSize(new Dimension(300,30));
         pnlTenThuoc.add(lblTenThuoc);
         pnlTenThuoc.add(txtTenThuoc);
 
         JPanel pnlDanhMuc = new JPanel(new GridBagLayout());
         lbldanhMuc = new JLabel("Danh mục:");
-        lbldanhMuc.setPreferredSize(new Dimension(100,25));
+        lbldanhMuc.setPreferredSize(new Dimension(100,30));
+        lbldanhMuc.setFont(new Font("Arial", Font.BOLD, 13));
         cmbDanhMuc = new JComboBox<>();
         cmbDanhMuc.addItem("");
         loadComboBoxDanhMuc();
-        cmbDanhMuc.setPreferredSize(new Dimension(200,25));
+        cmbDanhMuc.setPreferredSize(new Dimension(300,30));
         pnlDanhMuc.add(lbldanhMuc);
         pnlDanhMuc.add(cmbDanhMuc);
 
         JPanel pnlNhaCungCap = new JPanel(new GridBagLayout());
         lblNhaCungCap = new JLabel("Nhà cung cấp:");
-        lblNhaCungCap.setPreferredSize(new Dimension(100,25));
+        lblNhaCungCap.setPreferredSize(new Dimension(100,30));
+        lblNhaCungCap.setFont(new Font("Arial", Font.BOLD, 13));
         cmbNhaCungCap = new JComboBox<>();
         cmbNhaCungCap.addItem("");
         loadComboBoxNhaCC();
-        cmbNhaCungCap.setPreferredSize(new Dimension(200,25));
+        cmbNhaCungCap.setPreferredSize(new Dimension(300,30));
         pnlNhaCungCap.add(lblNhaCungCap);
         pnlNhaCungCap.add(cmbNhaCungCap);
 
         JPanel pnlNhaSanXuat = new JPanel(new GridBagLayout());
         lblNhaSanXuat = new JLabel("Nhà sản xuất:");
-        lblNhaSanXuat.setPreferredSize(new Dimension(100,25));
+        lblNhaSanXuat.setPreferredSize(new Dimension(100,30));
+        lblNhaSanXuat.setFont(new Font("Arial", Font.BOLD, 13));
         cmbNhaSanXuat = new JComboBox<>();
         cmbNhaSanXuat.addItem("");
         loadComboBoxNhaSX();
-        cmbNhaSanXuat.setPreferredSize(new Dimension(200,25));
+        cmbNhaSanXuat.setPreferredSize(new Dimension(300,30));
         pnlNhaSanXuat.add(lblNhaSanXuat);
         pnlNhaSanXuat.add(cmbNhaSanXuat);
 
         JPanel pnlNuocSanXuat = new JPanel(new GridBagLayout());
         lblNuocSanXuat = new JLabel("Nước sản xuất:");
-        lblNuocSanXuat.setPreferredSize(new Dimension(100,25));
+        lblNuocSanXuat.setPreferredSize(new Dimension(100,30));
+        lblNuocSanXuat.setFont(new Font("Arial", Font.BOLD, 13));
         cmbNuocSanXuat = new JComboBox<>();
         cmbNuocSanXuat.addItem("");
         loadComboBoxNuocSX();
-        cmbNuocSanXuat.setPreferredSize(new Dimension(200,25));
+        cmbNuocSanXuat.setPreferredSize(new Dimension(300,30));
         pnlNuocSanXuat.add(lblNuocSanXuat);
         pnlNuocSanXuat.add(cmbNuocSanXuat);
 
         JPanel pnlKeThuoc = new JPanel(new GridBagLayout());
         lblKeThuoc = new JLabel("Kệ thuốc:");
-        lblKeThuoc.setPreferredSize(new Dimension(100,25));
+        lblKeThuoc.setPreferredSize(new Dimension(100,30));
+        lblKeThuoc.setFont(new Font("Arial", Font.BOLD, 13));
         cmbKeThuoc = new JComboBox<>();
         cmbKeThuoc.addItem("");
         loadComboBoxKeThuoc();
-        cmbKeThuoc.setPreferredSize(new Dimension(200,25));
+        cmbKeThuoc.setPreferredSize(new Dimension(300,30));
         pnlKeThuoc.add(lblKeThuoc);
         pnlKeThuoc.add(cmbKeThuoc);
 
-        modelDate = new SqlDateModel();
-        Properties properties = new Properties();
-        properties.put("text.today", "Today");
-        properties.put("text.month", "Month");
-        properties.put("text.year", "Year");
 
-        JPanel pnlNgaySanXuat = new JPanel(new GridBagLayout());
-        lblNgaySanXuat = new JLabel("Ngày sản xuất:");
-        lblNgaySanXuat.setPreferredSize(new Dimension(100,25));
-//datePickerNgaySanXuat = new JDatePickerImpl();
-        datePanel = new JDatePanelImpl(modelDate, properties);
-        datePickerNgaySanXuat =  new CustomDatePicker(datePanel, new DateLabelFormatter());
-        //datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-        pnlNgaySanXuat.add(lblNgaySanXuat);
-        pnlNgaySanXuat.add((Component) datePickerNgaySanXuat);
+        JPanel pnlTongSoLuong = new JPanel(new GridBagLayout());
+        lblTongSoLuong = new JLabel("Tổng số lượng:");
+        lblTongSoLuong.setPreferredSize(new Dimension(100,30));
+        lblTongSoLuong.setFont(new Font("Arial", Font.BOLD, 13));
+        txtTongSoLuong = new JTextField();
+        txtTongSoLuong.setPreferredSize(new Dimension(300,30));
+        pnlTongSoLuong.add(lblTongSoLuong);
+        pnlTongSoLuong.add(txtTongSoLuong);
 
-
-        JPanel pnlHSD = new JPanel(new GridBagLayout());
-        lblHSD = new JLabel("Hạn sử dụng:");
-        lblHSD.setPreferredSize(new Dimension(100,25));
-        txtHSD = new JTextField();
-        txtHSD.setPreferredSize(new Dimension(200,25));
-        pnlHSD.add(lblHSD);
-        pnlHSD.add(txtHSD);
-
-        JPanel pnlDonViTinh= new JPanel(new GridBagLayout());
-        lblDonViTinh = new JLabel("Đơn vị tính:");
-        lblDonViTinh.setPreferredSize(new Dimension(100,25));
-        cmbDonViTinh = new JComboBox<>();
-        cmbDonViTinh.addItem("");
-        cmbDonViTinh.setSelectedItem("");
-        loadComboBoxDonViTinh();
-        cmbDonViTinh.setPreferredSize(new Dimension(200,25));
-        pnlDonViTinh.add(lblDonViTinh);
-        pnlDonViTinh.add(cmbDonViTinh);
-
-        JPanel pnlSoLuongCon= new JPanel(new GridBagLayout());
-        lblSoLuongCon = new JLabel("Số lượng còn:");
-        lblSoLuongCon.setPreferredSize(new Dimension(100,25));
-        txtSoLuongCon = new JTextField();
-        txtSoLuongCon.setPreferredSize(new Dimension(200,25));
-        pnlSoLuongCon.add(lblSoLuongCon);
-        pnlSoLuongCon.add(txtSoLuongCon);
+        JPanel pnlThanhPhan = new JPanel(new GridBagLayout());
+        lblThanhPhan = new JLabel("Thành phần:");
+        lblThanhPhan.setPreferredSize(new Dimension(100,30));
+        lblThanhPhan.setFont(new Font("Arial", Font.BOLD, 13));
+        txtThanhPhan = new JTextField();
+        txtThanhPhan.setPreferredSize(new Dimension(300,30));
+        pnlThanhPhan.add(lblThanhPhan);
+        pnlThanhPhan.add(txtThanhPhan);
 
         JPanel pnlCachDung= new JPanel(new GridBagLayout());
         lblCachDung = new JLabel("Cách dùng:");
-        lblCachDung.setPreferredSize(new Dimension(100,25));
-        txaCachDung = new JTextArea(3,18);
+        lblCachDung.setPreferredSize(new Dimension(100,30));
+        lblCachDung.setFont(new Font("Arial", Font.BOLD, 13));
+        txaCachDung = new JTextArea(3,27);
         txaCachDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaCachDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
+        txaCachDung.setPreferredSize(new Dimension(300,30));
         scrCachDung = new JScrollPane(txaCachDung);
         pnlCachDung.add(lblCachDung);
         pnlCachDung.add(scrCachDung);
 
-        JPanel pnlThanhPhan = new JPanel(new GridBagLayout());
-        lblThanhPhan = new JLabel("Thành phần:");
-        lblThanhPhan.setPreferredSize(new Dimension(100,25));
-        txtThanhPhan = new JTextField();
-        txtThanhPhan.setPreferredSize(new Dimension(200,25));
-        pnlThanhPhan.add(lblThanhPhan);
-        pnlThanhPhan.add(txtThanhPhan);
-
         JPanel pnlBaoQuan = new JPanel(new GridBagLayout());
         lblBaoQuan = new JLabel("Bảo quản:");
-        lblBaoQuan.setPreferredSize(new Dimension(100,25));
+        lblBaoQuan.setPreferredSize(new Dimension(100,30));
+        lblBaoQuan.setFont(new Font("Arial", Font.BOLD, 13));
         txtBaoQuan = new JTextField();
-        txtBaoQuan.setPreferredSize(new Dimension(200,25));
+        txtBaoQuan.setPreferredSize(new Dimension(300,30));
         pnlBaoQuan.add(lblBaoQuan);
         pnlBaoQuan.add(txtBaoQuan);
 
         JPanel pnlCongDung = new JPanel(new GridBagLayout());
         lblCongDung = new JLabel("Công dụng:");
-        lblCongDung.setPreferredSize(new Dimension(100,25));
-        txaCongDung = new JTextArea(3, 18);
+        lblCongDung.setPreferredSize(new Dimension(100,30));
+        lblCongDung.setFont(new Font("Arial", Font.BOLD, 13));
+        txaCongDung = new JTextArea(3, 27);
+        txaCongDung.setPreferredSize(new Dimension(300,30));
         txaCongDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaCongDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
         scrCongDung = new JScrollPane(txaCongDung);
@@ -251,63 +190,66 @@ public class Form_ThemThuoc extends JPanel {
 
         JPanel pnlChiDinh = new JPanel(new GridBagLayout());
         lblChiDinh = new JLabel("Chỉ định:");
-        lblChiDinh.setPreferredSize(new Dimension(100,25));
+        lblChiDinh.setPreferredSize(new Dimension(100,30));
+        lblChiDinh.setFont(new Font("Arial", Font.BOLD, 13));
         txtChiDinh = new JTextField();
-        txtChiDinh.setPreferredSize(new Dimension(200,25));
+        txtChiDinh.setPreferredSize(new Dimension(300,30));
         pnlChiDinh.add(lblChiDinh);
         pnlChiDinh.add(txtChiDinh);
 
-        JPanel pnlHinhAnh = new JPanel(new GridBagLayout());
-        lblHinhAnh = new JLabel("Hình ảnh:");
-        lblHinhAnh.setPreferredSize(new Dimension(100,25));
-        txtHinhAnh = new JTextField();
-        txtHinhAnh.setPreferredSize(new Dimension(200,25));
-        pnlHinhAnh.add(lblHinhAnh);
-        pnlHinhAnh.add(txtHinhAnh);
-
-        JPanel pnlGiaNhap = new JPanel(new GridBagLayout());
-        lblGiaNhap = new JLabel("Giá nhập:");
-        lblGiaNhap.setPreferredSize(new Dimension(100,25));
-        txtGiaNhap = new JTextField();
-        txtGiaNhap.setPreferredSize(new Dimension(200,25));
-        pnlGiaNhap.add(lblGiaNhap);
-        pnlGiaNhap.add(txtGiaNhap);
-
-
-//        JPanel pnlTrangThai= new JPanel(new GridBagLayout());
-//        lblTrangThai = new JLabel("Trạng thái:");
-//        lblTrangThai.setPreferredSize(new Dimension(100,25));
-//        cmbTrangThai = new JComboBox<>(new String[]{"Còn","Hết"});
-//        cmbTrangThai.setPreferredSize(new Dimension(200,25));
-//        pnlTrangThai.add(lblTrangThai);
-//        pnlTrangThai.add(cmbTrangThai);
-
-        JPanel pnlHamLuong = new JPanel(new GridBagLayout());
-        lblHamLuong = new JLabel("Hàm lượng:");
-        lblHamLuong.setPreferredSize(new Dimension(100,25));
-        txtHamLuong = new JTextField();
-        txtHamLuong.setPreferredSize(new Dimension(200,25));
-        pnlHamLuong.add(lblHamLuong);
-        pnlHamLuong.add(txtHamLuong);
-
-        JPanel pnlDangBaoChe= new JPanel(new GridBagLayout());
-        lblDangBaoChe = new JLabel("Dạng bào chế:");
-        lblDangBaoChe.setPreferredSize(new Dimension(100,25));
-        txtDangBaoChe = new JTextField();
-        txtDangBaoChe.setPreferredSize(new Dimension(200,25));
-        pnlDangBaoChe.add(lblDangBaoChe);
-        pnlDangBaoChe.add(txtDangBaoChe);
 
         JPanel pnlMoTa = new JPanel(new GridBagLayout());
         lblMoTa = new JLabel("Mô tả:");
-        lblMoTa.setPreferredSize(new Dimension(100,25));
-        txaMoTa = new JTextArea(3,18);
-        txaMoTa.setPreferredSize(new Dimension(200,25));
+        lblMoTa.setPreferredSize(new Dimension(100,30));
+        lblMoTa.setFont(new Font("Arial", Font.BOLD, 13));
+        txaMoTa = new JTextArea(3,27);
+        txaMoTa.setPreferredSize(new Dimension(300,30));
         txaMoTa.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
         txaMoTa.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
         scrMota = new JScrollPane(txaMoTa);
         pnlMoTa.add(lblMoTa);
         pnlMoTa.add(scrMota);
+
+        JPanel pnlHamLuong = new JPanel(new GridBagLayout());
+        lblHamLuong = new JLabel("Hàm lượng:");
+        lblHamLuong.setPreferredSize(new Dimension(100,30));
+        lblHamLuong.setFont(new Font("Arial", Font.BOLD, 13));
+        txtHamLuong = new JTextField();
+        txtHamLuong.setPreferredSize(new Dimension(300,30));
+        pnlHamLuong.add(lblHamLuong);
+        pnlHamLuong.add(txtHamLuong);
+
+
+        JPanel pnlDangBaoChe = new JPanel(new GridBagLayout());
+        lblDangBaoChe = new JLabel("Dạng bào chế:");
+        lblDangBaoChe.setPreferredSize(new Dimension(100,30));
+        lblDangBaoChe.setFont(new Font("Arial", Font.BOLD, 13));
+        txtDangBaoChe = new JTextField();
+        txtDangBaoChe.setPreferredSize(new Dimension(300,30));
+        pnlDangBaoChe.add(lblDangBaoChe);
+        pnlDangBaoChe.add(txtDangBaoChe);
+
+        JPanel pnlHinhAnh = new JPanel(new GridBagLayout());
+        lblHinhAnh = new JLabel("Hình ảnh:");
+        lblHinhAnh.setPreferredSize(new Dimension(100,30));
+        lblHinhAnh.setFont(new Font("Arial", Font.BOLD, 13));
+        txtHinhAnh = new JTextField();
+        txtHinhAnh.setPreferredSize(new Dimension(200,30));
+        btnFileChooser = new JButton("Chọn ảnh");
+        btnFileChooser.setPreferredSize(new Dimension(100,30));
+        pnlHinhAnh.add(lblHinhAnh);
+        pnlHinhAnh.add(txtHinhAnh);
+        pnlHinhAnh.add(btnFileChooser);
+
+        pnlShowImage = new JPanel(new GridBagLayout());
+        pnlShowImage.setLayout(new GridBagLayout());
+        pnlWapperImage = new JPanel();
+        pnlWapperImage.setAlignmentX(CENTER_ALIGNMENT);
+        pnlWapperImage.setPreferredSize(new Dimension(190, 160));
+        imageIcon = new ImageIcon("images/not_Image.png");
+        loadImage(imageIcon);
+        pnlShowImage.add(pnlWapperImage);
+
 
         //
         gbc.gridx = 0; gbc.gridy = 1; inforInputThuoc.add(lblInforProductDetails, gbc);
@@ -320,111 +262,49 @@ public class Form_ThemThuoc extends JPanel {
         gbc.gridx = 0; gbc.gridy = 4;; inforInputThuoc.add(pnlNuocSanXuat, gbc);
         gbc.gridx = 1; gbc.gridy = 4;; inforInputThuoc.add(pnlKeThuoc, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 5; inforInputThuoc.add(pnlNgaySanXuat, gbc);
-        gbc.gridx = 1; gbc.gridy = 5; inforInputThuoc.add(pnlHSD, gbc);
+        gbc.gridx = 0; gbc.gridy = 5; inforInputThuoc.add(lblUsageDetails, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 6; inforInputThuoc.add(pnlDonViTinh, gbc);
-        gbc.gridx = 1; gbc.gridy = 6; inforInputThuoc.add(pnlSoLuongCon, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 7; inforInputThuoc.add(pnlHamLuong, gbc);
-        gbc.gridx = 1; gbc.gridy = 7; inforInputThuoc.add(pnlDangBaoChe, gbc);
-
-        //
-        gbc.gridx = 0; gbc.gridy = 8; inforInputThuoc.add(lblUsageDetails, gbc);
+        gbc.gridx = 0; gbc.gridy = 6; inforInputThuoc.add(pnlChiDinh, gbc);
+        gbc.gridx = 0; gbc.gridy = 7; inforInputThuoc.add(pnlTongSoLuong, gbc);
+        gbc.gridx = 0; gbc.gridy = 8; inforInputThuoc.add(pnlThanhPhan, gbc);
         gbc.gridx = 0; gbc.gridy = 9; inforInputThuoc.add(pnlCongDung, gbc);
-        gbc.gridx = 1; gbc.gridy = 9; inforInputThuoc.add(pnlThanhPhan, gbc);
+        gbc.gridx = 0; gbc.gridy = 10; inforInputThuoc.add(pnlCachDung, gbc);
+        gbc.gridx = 0; gbc.gridy = 11; inforInputThuoc.add(pnlMoTa, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 10; inforInputThuoc.add(pnlBaoQuan, gbc);
-        gbc.gridx = 1; gbc.gridy = 10; inforInputThuoc.add(pnlChiDinh, gbc);
+        gbc.gridx = 1; gbc.gridy = 6; inforInputThuoc.add(pnlHamLuong, gbc);
+        gbc.gridx = 1; gbc.gridy = 7; inforInputThuoc.add(pnlDangBaoChe, gbc);
+        gbc.gridx = 1; gbc.gridy = 8; inforInputThuoc.add(pnlBaoQuan, gbc);
+        gbc.gridx = 1; gbc.gridy = 9; inforInputThuoc.add(pnlHinhAnh, gbc);
+        gbc.gridheight = 2;
+        gbc.gridx = 1; gbc.gridy = 10; inforInputThuoc.add(pnlShowImage, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 11; inforInputThuoc.add(pnlCachDung, gbc);
-        gbc.gridx = 1; gbc.gridy = 11; inforInputThuoc.add(pnlMoTa, gbc);
-
-        //
-        gbc.gridx = 0; gbc.gridy = 12; inforInputThuoc.add(lblPricing, gbc);
-        gbc.gridx = 0; gbc.gridy = 13; inforInputThuoc.add(pnlGiaNhap, gbc);
-        gbc.gridx = 1; gbc.gridy = 13; inforInputThuoc.add(pnlHinhAnh, gbc);
-
-        gbc.gridx = 1; gbc.gridy = 14; inforInputThuoc.add(btnFileChooser = new JButton("Chọn ảnh"), gbc);
 
         add(inforInputThuoc, BorderLayout.CENTER);
 
         JPanel pButton = new JPanel();
         btnLuu = new JButton("Lưu");
+        btnLuu.setFont(new Font("Arial", Font.PLAIN, 15));
+        btnLuu.setBackground(new Color(65, 192, 201));
+        btnLuu.setForeground(Color.WHITE);
+        btnLuu.setOpaque(true);
+        btnLuu.setFocusPainted(false);
+        btnLuu.setBorderPainted(false);
+
         btnHuy = new JButton("Hủy");
+        btnHuy.setFont(new Font("Arial", Font.PLAIN, 15));
+        btnHuy.setBackground(Color.RED);
+        btnHuy.setForeground(Color.WHITE);
+        btnHuy.setOpaque(true);
+        btnHuy.setFocusPainted(false);
+        btnHuy.setBorderPainted(false);
         pButton.add(btnLuu);
+        pButton.add(Box.createHorizontalStrut(25));
         pButton.add(btnHuy);
         add(pButton, BorderLayout.SOUTH);
 
-        btnLuu.addActionListener(e->{
-            if(validateInputs()){
-                Thuoc_DAO thuoc_dao = new Thuoc_DAO();
-                DonGiaThuoc_DAO donGia_dao = new DonGiaThuoc_DAO();
-//                String maDonGia = donGia_dao.tuSinhMaDonGia();
-//                String maThuoc = thuoc_dao.tuSinhMaThuoc();
-//                String soHieuThuoc = thuoc_dao.tuSinhSoHieu();
-//                String tenThuoc = txtTenThuoc.getText().trim();
-//                DanhMuc danhMuc = dm_DAO.getDanhMuc(cmbDanhMuc.getSelectedItem().toString());
-//                NhaCungCap nhaCungCap = ncc_DAO.getNhaCungCap(cmbNhaCungCap.getSelectedItem().toString());
-//                NhaSanXuat nhaSanXuat = nsx_DAO.getNSX(cmbNhaSanXuat.getSelectedItem().toString());
-//                NuocSanXuat nuocSanXuat = nuoc_DAO.getNuocSX(cmbNuocSanXuat.getSelectedItem().toString());
-//                KeThuoc keThuoc = ke_DAO.getKeThuoc(cmbKeThuoc.getSelectedItem().toString());
-                java.util.Date date = modelDate.getValue();
-                Date ngaySanXuat = new Date(date.getTime());
-                int hanSuDung = 0;
-                if (!txtHSD.getText().trim().isEmpty()) {
-                    hanSuDung = Integer.parseInt(txtHSD.getText().trim());
-
-                    // Proceed with your code using 'number'
-                } else {
-                    // Handle the case where input is empty
-                    System.out.println("Input is empty. Please enter a valid number.");
-                }
-                int soLuongCon = Integer.   parseInt(txtSoLuongCon.getText().trim());
-                String cachDung = txaCachDung.getText().trim();
-                String thanhPhan = txtThanhPhan.getText().trim();
-                String hamLuong = txtHamLuong.getText().trim();
-                String moTa = txaMoTa.getText().trim();
-                String dangBaoChe = txtDangBaoChe.getText().trim();
-                String baoQuan = txtBaoQuan.getText().trim();
-                String congDung = txaCongDung.getText().trim();
-                String chiDinh = txtChiDinh.getText().trim();
-                String hinhAnh = hinhAnhString;
-                double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
-                boolean trangThai = true;
-                String donViTinh = cmbDonViTinh.getSelectedItem().toString();
-//                boolean themDonGiaThanhCong = donGia_dao.themDonGia(maThuoc, donViTinh , giaNhap+(giaNhap*0.12));
-//                if (!themDonGiaThanhCong) {
-//                    JOptionPane.showMessageDialog(null, "Thêm đơn giá thuốc thất bại!");
-//                    return;
-//                }
-//                Thuoc thuoc = new Thuoc(maThuoc,soHieuThuoc,tenThuoc,cachDung,thanhPhan, baoQuan, congDung, chiDinh, hanSuDung,soLuongCon,
-//                        ngaySanXuat,giaNhap,danhMuc,nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe, donGia_dao.getDonGiaByMaThuoc(maThuoc));
-//                boolean themThuocThanhCong = thuoc_dao.addThuoc(thuoc);
-//                if (themThuocThanhCong) {
-//                    JOptionPane.showMessageDialog(null, "Thêm thuốc và cập nhật giá nhập thành công!");
-//                    JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
-//                    dialogThemThuoc.dispose(); // Đóng JDialog
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Thêm thuốc thành công, nhưng không thể cập nhật giá nhập.");
-//                }
-            }
-        });
-        btnHuy.addActionListener(e->{
-            int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy không?", "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
-            if(confirm == JOptionPane.YES_OPTION){
-                JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
-                dialogThemThuoc.dispose(); // Đóng JDialog
-            }
-        });
-
-        btnFileChooser.addActionListener(e ->{
-            hinhAnhBytes = encodeFileChooser();
-            if (hinhAnhBytes != null) {
-                hinhAnhString = Base64.getEncoder().encodeToString(hinhAnhBytes);
-                System.out.println("Base64 String: " + hinhAnhString);
-            }
-        });
+        btnLuu.addActionListener(this);
+        btnHuy.addActionListener(this);
+        btnFileChooser.addActionListener(this);
 
     }
 
@@ -461,6 +341,43 @@ public class Form_ThemThuoc extends JPanel {
         return bytes;
     }
 
+    public void loadImage(ImageIcon imageIcon) {
+        try {
+            Image image = imageIcon.getImage();
+
+            // Lấy kích thước khung chứa
+            int panelWidth = pnlWapperImage.getPreferredSize().width;
+            int panelHeight = pnlWapperImage.getPreferredSize().height;
+
+            // Điều chỉnh ảnh để phù hợp với khung nhưng vẫn giữ tỷ lệ khung hình
+            double aspectRatio = (double) image.getWidth(null) / image.getHeight(null);
+
+            int newWidth = panelWidth;
+            int newHeight = panelHeight;
+
+            if ((double) panelWidth / panelHeight > aspectRatio) {
+                newWidth = panelWidth;
+                newHeight = (int) (panelWidth / aspectRatio);
+            } else {
+                newHeight = panelHeight;
+                newWidth = (int) (panelHeight * aspectRatio);
+            }
+
+            Image scaledDefaultImage = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledDefaultImage);
+
+            // Đặt ảnh mặc định vào JLabel
+            pnlWapperImage.removeAll(); // Xóa nội dung cũ
+            JLabel imageLabel = new JLabel(scaledIcon);
+            pnlWapperImage.add(imageLabel);
+
+            // Làm mới giao diện
+            pnlWapperImage.revalidate();
+            pnlWapperImage.repaint();
+        } catch (Exception e) {
+            System.out.println("Không thể tải ảnh: " + e.getMessage());
+        }
+    }
 
     public void loadComboBoxDanhMuc(){
         try {
@@ -475,15 +392,15 @@ public class Form_ThemThuoc extends JPanel {
     }
 
     public void loadComboBoxKeThuoc(){
-//        try {
-//            ke_DAO = new KeThuoc_DAO();
-//            ArrayList<KeThuoc> listKeThuoc = ke_DAO.getAllKeThuoc();
-//            for(KeThuoc ke : listKeThuoc){
-//                cmbKeThuoc.addItem(ke.getTenKe());
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            ke_DAO = new KeThuoc_DAO();
+            ArrayList<KeThuoc> listKeThuoc = ke_DAO.getAllKeThuoc();
+            for(KeThuoc ke : listKeThuoc){
+                cmbKeThuoc.addItem(ke.getTenKe());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void loadComboBoxNhaSX(){
@@ -522,78 +439,163 @@ public class Form_ThemThuoc extends JPanel {
         }
     }
 
-    public void loadComboBoxDonViTinh() {
+    public void setTitle(String title) {
+        lblTitle.setText(title);
+    }
+
+    public void setTxtTenThuoc(String tenThuoc) {
+        this.txtTenThuoc.setText(tenThuoc);
+    }
+
+    public void setTxtHamLuong(String hamLuong) {
+        this.txtHamLuong.setText(hamLuong);
+    }
+
+    public void setTxtDangBaoChe(String dangBaoChe) {
+        this.txtDangBaoChe.setText(dangBaoChe);
+    }
+
+    public void setTxtThanhPhan(String thanhPhan) {
+        this.txtThanhPhan.setText(thanhPhan);
+    }
+
+    public void setTxtBaoQuan(String baoQuan) {
+        this.txtBaoQuan.setText(baoQuan);
+    }
+
+    public void setTxtTongSoLuong(String tongSoLuong) {
+        this.txtTongSoLuong.setText(tongSoLuong);
+    }
+
+    public void setTxtChiDinh(String chiDinh) {
+        this.txtChiDinh.setText(chiDinh);
+    }
+
+    public void setTxtHinhAnh(String hinhAnh) {
+        this.txtHinhAnh.setText(hinhAnh);
+    }
+
+
+    public void setBtnLuuEnabled(boolean enabled) {
+        this.btnLuu.setEnabled(enabled);
+    }
+
+    public void setBtnHuyEnabled(ActionListener actionListener) {
+        btnHuy.addActionListener(actionListener);
+    }
+
+    public void setTxaCachDung(String cachDung) {
+        this.txaCachDung.setText(cachDung);
+    }
+
+    public void setTxaCongDung(String congDung) {
+        this.txaCongDung.setText(congDung);
+    }
+
+    public void setTxaMoTa(String moTa) {
+        this.txaMoTa.setText(moTa);
+    }
+
+    public void setCmbDanhMuc(String danhMuc) {
+        this.cmbDanhMuc.setSelectedItem(danhMuc);
+    }
+
+    public void setCmbNhaCungCap(String nhaCungCap) {
+        this.cmbNhaCungCap.setSelectedItem(nhaCungCap);
+    }
+
+    public void setCmbNhaSanXuat(String nhaSanXuat) {
+        this.cmbNhaSanXuat.setSelectedItem(nhaSanXuat);
+    }
+
+    public void setCmbNuocSanXuat(String nuocSanXuat) {
+        this.cmbNuocSanXuat.setSelectedItem(nuocSanXuat);
+    }
+
+    public void setCmbKeThuoc(String keThuoc) {
+        this.cmbKeThuoc.setSelectedItem(keThuoc);
+    }
+
+
+    public void setPnlWapperImage(String hinhAnhBase64) {
         try {
-            dvt_DAO = new DonGiaThuoc_DAO();
-            ArrayList<DonGiaThuoc> listDonViTinh = dvt_DAO.getAllDonGia();
+            // Giải mã Base64 thành mảng byte
+            byte[] imageBytes = Base64.getDecoder().decode(hinhAnhBase64);
 
-            for (DonGiaThuoc dvt : listDonViTinh) {
-                String donViTinh = dvt.getDonViTinh();
-                if (donViTinh != null && !donViTinh.isEmpty() && !isItemExistsInComboBox(donViTinh)) {
-                    cmbDonViTinh.addItem(donViTinh);
-                }
-            }
+            // Tạo ImageIcon từ mảng byte
+            ImageIcon imageIcon = new ImageIcon(imageBytes);
+            loadImage(imageIcon);
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
-    private boolean isItemExistsInComboBox(String item) {
-        for (int i = 0; i < cmbDonViTinh.getItemCount(); i++) {
-            if (cmbDonViTinh.getItemAt(i).equalsIgnoreCase(item)) {
-                return true;
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+        if (o.equals(btnLuu)){
+            //            if(validateInputs()){
+//
+//            }
+            Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+            String maThuoc = thuoc_dao.tuSinhMaThuoc();
+            String tenThuoc = txtTenThuoc.getText().trim();
+            DanhMuc danhMuc = dm_DAO.getDanhMuc(cmbDanhMuc.getSelectedItem().toString());
+            NhaCungCap nhaCungCap = ncc_DAO.getNhaCungCap(cmbNhaCungCap.getSelectedItem().toString());
+            NhaSanXuat nhaSanXuat = nsx_DAO.getNSX(cmbNhaSanXuat.getSelectedItem().toString());
+            NuocSanXuat nuocSanXuat = nuoc_DAO.getNuocSX(cmbNuocSanXuat.getSelectedItem().toString());
+            KeThuoc keThuoc = ke_DAO.getKeThuoc(cmbKeThuoc.getSelectedItem().toString());
+            int tongSoLuong = Integer.parseInt(txtTongSoLuong.getText().trim());
+            String cachDung = txaCachDung.getText().trim();
+            String thanhPhan = txtThanhPhan.getText().trim();
+            String hamLuong = txtHamLuong.getText().trim();
+            String moTa = txaMoTa.getText().trim();
+            String dangBaoChe = txtDangBaoChe.getText().trim();
+            String baoQuan = txtBaoQuan.getText().trim();
+            String congDung = txaCongDung.getText().trim();
+            String chiDinh = txtChiDinh.getText().trim();
+            String hinhAnh = hinhAnhString;
+            boolean trangThai = true;
+
+            Thuoc thuoc = new Thuoc(maThuoc,tenThuoc,cachDung,thanhPhan, baoQuan, congDung, chiDinh,tongSoLuong,
+                    danhMuc,nhaSanXuat, nhaCungCap, nuocSanXuat, keThuoc, trangThai, hinhAnh, moTa, hamLuong, dangBaoChe);
+            boolean themThuocThanhCong = thuoc_dao.addThuoc(thuoc);
+            if (themThuocThanhCong) {
+                JOptionPane.showMessageDialog(null, "Thêm thuốc thành công!");
+                JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
+                dialogThemThuoc.dispose(); // Đóng JDialog
+            } else {
+                JOptionPane.showMessageDialog(null, "Thêm thuốc thất bại!");
             }
         }
-        return false;
-    }
-
-    // Class để định dạng ngày tháng
-    class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
-
-        private String datePattern = "dd-MM-yyyy";
-        private java.text.SimpleDateFormat dateFormatter = new java.text.SimpleDateFormat(datePattern);
-
-        @Override
-        public Object stringToValue(String text) throws java.text.ParseException {
-            return dateFormatter.parseObject(text);
-        }
-
-        @Override
-        public String valueToString(Object value) throws java.text.ParseException {
-            if (value != null) {
-                java.util.Calendar cal = (java.util.Calendar) value;
-                return dateFormatter.format(cal.getTime());
+        if (o.equals(btnHuy)){
+            if (!isCanceled) {
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy không?", "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
+                if(confirm == JOptionPane.YES_OPTION){
+                    JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
+                    isCanceled = true;
+                    dialogThemThuoc.dispose(); // Đóng JDialog
+                }
             }
 
-            return "";
+        }
+        if(o.equals(btnFileChooser)){
+            hinhAnhBytes = encodeFileChooser();
+            if (hinhAnhBytes != null) {
+                ImageIcon imageIcon = new ImageIcon(hinhAnhBytes);
+                loadImage(imageIcon);
+            }
+            hinhAnhString = Base64.getEncoder().encodeToString(hinhAnhBytes);
         }
     }
-
-    //Set text cho datePanel
-    class CustomDatePicker extends JDatePickerImpl {
-        public CustomDatePicker(JDatePanelImpl datePanel, JFormattedTextField.AbstractFormatter formatter) {
-            super(datePanel, formatter);
-
-            // Thiết lập placeholder ban đầu
-            getJFormattedTextField().setText("Chọn ngày");
-
-            // Đăng ký sự kiện focus để xóa placeholder khi người dùng chọn
-            getJFormattedTextField().addFocusListener(new FocusAdapter() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                    if (getJFormattedTextField().getText().equals("Chọn ngày")) {
-                        getJFormattedTextField().setText("");  // Xóa placeholder khi focus
-                    }
-                }
-
-                @Override
-                public void focusLost(FocusEvent e) {
-                    if (getJFormattedTextField().getText().isEmpty()) {
-                        getJFormattedTextField().setText("Chọn ngày");  // Đặt lại placeholder khi mất focus và không chọn ngày
-                    }
-                }
-            });
-        }
-    }
+    //    private boolean isItemExistsInComboBox(String item) {
+//        for (int i = 0; i < cmbDonViTinh.getItemCount(); i++) {
+//            if (cmbDonViTinh.getItemAt(i).equalsIgnoreCase(item)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
 }

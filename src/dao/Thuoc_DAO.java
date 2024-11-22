@@ -464,7 +464,7 @@ public class Thuoc_DAO {
         List<Object[]> rowsDataList = new ArrayList<>();
         try{
             // Note: OFFSET ? ROWS : Bỏ n dòng - FETCH NEXT ? ROWS ONLY: Chỉ lấy n dòng
-            String query = "Select * from Thuoc order by SoHieuThuoc offset ? rows fetch next ? rows only";
+            String query = "Select * from Thuoc order by MaThuoc offset ? rows fetch next ? rows only";
             con = ConnectDB.getConnection();
             statement = con.prepareStatement(query);
             statement.setInt(1, (currentPage - 1) * rowsPerPage);
@@ -475,28 +475,20 @@ public class Thuoc_DAO {
                 String tenThuoc = rs.getString("TenThuoc");
                 DanhMuc danhMuc = dm.timDanhMuc(rs.getString("maDanhMuc"));
                 NhaCungCap nhaCungCap = ncc.timNhaCungCap(rs.getString("maNhaCungCap"));
-
+                NhaSanXuat nhaSanXuat = nsx.timNhaSX(rs.getString("maNhaSanXuat"));
                 NuocSanXuat nuocSanXuat = nuoc.timNuocSanXuat(rs.getString("maNuocSanXuat"));
-                int soLuongCon = rs.getInt("soLuongCon");
-                DonGiaThuoc bangGiaSanPham = bg.timBangGia(rs.getString("maDonGia"));
-                String thanhPhan = rs.getString("thanhPhan");
-                String donViTinh = bangGiaSanPham.getDonViTinh();
-                double giaBan = bangGiaSanPham.getDonGia();
+                KeThuoc keThuoc = ke.timKeThuoc(rs.getString("maKe"));
+                int tongSoLuong = rs.getInt("tongSoLuong");
                 boolean trangThai = rs.getBoolean("trangThai");
-                Object[] rowData = {maThuoc,soHieuThuoc,tenThuoc,danhMuc.getTenDanhMuc(),nhaCungCap.getTenNCC(),nuocSanXuat.getTenNuoxSX(),soLuongCon,thanhPhan,donViTinh,giaBan};
+                Object[] rowData = {maThuoc,tenThuoc,danhMuc.getTenDanhMuc(),nhaCungCap.getTenNCC(),nhaSanXuat.getTenNhaSX(),nuocSanXuat.getTenNuoxSX(), keThuoc.getTenKe(), tongSoLuong};
                 if(trangThai == true){
                     rowsDataList.add(rowData);
                 }
-                Object[] rowData = {maThuoc, "Sửa số hiệu sau",tenThuoc,danhMuc.getTenDanhMuc(),nhaCungCap.getTenNCC(),nuocSanXuat.getTenNuoxSX(),soLuongCon,thanhPhan,donViTinh,giaBan};
-                rowsDataList.add(rowData);
             }
-
             rs.close();
             statement.close();
             con.close();
         }catch (SQLException e){
-            System.out.println("Rows per page: " + rowsPerPage);
-            System.out.println("Current page offset: " + ((currentPage - 1) * rowsPerPage));
             e.printStackTrace();
         }finally {
             try{
@@ -649,21 +641,6 @@ public class Thuoc_DAO {
 //        return list;
 //    }
 
-    public String tuSinhSoHieu() {
-        Connection con = ConnectDB.getConnection();
-        String sql = "SELECT MAX(soHieuThuoc) FROM Thuoc";
-        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                String lastId = rs.getString(1);
-                int newIdNum = Integer.parseInt(lastId.substring(1)) + 1; // Assuming ID is in format "S00001"
-                return String.format("S%05d", newIdNum); // Formats as S00001, S00002, etc.
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "S00001"; // Default starting value
-    }
-
     public String tuSinhMaThuoc() {
         Connection con = ConnectDB.getConnection();
         String sql = "SELECT MAX(maThuoc) FROM Thuoc";
@@ -681,54 +658,44 @@ public class Thuoc_DAO {
 
     public boolean addThuoc(Thuoc thuoc){
         Connection con = null;
-        PreparedStatement psDonGiaThuoc = null;
         PreparedStatement psThuoc = null;
         boolean flag = false;
-
         try{
             con = ConnectDB.getConnection();
-            String query = "insert into Thuoc values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String query = "insert into Thuoc values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             psThuoc = con.prepareStatement(query);
-            psThuoc.setString(1,tuSinhSoHieu());
-            psThuoc.setString(2,tuSinhMaThuoc());
-            psThuoc.setString(3, thuoc.getTenThuoc());
-            psThuoc.setString(4, thuoc.getDanhMuc().getMaDanhMuc());
-            psThuoc.setString(5, thuoc.getNhaCungCap().getMaNCC());
-            psThuoc.setString(6, thuoc.getNhaSanXuat().getMaNhaSX());
-            psThuoc.setString(7, thuoc.getNuocSanXuat().getMaNuocSX());
-            psThuoc.setString(8, thuoc.getKeThuoc().getMaKe());
-            Date ngaySX = thuoc.getNgaySX(); // thuoc.getNgaySX() trả về java.util.Date
-            psThuoc.setDate(9, new java.sql.Date(ngaySX.getTime()));
-            psThuoc.setInt(10, thuoc.getHSD());
-            psThuoc.setString(11, thuoc.getDonGiaThuoc().getMaDonGia());
-            psThuoc.setInt(12,thuoc.getSoLuongCon());
-            psThuoc.setString(13, thuoc.getCachDung());
-            psThuoc.setString(14, thuoc.getThanhPhan());
-            psThuoc.setString(15, thuoc.getBaoQuan());
-            psThuoc.setString(16, thuoc.getCongDung());
-            psThuoc.setString(17, thuoc.getChiDinh());
-            psThuoc.setString(18, thuoc.getMoTa());
-            psThuoc.setString(19, thuoc.getHamLuong());
-            psThuoc.setString(20, thuoc.getDangBaoChe());
-            psThuoc.setString(21, thuoc.getHinhAnh());
-            psThuoc.setDouble(22, thuoc.getGiaNhap());
-            psThuoc.setBoolean(23, thuoc.isTrangThai());
+            psThuoc.setString(1,tuSinhMaThuoc());
+            psThuoc.setString(2, thuoc.getTenThuoc());
+            psThuoc.setString(3, thuoc.getDanhMuc().getMaDanhMuc());
+            psThuoc.setString(4, thuoc.getNhaCungCap().getMaNCC());
+            psThuoc.setString(5, thuoc.getNhaSanXuat().getMaNhaSX());
+            psThuoc.setString(6, thuoc.getNuocSanXuat().getMaNuocSX());
+            psThuoc.setString(7, thuoc.getKeThuoc().getMaKe());
+            psThuoc.setInt(8, thuoc.getTongSoLuong());
+            psThuoc.setString(9, thuoc.getCachDung());
+            psThuoc.setString(10, thuoc.getThanhPhan());
+            psThuoc.setString(11, thuoc.getBaoQuan());
+            psThuoc.setString(12, thuoc.getCongDung());
+            psThuoc.setString(13, thuoc.getChiDinh());
+            psThuoc.setString(14, thuoc.getMoTa());
+            psThuoc.setString(15, thuoc.getHamLuong());
+            psThuoc.setString(16, thuoc.getDangBaoChe());
+            psThuoc.setString(17, thuoc.getHinhAnh());
+            psThuoc.setBoolean(18, thuoc.isTrangThai());
             psThuoc.executeUpdate();
             con.commit();
-            flag = true; // Đặt flag thành true nếu không có lỗi xảy ra
+            flag = true;
         } catch (Exception e) {
             e.printStackTrace();
             if (con != null) {
                 try {
-                    con.rollback(); // Hoàn tác nếu có lỗi
+                    con.rollback();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
         } finally {
-        // Đóng kết nối và các PreparedStatement
             try {
-                if (psDonGiaThuoc != null) psDonGiaThuoc.close();
                 if (psThuoc != null) psThuoc.close();
                 if (con != null) con.close();
             } catch (SQLException e) {
@@ -740,37 +707,31 @@ public class Thuoc_DAO {
 
     public boolean updateThuoc(Thuoc thuoc){
         Connection con = null;
-        PreparedStatement ps ;
+        PreparedStatement psThuoc ;
         boolean flag = false;
         try{
             con = ConnectDB.getConnection();
-            String sql = "update Thuoc set tenThuoc = ?, maDanhMuc = ?, maNhaCungCap = ?, maNhaSanXuat = ?, maNuocSanXuat = ?, maKe = ?, ngaySX = ?, HSD = ?, maDonGia = ?, soLuongCon = ?, cachDung = ?, thanhPhan = ?, baoQuan = ?, congDung = ?, chiDinh = ?, moTa = ?, hamLuong = ?, dangBaoChe = ?, hinhAnh = ?, giaNhap = ?, trangThai = ? where soHieuThuoc = ? and maThuoc = ?";
-            ps = con.prepareStatement(sql);
-            ps.setString(1, thuoc.getTenThuoc());
-            ps.setString(2, thuoc.getDanhMuc().getMaDanhMuc());
-            ps.setString(3, thuoc.getNhaCungCap().getMaNCC());
-            ps.setString(4, thuoc.getNhaSanXuat().getMaNhaSX());
-            ps.setString(5, thuoc.getNuocSanXuat().getMaNuocSX());
-            ps.setString(6, thuoc.getKeThuoc().getMaKe());
-            Date ngaySX = thuoc.getNgaySX();
-            ps.setDate(7, new java.sql.Date(ngaySX.getTime()));
-            ps.setInt(8, thuoc.getHSD());
-            ps.setString(9, thuoc.getDonGiaThuoc().getMaDonGia());
-            ps.setInt(10, thuoc.getSoLuongCon());
-            ps.setString(11, thuoc.getCachDung());
-            ps.setString(12, thuoc.getThanhPhan());
-            ps.setString(13, thuoc.getBaoQuan());
-            ps.setString(14, thuoc.getCongDung());
-            ps.setString(15, thuoc.getChiDinh());
-            ps.setString(16, thuoc.getMoTa());
-            ps.setString(17, thuoc.getHamLuong());
-            ps.setString(18, thuoc.getDangBaoChe());
-            ps.setString(19, thuoc.getHinhAnh());
-            ps.setDouble(20, thuoc.getGiaNhap());
-            ps.setBoolean(21, thuoc.isTrangThai());
-            ps.setString(22, thuoc.getSoHieuThuoc());
-            ps.setString(23, thuoc.getMaThuoc());
-            ps.executeUpdate();
+            String sql = "update Thuoc set tenThuoc = ?, maDanhMuc = ?, maNhaCungCap = ?, maNhaSanXuat = ?, maNuocSanXuat = ?, maKe = ?, tongSoLuong = ?, cachDung = ?, thanhPhan = ?, baoQuan = ?, congDung = ?, chiDinh = ?, moTa = ?, hamLuong = ?, dangBaoChe = ?, hinhAnh = ? where maThuoc = ?";
+            psThuoc = con.prepareStatement(sql);
+            psThuoc.setString(1, thuoc.getTenThuoc());
+            psThuoc.setString(2, thuoc.getDanhMuc().getMaDanhMuc());
+            psThuoc.setString(3, thuoc.getNhaCungCap().getMaNCC());
+            psThuoc.setString(4, thuoc.getNhaSanXuat().getMaNhaSX());
+            psThuoc.setString(5, thuoc.getNuocSanXuat().getMaNuocSX());
+            psThuoc.setString(6, thuoc.getKeThuoc().getMaKe());
+            psThuoc.setInt(7, thuoc.getTongSoLuong());
+            psThuoc.setString(8, thuoc.getCachDung());
+            psThuoc.setString(9, thuoc.getThanhPhan());
+            psThuoc.setString(10, thuoc.getBaoQuan());
+            psThuoc.setString(11, thuoc.getCongDung());
+            psThuoc.setString(12, thuoc.getChiDinh());
+            psThuoc.setString(13, thuoc.getMoTa());
+            psThuoc.setString(14, thuoc.getHamLuong());
+            psThuoc.setString(15, thuoc.getDangBaoChe());
+            psThuoc.setString(16, thuoc.getHinhAnh());
+            psThuoc.setString(17, thuoc.getMaThuoc());
+
+            psThuoc.executeUpdate();
             con.commit();
             flag = true;
         }catch (SQLException e){
@@ -872,6 +833,89 @@ public class Thuoc_DAO {
         return listThuoc;
     }
 
+    public ArrayList<Thuoc> getDSThuocTheoNSX(String tenNSX) throws Exception {
+        ArrayList<Thuoc> listThuoc = new ArrayList<Thuoc>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            con = ConnectDB.getConnection();
+
+            String sql = "{CALL getDSThuocTheoNSX(?)}";
+
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, tenNSX);
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Thuoc t = new Thuoc();
+                t.setMaThuoc(rs.getString("maThuoc"));
+                t.setTenThuoc(rs.getString("tenThuoc"));
+
+                for (DanhMuc x : listDanhMuc) {
+                    if (x.getMaDanhMuc().equalsIgnoreCase(rs.getString("maDanhMuc"))) {
+                        t.setDanhMuc(x);
+                        break;
+                    }
+                }
+
+                for (NhaCungCap x : listNCC) {
+                    if (x.getMaNCC().equalsIgnoreCase(rs.getString("maNhaCungCap"))) {
+                        t.setNhaCungCap(x);
+                        break;
+                    }
+                }
+
+                for (NhaSanXuat x : listNSX) {
+                    if (x.getMaNhaSX().equalsIgnoreCase(rs.getString("maNhaSanXuat"))) {
+                        t.setNhaSanXuat(x);
+                        break;
+                    }
+                }
+
+                for (NuocSanXuat x : listNuoc) {
+                    if (x.getMaNuocSX().equalsIgnoreCase(rs.getString("maNuocSanXuat"))) {
+                        t.setNuocSanXuat(x);
+                        break;
+                    }
+                }
+
+                for (KeThuoc x : listKe) {
+                    if (x.getMaKe().equalsIgnoreCase(rs.getString("maKe"))) {
+                        t.setKeThuoc(x);
+                        break;
+                    }
+                }
+
+
+                t.setTongSoLuong(rs.getInt("tongSoLuong"));
+                t.setCachDung(rs.getString("cachDung"));
+                t.setThanhPhan(rs.getString("thanhPhan"));
+                t.setBaoQuan(rs.getString("baoQuan"));
+                t.setCongDung(rs.getString("congDung"));
+                t.setChiDinh(rs.getString("chiDinh"));
+                t.setHinhAnh(rs.getString("hinhAnh"));
+                t.setMoTa(rs.getString("moTa"));
+                t.setHamLuong(rs.getString("hamLuong"));
+                t.setDangBaoChe(rs.getString("dangBaoChe"));
+                t.setTrangThai(rs.getBoolean("trangThai"));
+
+                listThuoc.add(t);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the resources
+            if (rs != null) rs.close();
+            if (statement != null) statement.close();
+        }
+
+        return listThuoc;
+    }
+
 //    public boolean traThuocVeKho(ArrayList<ChiTietHoaDon> listCTHD) {
 //        ConnectDB con  = new ConnectDB();
 //        con.connect();
@@ -939,6 +983,31 @@ public class Thuoc_DAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean deleteThuoc(String maThuoc){
+        Connection con;
+        con = ConnectDB.getConnection();
+        PreparedStatement ps;
+        boolean flag = false;
+        try{
+            String sql = "update Thuoc set trangThai = 0 where maThuoc = ? ";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, maThuoc);
+            ps.executeUpdate();
+            con.commit();
+            flag = true;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            try {
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
     }
 
 }

@@ -1,4 +1,5 @@
-﻿-- Tạo cơ sở dữ liệu
+﻿USE master
+-- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
 
@@ -13,7 +14,7 @@ CREATE TABLE ChucVu (
 
 -- Bảng NhanVien
 CREATE TABLE NhanVien (
-    maNV VARCHAR(10) NOT NULL PRIMARY KEY,
+    maNV VARCHAR(20) NOT NULL PRIMARY KEY,
     hoNV NVARCHAR(10) NOT NULL,
     tenNV NVARCHAR(50) NOT NULL,
     ngaySinh DATE NOT NULL,
@@ -29,7 +30,7 @@ CREATE TABLE NhanVien (
 
 -- Bảng TaiKhoan
 CREATE TABLE TaiKhoan (
-    taiKhoan VARCHAR(10) NOT NULL PRIMARY KEY,
+    taiKhoan VARCHAR(20) NOT NULL PRIMARY KEY,
     matKhau VARCHAR(20) NOT NULL,
     ngayCapNhat DATE,
     FOREIGN KEY (taiKhoan) REFERENCES NhanVien(maNV)
@@ -38,7 +39,7 @@ CREATE TABLE TaiKhoan (
 
 -- Bảng DiemTichLuy 
 CREATE TABLE DiemTichLuy (
-	maDTL VARCHAR(10) PRIMARY KEY,
+	maDTL VARCHAR(20) PRIMARY KEY,
 	xepHang NVARCHAR(50) NOT NULL,
 	diemTong FLOAT NOT NULL,
 	diemHienTai FLOAT NOT NULL
@@ -46,7 +47,7 @@ CREATE TABLE DiemTichLuy (
 
 -- Bảng KhachHang
 CREATE TABLE KhachHang (
-    maKH VARCHAR(10) NOT NULL PRIMARY KEY,
+    maKH VARCHAR(20) NOT NULL PRIMARY KEY,
 	hoKH NVARCHAR(10) NOT NULL,
     tenKH NVARCHAR(50) NOT NULL,
     ngaySinh DATE,
@@ -55,21 +56,21 @@ CREATE TABLE KhachHang (
     diaChi NVARCHAR(255),
     SDT VARCHAR(15),
     trangThai BIT,
-	maDTL VARCHAR(10),
+	maDTL VARCHAR(20),
 	FOREIGN KEY (maDTL) REFERENCES DiemTichLuy(maDTL)
 );
 
 
 -- Bảng Thue
 CREATE TABLE Thue (
-    maThue VARCHAR(15) NOT NULL PRIMARY KEY,
+    maThue VARCHAR(20) NOT NULL PRIMARY KEY,
     loaiThue NVARCHAR(50) NOT NULL,
     tyLeThue FLOAT(10) NOT NULL
 );
 
 -- Bảng NhaCungCap
 CREATE TABLE NhaCungCap (
-    maNCC VARCHAR(10) NOT NULL PRIMARY KEY,
+    maNCC VARCHAR(20) NOT NULL PRIMARY KEY,
     tenNCC NVARCHAR(50),
     diaChi NVARCHAR(255),
     email VARCHAR(50)
@@ -77,80 +78,124 @@ CREATE TABLE NhaCungCap (
 
 -- Bảng DanhMuc
 CREATE TABLE DanhMuc (
-    maDanhMuc VARCHAR(10) NOT NULL PRIMARY KEY,
+    maDanhMuc VARCHAR(20) NOT NULL PRIMARY KEY,
     tenDanhMuc NVARCHAR(50)
 );
 
 -- Bảng NhaSanXuat
 CREATE TABLE NhaSanXuat (
-    maNhaSX VARCHAR(15) NOT NULL PRIMARY KEY,
+    maNhaSX VARCHAR(20) NOT NULL PRIMARY KEY,
     tenNhaSX NVARCHAR(50),
     diaChi NVARCHAR(255)
 );
 
 -- Bảng KeThuoc
 CREATE TABLE KeThuoc (
-    maKe VARCHAR(10) NOT NULL PRIMARY KEY,
+    maKe VARCHAR(20) NOT NULL PRIMARY KEY,
     tenKe NVARCHAR(50),
-    maNhanVien VARCHAR(10),
+    maNhanVien VARCHAR(20),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV)
 );
 
 -- Bảng NuocSanXuat
 CREATE TABLE NuocSanXuat (
-    maNuoc VARCHAR(10) NOT NULL PRIMARY KEY,
+    maNuoc VARCHAR(20) NOT NULL PRIMARY KEY,
 	tenNuoc NVARCHAR(50) NOT NULL
 );
 
 -- Bảng DonGiaThuoc
 CREATE TABLE DonGiaThuoc (
 	maDonGia VARCHAR(20) PRIMARY KEY NOT NULL,
-	maThuoc VARCHAR(10) NOT NULL,
+	maThuoc VARCHAR(20) NOT NULL,
 	donViTinh NVARCHAR(50) NOT NULL,
 	donGia FLOAT(10)
 )
 
+
+
 -- Bảng Thuoc (Sản phẩm thuốc)
 CREATE TABLE Thuoc (
-    soHieuThuoc VARCHAR(10) NOT NULL,
-    maThuoc VARCHAR(10) NOT NULL,
+    maThuoc VARCHAR(20) primary key NOT NULL,
 	tenThuoc NVARCHAR(50) NOT NULL,
-    maDanhMuc VARCHAR(10),
-    maNhaCungCap VARCHAR(10),
-    maNhaSanXuat VARCHAR(15),
-	maNuocSanXuat VARCHAR(10),
-    maKe VARCHAR(10),
-    ngaySX DATE,
-    HSD INT,
-    maDonGia VARCHAR(20) NOT NULL,
-	soLuongCon int NOT NULL,
+    maDanhMuc VARCHAR(20),
+    maNhaCungCap VARCHAR(20),
+    maNhaSanXuat VARCHAR(20),
+	maNuocSanXuat VARCHAR(20),
+    maKe VARCHAR(20),
+	tongSoLuong INT NOT NULL,
     cachDung NVARCHAR(255),
     thanhPhan NVARCHAR(255),
     baoQuan NVARCHAR(255),
     congDung NVARCHAR(255),
     chiDinh NVARCHAR(255),
 	moTa NVARCHAR(255),
-	hamLuong NVARCHAR(255),
+	hamLuong NVARCHAR(MAX),
 	dangBaoChe NVARCHAR(255),
-	hinhAnh VARCHAR(255),
-    giaNhap FLOAT(10),
-	trangThai bit,
-	PRIMARY KEY (soHieuThuoc, maThuoc),
+	hinhAnh VARCHAR(MAX),
+	trangThai BIT,
     FOREIGN KEY (maDanhMuc) REFERENCES DanhMuc(maDanhMuc),
     FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC),
     FOREIGN KEY (maNhaSanXuat) REFERENCES NhaSanXuat(maNhaSX),
     FOREIGN KEY (maKe) REFERENCES KeThuoc(maKe),
 	FOREIGN KEY (maNuocSanXuat) REFERENCES NuocSanXuat(maNuoc),
-	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 );
+
+
+
+-- Bảng PhieuNhapThuoc
+CREATE TABLE PhieuNhapThuoc (
+    maPhieuNhap VARCHAR(20) NOT NULL PRIMARY KEY,
+    maNhanVien VARCHAR(20) NOT NULL, 
+    ngayLapPhieu DATE NOT NULL,
+    maNhaCungCap VARCHAR(20) NOT NULL,
+    tongTien FLOAT(10) NOT NULL,
+    FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
+    FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC)
+);
+
+-- Bảng ChiTietPhieuNhap
+CREATE TABLE ChiTietPhieuNhap (
+    maPhieuNhap VARCHAR(20) NOT NULL,
+	maThuoc VARCHAR(20) NOT NULL,
+	donViTinh NVARCHAR(20) NOT NULL,
+	ngaySanXuat DATE NOT NULL,
+	HSD INT NOT NULL,
+    donGiaNhap FLOAT(10) NOT NULL,
+	soLuongNhap INT NOT NULL,
+    thanhTien FLOAT(10) NOT NULL,
+	PRIMARY KEY (maPhieuNhap, maThuoc, donViTinh),
+    FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
+    FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
+);
+
+-- Bảng LoThuoc
+CREATE TABLE LoThuoc (
+	maLoThuoc VARCHAR(20) primary key not null,
+	maPhieuNhap VARCHAR(20) not null,
+	ngayNhap DATE,
+	tongTien FLOAT(10)
+	FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
+)
+
+-- Bảng ChiTietLoThuoc
+CREATE TABLE ChiTietLoThuoc (
+	soHieuThuoc VARCHAR(20) primary key not null,
+	maThuoc VARCHAR(20) not null,
+	maLoThuoc VARCHAR(20) not null,
+	soLuongCon INT not null,
+	maDonGia VARCHAR(20),
+	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
+	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
+	FOREIGN KEY (maLoThuoc) REFERENCES LoThuoc(maLoThuoc)
+)
 
 
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
-    maHD VARCHAR(10) NOT NULL PRIMARY KEY,
-    maKhachHang VARCHAR(10),
-    maNhanVien VARCHAR(10) NOT NULL,
-    maThue VARCHAR(15),
+    maHD VARCHAR(20) NOT NULL PRIMARY KEY,
+    maKhachHang VARCHAR(20),
+    maNhanVien VARCHAR(20) NOT NULL,
+    maThue VARCHAR(20),
     ngayLap DATE NOT NULL,
     hinhThucThanhToan NVARCHAR(20),
 	trangThai bit,
@@ -163,23 +208,23 @@ CREATE TABLE HoaDon (
 
 -- Bảng ChiTietHoaDon
 CREATE TABLE ChiTietHoaDon (
-    maHD VARCHAR(10) NOT NULL,
-    soHieuThuoc VARCHAR(10) NOT NULL,
-	maThuoc VARCHAR(10) NOT NULL,
+    maHD VARCHAR(20) NOT NULL,
+    soHieuThuoc VARCHAR(20) NOT NULL,
+	maThuoc VARCHAR(20) NOT NULL,
     donViTinh NVARCHAR(20),
     soLuong INT NOT NULL,
     thanhTien FLOAT(10),
     PRIMARY KEY (maHD, soHieuThuoc),
     FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
-    FOREIGN KEY (soHieuThuoc, maThuoc) REFERENCES Thuoc(soHieuThuoc, maThuoc)
+    FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
 
 -- Bảng DoiTra
 CREATE TABLE PhieuDoiTra (
-	maPhieu VARCHAR(10) NOT NULL PRIMARY KEY,
-	maNV VARCHAR(10) NOT NULL,
+	maPhieu VARCHAR(20) NOT NULL PRIMARY KEY,
+	maNV VARCHAR(20) NOT NULL,
 	loai bit NOT NULL,
-    maHD VARCHAR(10) NOT NULL,
+    maHD VARCHAR(20) NOT NULL,
 	lyDo VARCHAR(255),
 	ngayDoiTra DATE NOT NULL,
 	FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
@@ -187,9 +232,9 @@ CREATE TABLE PhieuDoiTra (
 );
 -- Bảng DonDatThuoc
 CREATE TABLE DonDatThuoc (
-    maDon VARCHAR(10) NOT NULL PRIMARY KEY,
-    maKhachHang VARCHAR(10) NOT NULL,
-    maNhanVien VARCHAR(10),
+    maDon VARCHAR(20) NOT NULL PRIMARY KEY,
+    maKhachHang VARCHAR(20) NOT NULL,
+    maNhanVien VARCHAR(20),
     thoiGianDat DATE,
     tongTien FLOAT(10),
     FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
@@ -198,45 +243,23 @@ CREATE TABLE DonDatThuoc (
 
 -- Bảng ChiTietDonDatThuoc
 CREATE TABLE ChiTietDonDatThuoc (
-    maDon VARCHAR(10) NOT NULL,
-    soHieuThuoc VARCHAR(10) NOT NULL,
-	maThuoc VARCHAR(10) NOT NULL,
+    maDon VARCHAR(20) NOT NULL,
+	maThuoc VARCHAR(20) NOT NULL,
+    soHieuThuoc VARCHAR(20) NOT NULL,
     donViTinh NVARCHAR(20),
     soLuong INT NOT NULL,
     thanhTien FLOAT(10),
     PRIMARY KEY (maDon, soHieuThuoc),
     FOREIGN KEY (maDon) REFERENCES DonDatThuoc(maDon),
-    FOREIGN KEY (soHieuThuoc, maThuoc) REFERENCES Thuoc(soHieuThuoc, maThuoc)
+	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
+    FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
 
--- Bảng PhieuNhapThuoc
-CREATE TABLE PhieuNhapThuoc (
-    maPhieuNhap VARCHAR(10) NOT NULL PRIMARY KEY,
-    maNhanVien VARCHAR(10),
-    ngayLapPhieu DATE,
-    maNhaCungCap VARCHAR(10),
-    tongTien FLOAT(10),
-    FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
-    FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC)
-);
 
--- Bảng ChiTietPhieuNhap
-CREATE TABLE ChiTietPhieuNhap (
-    maPhieuNhap VARCHAR(10) NOT NULL,
-    soHieuThuoc VARCHAR(10) NOT NULL,
-	maThuoc VARCHAR(10) NOT NULL,
-    soLuong INT NOT NULL,
-	donViTinh NVARCHAR(20) NOT NULL,
-    donGiaNhap FLOAT(10),
-    thanhTien FLOAT(10),
-    PRIMARY KEY (maPhieuNhap, soHieuThuoc),
-    FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
-    FOREIGN KEY (soHieuThuoc, maThuoc) REFERENCES Thuoc(soHieuThuoc, maThuoc)
-);
 
 -- Bảng ChuongTrinhKhuyenMai
 CREATE TABLE ChuongTrinhKhuyenMai (
-    maCTKM VARCHAR(10) NOT NULL PRIMARY KEY,
+    maCTKM VARCHAR(20) NOT NULL PRIMARY KEY,
     mota NVARCHAR(255),
     loaiKhuyenMai NVARCHAR(50),
     ngayBatDau DATE,
@@ -245,26 +268,29 @@ CREATE TABLE ChuongTrinhKhuyenMai (
 
 -- Bảng ChiTietKhuyenMai
 CREATE TABLE ChiTietKhuyenMai (
-    maCTKM VARCHAR(10) NOT NULL,
-    soHieuThuoc VARCHAR(10) NOT NULL,
-	maThuoc VARCHAR(10) NOT NULL,
+    maCTKM VARCHAR(20) NOT NULL,
+    soHieuThuoc VARCHAR(20) NOT NULL,
+	maThuoc VARCHAR(20) NOT NULL,
     tyLeKhuyenMai FLOAT(10),
     soLuongToiThieu INT,
     PRIMARY KEY (maCTKM, soHieuThuoc),
     FOREIGN KEY (maCTKM) REFERENCES ChuongTrinhKhuyenMai(maCTKM),
-    FOREIGN KEY (soHieuThuoc, maThuoc) REFERENCES Thuoc(soHieuThuoc, maThuoc)
+    FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
+	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
 
 -- Bảng ChiTietPhieuDoiTra
 CREATE TABLE ChiTietPhieuDoiTra (
-	maPhieu VARCHAR(10) NOT NULL,
-	soHieuThuoc VARCHAR(10) NOT NULL,
-	maThuoc VARCHAR(10) NOT NULL,
+	maPhieu VARCHAR(20) NOT NULL,
+	soHieuThuoc VARCHAR(20) NOT NULL,
+	maThuoc VARCHAR(20) NOT NULL,
 	ghiChu NVARCHAR(255),
 	PRIMARY KEY (maPhieu, soHieuThuoc),
 	FOREIGN KEY (maPhieu) REFERENCES PhieuDoiTra(maPhieu),
-    FOREIGN KEY (soHieuThuoc, maThuoc) REFERENCES Thuoc(soHieuThuoc, maThuoc)
+    FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
+	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
+
 
 
 ---- Thêm dữ liệu
@@ -296,6 +322,7 @@ VALUES
 ('QL001', 'a665a45920422f9d'),
 ('QL002', 'a665a45920422f9d'),
 ('Admin1', '6b86b273ff34fce1')
+
 -- Bảng DiemTichLuy
 INSERT INTO DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai)
 VALUES
@@ -362,43 +389,82 @@ VALUES
 ('THUE002', N'Thuế nhập khẩu', 0.05),
 ('THUE003', N'Thuế tiêu thụ đặc biệt', 0.2)
 
--- Bảng BangGiaSanPham
+-- Bảng DonGiaThuoc
 INSERT INTO DonGiaThuoc
 VALUES
-('DG0001', 'T001', N'Hộp', 50000),
-('DG0002', 'T002', N'Hộp', 35000),
-('DG0003', 'T003', N'Hộp', 150000),
-('DG0004', 'T004', N'Hộp', 75000),
-('DG0005', 'T005', N'Viên', 5000),
-('DG0006', 'T005', N'Hộp', 40000)
+('DG001', 'T001', N'Hộp', 50000),
+('DG002', 'T002', N'Hộp', 35000),
+('DG003', 'T003', N'Hộp', 150000),
+('DG004', 'T004', N'Hộp', 75000),
+('DG005', 'T005', N'Viên', 5000),
+('DG006', 'T005', N'Hộp', 40000)
 
 INSERT INTO DonGiaThuoc
 VALUES
-('DG0007', 'T006', N'Hộp', 50000),
-('DG0008', 'T007', N'Hộp', 35000),
-('DG0009', 'T008', N'Hộp', 150000),
-('DG0010', 'T009', N'Hộp', 75000),
-('DG0011', 'T010', N'Viên', 5000),
-('DG0012', 'T011', N'Hộp', 40000)
+('DG007', 'T006', N'Hộp', 50000),
+('DG008', 'T007', N'Hộp', 35000),
+('DG009', 'T008', N'Hộp', 150000),
+('DG010', 'T009', N'Hộp', 75000),
+('DG011', 'T010', N'Viên', 5000)
+
+SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE dg.maThuoc = 'T005' AND dg.donViTinh = N'Hộp'
 
 -- Bảng Thuoc
-INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maDonGia)
+INSERT INTO Thuoc (maThuoc, tenThuoc, maKe, tongSoLuong, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
 VALUES
-('S00001', 'T001', N'Paracetamol','K01', 60, 40000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png', 'DG0001'),
-('S00002' ,'T002', N'Aspirin','K01', 36, 25000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png', 'DG0002'),
-('S00003', 'T003', N'Amoxicillin','K02', 24, 120000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png', 'DG0003'),
-('S00004', 'T004', N'Ibuprofen','K03', 24, 50000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png', 'DG0004'),
-('S00005', 'T005', N'Vitamin C','K03', 36, 3000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0005'),
-('S00006', 'T005', N'Vitamin C','K03', 36, 30000, 20, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0006')
+('T001', N'Paracetamol','K01', 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
+('T002', N'Aspirin','K01', 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
+('T003', N'Amoxicillin','K02', 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
+('T004', N'Ibuprofen','K03', 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
+('T005', N'Vitamin C','K03', 320, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
 
-INSERT INTO Thuoc (soHieuThuoc, maThuoc, tenThuoc, maKe, HSD, giaNhap, soLuongCon, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh, maDonGia)
+INSERT INTO Thuoc (maThuoc, tenThuoc, maKe, tongSoLuong, maDanhMuc, maNhaCungCap, maNhaSanXuat, maNuocSanXuat, trangThai, hinhAnh)
 VALUES
-('S00007', 'T006', N'Paracetamol','K01', 60, 40000, 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png', 'DG0001'),
-('S00008' ,'T007', N'Aspirin','K01', 36, 25000, 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png', 'DG0002'),
-('S00009', 'T008', N'Amoxicillin','K02', 24, 120000, 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png', 'DG0003'),
-('S00010', 'T009', N'Ibuprofen','K03', 24, 50000, 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png', 'DG0004'),
-('S00011', 'T010', N'Vitamin C','K03', 36, 3000, 300, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0005'),
-('S00012', 'T011', N'Vitamin C','K03', 36, 30000, 20, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png', 'DG0006')
+('T006', N'Paracetamol','K01', 50, 'DM001', 'NCC001', 'NHSX001', 'US', 1, 'images\\sample.png'),
+('T007', N'Aspirin','K01', 40, 'DM001', 'NCC001', 'NHSX003', 'CN', 1, 'images\\sample.png'),
+('T008', N'Amoxicillin','K02', 50, 'DM003', 'NCC002', 'NHSX002', 'RU', 1, 'images\\sample.png'),
+('T009', N'Ibuprofen','K03', 50, 'DM001', 'NCC003', 'NHSX001', 'EN', 1, 'images\\sample.png'),
+('T010', N'Vitamin C','K03', 320, 'DM002', 'NCC002', 'NHSX003', 'US', 1, 'images\\sample.png')
+
+
+INSERT INTO PhieuNhapThuoc(maPhieuNhap, maNhanVien, ngayLapPhieu, maNhaCungCap, tongTien)
+VALUES
+('PN001', 'NV001', '2024-10-10', 'NCC001', 3000000),
+('PN002', 'NV002', '2024-10-11', 'NCC002', 4000000),
+('PN003', 'NV003', '2024-10-12', 'NCC003', 5000000)
+
+INSERT INTO ChiTietPhieuNhap(maPhieuNhap, maThuoc, donViTinh, ngaySanXuat, HSD, donGiaNhap, soLuongNhap, thanhTien)
+VALUES
+('PN001', 'T001', 'Hộp', '2024-1-1', 36, 40000, 50, 2000000),
+('PN001', 'T002', 'Hộp', '2024-1-1', 36, 25000, 40, 1000000),
+('PN002', 'T004', 'Hộp', '2024-1-1', 36, 50000, 50, 2500000),
+('PN002', 'T005', 'Hộp', '2024-1-1', 36, 30000, 20, 600000),
+('PN002', 'T005', 'Viên', '2024-1-1', 36, 3000, 300, 900000),
+('PN003', 'T003', 'Hộp', '2024-1-1', 36, 100000, 50, 5000000)
+
+
+INSERT INTO LoThuoc(maLoThuoc, maPhieuNhap, ngayNhap, tongTien)
+VALUES
+('LO001', 'PN001', '2024-10-10', 3000000),
+('LO002', 'PN002', '2024-10-11', 4000000),
+('LO003', 'PN003', '2024-10-12', 5000000)
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia)
+VALUES
+('SH001', 'T001', 'LO001', 50, 'DG001'),
+('SH002', 'T002', 'LO001', 40, 'DG002'),
+('SH003', 'T003', 'LO003', 50, 'DG003'),
+('SH004', 'T004', 'LO002', 50, 'DG004'),
+('SH005', 'T005', 'LO002', 300, 'DG005'),
+('SH006', 'T005', 'LO002', 20, 'DG006')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia)
+VALUES
+('SH007', 'T006', 'LO001', 50, 'DG007'),
+('SH008', 'T007', 'LO001', 40, 'DG008'),
+('SH009', 'T008', 'LO003', 50, 'DG009'),
+('SH010', 'T009', 'LO002', 50, 'DG010'),
+('SH011', 'T010', 'LO002', 300, 'DG011')
 
 
 -- Bảng HoaDon
@@ -411,11 +477,11 @@ VALUES
 -- Bảng ChiTietHoaDon
 INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
 VALUES
-('HD001', 'S00001', 'T001', N'Hộp', 1, 100000),
-('HD001', 'S00002', 'T002', N'Hộp', 2, 35000),
-('HD002', 'S00003', 'T003', N'Hộp', 1, 150000),
-('HD002', 'S00004', 'T004', N'Hộp', 1, 75000),
-('HD002', 'S00005', 'T005', N'Viên', 5, 100000)
+('HD001', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD001', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD002', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD002', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD002', 'SH005', 'T005', N'Viên', 5, 100000)
 
 
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
@@ -427,11 +493,11 @@ VALUES
 -- Bảng ChiTietHoaDon
 INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
 VALUES
-('HD003', 'S00001', 'T001', N'Hộp', 1, 100000),
-('HD003', 'S00002', 'T002', N'Hộp', 2, 35000),
-('HD004', 'S00003', 'T003', N'Hộp', 1, 150000),
-('HD004', 'S00004', 'T004', N'Hộp', 1, 75000),
-('HD004', 'S00005', 'T005', N'Viên', 5, 100000)
+('HD003', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD003', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD004', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD004', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD004', 'SH005', 'T005', N'Viên', 5, 100000)
 
 
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
@@ -443,28 +509,28 @@ VALUES
 -- Bảng ChiTietHoaDon
 INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
 VALUES
-('HD005', 'S00001', 'T001', N'Hộp', 1, 100000),
-('HD005', 'S00002', 'T002', N'Hộp', 2, 35000),
-('HD006', 'S00003', 'T003', N'Hộp', 1, 150000),
-('HD006', 'S00004', 'T004', N'Hộp', 1, 75000),
-('HD006', 'S00005', 'T005', N'Viên', 5, 100000)
+('HD005', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD005', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD006', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD006', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD006', 'SH005', 'T005', N'Viên', 5, 100000)
 
 
--- Bảng DonDatThuoc
-INSERT INTO DonDatThuoc (maDon, maKhachHang, maNhanVien, thoiGianDat, tongTien)
-VALUES
-('MD001', 'KH001', 'NV001', '2024-09-01', 85000),
-('MD002', 'KH002', 'NV002', '2024-09-02', 300000),
-('MD003', 'KH003', 'NV003', '2024-09-03', 250000)
+---- Bảng DonDatThuoc
+--INSERT INTO DonDatThuoc (maDon, maKhachHang, maNhanVien, thoiGianDat, tongTien)
+--VALUES
+--('MD001', 'KH001', 'NV001', '2024-09-01', 85000),
+--('MD002', 'KH002', 'NV002', '2024-09-02', 300000),
+--('MD003', 'KH003', 'NV003', '2024-09-03', 250000)
 
--- Bảng ChiTietDonDatThuoc
-INSERT INTO ChiTietDonDatThuoc (maDon, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
-VALUES
-('MD001', 'S00001', 'T001','Hộp', 1, 50000),
-('MD001', 'S00002', 'T002', 'Hộp', 1, 35000),
-('MD002', 'S00003', 'T003', 'Hộp', 2, 300000),
-('MD003', 'S00004', 'T004', 'Hộp', 2, 75000),
-('MD003', 'S00005', 'T005', 'Viên', 20, 100000)
+---- Bảng ChiTietDonDatThuoc
+--INSERT INTO ChiTietDonDatThuoc (maDon, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+--VALUES
+--('MD001', 'SH001', 'T001', N'Hộp', 1, 50000),
+--('MD001', 'SH002', 'T002', N'Hộp', 1, 35000),
+--('MD002', 'SH003', 'T003', N'Hộp', 2, 300000),
+--('MD003', 'SH004', 'T004', N'Hộp', 2, 75000),
+--('MD003', 'SH005', 'T005', N'Viên', 20, 100000)
 
 -- Bảng ChuongTrinhKhuyenMai
 INSERT INTO ChuongTrinhKhuyenMai (maCTKM, moTa, loaiKhuyenMai, ngayBatDau, ngayKetThuc)
@@ -477,12 +543,14 @@ VALUES
 
 INSERT INTO ChiTietKhuyenMai (maCTKM, soHieuThuoc, maThuoc, tyLeKhuyenMai, soLuongToiThieu)
 VALUES
-('KM001', 'S00001', 'T001', null, 5),
-('KM002', 'S00002', 'T002', 0.1, 5),
-('KM003', 'S00003', 'T003', null, 3),
-('KM004', 'S00004', 'T004', 0.2, 5),
-('KM005', 'S00005', 'T005', 0.5, 4);
+('KM001', 'SH001', 'T001', 0.4, 5),
+('KM002', 'SH002', 'T002', 0.1, 5),
+('KM003', 'SH003', 'T003', 0.6, 3),
+('KM004', 'SH004', 'T004', 0.2, 5),
+('KM005', 'SH005', 'T005', 0.5, 4);
 GO
+
+
 
 
 ------------- PROCEDURE
@@ -531,7 +599,7 @@ BEGIN
 	SELECT *
 	FROM ChiTietHoaDon cthd
 	JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
-	JOIN DonGiaThuoc dgt ON t.maDonGia = dgt.maDonGia
+	JOIN DonGiaThuoc dgt ON t.maThuoc = dgt.maThuoc
 	WHERE maHD = @maHD
 END
 GO
@@ -900,6 +968,41 @@ BEGIN
 END
 GO 
 
+-- lấy danh sách thuốc theo nhà sản xuất
+CREATE PROCEDURE getDSThuocTheoNSX @tenNSX NVARCHAR(50)
+AS
+BEGIN
+	SELECT DISTINCT t.*, nsx.*
+	FROM Thuoc t
+	JOIN NhaSanXuat nsx ON t.maNhaSanXuat = nsx.maNhaSX
+	WHERE nsx.maNhaSX = @tenNSX
+END
+GO 
+
+
+-- lấy danh sách thuốc theo nước sản xuất
+CREATE PROCEDURE getDSThuocTheoNuocSX @tenNuocSX NVARCHAR(50)
+AS
+BEGIN
+	SELECT DISTINCT t.*, nuocsx.*
+	FROM Thuoc t
+	JOIN NuocSanXuat nuocsx ON t.maNhaSanXuat = nuocsx.maNuoc
+	WHERE nuocsx.maNuoc = @tenNuocSX
+END
+GO 
+
+-- lấy danh sách thuốc theo kệ thuốc
+CREATE PROCEDURE getDSThuocTheoKeThuoc @tenKe NVARCHAR(50)
+AS
+BEGIN
+	SELECT DISTINCT t.*, ke.*
+	FROM Thuoc t
+	JOIN KeThuoc ke ON t.maNhaSanXuat = ke.maKe
+	WHERE ke.maKe = @tenKe
+END
+GO
+
+
 
 -- lấy danh sách khuyến mãi
 CREATE PROCEDURE getDSKhuyenMai
@@ -917,7 +1020,9 @@ AS
 BEGIN
 	SELECT *
 	FROM Thuoc t
-	LEFT JOIN ChiTietKhuyenMai ctkm ON t.soHieuThuoc = ctkm.soHieuThuoc AND t.maThuoc = ctkm.maThuoc
+	JOIN DonGiaThuoc dg ON t.maThuoc = dg.maThuoc
+	LEFT JOIN ChiTietKhuyenMai ctkm ON t.maThuoc = ctkm.maThuoc
+	LEFT JOIN ChiTietLoThuoc ctlt ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
 	ORDER BY ctkm.tyLeKhuyenMai DESC
 END
@@ -1186,6 +1291,20 @@ END
 GO
 
 
+-- lấy chi tiết lô thuốc theo mã đơn giá
+CREATE PROCEDURE getCTLoThuocTheoMaDGVaMaThuoc
+	@maDG VARCHAR(20),
+	@maThuoc VARCHAR(20)
+AS 
+BEGIN
+	SELECT * 
+	FROM ChiTietLoThuoc lt 
+	JOIN DonGiaThuoc dg ON lt.maDonGia = dg.maDonGia
+	WHERE dg.maDonGia = @maDG AND lt.maThuoc = @maThuoc
+END
+GO
+
+
 
 -- --------- TRIGGER
 -- cập nhật điểm tích lũy sau khi thanh toán
@@ -1237,42 +1356,43 @@ END;
 GO
 
 
--- cập nhật số lượng thuốc sau khi thanh toán thành công
-CREATE TRIGGER trg_UpdateSoLuongThuoc
-ON HoaDon
-AFTER INSERT
-AS
-BEGIN
-    IF EXISTS (
-        SELECT 1 
-        FROM inserted i
-        WHERE i.trangThai = 1
-    )
-    BEGIN
-        UPDATE t
-        SET t.soLuongCon = t.soLuongCon - cthd.soLuong
-        FROM Thuoc t
-        INNER JOIN ChiTietHoaDon cthd ON t.soHieuThuoc = cthd.soHieuThuoc AND t.maThuoc = cthd.maThuoc
-        INNER JOIN HoaDon h ON h.maHD = cthd.maHD
-        INNER JOIN inserted i ON h.maHD = i.maHD
-        WHERE i.trangThai = 1 
-          AND t.soLuongCon >= cthd.soLuong; 
+---- cập nhật số lượng thuốc sau khi thanh toán thành công
+--CREATE TRIGGER trg_UpdateSoLuongThuoc
+--ON HoaDon
+--AFTER INSERT
+--AS
+--BEGIN
+--    IF EXISTS (
+--        SELECT 1 
+--        FROM inserted i
+--        WHERE i.trangThai = 1
+--    )
+--    BEGIN
+--        UPDATE t
+--        SET t.soLuongCon = t.soLuongCon - cthd.soLuong
+--        FROM Thuoc t
+--        INNER JOIN ChiTietHoaDon cthd ON t.soHieuThuoc = cthd.soHieuThuoc AND t.maThuoc = cthd.maThuoc
+--        INNER JOIN HoaDon h ON h.maHD = cthd.maHD
+--        INNER JOIN inserted i ON h.maHD = i.maHD
+--        WHERE i.trangThai = 1 
+--          AND t.soLuongCon >= cthd.soLuong; 
         
-        IF @@ROWCOUNT = 0
-        BEGIN
-            PRINT 'Không có bản ghi nào được cập nhật.';
-        END
-        ELSE
-        BEGIN
-            PRINT 'Số lượng thuốc đã được cập nhật thành công.';
-        END
-    END
-    ELSE
-    BEGIN
-        PRINT 'Hóa đơn không có trạng thái đã thanh toán.';
-    END
-END;
-GO
+--        IF @@ROWCOUNT = 0
+--        BEGIN
+--            PRINT 'Không có bản ghi nào được cập nhật.';
+--        END
+--        ELSE
+--        BEGIN
+--            PRINT 'Số lượng thuốc đã được cập nhật thành công.';
+--        END
+--    END
+--    ELSE
+--    BEGIN
+--        PRINT 'Hóa đơn không có trạng thái đã thanh toán.';
+--    END
+--END;
+--GO
+
 
 
 
