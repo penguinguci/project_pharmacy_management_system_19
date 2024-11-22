@@ -73,7 +73,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public JButton btnXemCTTB;
 
     public GUI_TrangChu() throws Exception {
-
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -194,7 +193,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         //Phân quyền
         if(nhanVienDN != null) {
-            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){ //Nhân viên bán thuốc
                 submenuNhanVien.add(btnBanThuoc);
                 submenuNhanVien.add(btnNhapThuocTuNCC);
             } else {
@@ -275,7 +274,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         //Phân quyền
         if(nhanVienDN != null) {
-            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){ // Nhân viên bán thuốc
                 submenuKhuyenMai.add(btnTimKiemKhuyenMai);
             } else {
                 submenuKhuyenMai.add(btnCapNhatKhuyenmai);

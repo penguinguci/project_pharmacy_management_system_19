@@ -7,7 +7,45 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ChuongTrinhKhuyenMai_DAO {
-    public ChuongTrinhKhuyenMai_DAO() {}
+    private ArrayList<ChuongTrinhKhuyenMai> list;
+
+    public ChuongTrinhKhuyenMai_DAO() {
+        list = new ArrayList<>();
+        try {
+            list = getAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<ChuongTrinhKhuyenMai> getAll() {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select * from ChuongTrinhKhuyenMai";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ChuongTrinhKhuyenMai ctkm = new ChuongTrinhKhuyenMai();
+                ctkm.setMaCTKM(rs.getString("maCTKM"));
+                ctkm.setLoaiKhuyenMai(rs.getString("loaiKhuyenMai"));
+                ctkm.setMoTa(rs.getString("mota"));
+                ctkm.setNgayBatDau(rs.getDate("ngayBatDau"));
+                ctkm.setNgayKetThuc(rs.getDate("ngayKetThuc"));
+
+                if(checkTrung(this.list ,ctkm.getMaCTKM())) {
+                    this.list.add(ctkm);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this.list;
+    }
 
     public ArrayList<ChuongTrinhKhuyenMai> getAllChuongTrinhKhuyenMai() {
         ArrayList<ChuongTrinhKhuyenMai> dsCTKN = new ArrayList<ChuongTrinhKhuyenMai>();
@@ -73,5 +111,54 @@ public class ChuongTrinhKhuyenMai_DAO {
             }
         }
         return chuongTrinhKhuyenMai;
+    }
+
+    public ArrayList<ChuongTrinhKhuyenMai> timKiemMoTaProMax(ArrayList<ChuongTrinhKhuyenMai> list, String data) {
+        ArrayList<ChuongTrinhKhuyenMai> listCTKM = new ArrayList<>();
+        for(ChuongTrinhKhuyenMai x : list) {
+            if(x.getMoTa().indexOf(data) != -1) {
+                listCTKM.add(x);
+            }
+        }
+        return listCTKM;
+    }
+
+    public ArrayList<ChuongTrinhKhuyenMai> timKiemLoaiProMax(ArrayList<ChuongTrinhKhuyenMai> list, String data) {
+        ArrayList<ChuongTrinhKhuyenMai> listCTKM = new ArrayList<>();
+        for(ChuongTrinhKhuyenMai x : list) {
+            if(x.getLoaiKhuyenMai().indexOf(data) != -1) {
+                listCTKM.add(x);
+            }
+        }
+        return listCTKM;
+    }
+
+    public ArrayList<ChuongTrinhKhuyenMai> timNgayBatDau(ArrayList<ChuongTrinhKhuyenMai> list, Date ngayBD) {
+        ArrayList<ChuongTrinhKhuyenMai> listCTKM = new ArrayList<>();
+        for(ChuongTrinhKhuyenMai x : list) {
+            if(x.getNgayBatDau().after(ngayBD) || x.getNgayBatDau().equals(ngayBD)) {
+                listCTKM.add(x);
+            }
+        }
+        return listCTKM;
+    }
+
+    public ArrayList<ChuongTrinhKhuyenMai> timNgayKetThuc(ArrayList<ChuongTrinhKhuyenMai> list, Date ngayKT) {
+        ArrayList<ChuongTrinhKhuyenMai> listCTKM = new ArrayList<>();
+        for(ChuongTrinhKhuyenMai x : list) {
+            if(x.getNgayKetThuc().before(ngayKT) || x.getNgayKetThuc().equals(ngayKT)) {
+                listCTKM.add(x);
+            }
+        }
+        return listCTKM;
+    }
+
+    private boolean checkTrung(ArrayList<ChuongTrinhKhuyenMai> listCTKM,String maCTKM) {
+        for(ChuongTrinhKhuyenMai x : list) {
+            if(x.getMaCTKM().equalsIgnoreCase(maCTKM)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
