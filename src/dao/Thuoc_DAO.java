@@ -115,8 +115,8 @@ public class Thuoc_DAO {
                 t.setHamLuong(rs.getString("hamLuong"));
                 t.setDangBaoChe(rs.getString("dangBaoChe"));
                 t.setTrangThai(rs.getBoolean("trangThai"));
-
-                listThuoc.add(t);
+                if(t.isTrangThai())
+                    listThuoc.add(t);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -431,7 +431,7 @@ public class Thuoc_DAO {
         Thuoc thuoc = null;
         int count = 0;
         try{
-            String query = "Select count(*) from Thuoc";
+            String query = "Select count(*) from Thuoc where trangThai = 1";
             con = ConnectDB.getConnection();
             statement = con.prepareStatement(query);
             rs = statement.executeQuery();
@@ -464,7 +464,7 @@ public class Thuoc_DAO {
         List<Object[]> rowsDataList = new ArrayList<>();
         try{
             // Note: OFFSET ? ROWS : Bỏ n dòng - FETCH NEXT ? ROWS ONLY: Chỉ lấy n dòng
-            String query = "Select * from Thuoc order by MaThuoc offset ? rows fetch next ? rows only";
+            String query = "Select * from ( select * from Thuoc where trangThai = 1 ) as FilteredThuoc order by MaThuoc offset ? rows fetch next ? rows only";
             con = ConnectDB.getConnection();
             statement = con.prepareStatement(query);
             statement.setInt(1, (currentPage - 1) * rowsPerPage);
@@ -479,11 +479,9 @@ public class Thuoc_DAO {
                 NuocSanXuat nuocSanXuat = nuoc.timNuocSanXuat(rs.getString("maNuocSanXuat"));
                 KeThuoc keThuoc = ke.timKeThuoc(rs.getString("maKe"));
                 int tongSoLuong = rs.getInt("tongSoLuong");
-                boolean trangThai = rs.getBoolean("trangThai");
                 Object[] rowData = {maThuoc,tenThuoc,danhMuc.getTenDanhMuc(),nhaCungCap.getTenNCC(),nhaSanXuat.getTenNhaSX(),nuocSanXuat.getTenNuoxSX(), keThuoc.getTenKe(), tongSoLuong};
-                if(trangThai == true){
-                    rowsDataList.add(rowData);
-                }
+                rowsDataList.add(rowData);
+
             }
             rs.close();
             statement.close();

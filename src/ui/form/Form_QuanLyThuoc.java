@@ -11,6 +11,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseListener {
     public JPanel pnlSanPham;
@@ -46,7 +49,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public int rowsPerPage = 10  ;
     public int totalPages, totalRows;
     public JButton btnPrev, btnNext, btnFirst, btnLast;
-    public ArrayList<Thuoc> filteredListDanhMuc, filteredListNCC, filteredListNSX;
+    public List<Thuoc> filteredListThuoc;
     public int widthScreen ;
     public int heightScreen ;
     public Thuoc_DAO thuocDao;
@@ -57,6 +60,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public Form_CapNhatThuoc pnlCapNhatThuoc;
     public ImageIcon imageIcon;
     public JPanel imgPanel;
+    private String danhMucSort, nccSort, nsxSort;
 
     public Form_QuanLyThuoc() throws Exception {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -540,13 +544,9 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
 
         Runnable loadDataAndUpdate = () -> {
             try {
-                if (filteredListDanhMuc != null) {
-                    loadFilteredDataDanhMucToTable();
-                } else if(filteredListNCC != null){
-                    loadFilteredDataNCCToTable();
-                } else if(filteredListNSX != null){
-                    loadFilteredDataNSXToTable();
-                }else {
+                if (filteredListThuoc != null) {
+                    loadFilteredDataToTable();
+                }else{
                     loadDataThuocToTable(currentPage, rowsPerPage);
                 }
                 lblPageInfo.setText(currentPage + " / " + totalPages);
@@ -586,6 +586,12 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             dialog.setLocationRelativeTo(null);
             dialog.setResizable(false);
             dialog.setVisible(true);
+            clearData();
+            try {
+                loadDataThuocToTable(currentPage, rowsPerPage);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         if (o.equals(btnUpdate)) {
@@ -619,10 +625,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
                 dialog.add(pnlCapNhatThuoc);
+
                 dialog.setSize(1000, 950);
                 dialog.setLocationRelativeTo(null);
                 dialog.setResizable(false);
                 dialog.setVisible(true);
+                clearData();
+                try {
+                    loadDataThuocToTable(currentPage, rowsPerPage);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn dòng cần cập nhật");
             }
@@ -638,6 +651,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                     if (confirm == JOptionPane.YES_OPTION) {
                         JOptionPane.showMessageDialog(this, "Đã xóa thuốc thành công");
                         clearData();
+                        lblTenSanPham.setText("");
+                        txtMaThuoc.setText("");
+                        txtThanhPhan.setText("");
+                        txtBaoQuan.setText("");
+                        txtHamLuong.setText("");
+                        txtDangBaoChe.setText("");
+                        txtChiDinh.setText("");
+                        txaMoTa.setText("");
+                        txaCongDung.setText("");
+                        txaCachDung.setText("");
+                        loadImageThuoc(new Thuoc());
                         try {
                             loadDataThuocToTable(currentPage, rowsPerPage);
                         } catch (Exception ex) {
@@ -645,7 +669,6 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                         }
                     }
                 }
-
             }
         }
         if (e.getSource().equals(btnBack)) {
@@ -663,141 +686,103 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                 throw new RuntimeException(ex);
             }
         }
+
+
         if (e.getSource().equals(cmbDanhMuc)) {
-            String danhMucSort = cmbDanhMuc.getSelectedItem().toString();
-            if (!danhMucSort.equals("Danh mục")) {
-                try {
-                    thuocDao = new Thuoc_DAO();
-                    filteredListDanhMuc = thuocDao.getDSThuocTheoTenDM(danhMucSort);
-                    // Tính lại số dòng và số trang
-                    totalRows = filteredListDanhMuc.size();
-                    totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
-                    currentPage = 1; // Reset về trang đầu tiên
-                    loadFilteredDataDanhMucToTable();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Lỗi khi lọc theo danh mục: " + ex.getMessage(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
-                }
-            } else {
-                // Xóa bộ lọc và tải lại dữ liệu toàn bộ
-                filteredListDanhMuc = null;
-                currentPage = 1; // Reset về trang đầu tiên
-                loadDataAndUpdate.run();
+            danhMucSort = cmbDanhMuc.getSelectedItem().toString();
+            if (danhMucSort.equals("Danh mục")) {
+                danhMucSort = null;
             }
-    }
-
-        if (e.getSource().equals(cmbNhaCungCap)){
-            String nccSort = cmbNhaCungCap.getSelectedItem().toString();
-            if(!nccSort.equals("Nhà cung cấp")) {
-                try {
-                    thuocDao = new Thuoc_DAO();
-                    filteredListNCC = thuocDao.getDSThuocTheoNhaCC(nccSort);
-                    totalRows = filteredListNCC.size();
-                    totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
-                    currentPage = 1;
-                    loadFilteredDataNCCToTable();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Lỗi khi lọc theo nhà cung cấp: " + ex.getMessage(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
-                }
-            } else {
-                filteredListNCC = null;
-                currentPage = 1;
-                loadDataAndUpdate.run();
-            }
+            applyFilters();
         }
 
-        if (e.getSource().equals(cmbNhaSanXuat)){
-            String nsxSort = cmbNhaSanXuat.getSelectedItem().toString();
-            if(!nsxSort.equals("Nhà sản xuất")) {
-                try {
-                    thuocDao = new Thuoc_DAO();
-                    filteredListNSX = thuocDao.getDSThuocTheoNSX(nsxSort);
-                    totalRows = filteredListNSX.size();
-                    totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
-                    currentPage = 1;
-                    loadFilteredDataNSXToTable();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Lỗi khi lọc theo nhà sản xuất: " + ex.getMessage(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
-                }
-            } else {
-                filteredListNSX = null;
-                currentPage = 1;
-                loadDataAndUpdate.run();
+        if (e.getSource().equals(cmbNhaCungCap)) {
+            nccSort = cmbNhaCungCap.getSelectedItem().toString();
+            if (nccSort.equals("Nhà cung cấp")) {
+                nccSort = null;
             }
+            applyFilters();
         }
 
-        if (e.getSource().equals(txtSearch)){
-
+        if (e.getSource().equals(cmbNhaSanXuat)) {
+            nsxSort = cmbNhaSanXuat.getSelectedItem().toString();
+            if (nsxSort.equals("Nhà sản xuất")) {
+                nsxSort = null;
+            }
+            applyFilters();
         }
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                applyFilters(); // Tìm kiếm khi có thêm ký tự
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                applyFilters(); // Tìm kiếm khi ký tự bị xóa
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                applyFilters(); // Xử lý các thay đổi khác
+            }
+        });
 
 
     }
+
+
 
     private void clearData() {
         dtListProduct.setRowCount(0);
 
     }
 
-    private void loadFilteredDataDanhMucToTable() {
-        if (filteredListDanhMuc != null) {
-            int start = (currentPage - 1) * rowsPerPage;
-            int end = Math.min(start + rowsPerPage, filteredListDanhMuc.size());
-            List<Thuoc> paginatedList = filteredListDanhMuc.subList(start, end);
-
-            dtListProduct.setRowCount(0); // Xóa dữ liệu cũ
-            for (Thuoc thuoc : paginatedList) {
-                dtListProduct.addRow(new Object[]{
-                        thuoc.getMaThuoc(),
-                        thuoc.getTenThuoc(),
-                        thuoc.getDanhMuc().getTenDanhMuc(),
-                        thuoc.getNhaCungCap().getTenNCC(),
-                        thuoc.getNhaSanXuat().getTenNhaSX(),
-                        thuoc.getNuocSanXuat().getTenNuoxSX(),
-                        thuoc.getKeThuoc().getTenKe(),
-                        thuoc.getTongSoLuong()
-                });
+    private void applyFilters() {
+        try {
+            filteredListThuoc = new ArrayList<>(thuocDao.getAllThuoc());
+            if (danhMucSort != null && !danhMucSort.equals("Danh mục")) {
+                filteredListThuoc = filteredListThuoc.stream().filter(thuoc -> thuoc.getDanhMuc().getTenDanhMuc().equals(danhMucSort)).collect(Collectors.toList());
             }
 
-            lblPageInfo.setText(currentPage + " / " + totalPages);
-        }
-    }
-
-    private void loadFilteredDataNCCToTable() {
-        if (filteredListNCC != null) {
-            int start = (currentPage - 1) * rowsPerPage;
-            int end = Math.min(start + rowsPerPage, filteredListNCC.size());
-            List<Thuoc> paginatedList = filteredListNCC.subList(start, end);
-
-            dtListProduct.setRowCount(0); // Xóa dữ liệu cũ
-            for (Thuoc thuoc : paginatedList) {
-                dtListProduct.addRow(new Object[]{
-                        thuoc.getMaThuoc(),
-                        thuoc.getTenThuoc(),
-                        thuoc.getDanhMuc().getTenDanhMuc(),
-                        thuoc.getNhaCungCap().getTenNCC(),
-                        thuoc.getNhaSanXuat().getTenNhaSX(),
-                        thuoc.getNuocSanXuat().getTenNuoxSX(),
-                        thuoc.getKeThuoc().getTenKe(),
-                        thuoc.getTongSoLuong()
-                });
+            if (nccSort != null && !nccSort.equals("Nhà cung cấp")) {
+                filteredListThuoc = filteredListThuoc.stream()
+                        .filter(thuoc -> thuoc.getNhaCungCap().getTenNCC().equals(nccSort))
+                        .collect(Collectors.toList());
             }
 
-            lblPageInfo.setText(currentPage + " / " + totalPages);
+            if (nsxSort != null && !nsxSort.equals("Nhà sản xuất")) {
+                filteredListThuoc = filteredListThuoc.stream()
+                        .filter(thuoc -> thuoc.getNhaSanXuat().getTenNhaSX().equals(nsxSort))
+                        .collect(Collectors.toList());
+            }
+
+            String kyTu = txtSearch.getText().trim();
+            if (!kyTu.isEmpty()) {
+                filteredListThuoc = filteredListThuoc.stream()
+                        .filter(thuoc -> thuoc.getTenThuoc().toLowerCase().contains(kyTu.toLowerCase()) ||
+                                thuoc.getMaThuoc().toLowerCase().contains(kyTu.toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+
+
+            totalRows = filteredListThuoc.size();
+            totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
+            currentPage = 1;
+            loadFilteredDataToTable();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
 
     }
 
-    private void loadFilteredDataNSXToTable() {
-        if (filteredListNSX != null) {
-            int start = (currentPage - 1) * rowsPerPage;
-            int end = Math.min(start + rowsPerPage, filteredListNSX.size());
-            List<Thuoc> paginatedList = filteredListNSX.subList(start, end);
 
+    private void loadFilteredDataToTable() {
+        if (filteredListThuoc != null) {
+            int start = (currentPage - 1) * rowsPerPage;
+            int end = Math.min(start + rowsPerPage, filteredListThuoc.size());
+            List<Thuoc> paginatedList = filteredListThuoc.subList(start, end);
             dtListProduct.setRowCount(0);
             for (Thuoc thuoc : paginatedList) {
                 dtListProduct.addRow(new Object[]{
@@ -814,9 +799,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
 
             lblPageInfo.setText(currentPage + " / " + totalPages);
         }
-
     }
-
 
     @Override
     public void mouseClicked(MouseEvent e) {

@@ -22,11 +22,11 @@ import java.util.Calendar;
 import java.util.Properties;
 
 public class Form_CapNhatThuoc extends Form_ThemThuoc {
+    public String hinhAnhMoi;
     public Form_ThemThuoc dialogWapper;
     public ImageIcon imageIcon;
     public JPanel pnlShowImage, pnlWapperImage;
     public byte[] hinhAnhBytes;
-    public JButton btnFileChooser;
     public DanhMuc_DAO dm_DAO = new DanhMuc_DAO();
     public KeThuoc_DAO ke_DAO = new KeThuoc_DAO();
     public NhaSanXuat_DAO nsx_DAO = new NhaSanXuat_DAO();
@@ -60,11 +60,23 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
         setTxaCongDung(congDung);
         setTxtChiDinh(chiDinh);
 
+
         setTxtHinhAnh("");
         setPnlWapperImage(hinhAnh);
 
         btnLuu.removeActionListener(this);
         btnHuy.removeActionListener(this);
+        btnFileChooser.removeActionListener(this);
+
+        btnFileChooser.addActionListener(e -> {
+            hinhAnhBytes = encodeFileChooser();
+            if (hinhAnhBytes != null) {
+                ImageIcon imageIcon = new ImageIcon(hinhAnhBytes);
+                loadImage(imageIcon);
+            }
+            hinhAnhMoi = Base64.getEncoder().encodeToString(hinhAnhBytes);
+        });
+
         btnLuu.addActionListener(e->{
 
             Thuoc_DAO thuoc_dao = new Thuoc_DAO();
@@ -86,13 +98,8 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
             String congDungMoi = txaCongDung.getText().trim();
             String chiDinhMoi = txtChiDinh.getText().trim();
 
-            // Kiểm tra nếu có ảnh mới, nếu không, giữ ảnh cũ
-            String hinhAnhMoi = null;
-            if (hinhAnhBytes != null) {
-                hinhAnhMoi = Base64.getEncoder().encodeToString(hinhAnhBytes); // Mã hóa ảnh mới
-            } else {
-                hinhAnhMoi = hinhAnh; // Nếu không có ảnh mới, giữ ảnh cũ
-            }
+
+
 
 
             Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
@@ -106,6 +113,7 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
             thuoc.setNhaSanXuat(nhaSanXuatMoi);
             thuoc.setNhaCungCap(nhaCungCapMoi);
             thuoc.setNuocSanXuat(nuocSanXuatMoi);
+            thuoc.setTongSoLuong(tongSoLuongMoi);
             thuoc.setKeThuoc(keThuocMoi);
             thuoc.setHinhAnh(hinhAnhMoi);
             thuoc.setMoTa(moTaMoi);
