@@ -3,10 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ChiTietLoThuoc_DAO {
@@ -45,7 +42,9 @@ public class ChiTietLoThuoc_DAO {
                 ctLo.setThuoc(thuoc_dao.timThuoc(rs.getString("maThuoc")));
                 ctLo.setDonGiaThuoc(donGiaThuoc_dao.timBangGia(rs.getString("maDonGia")));
                 ctLo.setLoThuoc(loThuoc_dao.timLoThuoc(rs.getString("maLoThuoc")));
-                if(checkTrung(ctLo.getSoHieuThuoc())) {
+                ctLo.setNgaySX(rs.getDate("ngaySX"));
+                ctLo.setHSD(rs.getDate("HSD"));
+                if(checkTrung(this.list, ctLo.getSoHieuThuoc())) {
                     list.add(ctLo);
                 }
             }
@@ -64,7 +63,7 @@ public class ChiTietLoThuoc_DAO {
         return null;
     }
 
-    private boolean checkTrung(String soHieu) {
+    private boolean checkTrung(ArrayList<ChiTietLoThuoc> list, String soHieu) {
         for(ChiTietLoThuoc x : list) {
             if(x.getSoHieuThuoc().equalsIgnoreCase(soHieu)){
                 return false;
@@ -100,8 +99,10 @@ public class ChiTietLoThuoc_DAO {
 
                 DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
                 donGiaThuoc.setMaDonGia("maDonGia");
+                Date ngaySX = rs.getDate("ngaySX");
+                Date HSD = rs.getDate("HSD");
 
-                chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuongCon, donGiaThuoc);
+                chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuongCon, donGiaThuoc, ngaySX, HSD);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -205,6 +206,101 @@ public class ChiTietLoThuoc_DAO {
         }
         reload();
         return true;
+    }
+
+   public ArrayList<ChiTietLoThuoc> timThuocTheoTen(ArrayList<ChiTietLoThuoc> list, String tenThuoc) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getThuoc().getTenThuoc().indexOf(tenThuoc) != -1) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+   }
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoDanhMuc(ArrayList<ChiTietLoThuoc> list, String danhMuc) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getThuoc().getDanhMuc().getTenDanhMuc().indexOf(danhMuc) > -1) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+    }
+    public ArrayList<ChiTietLoThuoc> timThuocTheoNCC(ArrayList<ChiTietLoThuoc> list, String nhaCungCap) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getThuoc().getNhaCungCap().getTenNCC().indexOf(nhaCungCap) > -1) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoNhaSX(ArrayList<ChiTietLoThuoc> list, String nhaSX) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getThuoc().getNhaSanXuat().getTenNhaSX().indexOf(nhaSX) > -1) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoNuocSX(ArrayList<ChiTietLoThuoc> list, String nuocSX) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getThuoc().getNuocSanXuat().getTenNuoxSX().indexOf(nuocSX) != -1) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoKhangGia(ArrayList<ChiTietLoThuoc> list, double min, double max) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getDonGiaThuoc().getDonGia() >= min && x.getDonGiaThuoc().getDonGia() <= max) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoKhangGiaMin(ArrayList<ChiTietLoThuoc> list, double gia) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getDonGiaThuoc().getDonGia() > gia) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoKhangGiaMax(ArrayList<ChiTietLoThuoc> list, double gia) {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getDonGiaThuoc().getDonGia() < gia) {
+                if(checkTrung(result, x.getSoHieuThuoc())) {
+                    result.add(x);
+                }
+            }
+        }
+        return result;
     }
 
     private void reload() {

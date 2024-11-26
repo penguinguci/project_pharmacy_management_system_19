@@ -534,7 +534,10 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 // chi tiết lô thuốc
                 String soHieuThuoc = generateSoHieuThuoc();
 
-                ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuong, null);
+                java.sql.Date sqlSX = new java.sql.Date(ngaySX.getTime());
+                java.sql.Date sqlHH = new java.sql.Date(ngayHH.getTime());
+
+                ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuong, null, sqlSX, sqlHH);
                 dsCTLoThuoc.add(chiTietLoThuoc);
             }
 
