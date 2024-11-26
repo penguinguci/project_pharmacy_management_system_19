@@ -608,42 +608,6 @@ public class Thuoc_DAO {
         return list;
     }
 
-//    public ArrayList<Thuoc> timThuocTheoKhangGia(double min, double max) {
-//        ArrayList<Thuoc> list = new ArrayList<>();
-//        for(Thuoc x : this.list) {
-//            if(x.getDonGiaThuoc().getDonGia() >= min && x.getDonGiaThuoc().getDonGia() <= max) {
-//                if(checkTrung(list, x.getMaThuoc())) {
-//                    list.add(x);
-//                }
-//            }
-//        }
-//        return list;
-//    }
-
-//    public ArrayList<Thuoc> timThuocTheoKhangGiaMin(double gia) {
-//        ArrayList<Thuoc> list = new ArrayList<>();
-//        for(Thuoc x : this.list) {
-//            if(x.getDonGiaThuoc().getDonGia() >= gia) {
-//                if(checkTrung(list, x.getMaThuoc())) {
-//                    list.add(x);
-//                }
-//            }
-//        }
-//        return list;
-//    }
-
-//    public ArrayList<Thuoc> timThuocTheoKhangGiaMax(double gia) {
-//        ArrayList<Thuoc> list = new ArrayList<>();
-//        for(Thuoc x : this.list) {
-//            if(x.getDonGiaThuoc().getDonGia() >= gia) {
-//                if(checkTrung(list, x.getMaThuoc())) {
-//                    list.add(x);
-//                }
-//            }
-//        }
-//        return list;
-//    }
-
     public String tuSinhSoHieu() {
         ConnectDB con  = new ConnectDB();
         con.connect();
