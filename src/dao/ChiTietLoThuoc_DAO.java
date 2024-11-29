@@ -5,6 +5,7 @@ import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ChiTietLoThuoc_DAO {
     private ArrayList<ChiTietLoThuoc> list;
@@ -301,6 +302,30 @@ public class ChiTietLoThuoc_DAO {
             }
         }
         return result;
+    }
+
+    public ArrayList<ChiTietLoThuoc> thuocSapHetHan() {
+        ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
+        Date ngayHienTai = new Date(System.currentTimeMillis());
+        Date sau30Ngay = congThemNgay(ngayHienTai);
+
+        for(ChiTietLoThuoc x : this.list) {
+            if(x.getHSD().after(ngayHienTai) && x.getHSD().before(sau30Ngay)) {
+                result.add(x);
+            }
+        }
+
+        return result;
+    }
+
+    private Date congThemNgay(Date oldDate) {
+
+        // Sử dụng Calendar để cộng thêm 30 ngày
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(oldDate);
+        cal.add(Calendar.DAY_OF_MONTH, 30);
+
+        return new Date(cal.getTimeInMillis());
     }
 
     private void reload() {
