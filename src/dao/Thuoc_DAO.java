@@ -532,11 +532,11 @@ public class Thuoc_DAO {
         } else {
             for(Thuoc x : list) {
                 String tenThuoc = x.getTenThuoc();
-                String[] tachTen = tenThuoc.split("\\s+");// Cắt từng từ trong họ tên
+                String[] tachTen = tenThuoc.split("\\s+");// cắt từng từ trong họ tên
                 if(tachTen.length > 1){
                     for(String s : tachTen) {
                         if(s.length()>data.length()) {
-                            if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { //Cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
+                            if(s.substring(0, soKiTu).equalsIgnoreCase(data)) { // cắt số lượng kí tự của 1 từ theo số lượng kí tự của dữ liệu nhập
                                 if(checkTrung(listThuoc, x.getMaThuoc())){
                                     listThuoc.add(x);
                                 }
@@ -1006,6 +1006,77 @@ public class Thuoc_DAO {
             }
         }
         return flag;
+    }
+
+    public boolean updateTongSoLuongThuoc(Thuoc thuoc, int soLuong) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE Thuoc SET tongSoLuong += ? WHERE maThuoc = ? " ;
+            statement = con.prepareStatement(sql);
+
+            statement.setDouble(1, soLuong);
+            statement.setString(2, thuoc.getMaThuoc());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
+
+    public boolean updateTongSoLuongThuocSauKhiThanhToan(Thuoc thuoc, int soLuong) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE Thuoc SET tongSoLuong -= ? WHERE maThuoc = ? " ;
+            statement = con.prepareStatement(sql);
+
+            statement.setDouble(1, soLuong);
+            statement.setString(2, thuoc.getMaThuoc());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
     }
 
 }

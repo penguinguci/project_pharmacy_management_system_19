@@ -2,26 +2,19 @@ package ui.form;
 
 import dao.*;
 import entity.*;
-import org.jdatepicker.JDateComponentFactory;
-import org.jdatepicker.JDatePicker;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.SqlDateModel;
-import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,6 +54,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public ImageIcon imageIcon;
     public JPanel imgPanel;
     private String danhMucSort, nccSort, nsxSort;
+    public JPanel pnlMaThuoc, pnlThanhPhan, pnlCachDung, pnlBaoQuan, pnlCongDung, pnlChiDinh, pnlMoTa, pnlHamLuong, pnlDangBaoChe;
 
     public Form_QuanLyThuoc() throws Exception {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -82,12 +76,12 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnBack.setBorderPainted(false);
         btnBack.setFocusPainted(false);
 
-        JLabel lblTitle = new JLabel("QUẢN LÍ THUỐC", JLabel.CENTER);
+        JLabel lblTitle = new JLabel("QUẢN LÝ THUỐC", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setForeground(new Color(54, 69, 79));
 
-        panelTieuDe.add(Box.createHorizontalStrut(-700 ));
-        panelTieuDe.add(btnBack, BorderLayout.EAST);
+        panelTieuDe.add(Box.createHorizontalStrut(-550 ));
+        panelTieuDe.add(panelButton_left, BorderLayout.EAST);
         panelTieuDe.add(Box.createHorizontalStrut(widthScreen/2 - 150));
         panelTieuDe.add(lblTitle, BorderLayout.CENTER);
         panelTieuDe.setPreferredSize(new Dimension(widthScreen -6, 60));
@@ -197,15 +191,57 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         // Pag
         lblPageInfo = new JLabel();
         JPanel pPag = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
         btnFirst = new JButton("<<");
+        btnFirst.setBackground(new Color(65, 192, 201));
+        btnFirst.setFont(new Font("Arial", Font.BOLD, 13));
+        btnFirst.setFocusPainted(false);
+        btnFirst.setForeground(Color.WHITE);
+        btnFirst.setOpaque(true);
+        btnFirst.setBorderPainted(false);
+        btnFirst.setPreferredSize(new Dimension(50,25));
+        btnFirst.setMaximumSize(new Dimension(50,25));
+        btnFirst.setMinimumSize(new Dimension(50,25));
+
         btnPrev = new JButton("<");
+        btnPrev.setBackground(new Color(65, 192, 201));
+        btnPrev.setFont(new Font("Arial", Font.BOLD, 13));
+        btnPrev.setFocusPainted(false);
+        btnPrev.setForeground(Color.WHITE);
+        btnPrev.setOpaque(true);
+        btnPrev.setBorderPainted(false);
+        btnPrev.setPreferredSize(new Dimension(50,25));
+        btnPrev.setMaximumSize(new Dimension(50,25));
+        btnPrev.setMinimumSize(new Dimension(50,25));
+
         btnNext = new JButton(">");
+        btnNext.setBackground(new Color(65, 192, 201));
+        btnNext.setFont(new Font("Arial", Font.BOLD, 13));
+        btnNext.setFocusPainted(false);
+        btnNext.setForeground(Color.WHITE);
+        btnNext.setOpaque(true);
+        btnNext.setBorderPainted(false);
+        btnNext.setPreferredSize(new Dimension(50,25));
+        btnNext.setMaximumSize(new Dimension(50,25));
+        btnNext.setMinimumSize(new Dimension(50,25));
+
         btnLast = new JButton(">>");
+        btnLast.setBackground(new Color(65, 192, 201));
+        btnLast.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLast.setFocusPainted(false);
+        btnLast.setForeground(Color.WHITE);
+        btnLast.setOpaque(true);
+        btnLast.setBorderPainted(false);
+        btnLast.setPreferredSize(new Dimension(50,25));
+        btnLast.setMaximumSize(new Dimension(50,25));
+        btnLast.setMinimumSize(new Dimension(50,25));
+
         pPag.setPreferredSize(new Dimension(widthScreen, btnFirst.getPreferredSize().height));
 
         pPag.add(btnFirst);
         pPag.add(btnPrev);
         lblPageInfo.setText("1" + "/" + totalPages);
+        lblPageInfo.setFont(new Font("Arial", Font.BOLD, 13));
         pPag.add(lblPageInfo);
 
         pPag.add(btnNext);
@@ -213,165 +249,68 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
 
         pContainerCenter.add(pPag);
 
-        // Product Detail
+        // Panel hiển thị chi tiết sản phẩm
         pProductDetail = new JPanel(new BorderLayout());
-        pProductDetail.setBorder(BorderFactory.createTitledBorder("Thông tin chi tiết thuốc"));
-        pProductDetail.setPreferredSize(new Dimension(widthScreen-6,300));
+        pProductDetail.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY),
+                "Thông tin chi tiết thuốc", TitledBorder.LEADING, TitledBorder.TOP, new Font("Arial", Font.BOLD, 14)));
+        pProductDetail.setPreferredSize(new Dimension(widthScreen - 6, 235));
 
+        // Panel chứa thông tin sản phẩm
         pnlSanPham = new JPanel(new BorderLayout());
-        pnlSanPham.setPreferredSize(new Dimension(400,500));
+        pnlSanPham.setPreferredSize(new Dimension(400, 235));
+        pnlSanPham.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        lblTenSanPham = new JLabel();
+        // Tên sản phẩm
+        lblTenSanPham = new JLabel("Tên sản phẩm");
         lblTenSanPham.setHorizontalAlignment(SwingConstants.CENTER);
         lblTenSanPham.setForeground(new Color(65, 192, 201));
-        lblTenSanPham.setFont(new Font("Arial", Font.PLAIN, 20));
-        imgProduct = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        imgProduct.setPreferredSize(new Dimension(150, 250));
+        lblTenSanPham.setFont(new Font("Arial", Font.BOLD, 20));
 
+        // Ảnh sản phẩm
+        imgProduct = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        imgProduct.setPreferredSize(new Dimension(150, 200));
+        imgProduct.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
-        pInforDetail = new JPanel(new GridBagLayout());
-        pInforDetail.setPreferredSize(new Dimension(widthScreen/2, 400));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(15, 15, 15, 15);
-
-
-        JPanel pnlMaThuoc = new JPanel(new GridBagLayout());
-        lblMaThuoc = new JLabel("Mã thuốc:");
-        lblMaThuoc.setPreferredSize(new Dimension(100,30));
-        lblMaThuoc.setFont(new Font("Arial", Font.BOLD, 12));
-        txtMaThuoc = new JTextField();
-        txtMaThuoc.setEnabled(false);
-        txtMaThuoc.setDisabledTextColor(Color.BLACK);
-        txtMaThuoc.setPreferredSize(new Dimension(300,30));
-        pnlMaThuoc.add(lblMaThuoc);
-        pnlMaThuoc.add(txtMaThuoc);
-
-        JPanel pnlThanhPhan = new JPanel(new GridBagLayout());
-        lblThanhPhan = new JLabel("Thành phần:");
-        lblThanhPhan.setPreferredSize(new Dimension(100,30));
-        lblThanhPhan.setFont(new Font("Arial", Font.BOLD, 12));
-        txtThanhPhan = new JTextField();
-        txtThanhPhan.setEnabled(false);
-        txtThanhPhan.setDisabledTextColor(Color.BLACK);
-        txtThanhPhan.setPreferredSize(new Dimension(300,30));
-        pnlThanhPhan.add(lblThanhPhan);
-        pnlThanhPhan.add(txtThanhPhan);
-
-
-        JPanel pnlCachDung= new JPanel(new GridBagLayout());
-        lblCachDung = new JLabel("Cách dùng:");
-        lblCachDung.setPreferredSize(new Dimension(100,30));
-        lblCachDung.setFont(new Font("Arial", Font.BOLD, 12));
-        txaCachDung = new JTextArea(3,27);
-        txaCachDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
-        txaCachDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
-        txaCachDung.setEnabled(false);
-        txaCachDung.setDisabledTextColor(Color.BLACK);
-        txaCachDung.setPreferredSize(new Dimension(300,30));
-        spCachDung = new JScrollPane(txaCachDung);
-        pnlCachDung.add(lblCachDung);
-        pnlCachDung.add(spCachDung);
-
-        JPanel pnlBaoQuan = new JPanel(new GridBagLayout());
-        lblBaoQuan = new JLabel("Bảo quản:");
-        lblBaoQuan.setPreferredSize(new Dimension(100,30));
-        lblBaoQuan.setFont(new Font("Arial", Font.BOLD, 12));
-        txtBaoQuan = new JTextField();
-        txtBaoQuan.setEnabled(false);
-        txtBaoQuan.setDisabledTextColor(Color.BLACK);
-        txtBaoQuan.setPreferredSize(new Dimension(300,30));
-        pnlBaoQuan.add(lblBaoQuan);
-        pnlBaoQuan.add(txtBaoQuan);
-
-        JPanel pnlCongDung = new JPanel(new GridBagLayout());
-        lblCongDung = new JLabel("Công dụng:");
-        lblCongDung.setPreferredSize(new Dimension(100,30));
-        lblCongDung.setFont(new Font("Arial", Font.BOLD, 12));
-        txaCongDung = new JTextArea(3, 27);
-        txaCongDung.setEnabled(false);
-        txaCongDung.setDisabledTextColor(Color.BLACK);
-        txaCongDung.setPreferredSize(new Dimension(300,30));
-        txaCongDung.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
-        txaCongDung.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
-        spCongDung = new JScrollPane(txaCongDung);
-        pnlCongDung.add(lblCongDung);
-        pnlCongDung.add(spCongDung);
-
-        JPanel pnlChiDinh = new JPanel(new GridBagLayout());
-        lblChiDinh = new JLabel("Chỉ định:");
-        lblChiDinh.setPreferredSize(new Dimension(100,30));
-        lblChiDinh.setFont(new Font("Arial", Font.BOLD, 12));
-        txtChiDinh = new JTextField();
-        txtChiDinh.setEnabled(false);
-        txtChiDinh.setDisabledTextColor(Color.BLACK);
-        txtChiDinh.setPreferredSize(new Dimension(300,30));
-        pnlChiDinh.add(lblChiDinh);
-        pnlChiDinh.add(txtChiDinh);
-
-
-        JPanel pnlMoTa = new JPanel(new GridBagLayout());
-        lblMoTa = new JLabel("Mô tả:");
-        lblMoTa.setPreferredSize(new Dimension(100,30));
-        lblMoTa.setFont(new Font("Arial", Font.BOLD, 12));
-        txaMoTa = new JTextArea(3,27);
-        txaMoTa.setEnabled(false);
-        txaMoTa.setDisabledTextColor(Color.BLACK);
-        txaMoTa.setPreferredSize(new Dimension(300,30));
-        txaMoTa.setLineWrap(true); //Tự xuống dòng khi hết chiều ngang
-        txaMoTa.setWrapStyleWord(true);  // Xuống dòng tại từ (không cắt từ giữa chừng)
-        scrMoTa = new JScrollPane(txaMoTa);
-        pnlMoTa.add(lblMoTa);
-        pnlMoTa.add(scrMoTa);
-
-        JPanel pnlHamLuong = new JPanel(new GridBagLayout());
-        lblHamLuong = new JLabel("Hàm lượng:");
-        lblHamLuong.setPreferredSize(new Dimension(100,30));
-        lblHamLuong.setFont(new Font("Arial", Font.BOLD, 12));
-        txtHamLuong = new JTextField();
-        txtHamLuong.setEnabled(false);
-        txtHamLuong.setDisabledTextColor(Color.BLACK);
-        txtHamLuong.setPreferredSize(new Dimension(300,30));
-        pnlHamLuong.add(lblHamLuong);
-        pnlHamLuong.add(txtHamLuong);
-
-        JPanel pnlDangBaoChe = new JPanel(new GridBagLayout());
-        lblDangBaoChe = new JLabel("Dạng bào chế:");
-        lblDangBaoChe.setPreferredSize(new Dimension(100,30));
-        lblDangBaoChe.setFont(new Font("Arial", Font.BOLD, 12));
-        txtDangBaoChe = new JTextField();
-        txtDangBaoChe.setEnabled(false);
-        txtDangBaoChe.setDisabledTextColor(Color.BLACK);
-        txtDangBaoChe.setPreferredSize(new Dimension(300,30));
-        pnlDangBaoChe.add(lblDangBaoChe);
-        pnlDangBaoChe.add(txtDangBaoChe);
-
-        gbc.gridy = 1;
-
-        gbc.gridx = 1; pInforDetail.add(pnlMaThuoc, gbc);
-        gbc.gridx = 2; pInforDetail.add(pnlThanhPhan, gbc);
-        gbc.gridx = 3; pInforDetail.add(pnlHamLuong, gbc);
-
-        gbc.gridy = 2;
-        gbc.gridx = 1; pInforDetail.add(pnlBaoQuan, gbc);
-        gbc.gridx = 2; pInforDetail.add(pnlDangBaoChe, gbc);
-        gbc.gridx = 3; pInforDetail.add(pnlChiDinh, gbc);
-
-        gbc.gridy = 3;
-        gbc.gridx = 1; pInforDetail.add(pnlMoTa, gbc);
-        gbc.gridx = 2; pInforDetail.add(pnlCongDung, gbc);
-        gbc.gridx = 3; pInforDetail.add(pnlCachDung, gbc);
-
-        pnlSanPham.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+        // Thêm các thành phần vào panel sản phẩm
         pnlSanPham.add(lblTenSanPham, BorderLayout.NORTH);
         pnlSanPham.add(imgProduct, BorderLayout.CENTER);
 
-        JPanel panelRong = new JPanel();
-        panelRong.setBorder(new EmptyBorder(200, 100, 100, 100));
+        // Panel chứa thông tin chi tiết thuốc
+        pInforDetail = new JPanel(new GridBagLayout());
+        pInforDetail.setPreferredSize(new Dimension(widthScreen / 2, 300));
+        pInforDetail.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 10, 5, 10);
+
+
+        // thông tin
+        pnlMaThuoc = createInfoPanel("Mã thuốc:", txtMaThuoc = new JTextField(), 150);
+        pnlThanhPhan = createInfoPanel("Thành phần:", txtThanhPhan = new JTextField(), 150);
+        pnlCachDung = createInfoPanel("Cách dùng:", txaCachDung = new JTextArea(3, 20), 150);
+        pnlBaoQuan = createInfoPanel("Bảo quản:", txtBaoQuan = new JTextField(), 150);
+        pnlCongDung = createInfoPanel("Công dụng:", txaCongDung = new JTextArea(3, 20), 150);
+        pnlChiDinh = createInfoPanel("Chỉ định:", txtChiDinh = new JTextField(), 150);
+        pnlMoTa = createInfoPanel("Mô tả:", txaMoTa =  new JTextArea(3, 20), 150);
+        pnlHamLuong = createInfoPanel("Hàm lượng:", txtHamLuong =  new JTextField(), 150);
+        pnlDangBaoChe = createInfoPanel("Dạng bào chế:", txtDangBaoChe = new JTextField(), 150);
+
+        // thêm các panel vào giao diện chi tiết thuốc
+        gbc.gridx = 0; gbc.gridy = 0; pInforDetail.add(pnlMaThuoc, gbc);
+        gbc.gridx = 1; pInforDetail.add(pnlThanhPhan, gbc);
+        gbc.gridx = 2; pInforDetail.add(pnlHamLuong, gbc);
+
+        gbc.gridy = 1; gbc.gridx = 0; pInforDetail.add(pnlBaoQuan, gbc);
+        gbc.gridx = 1; pInforDetail.add(pnlDangBaoChe, gbc);
+        gbc.gridx = 2; pInforDetail.add(pnlChiDinh, gbc);
+
+        gbc.gridy = 2; gbc.gridx = 0; pInforDetail.add(pnlMoTa, gbc);
+        gbc.gridx = 1; pInforDetail.add(pnlCongDung, gbc);
+        gbc.gridx = 2; pInforDetail.add(pnlCachDung, gbc);
+
+
         pProductDetail.add(pnlSanPham, BorderLayout.WEST);
-
         pProductDetail.add(pInforDetail, BorderLayout.CENTER);
-
 
         pContainerCenter.add(pProductDetail);
 
@@ -406,6 +345,21 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             }
         });
 
+    }
+
+    // hàm tiện ích tạo các ô thông tin
+    private JPanel createInfoPanel(String labelText, JComponent inputComponent, int inputWidth) {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Arial", Font.BOLD, 12));
+        inputComponent.setPreferredSize(new Dimension(inputWidth, 30));
+        inputComponent.setEnabled(false);
+        if (inputComponent instanceof JTextComponent) {
+            ((JTextComponent) inputComponent).setDisabledTextColor(Color.BLACK);
+        }
+        panel.add(label, BorderLayout.WEST);
+        panel.add(inputComponent, BorderLayout.CENTER);
+        return panel;
     }
 
     public void loadDataThuocToTable(int currentPage, int rowsPerPage) throws Exception {
@@ -582,7 +536,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             Form_ThemThuoc pnlThemThuoc = new Form_ThemThuoc();
             dialog.add(pnlThemThuoc);
-            dialog.setSize(1000, 950);
+            dialog.setSize(950, 850);
             dialog.setLocationRelativeTo(null);
             dialog.setResizable(false);
             dialog.setVisible(true);
@@ -592,6 +546,8 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+            lblPageInfo.setText(currentPage + " / " + totalPages);
+
         }
 
         if (o.equals(btnUpdate)) {
@@ -626,7 +582,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
 
                 dialog.add(pnlCapNhatThuoc);
 
-                dialog.setSize(1000, 950);
+                dialog.setSize(950, 850);
                 dialog.setLocationRelativeTo(null);
                 dialog.setResizable(false);
                 dialog.setVisible(true);
@@ -636,6 +592,8 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
+                lblPageInfo.setText(currentPage + " / " + totalPages);
+
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn dòng cần cập nhật");
             }
@@ -650,7 +608,6 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                     int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa không?", "Lưu ý", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         JOptionPane.showMessageDialog(this, "Đã xóa thuốc thành công");
-                        clearData();
                         lblTenSanPham.setText("");
                         txtMaThuoc.setText("");
                         txtThanhPhan.setText("");
@@ -662,11 +619,22 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
                         txaCongDung.setText("");
                         txaCachDung.setText("");
                         loadImageThuoc(new Thuoc());
+
+
+                        totalRows = thuocDao.countThuoc();
+                        totalPages = (int) Math.ceil((double) totalRows / rowsPerPage);
+                        if (currentPage > totalPages) {
+                            currentPage = Math.max(1, currentPage - 1);
+                        }
+                        lblPageInfo.setText(currentPage + " / " + totalPages);
+
+                        clearData();
                         try {
                             loadDataThuocToTable(currentPage, rowsPerPage);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
+
                     }
                 }
             }
@@ -730,8 +698,6 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
 
 
     }
-
-
 
     private void clearData() {
         dtListProduct.setRowCount(0);
@@ -825,5 +791,4 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public void mouseExited(MouseEvent e) {
 
     }
-
 }

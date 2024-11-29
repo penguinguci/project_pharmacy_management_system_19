@@ -35,11 +35,15 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
     public DonGiaThuoc_DAO dvt_DAO = new DonGiaThuoc_DAO();
     private Thuoc_DAO thuocDao;
     private KeThuoc ke;
+    public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
     public Form_CapNhatThuoc(String maThuoc, String tenThuoc, String danhMuc,
                              String nhaCungCap, String nhaSanXuat, String nuocSanXuat, String keThuoc, String tongSoLuong, String thanhPhan,
                              String cachDung, String hamLuong, String moTa, String dangBaoChe,
                              String baoQuan, String congDung, String chiDinh, String hinhAnh) {
+
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+
         dialogWapper = new Form_ThemThuoc();
         setTitle("CẬP NHẬT THUỐC");
 
@@ -99,9 +103,6 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
             String chiDinhMoi = txtChiDinh.getText().trim();
 
 
-
-
-
             Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
             thuoc.setTenThuoc(tenThuocMoi);
             thuoc.setCachDung(cachDungMoi);
@@ -127,7 +128,7 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
                 JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
 
                 if (dialogThemThuoc != null) {
-                    dialogThemThuoc.dispose(); // Close the dialog
+                    dialogThemThuoc.dispose();
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Cập nhật thuốc thất bại !");
@@ -137,7 +138,7 @@ public class Form_CapNhatThuoc extends Form_ThemThuoc {
             int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy không?", "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 JDialog dialogThemThuoc = (JDialog) SwingUtilities.getWindowAncestor(this);
-                dialogThemThuoc.dispose(); // Đóng JDialog
+                dialogThemThuoc.dispose();
             }
         });
 

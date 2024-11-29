@@ -73,7 +73,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public JButton btnXemCTTB;
 
     public GUI_TrangChu() throws Exception {
-
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -194,7 +193,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         //Phân quyền
         if(nhanVienDN != null) {
-            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){ //Nhân viên bán thuốc
                 submenuNhanVien.add(btnBanThuoc);
                 submenuNhanVien.add(btnNhapThuocTuNCC);
             } else {
@@ -213,6 +212,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             submenuNhanVien.add(btnTimKiemNV);
             submenuNhanVien.add(btnTaiKhoan);
         }
+
 
         // Submenu Khách hàng
         submenuKhachHang = new JPanel();
@@ -275,7 +275,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         //Phân quyền
         if(nhanVienDN != null) {
-            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){ // Nhân viên bán thuốc
                 submenuKhuyenMai.add(btnTimKiemKhuyenMai);
             } else {
                 submenuKhuyenMai.add(btnCapNhatKhuyenmai);
@@ -913,7 +913,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhapThuoc");
         } else if (o ==btnQLLoThuoc) {
-            formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+            try {
+                formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();

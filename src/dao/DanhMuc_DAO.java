@@ -23,24 +23,29 @@ public class DanhMuc_DAO {
         }
     }
 
-    public ArrayList<DanhMuc> getAllDanhMuc() throws Exception{
+    public ArrayList<DanhMuc> getAllDanhMuc() {
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        //Gọi bảng Nhân Viên
-        String sql = "select * from DanhMuc";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()){
-            DanhMuc d = new DanhMuc();
-            d.setMaDanhMuc(rs.getString(1));
-            d.setTenDanhMuc(rs.getString(2));
-            if(timDanhMuc(d.getMaDanhMuc()) == null) {
-                list.add(d);
+
+        try {
+            String sql = "select * from DanhMuc";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                DanhMuc d = new DanhMuc();
+                d.setMaDanhMuc(rs.getString(1));
+                d.setTenDanhMuc(rs.getString(2));
+                if(timDanhMuc(d.getMaDanhMuc()) == null) {
+                    list.add(d);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return this.list;
     }
 

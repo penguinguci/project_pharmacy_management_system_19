@@ -63,7 +63,7 @@ public class DonGiaThuoc_DAO {
         DonGiaThuoc donGiaThuoc = null;
         try {
             con = ConnectDB.getConnection();
-            String sql = "SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE t.maThuoc = ? AND dg.donViTinh = ?";
+            String sql = "SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE dg.maThuoc = ? AND dg.donViTinh LIKE ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, idThuoc);
             statement.setString(2, dvt);
@@ -72,9 +72,51 @@ public class DonGiaThuoc_DAO {
             if (rs.next()) {
                 String maDonGia = rs.getString("maDonGia");
                 Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+
                 String donViTinh = rs.getString("donViTinh");
                 double donGia = rs.getDouble("donGia");
                 donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return donGiaThuoc;
+    }
+
+
+    public DonGiaThuoc getDonGiaThuocTheoMaDG(String idDonGia) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        DonGiaThuoc donGiaThuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM DonGiaThuoc WHERE maDonGia = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, idDonGia);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maDonGia = rs.getString("maDonGia");
+                Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+                String donViTinh = rs.getString("donViTinh");
+                double donGia = rs.getDouble("donGia");
+
+                System.out.println(maDonGia);
+                System.out.println(thuoc);
+                System.out.println(donViTinh);
+                System.out.println(donGia);
+
+                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+                System.out.println(donGiaThuoc);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,104 +199,77 @@ public class DonGiaThuoc_DAO {
 
         return donGia;
     }
-//    public String tuSinhMaDonGia() {
-//        Connection con = ConnectDB.getConnection();
-//        String sql = "SELECT MAX(maDonGia) FROM DonGiaThuoc";
-//        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-//            if (rs.next()) {
-//                String lastId = rs.getString(1);
-//                int newIdNum = Integer.parseInt(lastId.substring(1)) + 1;
-//                return String.format("DG%04d", newIdNum);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return "DG00001"; // Default starting value
-//    }
 
-    public String tuSinhMaDonGia() {
-        ConnectDB con  = new ConnectDB();
-        con.connect();
-        con.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        int count = 0;
-        try {
-            String sql = "select * from DonGiaThuoc";
-            ps = con.getConnection().prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()){   // Đếm số dòng của bảng thuốc trong csdl
-                count++;
-            }
-        } catch (Exception e){
-            e.printStackTrace();
+    public boolean create(DonGiaThuoc donGiaThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
         }
-        count+=1; // Tăng lên 1 đơn vị so với số hiệu cuối cùng trong csdl
-        return "DG000"+count;
-    }
 
-    public boolean themDonGia(String maThuoc, String donViTinh, double donGia) {
-        String sql = "INSERT INTO DonGiaThuoc(maDonGia, maThuoc, donViTinh, donGia) VALUES (?, ?, ?, ?)";
+        PreparedStatement statement = null;
+        int n = 0;
 
-        try (Connection con = ConnectDB.getConnection();
-             PreparedStatement statement = con.prepareStatement(sql)) {
+        try {
+            String sql = "INSERT INTO DonGiaThuoc (maDonGia, maThuoc, donViTinh, donGia) " +
+                    "VALUES (?, ?, ?, ?)";
+            statement = con.prepareStatement(sql);
 
-            statement.setString(1, tuSinhMaDonGia());
-            statement.setString(2, maThuoc);
-            statement.setString(3, donViTinh);
-            statement.setDouble(4, donGia);
+            statement.setString(1, donGiaThuoc.getMaDonGia());
+            statement.setString(2, donGiaThuoc.getThuoc().getMaThuoc());
+            statement.setString(3, donGiaThuoc.getDonViTinh());
+            statement.setDouble(4, donGiaThuoc.getDonGia());
 
-            return statement.executeUpdate() > 0;
-
+            n = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        return false;
-    }
-
-    public DonGiaThuoc getDonViTinh(String tenDonViTinh){
-        try{
-            for(DonGiaThuoc donGiaThuoc : list){
-                if(donGiaThuoc.getDonViTinh().equalsIgnoreCase(tenDonViTinh)){
-                    return donGiaThuoc;
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
-        }catch (Exception e){
+        }
+
+        return n > 0;
+    }
+
+    public boolean updateGiaMoi(DonGiaThuoc donGiaThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE DonGiaThuoc SET donGia = ? WHERE maDonGia = ? " ;
+            statement = con.prepareStatement(sql);
+
+            statement.setString(2, donGiaThuoc.getMaDonGia());
+            statement.setDouble(1, donGiaThuoc.getDonGia());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-        return null;
-    }
-
-    public boolean updateDonGiaThuoc(DonGiaThuoc donGiaThuoc) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        boolean flag = false;
-        try{
-            con = ConnectDB.getConnection();
-            String sql = "Update DonGiaThuoc set donViTinh = ?, donGia = ? where maDonGia = ?";
-            ps = con.prepareStatement(sql);
-            ps.setString(1, donGiaThuoc.getDonViTinh());
-            ps.setDouble(2, donGiaThuoc.getDonGia());
-            ps.setString(3, donGiaThuoc.getMaDonGia());
-            flag = ps.executeUpdate() > 0;
-            if (flag) {
-                con.commit();
-            } else {
-                con.rollback();
-            }
-        }catch (SQLException e1){
-            e1.printStackTrace();
-            if(con != null){
-                try{
-                    con.rollback();
-                }catch (SQLException e2){
-                    e2.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        return flag;
+
+        return n > 0;
     }
-
-
-
 }

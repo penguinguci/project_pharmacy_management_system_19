@@ -6,6 +6,8 @@ import entity.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static connectDB.ConnectDB.getConnection;
+
 public class ChiTietHoaDon_DAO {
     private ArrayList<ChiTietHoaDon> list;
     private Thuoc_DAO thuoc_dao;
@@ -201,6 +203,9 @@ public class ChiTietHoaDon_DAO {
                 cthd.setDonViTinh(rs.getString("donViTinh"));
                 cthd.setSoLuong(rs.getInt("soLuong"));
 
+                ChiTietLoThuoc ctlt = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(rs.getString("maDonGia"), rs.getString("maThuoc"));
+                cthd.setChiTietLoThuoc(ctlt);
+
                 listCTHD.add(cthd);
             }
         } catch (SQLException e) {
@@ -305,4 +310,5 @@ public class ChiTietHoaDon_DAO {
         }
         return cthd;
     }
+
 }

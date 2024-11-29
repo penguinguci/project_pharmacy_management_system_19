@@ -37,6 +37,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
     private NhaCungCap_DAO nhaCungCap_dao = new NhaCungCap_DAO();
     private NhaSanXuat_DAO nhaSanXuat_dao = new NhaSanXuat_DAO();
     private NuocSanXuat_DAO nuocSanXuat_dao = new NuocSanXuat_DAO();
+    private ChiTietLoThuoc_DAO chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
 
     private JPanel imgPanel;
 
@@ -219,7 +220,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
 
         //Lấy dữ liệu bảng
         try {
-            loadDataTable(thuoc_dao.getAllThuoc());
+            loadDataTable(chiTietLoThuoc_dao.getAll());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -287,85 +288,96 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(btnLamMoi)) {
             try {
-                loadDataTable(thuoc_dao.getAllThuoc());
+                loadDataTable(chiTietLoThuoc_dao.getAll());
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }
         if(e.getSource().equals(btnTimKiem)){
-            HashSet<Thuoc> data = new HashSet<>();
-            if(!txtTen.getText().trim().equals("")){
-                if(data.isEmpty()) {
-                    data.addAll(thuoc_dao.timThuocTheoTenVipProMax(txtTen.getText().trim()));
+            ArrayList<ChiTietLoThuoc> listFull = chiTietLoThuoc_dao.getAll();
+            ArrayList<ChiTietLoThuoc> resultList = new ArrayList<>();
+            if(!txtTen.getText().trim().equalsIgnoreCase("")) {
+                if(resultList.isEmpty()) {
+                    resultList = chiTietLoThuoc_dao.timThuocTheoTen(listFull, txtTen.getText().trim());
                 } else {
-                    data.retainAll(thuoc_dao.timThuocTheoTenVipProMax(txtTen.getText().trim()));
+                    ArrayList<ChiTietLoThuoc> temp = new ArrayList<>();
+                    temp = chiTietLoThuoc_dao.timThuocTheoTen(resultList, txtTen.getText().trim());
+                    resultList.clear();
+                    resultList = temp;
                 }
             }
             if(cbDanhMuc.getSelectedIndex()!=0) {
-                if(data.isEmpty()) {
-                    data.addAll(thuoc_dao.timThuocTheoDanhMuc((String) cbDanhMuc.getSelectedItem()));
+                if(resultList.isEmpty()) {
+                    resultList = chiTietLoThuoc_dao.timThuocTheoDanhMuc(listFull, (String)cbDanhMuc.getSelectedItem());
                 } else {
-                    data.retainAll(thuoc_dao.timThuocTheoDanhMuc((String) cbDanhMuc.getSelectedItem()));
+                    ArrayList<ChiTietLoThuoc> temp = new ArrayList<>();
+                    temp = chiTietLoThuoc_dao.timThuocTheoDanhMuc(resultList, (String)cbDanhMuc.getSelectedItem());
+                    resultList.clear();
+                    resultList = temp;
                 }
             }
             if(cbNCC.getSelectedIndex()!=0) {
-                if(data.isEmpty()) {
-                    data.addAll(thuoc_dao.timThuocTheoNCC((String) cbNCC.getSelectedItem()));
+                if(resultList.isEmpty()) {
+                    resultList = chiTietLoThuoc_dao.timThuocTheoNCC(listFull, (String)cbNCC.getSelectedItem());
                 } else {
-                    data.retainAll(thuoc_dao.timThuocTheoNCC((String) cbNCC.getSelectedItem()));
+                    ArrayList<ChiTietLoThuoc> temp = new ArrayList<>();
+                    temp = chiTietLoThuoc_dao.timThuocTheoNCC(resultList, (String)cbNCC.getSelectedItem());
+                    resultList.clear();
+                    resultList = temp;
                 }
             }
             if(cbNhaSX.getSelectedIndex()!=0) {
-                if(data.isEmpty()) {
-                    data.addAll(thuoc_dao.timThuocTheoNhaSX((String) cbNhaSX.getSelectedItem()));
+                if(resultList.isEmpty()) {
+                    resultList = chiTietLoThuoc_dao.timThuocTheoNhaSX(listFull, (String)cbNhaSX.getSelectedItem());
                 } else {
-                    data.retainAll(thuoc_dao.timThuocTheoNhaSX((String) cbNhaSX.getSelectedItem()));
+                    ArrayList<ChiTietLoThuoc> temp = new ArrayList<>();
+                    temp = chiTietLoThuoc_dao.timThuocTheoNhaSX(resultList, (String)cbNhaSX.getSelectedItem());
+                    resultList.clear();
+                    resultList = temp;
                 }
             }
             if(cbNuocSX.getSelectedIndex()!=0) {
-                if(data.isEmpty()) {
-                    data.addAll(thuoc_dao.timThuocTheoNuocSX((String) cbNuocSX.getSelectedItem()));
+                if(resultList.isEmpty()) {
+                    resultList = chiTietLoThuoc_dao.timThuocTheoNuocSX(listFull, (String)cbNuocSX.getSelectedItem());
                 } else {
-                    data.retainAll(thuoc_dao.timThuocTheoNuocSX((String) cbNuocSX.getSelectedItem()));
+                    ArrayList<ChiTietLoThuoc> temp = new ArrayList<>();
+                    temp = chiTietLoThuoc_dao.timThuocTheoNuocSX(resultList, (String)cbNuocSX.getSelectedItem());
+                    resultList.clear();
+                    resultList = temp;
                 }
             }
-//            if(cbKhoangGia.getSelectedIndex()!=0) {
-//                if (cbKhoangGia.getSelectedIndex() == 1) {
-//                    if (data.isEmpty()) {
-//                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
-//                    } else {
-//                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMin(10000));
-//                    }
-//                } else if (cbKhoangGia.getSelectedIndex() == 2) {
-//                    if (data.isEmpty()) {
-//                        data.addAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
-//                    } else {
-//                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(10000, 50000));
-//                    }
-//                } else if (cbKhoangGia.getSelectedIndex() == 3) {
-//                    if (data.isEmpty()) {
-//                        data.addAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
-//                    } else {
-//                        data.retainAll(thuoc_dao.timThuocTheoKhangGia(50000, 100000));
-//                    }
-//                } else {
-//                    if (data.isEmpty()) {
-//                        data.addAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
-//                    } else {
-//                        data.retainAll(thuoc_dao.timThuocTheoKhangGiaMax(100000));
-//                    }
-//                }
-//            }
-            if(data.isEmpty()){
-                JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc phù hợp!");
-                try {
-                    loadDataTable(thuoc_dao.getAllThuoc());
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+            if(cbKhoangGia.getSelectedIndex()!=0) {
+                if(resultList.isEmpty()) {
+                    if(cbKhoangGia.getSelectedIndex() == 1) {
+                        resultList = chiTietLoThuoc_dao.timThuocTheoKhangGiaMax(listFull, 10000);
+                    } else if(cbKhoangGia.getSelectedIndex() == 2) {
+                        resultList = chiTietLoThuoc_dao.timThuocTheoKhangGia(listFull, 10000,50000);
+                    } else if(cbKhoangGia.getSelectedIndex() == 3) {
+                        resultList = chiTietLoThuoc_dao.timThuocTheoKhangGia(listFull, 50000,100000);
+                    } else {
+                        resultList = chiTietLoThuoc_dao.timThuocTheoKhangGiaMin(listFull, 100000);
+                    }
+                } else {
+                    ArrayList<ChiTietLoThuoc> temp = new ArrayList<>();
+                    if(cbKhoangGia.getSelectedIndex() == 1) {
+                        temp = chiTietLoThuoc_dao.timThuocTheoKhangGiaMax(resultList, 10000);
+                    } else if(cbKhoangGia.getSelectedIndex() == 2) {
+                        temp = chiTietLoThuoc_dao.timThuocTheoKhangGia(resultList, 10000,50000);
+                    } else if(cbKhoangGia.getSelectedIndex() == 3) {
+                        temp = chiTietLoThuoc_dao.timThuocTheoKhangGia(resultList, 50000,100000);
+                    } else {
+                        temp = chiTietLoThuoc_dao.timThuocTheoKhangGiaMin(resultList, 100000);
+                    }
+                    resultList.clear();
+                    resultList = temp;
                 }
+            }
+
+            if(resultList.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc phù hợp!");
                 clearData();
             } else {
-                loadDataTable(data);
+                loadDataTable(resultList);
             }
         }
         if (e.getSource().equals(btnQuayLai)) {
@@ -380,6 +392,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         cbNhaSX.setSelectedIndex(0);
         cbNuocSX.setSelectedIndex(0);
         cbKhoangGia.setSelectedIndex(0);
+        txtTen.requestFocus();
     }
 
     @Override
@@ -407,29 +420,15 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
 
     }
 
-    public void loadDataTable(ArrayList<Thuoc> newData) {
-        dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
-//        for(Thuoc x: newData) {
-//            String date = "Chưa cập nhật";
-//            if(x.getNgaySX() != null) {
-//                date = formatDate(x.getNgaySX());
-//            }
-//            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
-//            dtmThuoc.addRow(data);
-//        }
+    public void loadDataTable(ArrayList<ChiTietLoThuoc> newData) {
+        dtmThuoc.setRowCount(0);
+        for(ChiTietLoThuoc x: newData) {
+            Object[] data = {x.getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDanhMuc().getTenDanhMuc(), x.getThuoc().getNhaCungCap().getTenNCC(),
+                    x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), x.getNgaySX(), x.getHSD(), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+            dtmThuoc.addRow(data);
+        }
     }
 
-    public void loadDataTable(HashSet<Thuoc> newData) {
-        dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
-//        for(Thuoc x: newData) {
-//            String date = "Chưa cập nhật";
-//            if(x.getNgaySX() != null) {
-//                date = formatDate(x.getNgaySX());
-//            }
-//            Object[] data = {x.getSoHieuThuoc(), x.getMaThuoc(), x.getTenThuoc(), x.getDanhMuc().getTenDanhMuc(), x.getNhaCungCap().getTenNCC(), x.getNhaSanXuat().getTenNhaSX(), x.getNuocSanXuat().getTenNuoxSX(), date, x.getHSD()+" tháng", x.getTongSoLuong(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
-//            dtmThuoc.addRow(data);
-//        }
-    }
 
     public void renderTable(String[] colsName, JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
