@@ -50,7 +50,7 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         btnBack.setBorderPainted(false);
         btnBack.setFocusPainted(false);
 
-        JLabel title = new JLabel("QUẢN LÝ KHUYẾN MÃI", JLabel.CENTER);
+        JLabel title = new JLabel("TÌM KIẾM KHUYẾN MÃI", JLabel.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 20));
         add(title, BorderLayout.NORTH);
 

@@ -49,6 +49,19 @@ public class DanhMuc_DAO {
         return this.list;
     }
 
+    public DanhMuc getDanhMuc(String tenDanhMuc){
+        try{
+            for(DanhMuc d : list){
+                if(d.getTenDanhMuc().equalsIgnoreCase(tenDanhMuc)){
+                    return d;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
     public DanhMuc timDanhMuc(String maDanhMuc) {
         for(DanhMuc x : list) {
             if(x.getMaDanhMuc().equalsIgnoreCase(maDanhMuc)) {

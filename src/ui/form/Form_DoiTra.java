@@ -464,59 +464,59 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         if(e.getSource().equals(btnXacNhan)) {
             if(!txtMaHoaDon.getText().trim().equals("")){
                 if(cbLoaiPhieu.getSelectedIndex()!=0) {
-                        PhieuDoiTra pdt = new PhieuDoiTra();
+                    PhieuDoiTra pdt = new PhieuDoiTra();
 
-                        pdt.setMaPhieu(phieuDoiTra_dao.tuTaoMaPhieu());
+                    pdt.setMaPhieu(phieuDoiTra_dao.tuTaoMaPhieu());
 
-                        pdt.setNhanVien(getNhanVienDN());
+                    pdt.setNhanVien(getNhanVienDN());
 
-                        Date currentDate = new Date(System.currentTimeMillis());
-                        pdt.setNgayDoiTra(currentDate);
+                    Date currentDate = new Date(System.currentTimeMillis());
+                    pdt.setNgayDoiTra(currentDate);
 
-                        boolean type = false; // Đổi
-                        if(cbLoaiPhieu.getSelectedIndex() == 2) {
-                            type = true;
-                        }
-                        pdt.setLoai(type);
-                        HoaDon hd = hd_dao.timHoaDon(txtMaHoaDon.getText().trim());
-                        if(hd!=null) {
-                            pdt.setHoaDon(hd);
+                    boolean type = false; // Đổi
+                    if(cbLoaiPhieu.getSelectedIndex() == 2) {
+                        type = true;
+                    }
+                    pdt.setLoai(type);
+                    HoaDon hd = hd_dao.timHoaDon(txtMaHoaDon.getText().trim());
+                    if(hd!=null) {
+                        pdt.setHoaDon(hd);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn!");
+                    }
+                    pdt.setLyDo(txtLyDo.getText().trim());
+
+                    try {
+                        if(!phieuDoiTra_dao.create(pdt)) {
+                            JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả!");
                         } else {
-                            JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn!");
-                        }
-                        pdt.setLyDo(txtLyDo.getText().trim());
-
-                        try {
-                            if(!phieuDoiTra_dao.create(pdt)) {
-                                JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả!");
+                            if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả!");
                             } else {
-                                if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
-                                    JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả!");
+                                if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
+                                    JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
                                 } else {
-                                    if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
-                                        JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
+                                    if(!chiTietLoThuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                        JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
                                     } else {
-                                        if(!chiTietLoThuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
-                                            JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
-                                        } else {
-                                            JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
-                                            int result = JOptionPane.showConfirmDialog(
-                                                    null, // Không có thành phần cha
-                                                    "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
-                                                    "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
-                                                    JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
-                                            );
-                                            if (result == JOptionPane.YES_OPTION) {
-                                                trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
-                                            }
-                                            clear();
+                                        JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
+                                        int result = JOptionPane.showConfirmDialog(
+                                                null, // Không có thành phần cha
+                                                "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
+                                                "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
+                                                JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
+                                        );
+                                        if (result == JOptionPane.YES_OPTION) {
+                                            trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
                                         }
+                                        clear();
                                     }
                                 }
                             }
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
                         }
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Chưa chọn loại phiếu!");
                 }
@@ -663,7 +663,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
                 @Override
                 public void focusLost(FocusEvent e) {
                     if (getJFormattedTextField().getText().isEmpty()) {
-                        getJFormattedTextField().setText("Chọn ngày");  // Đặt lại placeholder khi mất focus và không chọn ngày
+                        getJFormattedTextField().setText("Chọn ngày");
                     }
                 }
             });

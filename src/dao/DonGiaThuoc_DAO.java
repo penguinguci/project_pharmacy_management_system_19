@@ -63,7 +63,7 @@ public class DonGiaThuoc_DAO {
         DonGiaThuoc donGiaThuoc = null;
         try {
             con = ConnectDB.getConnection();
-            String sql = "SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE t.maThuoc = ? AND dg.donViTinh = ?";
+            String sql = "SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE dg.maThuoc = ? AND dg.donViTinh LIKE ?";
             statement = con.prepareStatement(sql);
             statement.setString(1, idThuoc);
             statement.setString(2, dvt);
@@ -72,9 +72,51 @@ public class DonGiaThuoc_DAO {
             if (rs.next()) {
                 String maDonGia = rs.getString("maDonGia");
                 Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+
                 String donViTinh = rs.getString("donViTinh");
                 double donGia = rs.getDouble("donGia");
                 donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return donGiaThuoc;
+    }
+
+
+    public DonGiaThuoc getDonGiaThuocTheoMaDG(String idDonGia) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        DonGiaThuoc donGiaThuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM DonGiaThuoc WHERE maDonGia = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, idDonGia);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String maDonGia = rs.getString("maDonGia");
+                Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+                String donViTinh = rs.getString("donViTinh");
+                double donGia = rs.getDouble("donGia");
+
+                System.out.println(maDonGia);
+                System.out.println(thuoc);
+                System.out.println(donViTinh);
+                System.out.println(donGia);
+
+                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+                System.out.println(donGiaThuoc);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -156,5 +198,78 @@ public class DonGiaThuoc_DAO {
         }
 
         return donGia;
+    }
+
+    public boolean create(DonGiaThuoc donGiaThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "INSERT INTO DonGiaThuoc (maDonGia, maThuoc, donViTinh, donGia) " +
+                    "VALUES (?, ?, ?, ?)";
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, donGiaThuoc.getMaDonGia());
+            statement.setString(2, donGiaThuoc.getThuoc().getMaThuoc());
+            statement.setString(3, donGiaThuoc.getDonViTinh());
+            statement.setDouble(4, donGiaThuoc.getDonGia());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
+    public boolean updateGiaMoi(DonGiaThuoc donGiaThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE DonGiaThuoc SET donGia = ? WHERE maDonGia = ? " ;
+            statement = con.prepareStatement(sql);
+
+            statement.setString(2, donGiaThuoc.getMaDonGia());
+            statement.setDouble(1, donGiaThuoc.getDonGia());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
     }
 }

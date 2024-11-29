@@ -421,22 +421,14 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
     }
 
     public void loadDataTable(ArrayList<ChiTietLoThuoc> newData) {
-        dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
+        dtmThuoc.setRowCount(0);
         for(ChiTietLoThuoc x: newData) {
             Object[] data = {x.getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDanhMuc().getTenDanhMuc(), x.getThuoc().getNhaCungCap().getTenNCC(),
-                            x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), formatDate(x.getNgaySX()), formatDate(x.getHSD()), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+                    x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), x.getNgaySX(), x.getHSD(), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
             dtmThuoc.addRow(data);
         }
     }
 
-//    public void loadDataTable(HashSet<ChiTietLoThuoc> newData) {
-//        dtmThuoc.setRowCount(0); //Xoá dữ liệu hiện tại
-//        for(ChiTietLoThuoc x: newData) {
-//            Object[] data = {x.getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDanhMuc(), x.getThuoc().getNhaCungCap().getTenNCC(),
-//                            x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), formatDate(x.getNgaySX()), formatDate(x.getHSD()), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
-//            dtmThuoc.addRow(data);
-//        }
-//    }
 
     public void renderTable(String[] colsName, JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();

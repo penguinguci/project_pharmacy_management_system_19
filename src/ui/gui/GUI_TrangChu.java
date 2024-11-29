@@ -213,6 +213,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             submenuNhanVien.add(btnTaiKhoan);
         }
 
+
         // Submenu Khách hàng
         submenuKhachHang = new JPanel();
         submenuKhachHang.setLayout(new BoxLayout(submenuKhachHang, BoxLayout.Y_AXIS));
@@ -911,7 +912,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhapThuoc");
         } else if (o ==btnQLLoThuoc) {
-            formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+            try {
+                formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
             centerPanel.revalidate();
             centerPanel.repaint();

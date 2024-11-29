@@ -74,6 +74,7 @@ public class ChiTietLoThuoc_DAO {
     }
 
 
+
     public ChiTietLoThuoc getCTLoThuocTheoMaDGVaMaThuoc(String maDonGia, String maThuoc) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -100,6 +101,52 @@ public class ChiTietLoThuoc_DAO {
 
                 DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
                 donGiaThuoc.setMaDonGia("maDonGia");
+
+                Date ngaySX = rs.getDate("ngaySX");
+                Date HSD = rs.getDate("HSD");
+
+                chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuongCon, donGiaThuoc, ngaySX, HSD);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return chiTietLoThuoc;
+    }
+
+
+    public ChiTietLoThuoc getCTLoThuocTheoSoHieuThuoc(String sht) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        ChiTietLoThuoc chiTietLoThuoc = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM ChiTietLoThuoc WHERE soHieuThuoc = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, sht);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                String soHieuThuoc = rs.getString("soHieuThuoc");
+
+                Thuoc thuoc = new Thuoc();
+                thuoc.setMaThuoc(rs.getString("maThuoc"));
+
+                LoThuoc loThuoc = new LoThuoc();
+                loThuoc.setMaLoThuoc(rs.getString("maLoThuoc"));
+
+                int soLuongCon = rs.getInt("soLuongCon");
+
+                DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaThuocTheoMaDG(rs.getString("maThuoc"));
+
                 Date ngaySX = rs.getDate("ngaySX");
                 Date HSD = rs.getDate("HSD");
 
@@ -136,18 +183,20 @@ public class ChiTietLoThuoc_DAO {
 
         try {
             for(ChiTietLoThuoc ctLoThuoc : dsCTLoThuoc) {
-                String sql = "INSERT INTO ChiTietLoThuoc (soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia) " +
-                        "VALUES (?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO ChiTietLoThuoc (soHieuThuoc, maThuoc, maLoThuoc, ngaySX, HSD, soLuongCon, maDonGia) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
                 statement = con.prepareStatement(sql);
 
                 statement.setString(1, ctLoThuoc.getSoHieuThuoc());
                 statement.setString(2, ctLoThuoc.getThuoc().getMaThuoc());
                 statement.setString(3, loThuoc.getMaLoThuoc());
-                statement.setInt(4, ctLoThuoc.getSoLuongCon());
+                statement.setDate(4, new java.sql.Date(ctLoThuoc.getNgaySX().getTime()));
+                statement.setDate(5,  new java.sql.Date(ctLoThuoc.getHSD().getTime()));
+                statement.setInt(6, ctLoThuoc.getSoLuongCon());
                 if (ctLoThuoc.getDonGiaThuoc() == null) {
-                    statement.setString(5, null);
+                    statement.setString(7, null);
                 } else {
-                    statement.setString(5, ctLoThuoc.getDonGiaThuoc().getMaDonGia());
+                    statement.setString(7, ctLoThuoc.getDonGiaThuoc().getMaDonGia());
                 }
 
                 n = statement.executeUpdate();
@@ -165,6 +214,68 @@ public class ChiTietLoThuoc_DAO {
             }
         }
         return n > 0;
+    }
+
+
+    // lấy danh sách chi tiết lô thuốc theo mã lô thuốc
+    public ArrayList<ChiTietLoThuoc> getDSChiTietLoThuoc(String maLT) throws SQLException {
+        ConnectDB con = new ConnectDB();
+        con.connect();
+        Connection connection = null;
+        CallableStatement cstmt = null;
+        ResultSet rs = null;
+        ArrayList<ChiTietLoThuoc> dsCTLT = new ArrayList<>();
+
+        try {
+            connection = con.getConnection();
+
+            if (connection == null || connection.isClosed()) {
+                System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return dsCTLT;
+            }
+
+            String sql = "{call getDSChiTietLoThuoc(?)}";
+            cstmt = connection.prepareCall(sql);
+            cstmt.setString(1, maLT);
+
+            rs = cstmt.executeQuery();
+
+            while (rs.next()) {
+                String soHieuThuoc = rs.getString("soHieuThuoc");
+                Thuoc thuoc = new Thuoc();
+                thuoc.setMaThuoc(rs.getString("maThuoc"));
+
+                LoThuoc loThuoc = new LoThuoc();
+                loThuoc.setMaLoThuoc(rs.getString("maLoThuoc"));
+
+                int soLuongCon = rs.getInt("soLuongCon");
+
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                donGiaThuoc.setMaDonGia(rs.getString("maDonGia"));
+                donGiaThuoc.setDonViTinh(rs.getString("donViTinh"));
+                donGiaThuoc.setDonGia(rs.getDouble("donGia"));
+
+                Date ngaySX = rs.getDate("ngaySX");
+                Date HSD = rs.getDate("HSD");
+
+                ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuongCon, donGiaThuoc, ngaySX, HSD);
+                dsCTLT.add(chiTietLoThuoc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (cstmt != null) {
+                cstmt.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+
+        return dsCTLT;
     }
 
     public boolean traThuocVeKho(ArrayList<ChiTietHoaDon> listCTHD) {
@@ -209,7 +320,8 @@ public class ChiTietLoThuoc_DAO {
         return true;
     }
 
-   public ArrayList<ChiTietLoThuoc> timThuocTheoTen(ArrayList<ChiTietLoThuoc> list, String tenThuoc) {
+
+    public ArrayList<ChiTietLoThuoc> timThuocTheoTen(ArrayList<ChiTietLoThuoc> list, String tenThuoc) {
         ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
         for(ChiTietLoThuoc x : this.list) {
             if(x.getThuoc().getTenThuoc().indexOf(tenThuoc) != -1) {
@@ -219,7 +331,7 @@ public class ChiTietLoThuoc_DAO {
             }
         }
         return result;
-   }
+    }
 
     public ArrayList<ChiTietLoThuoc> timThuocTheoDanhMuc(ArrayList<ChiTietLoThuoc> list, String danhMuc) {
         ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
@@ -303,6 +415,7 @@ public class ChiTietLoThuoc_DAO {
         }
         return result;
     }
+
 
     public ArrayList<ChiTietLoThuoc> thuocSapHetHan() {
         ArrayList<ChiTietLoThuoc> result = new ArrayList<>();

@@ -40,6 +40,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
     public Thuoc_DAO thuoc_dao;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DonGiaThuoc_DAO donGiaThuoc_dao;
+    public NhaCungCap_DAO nhaCungCap_dao;
 
     public Form_QuanLyNhapThuoc() throws Exception {
         phieuNhapThuoc_dao = new PhieuNhapThuoc_DAO();
@@ -47,11 +48,12 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         donGiaThuoc_dao = new DonGiaThuoc_DAO();
         thuoc_dao = new Thuoc_DAO();
+        nhaCungCap_dao = new NhaCungCap_DAO();
 
         setLayout(new BorderLayout());
 
         // tiêu đề
-        lblTitle = new JLabel("Quản lý đặt thuốc", JLabel.CENTER);
+        lblTitle = new JLabel("QUẢN LÝ NHẬP THUỐC", JLabel.CENTER);
         lblTitle.setFont(new Font("Times New Roman", Font.BOLD, 40));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Add some space around the title
 
@@ -236,7 +238,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
                     pn.getNhanVien().getTenNV(),
                     pn.getNhaCungCap().getTenNCC(),
                     pn.getNgayLapPhieu(),
-                    phieuNhapThuoc_dao.getTongTienPhieuNhap(pn.getMaPhieuNhap())
+                    String.format("%,.0f", phieuNhapThuoc_dao.getTongTienPhieuNhap(pn.getMaPhieuNhap())) + "đ"
             });
         }
     }
@@ -248,16 +250,17 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         modelChiTiet.setRowCount(0);
         for (ChiTietPhieuNhap ct : dsCTPN) {
             Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(ct.getThuoc().getMaThuoc());
+            NhaCungCap ncc = nhaCungCap_dao.timNhaCungCap(thuoc.getNhaCungCap().getMaNCC());
             modelChiTiet.addRow(new Object[] {
                     thuoc.getMaThuoc(),
                     thuoc.getTenThuoc(),
-                    thuoc.getNhaCungCap().getTenNCC(),
+                    ncc.getTenNCC(),
                     ct.getNgaySX(),
                     ct.getHSD(),
                     ct.getDonViTinh(),
                     ct.getSoLuongNhap(),
-                    ct.getDonGiaNhap(),
-                    ct.tinhThanhTien()
+                    String.format("%,.0f", ct.getDonGiaNhap()) + "đ",
+                    String.format("%,.0f", ct.tinhThanhTien()) + "đ"
             });
         }
     }

@@ -132,4 +132,25 @@ public class LoThuoc_DAO {
         }
         return n > 0;
     }
+
+
+    public double getTongTienLoThuoc(String maLT) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select tongTien from LoThuoc where maLoThuoc = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, maLT);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getDouble("tongTien");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

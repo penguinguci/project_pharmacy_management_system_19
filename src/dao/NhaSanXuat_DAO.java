@@ -2,6 +2,7 @@ package dao;
 
 import connectDB.ConnectDB;
 import entity.ChucVu;
+import entity.NhaCungCap;
 import entity.NhaSanXuat;
 
 import java.sql.Connection;
@@ -15,6 +16,11 @@ public class NhaSanXuat_DAO {
 
     public NhaSanXuat_DAO() {
         list = new ArrayList<NhaSanXuat>();
+        try {
+            list = getAllNhaSanXuat();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<NhaSanXuat> getAllNhaSanXuat() throws Exception{
@@ -40,6 +46,18 @@ public class NhaSanXuat_DAO {
             }
         }
         return this.list;
+    }
+    public NhaSanXuat getNSX(String tenNSX) {
+        try{
+            for(NhaSanXuat nsx : list){
+                if(nsx.getTenNhaSX().equalsIgnoreCase(tenNSX)){
+                    return nsx;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public NhaSanXuat timNhaSX(String ma) {

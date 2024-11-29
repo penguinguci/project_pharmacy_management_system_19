@@ -35,10 +35,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 public class Form_BanThuoc extends JPanel implements ActionListener, DocumentListener {
     public JButton btnBack, btnLamMoi;
@@ -567,10 +565,16 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     // pt để load danh sách thuốc
     public void loadThuocData() throws Exception {
         ArrayList<Thuoc> listThuoc = thuocDao.getAllThuoc();
+        ArrayList<DonGiaThuoc> dsDG = donGiaThuoc_dao.getAllDonGia();
         panelDSThuoc.removeAll();
         for(Thuoc thuoc : listThuoc) {
-            ThuocPanel thuocPanel = new ThuocPanel(thuoc);
-            panelDSThuoc.add(thuocPanel);
+            for (DonGiaThuoc dg : dsDG) {
+                if (thuoc.getMaThuoc().equals(dg.getThuoc().getMaThuoc())) {
+                    ThuocPanel thuocPanel = new ThuocPanel(thuoc);
+                    panelDSThuoc.add(thuocPanel);
+                    break;
+                }
+            }
         }
 
         panelDSThuoc.revalidate();
@@ -676,7 +680,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.insets = new Insets(5, 5, 5, 5);
 
             // hình ảnh thuốc
-            ImageIcon imageIcon = new ImageIcon(thuoc.getHinhAnh());
+            // tạo ImageIcon từ mảng byte
+            byte[] imageBytes = Base64.getDecoder().decode(thuoc.getHinhAnh());
+
+            ImageIcon imageIcon = new ImageIcon(imageBytes);
             Image image = imageIcon.getImage();
             Image scaledImageThongBao = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             ImageIcon scaledImage = new ImageIcon(scaledImageThongBao);
@@ -838,7 +845,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 giaLabel.setText("Giá: " + String.format("%,.0f", giaThuoc) + "đ");
             }
         }
-
     }
 
     // hàm cập nhật tiền
@@ -1311,8 +1317,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
             Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
             DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
-            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), thuoc.getMaThuoc());
             chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
+            chiTietLoThuoc.setThuoc(thuoc);
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
             dsChiTietHoaDon.add(chiTietHoaDon);
         }
@@ -1335,6 +1342,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             // xóa đơn đặt thuốc sau khi thanh toán thành công
             if (maDon != null) {
                 donDatThuocDao.xoaDonDatThuoc(maDon);
+            }
+
+            // cập nhật tổng số lượng thuốc sau thanh toán
+            for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+                String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
+                int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
+                Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
+                thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
             }
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
@@ -1458,6 +1473,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
            // xóa đơn đặt thuốc sau khi thanh toán thành công
             if (maDon != null) {
                 donDatThuocDao.xoaDonDatThuoc(maDon);
+            }
+
+            // cập nhật tổng số lượng thuốc sau thanh toán
+            for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+                String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
+                int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
+                Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
+                thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
             }
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");

@@ -186,6 +186,26 @@ public class HoaDon_DAO {
     }
 
 
+    public double getTienThueTheoMaHD(String maHD) {
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select tienThue from HoaDon where maHD = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, maHD);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getDouble("tienThue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 
     // lấy danh thu các tháng trong năm
     public HashMap<Integer, Double> getDoanhThuThangTrongNam(int nam) {

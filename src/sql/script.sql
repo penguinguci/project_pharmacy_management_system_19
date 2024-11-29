@@ -191,6 +191,7 @@ CREATE TABLE ChiTietLoThuoc (
 )
 
 
+
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
     maHD VARCHAR(20) NOT NULL PRIMARY KEY,
@@ -1287,6 +1288,19 @@ BEGIN
 	WHERE maPhieuNhap = @maPhieuNhap
 END
 GO
+
+
+-- lấy DS chi tiết lô thuốc 
+CREATE PROCEDURE getDSChiTietLoThuoc @maLT VARCHAR(20)
+AS
+BEGIN
+	SELECT *
+	FROM ChiTietLoThuoc lt
+	LEFT JOIN DonGiaThuoc dg ON lt.maDonGia = dg.maDonGia
+	WHERE lt.maLoThuoc = @maLT
+END 
+GO
+
 
 
 -- --------- TRIGGER
