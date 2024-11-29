@@ -1,175 +1,233 @@
 package ui.form;
 
+import dao.DangNhap_DAO;
+import entity.NhanVien;
+import entity.TaiKhoan;
+
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 public class Form_DoiMatKhau extends JPanel implements ActionListener {
 
-    private JPasswordField txtCurrentPassword;
-    private JPasswordField txtNewPassword;
-    private JPasswordField txtConfirmNewPassword;
-    private JButton btnChangePassword, btnCancel, btnLamMoi;
-    private JButton btnShowCurrentPassword, btnShowNewPassword, btnShowConfirmNewPassword;
-    private ImageIcon eyeOpenIcon, eyeClosedIcon;
+    private JPasswordField txtMatKhauHienTai, txtMatKhauMoi, txtXacNhatMatKhau;
+    private JButton btnDoiMatKhau, btnHuy, btnLamMoi;
+    private JButton btnHienThiMatKhauHienTai, getBtnHienThiMatKhauMoi, getBtnHienThiMatKhauXacNhan;
+    private ImageIcon moMat, nhamMat;
+    public DangNhap_DAO dangNhap_dao;
+    private NhanVien nhanVienDN;
 
     public Form_DoiMatKhau() {
+        dangNhap_dao = new DangNhap_DAO();
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 10, 15, 10);
 
         // icon ẩn hiện
-        eyeOpenIcon = new ImageIcon("images/moMat.png");
-        eyeClosedIcon = new ImageIcon("images/nhamMat.png");
+        moMat = new ImageIcon("images/moMat.png");
+        nhamMat = new ImageIcon("images/nhamMat.png");
 
-        // Nhập mật khẩu hiện tại
-        JLabel lblCurrentPassword = new JLabel("Mật khẩu hiện tại:");
+        // nhập mật khẩu hiện tại
+        JLabel lblMatKhauHienTai= new JLabel("Mật khẩu hiện tại:");
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(lblCurrentPassword, gbc);
+        add(lblMatKhauHienTai, gbc);
 
-        txtCurrentPassword = new JPasswordField(20);
-        txtCurrentPassword.setPreferredSize(new Dimension(200, 30));
+        txtMatKhauHienTai = new JPasswordField(20);
+        txtMatKhauHienTai.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
-        add(txtCurrentPassword, gbc);
+        add(txtMatKhauHienTai, gbc);
 
         // nút ẩn
-        btnShowCurrentPassword = new JButton(eyeClosedIcon);
-        btnShowCurrentPassword.setPreferredSize(new Dimension(30, 30));
-        btnShowCurrentPassword.setFocusPainted(false);
-        btnShowCurrentPassword.setContentAreaFilled(false);
-        btnShowCurrentPassword.setBorderPainted(false);
-        btnShowCurrentPassword.addActionListener(e -> togglePasswordVisibility(txtCurrentPassword, btnShowCurrentPassword));
+        btnHienThiMatKhauHienTai = new JButton(nhamMat);
+        btnHienThiMatKhauHienTai.setPreferredSize(new Dimension(30, 30));
+        btnHienThiMatKhauHienTai.setFocusPainted(false);
+        btnHienThiMatKhauHienTai.setContentAreaFilled(false);
+        btnHienThiMatKhauHienTai.setBorderPainted(false);
+        btnHienThiMatKhauHienTai.addActionListener(e -> togglePasswordVisibility(txtMatKhauHienTai, btnHienThiMatKhauHienTai));
         gbc.gridx = 2;
-        add(btnShowCurrentPassword, gbc);
+        add(btnHienThiMatKhauHienTai, gbc);
 
-        // Nhập mật khẩu mới
-        JLabel lblNewPassword = new JLabel("Mật khẩu mới:");
+        // nhập mật khẩu mới
+        JLabel lblMatKhauMoi = new JLabel("Mật khẩu mới:");
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(lblNewPassword, gbc);
+        add(lblMatKhauMoi, gbc);
 
-        txtNewPassword = new JPasswordField(20);
-        txtNewPassword.setPreferredSize(new Dimension(200, 30));
+        txtMatKhauMoi = new JPasswordField(20);
+        txtMatKhauMoi.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
-        add(txtNewPassword, gbc);
+        add(txtMatKhauMoi, gbc);
 
         // nút ẩn
-        btnShowNewPassword = new JButton(eyeClosedIcon);
-        btnShowNewPassword.setPreferredSize(new Dimension(30, 30));
-        btnShowNewPassword.setFocusPainted(false);
-        btnShowNewPassword.setContentAreaFilled(false);
-        btnShowNewPassword.setBorderPainted(false);
-        btnShowNewPassword.addActionListener(e -> togglePasswordVisibility(txtNewPassword, btnShowNewPassword));
+        getBtnHienThiMatKhauMoi = new JButton(nhamMat);
+        getBtnHienThiMatKhauMoi.setPreferredSize(new Dimension(30, 30));
+        getBtnHienThiMatKhauMoi.setFocusPainted(false);
+        getBtnHienThiMatKhauMoi.setContentAreaFilled(false);
+        getBtnHienThiMatKhauMoi.setBorderPainted(false);
+        getBtnHienThiMatKhauMoi.addActionListener(e -> togglePasswordVisibility(txtMatKhauMoi, getBtnHienThiMatKhauMoi));
         gbc.gridx = 2;
-        add(btnShowNewPassword, gbc);
+        add(getBtnHienThiMatKhauMoi, gbc);
 
-        // Nhập lại mật khẩu mới
-        JLabel lblConfirmNewPassword = new JLabel("Nhập lại mật khẩu mới:");
+        // nhập lại mật khẩu mới
+        JLabel lblXacNhanMatKhau = new JLabel("Nhập lại mật khẩu mới:");
         gbc.gridx = 0;
         gbc.gridy = 2;
-        add(lblConfirmNewPassword, gbc);
+        add(lblXacNhanMatKhau, gbc);
 
-        txtConfirmNewPassword = new JPasswordField(20);
-        txtConfirmNewPassword.setPreferredSize(new Dimension(200, 30));
+        txtXacNhatMatKhau = new JPasswordField(20);
+        txtXacNhatMatKhau.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 1;
-        add(txtConfirmNewPassword, gbc);
+        add(txtXacNhatMatKhau, gbc);
 
         // nút ẩn
-        btnShowConfirmNewPassword = new JButton(eyeClosedIcon);
-        btnShowConfirmNewPassword.setPreferredSize(new Dimension(30, 30));
-        btnShowConfirmNewPassword.setFocusPainted(false);
-        btnShowConfirmNewPassword.setContentAreaFilled(false);
-        btnShowConfirmNewPassword.setBorderPainted(false);
-        btnShowConfirmNewPassword.addActionListener(e -> togglePasswordVisibility(txtConfirmNewPassword, btnShowConfirmNewPassword));
+        getBtnHienThiMatKhauXacNhan = new JButton(nhamMat);
+        getBtnHienThiMatKhauXacNhan.setPreferredSize(new Dimension(30, 30));
+        getBtnHienThiMatKhauXacNhan.setFocusPainted(false);
+        getBtnHienThiMatKhauXacNhan.setContentAreaFilled(false);
+        getBtnHienThiMatKhauXacNhan.setBorderPainted(false);
+        getBtnHienThiMatKhauXacNhan.addActionListener(e -> togglePasswordVisibility(txtXacNhatMatKhau, getBtnHienThiMatKhauXacNhan));
         gbc.gridx = 2;
-        add(btnShowConfirmNewPassword, gbc);
+        add(getBtnHienThiMatKhauXacNhan, gbc);
 
-        // Tạo panel cho các nút
+        // panel cho các nút
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
-        // Nút đổi mật khẩu
-        btnChangePassword = new JButton("Đổi mật khẩu");
-        btnChangePassword.setPreferredSize(new Dimension(125, 30));
-        btnChangePassword.setBackground(Color.decode("#4CAF50")); // Màu xanh lá
-        btnChangePassword.setForeground(Color.WHITE);
-//        btnChangePassword.setBorder(BorderFactory.createRoundedBorder());
-        buttonPanel.add(btnChangePassword);
+        // nút đổi mật khẩu
+        btnDoiMatKhau = new JButton("Đổi mật khẩu");
+        btnDoiMatKhau.setPreferredSize(new Dimension(125, 30));
+        btnDoiMatKhau.setBackground(Color.decode("#4CAF50"));
+        btnDoiMatKhau.setForeground(Color.WHITE);
+        buttonPanel.add(btnDoiMatKhau);
 
-        // Nút làm mới
+        // nút làm mới
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setPreferredSize(new Dimension(125, 30));
-        btnLamMoi.setBackground(Color.decode("#2196F3")); // Màu xanh dương
+        btnLamMoi.setBackground(Color.decode("#2196F3"));
         btnLamMoi.setForeground(Color.WHITE);
-//        btnLamMoi.setBorder(BorderFactory.createRoundedBorder());
         buttonPanel.add(btnLamMoi);
 
-        // Nút hủy
-        btnCancel = new JButton("Hủy");
-        btnCancel.setPreferredSize(new Dimension(120, 30));
-        btnCancel.setBackground(Color.decode("#f44336")); // Màu đỏ
-        btnCancel.setForeground(Color.WHITE);
-//        btnCancel.setBorder(BorderFactory.createRoundedBorder());
-        buttonPanel.add(btnCancel);
+        // nút hủy
+        btnHuy = new JButton("Hủy");
+        btnHuy.setPreferredSize(new Dimension(120, 30));
+        btnHuy.setBackground(Color.decode("#f44336"));
+        btnHuy.setForeground(Color.WHITE);
+        buttonPanel.add(btnHuy);
 
-        // Thêm buttonPanel vào layout chính
+        // thêm buttonPanel vào layout chính
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 3; // Chiếm 3 cột
         add(buttonPanel, gbc);
 
         // thêm sự kiện
-        btnCancel.addActionListener(this);
+        btnHuy.addActionListener(this);
         btnLamMoi.addActionListener(this);
-        btnChangePassword.addActionListener(this);
-
-        // Action cho nút đổi mật khẩu
-        btnChangePassword.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Xử lý đổi mật khẩu ở đây
-                String currentPassword = new String(txtCurrentPassword.getPassword());
-                String newPassword = new String(txtNewPassword.getPassword());
-                String confirmNewPassword = new String(txtConfirmNewPassword.getPassword());
-
-                // Kiểm tra và thực hiện đổi mật khẩu
-                if (!newPassword.equals(confirmNewPassword)) {
-                    JOptionPane.showMessageDialog(null, "Mật khẩu mới không khớp!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Logic đổi mật khẩu
-                    JOptionPane.showMessageDialog(null, "Đổi mật khẩu thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
+        btnDoiMatKhau.addActionListener(this);
     }
 
     private void togglePasswordVisibility(JPasswordField passwordField, JButton button) {
         if (passwordField.getEchoChar() == '•') {
             passwordField.setEchoChar((char) 0);
-            button.setIcon(eyeOpenIcon);
+            button.setIcon(moMat);
         } else {
             passwordField.setEchoChar('•');
-            button.setIcon(eyeClosedIcon);
+            button.setIcon(nhamMat);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnCancel) {
+        if (o == btnHuy) {
             SwingUtilities.getWindowAncestor(this).dispose();
-        } else if (o == btnChangePassword) {
-            // Xử lý đổi mật khẩu
+        } else if (o == btnDoiMatKhau) {
+            if (valiDataMatKhau()){
+                String matKhauMoi = new String(txtMatKhauMoi.getPassword()).trim();
+                String tk = nhanVienDN.getMaNV();
+
+                TaiKhoan taiKhoan = new TaiKhoan();
+                taiKhoan.setTaiKhoan(tk);
+                taiKhoan.setMatKhau(matKhauMoi);
+                taiKhoan.setNgayCapNhat(new Date());
+
+                if (dangNhap_dao.doiMatKhau(taiKhoan)) {
+                    JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công!");
+                    SwingUtilities.getWindowAncestor(this).dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Đổi mật khẩu không thành công!",
+                            "Thông báo", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         } else if (o == btnLamMoi) {
-            txtCurrentPassword.setText("");
-            txtNewPassword.setText("");
-            txtConfirmNewPassword.setText("");
-            btnShowCurrentPassword.setIcon(eyeClosedIcon);
-            btnShowNewPassword.setIcon(eyeClosedIcon);
-            btnShowConfirmNewPassword.setIcon(eyeClosedIcon);
+            lamMoi();
         }
+    }
+
+    public void lamMoi(){
+        txtMatKhauHienTai.setText("");
+        txtMatKhauMoi.setText("");
+        txtXacNhatMatKhau.setText("");
+        btnHienThiMatKhauHienTai.setIcon(nhamMat);
+        getBtnHienThiMatKhauMoi.setIcon(nhamMat);
+        getBtnHienThiMatKhauXacNhan.setIcon(nhamMat);
+    }
+
+    public boolean valiDataMatKhau() {
+        String matKhauHT = new String(txtMatKhauHienTai.getPassword()).trim();
+        String matKhauMoi = new String(txtMatKhauMoi.getPassword()).trim();
+        String xacNhanMatKhau = new String(txtXacNhatMatKhau.getPassword()).trim();
+
+        if (!(matKhauHT.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu hiện tại!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtMatKhauHienTai.requestFocus();
+            return false;
+        }
+
+        TaiKhoan taiKhoan = dangNhap_dao.getTaiKhoanByMaNV(nhanVienDN.getMaNV());
+        if (!dangNhap_dao.hashPass(matKhauHT).equals(taiKhoan.getMatKhau())) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu hiện tại không chính xác, vui lòng nhập lại!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtMatKhauHienTai.requestFocus();
+            return false;
+        }
+
+        if (!(matKhauMoi.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu mới!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtMatKhauMoi.requestFocus();
+            return false;
+        }
+
+        if (!(xacNhanMatKhau.length() > 0)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu xác nhận!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtXacNhatMatKhau.requestFocus();
+            return false;
+        }
+
+        if (!(matKhauMoi.equals(xacNhanMatKhau))) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp với mật khẩu mới, vui lòng nhập lại!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            txtXacNhatMatKhau.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    public void setNhanVienDN(NhanVien nhanVien) {
+        this.nhanVienDN = nhanVien;
+    }
+
+    public NhanVien getNhanVienDN() {
+        return nhanVienDN;
     }
 }

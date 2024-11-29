@@ -23,27 +23,45 @@ public class DanhMuc_DAO {
         }
     }
 
-    public ArrayList<DanhMuc> getAllDanhMuc() throws Exception{
+    public ArrayList<DanhMuc> getAllDanhMuc() {
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        //Gọi bảng Nhân Viên
-        String sql = "select * from DanhMuc";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()){
-            DanhMuc d = new DanhMuc();
-            d.setMaDanhMuc(rs.getString(1));
-            d.setTenDanhMuc(rs.getString(2));
-            if(timDanhMuc(d.getMaDanhMuc()) == null) {
-                list.add(d);
+
+        try {
+            String sql = "select * from DanhMuc";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                DanhMuc d = new DanhMuc();
+                d.setMaDanhMuc(rs.getString(1));
+                d.setTenDanhMuc(rs.getString(2));
+                if(timDanhMuc(d.getMaDanhMuc()) == null) {
+                    list.add(d);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return this.list;
     }
 
+    public DanhMuc getDanhMuc(String tenDanhMuc){
+        try{
+            for(DanhMuc d : list){
+                if(d.getTenDanhMuc().equalsIgnoreCase(tenDanhMuc)){
+                    return d;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
     public DanhMuc timDanhMuc(String maDanhMuc) {
         for(DanhMuc x : list) {
             if(x.getMaDanhMuc().equalsIgnoreCase(maDanhMuc)) {

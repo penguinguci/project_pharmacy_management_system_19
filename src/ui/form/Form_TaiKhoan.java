@@ -27,10 +27,13 @@ public class Form_TaiKhoan extends JPanel implements ActionListener {
     private JButton btnDoiMatKhau;
     private JTextField txtNgaySinh, txtSDT, txtEmail, txtDiaChi, txtGioiTinh, txtVaiTro, txtTrangThai;
     public HoaDon_DAO hoaDon_dao;
+    private NhanVien nhanVien;
 
     public Form_TaiKhoan(NhanVien nhanVien) {
         // khoi tao
         hoaDon_dao = new HoaDon_DAO();
+
+        this.nhanVien = nhanVien;
 
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.decode("#F5F5F5"));
@@ -153,10 +156,11 @@ public class Form_TaiKhoan extends JPanel implements ActionListener {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         btnDoiMatKhau = new JButton("Đổi Mật Khẩu");
-        btnDoiMatKhau.setFont(new Font("Arial", Font.BOLD, 14));
+        btnDoiMatKhau.setBackground(new Color(65, 192, 201));
         btnDoiMatKhau.setForeground(Color.WHITE);
-        btnDoiMatKhau.setBackground(Color.decode("#007BFF"));
+        btnDoiMatKhau.setOpaque(true);
         btnDoiMatKhau.setFocusPainted(false);
+        btnDoiMatKhau.setBorderPainted(false);
         btnDoiMatKhau.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonPanel.add(btnDoiMatKhau);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -218,6 +222,7 @@ public class Form_TaiKhoan extends JPanel implements ActionListener {
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Đổi mật khẩu", true);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             Form_DoiMatKhau form_doiMatKhau = new Form_DoiMatKhau();
+            form_doiMatKhau.setNhanVienDN(nhanVien);
             dialog.add(form_doiMatKhau);
             dialog.setSize(450,270);
             dialog.setMaximumSize(new Dimension(450,270));

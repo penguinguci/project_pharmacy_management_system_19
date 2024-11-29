@@ -114,4 +114,50 @@ public class ChiTietPhieuNhap_DAO {
 
         return dsCTPN;
     }
+
+    public ChiTietPhieuNhap getCTPNTheoMaThuocVaDonViTinh(String maThuoc, String donViTinh, Date ngaySanXuat, Date ngayHetHan) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        ChiTietPhieuNhap chiTietPhieuNhap = null;
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "{CALL getCTPNTheoMaThuocVaDonViTinh(?, ?, ?, ?)}";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, maThuoc);
+            statement.setString(2, donViTinh);
+            statement.setDate(3, ngaySanXuat);
+            statement.setDate(4, ngayHetHan);
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                PhieuNhapThuoc phieuNhapThuoc = new PhieuNhapThuoc();
+                phieuNhapThuoc.setMaPhieuNhap(rs.getString("maPhieuNhap"));
+
+                Thuoc thuoc = new Thuoc();
+                thuoc.setMaThuoc(rs.getString("maThuoc"));
+
+                String dvt = rs.getString("donViTinh");
+
+                Date ngaySX = rs.getDate("ngaySanXuat");
+                Date ngayHH = rs.getDate("HSD");
+
+                double donGiaNhap = rs.getDouble("donGiaNhap");
+                int soLuongNhap = rs.getInt("soLuongNhap");
+
+                chiTietPhieuNhap = new ChiTietPhieuNhap(phieuNhapThuoc, thuoc, soLuongNhap, dvt, donGiaNhap, ngaySX, ngayHetHan);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return chiTietPhieuNhap;
+    }
 }

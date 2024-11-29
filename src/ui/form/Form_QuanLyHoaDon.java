@@ -242,7 +242,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                         hd.getKhachHang().getSDT(),
                         hd.getNgayLap(),
                         hd.getThue().getLoaiThue(),
-                        hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())
+                        String.format("%,.0f", hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())) + "đ"
                 });
             } else {
                 modelHD.addRow(new Object[] {
@@ -252,7 +252,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                         hd.getKhachHang().getSDT(),
                         hd.getNgayLap(),
                         hd.getThue().getLoaiThue(),
-                        hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())
+                        String.format("%,.0f", hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())) + "đ"
                 });
             }
         }
@@ -262,20 +262,21 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         String maHD = modelHD.getValueAt(row, 0).toString();
         ArrayList<ChiTietHoaDon> dsCTHD = chiTietHoaDon_dao.getDSChiTietHD(maHD);
         modelChiTiet.setRowCount(0);
-
         for (ChiTietHoaDon ct: dsCTHD) {
-            Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(ct.getThuoc().getMaThuoc());
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), ct.getDonViTinh());
-            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), thuoc.getMaThuoc());
-            modelChiTiet.addRow(new Object[] {
-                    thuoc.getMaThuoc(),
-                    chiTietLoThuoc.getSoHieuThuoc(),
-                    thuoc.getTenThuoc(),
-                    ct.getDonViTinh(),
-                    ct.getSoLuong(),
-                    donGiaThuoc.getDonGia(),
-                    chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, thuoc.getMaThuoc())
-            });
+            if (dsCTHD != null) {
+                Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(ct.getThuoc().getMaThuoc());
+                DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), ct.getDonViTinh());
+                ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), thuoc.getMaThuoc());
+                modelChiTiet.addRow(new Object[] {
+                        thuoc.getMaThuoc(),
+                        chiTietLoThuoc.getSoHieuThuoc(),
+                        thuoc.getTenThuoc(),
+                        ct.getDonViTinh(),
+                        ct.getSoLuong(),
+                        String.format("%,.0f", donGiaThuoc.getDonGia()) + "đ",
+                        String.format("%,.0f", chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(maHD, thuoc.getMaThuoc())) + "đ"
+                });
+            }
         }
     }
 

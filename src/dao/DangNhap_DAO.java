@@ -140,7 +140,7 @@ public class DangNhap_DAO {
             statement = con.prepareStatement(sql);
             statement.setString(1, taiKhoan.getTaiKhoan());
             statement.setString(2, hashPass(taiKhoan.getMatKhau()));
-            statement.setDate(3, taiKhoan.getNgayCapNhat());
+            statement.setDate(3, new java.sql.Date(taiKhoan.getNgayCapNhat().getTime()));
 
             int rowsAffected = statement.executeUpdate();
             result = rowsAffected > 0;
@@ -157,7 +157,35 @@ public class DangNhap_DAO {
         return result;
     }
 
-    private String hashPass(String mk) {
+    public boolean doiMatKhau(TaiKhoan taiKhoan) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        boolean result = false;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "UPDATE TaiKhoan SET matKhau = ?, ngayCapNhat = ? WHERE taiKhoan = ?";
+            statement = con.prepareStatement(sql);
+            statement.setString(1, hashPass(taiKhoan.getMatKhau()));
+            statement.setDate(2, new java.sql.Date(taiKhoan.getNgayCapNhat().getTime()));
+            statement.setString(3, taiKhoan.getTaiKhoan());
+
+            int rowsAffected = statement.executeUpdate();
+            result = rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) statement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public String hashPass(String mk) {
         try {
             // Sử dụng SHA-256 để tạo hàm băm
             MessageDigest md = MessageDigest.getInstance("SHA-256");

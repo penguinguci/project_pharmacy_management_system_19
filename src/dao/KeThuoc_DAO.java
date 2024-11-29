@@ -2,6 +2,7 @@ package dao;
 
 import connectDB.ConnectDB;
 import entity.KeThuoc;
+import entity.NhaCungCap;
 import entity.NhanVien;
 
 import java.sql.PreparedStatement;
@@ -13,12 +14,13 @@ public class KeThuoc_DAO {
     private ArrayList<NhanVien> listNV;
     private NhanVien_DAO dao;
 
-    public KeThuoc_DAO() throws Exception{
+    public KeThuoc_DAO(){
         list = new ArrayList<KeThuoc>();
         dao = new NhanVien_DAO();
         listNV = new ArrayList<NhanVien>();
-        listNV = dao.getAllNhanVien();
+
         try{
+            listNV = dao.getAllNhanVien();
             list = getAllKeThuoc();
         }catch (Exception e){
             e.printStackTrace();
@@ -48,6 +50,19 @@ public class KeThuoc_DAO {
             list.add(k);
         }
         return list;
+    }
+
+    public KeThuoc getKeThuoc(String tenKe) {
+        try{
+            for(KeThuoc ke : list){
+                if(ke.getTenKe().equalsIgnoreCase(tenKe)){
+                    return ke;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
     public KeThuoc timKeThuoc(String maKe) {
         for (KeThuoc k : this.list) {

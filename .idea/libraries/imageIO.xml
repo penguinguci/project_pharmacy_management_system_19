@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="imageIO">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/imageIO.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

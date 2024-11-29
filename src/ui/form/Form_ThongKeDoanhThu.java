@@ -1,6 +1,12 @@
 package ui.form;
 
+import dao.ChiTietHoaDon_DAO;
+import dao.ChiTietLoThuoc_DAO;
+import dao.ChiTietPhieuNhap_DAO;
 import dao.HoaDon_DAO;
+import entity.ChiTietHoaDon;
+import entity.ChiTietLoThuoc;
+import entity.ChiTietPhieuNhap;
 import entity.HoaDon;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -24,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +47,9 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     public HoaDon_DAO hoaDon_dao;
     public JPanel chartPanel;
     public JLabel lblDoanhThuValue, lblLoiNhuanValue;
+    public ChiTietHoaDon_DAO chiTietHoaDon_dao;
+    public ChiTietPhieuNhap_DAO chiTietPhieuNhap_dao;
+    public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
     public Form_ThongKeDoanhThu() throws SQLException {
         setLayout(new BorderLayout());
@@ -47,7 +57,9 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
         // khởi tạo
         hoaDon_dao = new HoaDon_DAO();
-
+        chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
+        chiTietPhieuNhap_dao = new ChiTietPhieuNhap_DAO();
+        chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
 
         //  chọn thời gian
         JPanel filterPanel = new JPanel(new FlowLayout());
@@ -202,6 +214,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
         // Update tổng doanh thu
         updateTongDoanhThu();
+        updateTongLoiNhuan();
 
         // thêm sự kiện
         // Gán sự kiện thay đổi thời gian
@@ -210,6 +223,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         btnQuayLai.addActionListener(this);
     }
 
+    // update tổng doanh thu
     public void updateTongDoanhThu() {
         double tongDoanhThu = 0;
         for (int i = 0; i < modelHD.getRowCount(); i++) {
@@ -222,6 +236,40 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         lblDoanhThuValue.setText(String.format("%,.0f VND", tongDoanhThu));
     }
 
+    // update tổng lợi nhuận
+    public void updateTongLoiNhuan() throws SQLException {
+        double tongDoanhThu = 0;
+        double tongTienThue = 0;
+        double tongGiaNhapSP = 0;
+        for (int i = 0; i < modelHD.getRowCount(); i++) {
+            Object value = modelHD.getValueAt(i, 4);
+            if (value instanceof Number) {
+                double tongTien = ((Number) value).doubleValue();
+                tongDoanhThu += tongTien;
+                String maHD = modelHD.getValueAt(i, 0).toString();
+                tongTienThue += hoaDon_dao.getTienThueTheoMaHD(maHD);
+                ArrayList<ChiTietHoaDon> dsCTHD = chiTietHoaDon_dao.getDSChiTietHD(maHD);
+                for (ChiTietHoaDon ct: dsCTHD) {
+                    String soHieuThuoc = ct.getChiTietLoThuoc().getSoHieuThuoc();
+                    ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoSoHieuThuoc(soHieuThuoc);
+                    ChiTietPhieuNhap chiTietPhieuNhap = chiTietPhieuNhap_dao.getCTPNTheoMaThuocVaDonViTinh(
+                                                            ct.getThuoc().getMaThuoc(),
+                                                            ct.getDonViTinh(),
+                                                            (Date) chiTietLoThuoc.getNgaySX(),
+                                                            (Date) chiTietLoThuoc.getHSD());
+                    if (chiTietPhieuNhap == null) {
+                        tongGiaNhapSP += 0;
+                    } else {
+                        tongGiaNhapSP += chiTietPhieuNhap.getDonGiaNhap();
+                    }
+                }
+            }
+        }
+
+
+        double tongloiNhuan = tongDoanhThu - tongTienThue - tongGiaNhapSP;
+        lblLoiNhuanValue.setText(String.format("%,.0f VND", tongloiNhuan));
+    }
 
 
     // update table
@@ -254,6 +302,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         ArrayList<HoaDon> dsHDTheoNam = hoaDon_dao.getDanhSachHoaDonByYear(nam);
         updateTableHD(dsHDTheoNam);
         updateTongDoanhThu();
+        updateTongLoiNhuan();
     }
 
     // update DS hóa đơn theo tháng trong năm
@@ -261,6 +310,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         ArrayList<HoaDon> dsHDTheoNam = hoaDon_dao.getDanhSachHoaDonTheoThangTrongNam(nam, thang);
         updateTableHD(dsHDTheoNam);
         updateTongDoanhThu();
+        updateTongLoiNhuan();
     }
 
     // update DS hóa đơn theo tuần của tháng trong
@@ -268,6 +318,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         ArrayList<HoaDon> dsHDTheoNam = hoaDon_dao.getDanhSachHoaDonTheoTuanCuaThangTrongNam(nam, thang, tuan);
         updateTableHD(dsHDTheoNam);
         updateTongDoanhThu();
+        updateTongLoiNhuan();
     }
 
     //  tạo dữ liệu và biểu đồ thống kê
