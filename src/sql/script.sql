@@ -181,6 +181,8 @@ CREATE TABLE ChiTietLoThuoc (
 	soHieuThuoc VARCHAR(20) primary key not null,
 	maThuoc VARCHAR(20) not null,
 	maLoThuoc VARCHAR(20) not null,
+	ngaySX DATE not null,
+	HSD DATE not null,
 	soLuongCon INT not null,
 	maDonGia VARCHAR(20),
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
@@ -448,22 +450,30 @@ VALUES
 ('LO002', 'PN002', '2024-10-11', 4000000),
 ('LO003', 'PN003', '2024-10-12', 5000000)
 
-INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia)
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
 VALUES
-('SH001', 'T001', 'LO001', 50, 'DG001'),
-('SH002', 'T002', 'LO001', 40, 'DG002'),
-('SH003', 'T003', 'LO003', 50, 'DG003'),
-('SH004', 'T004', 'LO002', 50, 'DG004'),
-('SH005', 'T005', 'LO002', 300, 'DG005'),
-('SH006', 'T005', 'LO002', 20, 'DG006')
+('SH001', 'T001', 'LO001', 50, 'DG001', '2024-1-1', '2025-12-1'),
+('SH002', 'T002', 'LO001', 40, 'DG002', '2024-1-1', '2025-7-1'),
+('SH003', 'T003', 'LO003', 50, 'DG003', '2024-1-1', '2025-8-1'),
+('SH004', 'T004', 'LO002', 50, 'DG004', '2024-1-1', '2026-3-1'),
+('SH005', 'T005', 'LO002', 300, 'DG005', '2024-1-1', '2025-12-1'),
+('SH006', 'T005', 'LO002', 20, 'DG006', '2024-1-1', '2026-1-1')
 
-INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia)
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
 VALUES
-('SH007', 'T006', 'LO001', 50, 'DG007'),
-('SH008', 'T007', 'LO001', 40, 'DG008'),
-('SH009', 'T008', 'LO003', 50, 'DG009'),
-('SH010', 'T009', 'LO002', 50, 'DG010'),
-('SH011', 'T010', 'LO002', 300, 'DG011')
+('SH007', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-1'),
+('SH008', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH009', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH0010', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH0011', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH0012', 'T006', 'LO001', 5, 'DG007', '2022-1-1', '2024-12-1'),
+('SH0013', 'T007', 'LO001', 4, 'DG008', '2022-1-1', '2024-12-1'),
+('SH0014', 'T008', 'LO003', 5, 'DG009', '2022-1-1', '2024-12-1'),
+('SH0015', 'T009', 'LO002', 5, 'DG010', '2022-1-1', '2024-12-1'),
+('SH0016', 'T010', 'LO002', 30, 'DG011', '2022-1-1', '2024-12-1')
 
 
 -- Bảng HoaDon
