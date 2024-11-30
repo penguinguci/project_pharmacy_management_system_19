@@ -562,6 +562,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 donGiaThuoc.setDonViTinh(donViTinh);
                 donGiaThuoc.setDonGia(giaBan);
                 donGiaThuoc.setThuoc(thuoc);
+                donGiaThuoc.setTrangThai(true);
 
                 // thêm đơn giá
                 DonGiaThuoc donGiaThuocCheck = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(maThuoc, donViTinh);
@@ -571,11 +572,13 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                     donGiaThuoc_dao.create(donGiaThuoc);
                     thuoc_dao.updateTongSoLuongThuoc(thuoc, soLuong);
                 } else {
-                    donGiaThuoc.setMaDonGia(donGiaThuocCheck.getMaDonGia());
-                    donGiaThuoc_dao.updateGiaMoi(donGiaThuoc);
+                    donGiaThuoc.setMaDonGia(generateDonGiaID());
+                    donGiaThuoc_dao.create(donGiaThuoc);
                     thuoc_dao.updateTongSoLuongThuoc(thuoc, soLuong);
-                }
 
+                    donGiaThuocCheck.setTrangThai(false);
+                    donGiaThuoc_dao.updateTrangThai(donGiaThuocCheck);
+                }
                 ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuong, donGiaThuoc, ngaySX, ngayHH);
                 dsCTLoThuoc.add(chiTietLoThuoc);
             }

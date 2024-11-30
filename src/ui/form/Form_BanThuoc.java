@@ -784,10 +784,15 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             for (DonGiaThuoc donGiaThuoc : dsDonGiaThuoc) {
                 cboDonViThuoc.addItem(donGiaThuoc.getDonViTinh());
             }
-            String idThuoc = thuoc.getMaThuoc();
-            String donViTinh = cboDonViThuoc.getSelectedItem().toString();
-            double giaThuoc = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(idThuoc, donViTinh);
-            giaLabel.setText("Giá: " + String.format("%,.0f",  giaThuoc) + "đ");
+
+            if (cboDonViThuoc.getItemCount() > 0) {
+                String idThuoc = thuoc.getMaThuoc();
+                String donViTinh = cboDonViThuoc.getSelectedItem().toString();
+                double giaThuoc = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(idThuoc, donViTinh);
+                giaLabel.setText("Giá: " + String.format("%,.0f",  giaThuoc) + "đ");
+            } else {
+                giaLabel.setText("Giá: Không khả dụng");
+            }
         }
 
         // sự kiện cho giao diện panel thuoc
@@ -1344,12 +1349,18 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 donDatThuocDao.xoaDonDatThuoc(maDon);
             }
 
-            // cập nhật tổng số lượng thuốc sau thanh toán
+
             for (int i = 0; i < modelGioHang.getRowCount(); i++) {
                 String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
                 int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
                 Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
                 thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
+
+                // cập nhật tổng số lượng thuốc sau thanh toán
+                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(thuoc.getMaThuoc());
+                for (DonGiaThuoc dg : dsDonGiaThuoc) {
+
+                }
             }
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");

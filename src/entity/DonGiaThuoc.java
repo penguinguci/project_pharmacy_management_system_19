@@ -4,12 +4,13 @@ public class DonGiaThuoc {
     private String maDonGia, donViTinh;
     private Thuoc thuoc;
     private double donGia;
+    private boolean trangThai;
 
     public DonGiaThuoc() {}
 
     public DonGiaThuoc(String maDonGia) {this.maDonGia = maDonGia;}
 
-    public DonGiaThuoc(String maDonGia, String donViTinh, Thuoc thuoc, double donGia) {
+    public DonGiaThuoc(String maDonGia, String donViTinh, Thuoc thuoc, double donGia, boolean trangThai) {
         this.maDonGia = maDonGia;
         this.donViTinh = donViTinh;
         this.thuoc = thuoc;
@@ -47,5 +48,13 @@ public class DonGiaThuoc {
 
     public void setDonGia(double donGia) {
         this.donGia = donGia;
+    }
+
+    public boolean isTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
     }
 }
