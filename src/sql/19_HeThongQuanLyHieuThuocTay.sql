@@ -107,17 +107,9 @@ CREATE TABLE DonGiaThuoc (
 	maDonGia VARCHAR(20) PRIMARY KEY NOT NULL,
 	maThuoc VARCHAR(20) NOT NULL,
 	donViTinh NVARCHAR(50) NOT NULL,
-	donGia FLOAT(10)
+	donGia FLOAT(10), 
+	trangThai BIT
 )
-
-
-SELECT *
-FROM DonGiaThuoc
-
-SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE dg.maThuoc = 'T010' AND dg.donViTinh LIKE 'Viên'
-
-
-
 
 
 -- Bảng Thuoc (Sản phẩm thuốc)
@@ -197,7 +189,6 @@ CREATE TABLE ChiTietLoThuoc (
 	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 	FOREIGN KEY (maLoThuoc) REFERENCES LoThuoc(maLoThuoc)
 )
-
 
 
 -- Bảng HoaDon
@@ -303,8 +294,8 @@ CREATE TABLE ChiTietPhieuDoiTra (
 
 
 
----- Thêm dữ liệu
 
+---- Thêm dữ liệu
 -- Bảng ChucVu
 INSERT INTO ChucVu (maChucVu, tenChucVu)
 VALUES
@@ -402,20 +393,20 @@ VALUES
 -- Bảng DonGiaThuoc
 INSERT INTO DonGiaThuoc
 VALUES
-('DG001', 'T001', N'Hộp', 50000),
-('DG002', 'T002', N'Hộp', 35000),
-('DG003', 'T003', N'Hộp', 150000),
-('DG004', 'T004', N'Hộp', 75000),
-('DG005', 'T005', N'Viên', 5000),
-('DG006', 'T005', N'Hộp', 40000)
+('DG001', 'T001', N'Hộp', 50000, 1),
+('DG002', 'T002', N'Hộp', 35000, 1),
+('DG003', 'T003', N'Hộp', 150000, 1),
+('DG004', 'T004', N'Hộp', 75000, 1),
+('DG005', 'T005', N'Viên', 5000, 1),
+('DG006', 'T005', N'Hộp', 40000, 1)
 
 INSERT INTO DonGiaThuoc
 VALUES
-('DG007', 'T006', N'Hộp', 50000),
-('DG008', 'T007', N'Hộp', 35000),
-('DG009', 'T008', N'Hộp', 150000),
-('DG010', 'T009', N'Hộp', 75000),
-('DG011', 'T010', N'Viên', 5000)
+('DG007', 'T006', N'Hộp', 50000, 1),
+('DG008', 'T007', N'Hộp', 35000, 1),
+('DG009', 'T008', N'Hộp', 150000, 1),
+('DG010', 'T009', N'Hộp', 75000, 1),
+('DG011', 'T010', N'Viên', 5000, 1)
 
 
 -- Bảng Thuoc
@@ -837,7 +828,7 @@ AS
 BEGIN
 	SELECT *
 	FROM DonGiaThuoc
-	WHERE maThuoc = @maThuoc
+	WHERE maThuoc = @maThuoc AND trangThai = 1
 END
 GO
 
@@ -1269,6 +1260,7 @@ BEGIN
 	WHERE dg.maDonGia = @maDG AND lt.maThuoc = @maThuoc
 END
 GO
+
 
 
 -- lấy DS chi tiết phiếu nhập theo mã phiếu nhập

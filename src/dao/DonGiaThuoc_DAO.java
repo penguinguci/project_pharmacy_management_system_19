@@ -35,6 +35,7 @@ public class DonGiaThuoc_DAO {
                 bangGiaSanPham.setThuoc(thuoc);
                 bangGiaSanPham.setDonViTinh(rs.getString("donViTinh"));
                 bangGiaSanPham.setDonGia(rs.getDouble("donGia"));
+                bangGiaSanPham.setTrangThai(rs.getBoolean("trangThai"));
 
                 if(timBangGia(bangGiaSanPham.getMaDonGia()) == null) {
                     list.add(bangGiaSanPham);
@@ -75,7 +76,9 @@ public class DonGiaThuoc_DAO {
 
                 String donViTinh = rs.getString("donViTinh");
                 double donGia = rs.getDouble("donGia");
-                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+                boolean trangThai = rs.getBoolean("trangThai");
+
+                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia, trangThai);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,14 +112,9 @@ public class DonGiaThuoc_DAO {
                 Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
                 String donViTinh = rs.getString("donViTinh");
                 double donGia = rs.getDouble("donGia");
+                boolean trangThai = rs.getBoolean("trangThai");
 
-                System.out.println(maDonGia);
-                System.out.println(thuoc);
-                System.out.println(donViTinh);
-                System.out.println(donGia);
-
-                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
-                System.out.println(donGiaThuoc);
+                donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia, trangThai);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,9 +148,11 @@ public class DonGiaThuoc_DAO {
                 Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
                 String donViTinh = rs.getString("donViTinh");
                 double donGia = rs.getDouble("donGia");
+                boolean trangThai = rs.getBoolean("trangThai");
 
-                DonGiaThuoc donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia);
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia, trangThai);
                 danhSachDonGia.add(donGiaThuoc);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -213,14 +213,15 @@ public class DonGiaThuoc_DAO {
         int n = 0;
 
         try {
-            String sql = "INSERT INTO DonGiaThuoc (maDonGia, maThuoc, donViTinh, donGia) " +
-                    "VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO DonGiaThuoc (maDonGia, maThuoc, donViTinh, donGia, trangThai) " +
+                    "VALUES (?, ?, ?, ?, ?)";
             statement = con.prepareStatement(sql);
 
             statement.setString(1, donGiaThuoc.getMaDonGia());
             statement.setString(2, donGiaThuoc.getThuoc().getMaThuoc());
             statement.setString(3, donGiaThuoc.getDonViTinh());
             statement.setDouble(4, donGiaThuoc.getDonGia());
+            statement.setBoolean(5, donGiaThuoc.isTrangThai());
 
             n = statement.executeUpdate();
         } catch (SQLException e) {
@@ -270,6 +271,63 @@ public class DonGiaThuoc_DAO {
             }
         }
 
+        return n > 0;
+    }
+
+    public boolean updateTrangThai(DonGiaThuoc donGiaThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE DonGiaThuoc SET trangThai = ? WHERE maDonGia = ? " ;
+            statement = con.prepareStatement(sql);
+
+            statement.setBoolean(1, donGiaThuoc.isTrangThai());
+            statement.setString(2, donGiaThuoc.getMaDonGia());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
+    // xóa đơn giá thuốc
+    public boolean deleteDonGiaThuoc(DonGiaThuoc donGiaThuoc) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement statement = null;
+        int n = 0;
+        try {
+            statement = con.prepareStatement("DELETE FROM DonGiaThuoc WHERE maDonGia = ?");
+            statement.setString(1, donGiaThuoc.getMaDonGia());
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
         return n > 0;
     }
 }
