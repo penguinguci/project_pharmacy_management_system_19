@@ -200,6 +200,7 @@ public class ChiTietLoThuoc_DAO {
                 }
 
                 n = statement.executeUpdate();
+
             }
 
         } catch (SQLException e) {
@@ -448,5 +449,40 @@ public class ChiTietLoThuoc_DAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public boolean deleteMaDGTrongCTLoThuoc(DonGiaThuoc donGiaThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE ChiTietLoThuoc SET maDonGia = NULL WHERE maDonGia = ? " ;
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, donGiaThuoc.getMaDonGia());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
     }
 }
