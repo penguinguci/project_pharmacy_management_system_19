@@ -15,6 +15,7 @@ public class DonGiaThuoc {
         this.donViTinh = donViTinh;
         this.thuoc = thuoc;
         this.donGia = donGia;
+        this.trangThai = trangThai;
     }
 
 

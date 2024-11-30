@@ -566,7 +566,6 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
                 // thêm đơn giá
                 DonGiaThuoc donGiaThuocCheck = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(maThuoc, donViTinh);
-
                 if (donGiaThuocCheck == null) {
                     donGiaThuoc.setMaDonGia(generateDonGiaID());
                     donGiaThuoc_dao.create(donGiaThuoc);

@@ -152,6 +152,7 @@ public class DonGiaThuoc_DAO {
 
                 DonGiaThuoc donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia, trangThai);
                 danhSachDonGia.add(donGiaThuoc);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

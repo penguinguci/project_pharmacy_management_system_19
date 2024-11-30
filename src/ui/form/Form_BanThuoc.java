@@ -1356,11 +1356,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
                 thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
 
-                // cập nhật tổng số lượng thuốc sau thanh toán
-                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(thuoc.getMaThuoc());
-                for (DonGiaThuoc dg : dsDonGiaThuoc) {
-
-                }
+//                // cập nhật tổng số lượng thuốc sau thanh toán
+//                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(thuoc.getMaThuoc());
+//                for (DonGiaThuoc dg : dsDonGiaThuoc) {
+//
+//                }
             }
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");

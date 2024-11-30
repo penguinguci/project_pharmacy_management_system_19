@@ -200,6 +200,7 @@ public class ChiTietLoThuoc_DAO {
                 }
 
                 n = statement.executeUpdate();
+
             }
 
         } catch (SQLException e) {

@@ -294,8 +294,8 @@ CREATE TABLE ChiTietPhieuDoiTra (
 
 
 
----- Thêm dữ liệu
 
+---- Thêm dữ liệu
 -- Bảng ChucVu
 INSERT INTO ChucVu (maChucVu, tenChucVu)
 VALUES
