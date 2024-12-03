@@ -77,16 +77,19 @@ public class ChiTietLoThuoc_DAO {
 
     public ChiTietLoThuoc getCTLoThuocTheoMaDGVaMaThuoc(String maDonGia, String maThuoc) {
         Connection con = null;
-        PreparedStatement statement = null;
+        CallableStatement callableStatement = null;
         ResultSet rs = null;
         ChiTietLoThuoc chiTietLoThuoc = null;
+
         try {
             con = ConnectDB.getConnection();
+
             String sql = "{CALL getCTLoThuocTheoMaDGVaMaThuoc(?, ?)}";
-            statement = con.prepareStatement(sql);
-            statement.setString(1, maDonGia);
-            statement.setString(2, maThuoc);
-            rs = statement.executeQuery();
+            callableStatement = con.prepareCall(sql);
+            callableStatement.setString(1, maDonGia);
+            callableStatement.setString(2, maThuoc);
+
+            rs = callableStatement.executeQuery();
 
             if (rs.next()) {
                 String soHieuThuoc = rs.getString("soHieuThuoc");
@@ -100,7 +103,7 @@ public class ChiTietLoThuoc_DAO {
                 int soLuongCon = rs.getInt("soLuongCon");
 
                 DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
-                donGiaThuoc.setMaDonGia("maDonGia");
+                donGiaThuoc.setMaDonGia(rs.getString("maDonGia"));
 
                 Date ngaySX = rs.getDate("ngaySX");
                 Date HSD = rs.getDate("HSD");
@@ -111,15 +114,17 @@ public class ChiTietLoThuoc_DAO {
             e.printStackTrace();
         } finally {
             try {
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e2) {
-                e2.printStackTrace();
+                if (rs != null) rs.close();
+                if (callableStatement != null) callableStatement.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+
         return chiTietLoThuoc;
     }
+
 
 
     public ChiTietLoThuoc getCTLoThuocTheoSoHieuThuoc(String sht) {
@@ -452,7 +457,7 @@ public class ChiTietLoThuoc_DAO {
     }
 
 
-    public boolean deleteMaDGTrongCTLoThuoc(DonGiaThuoc donGiaThuoc) throws SQLException {
+    public boolean updateSoLuongCon(ChiTietLoThuoc chiTietLoThuoc, int soLuong) throws SQLException {
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
 
@@ -465,10 +470,13 @@ public class ChiTietLoThuoc_DAO {
         int n = 0;
 
         try {
-            String sql = "UPDATE ChiTietLoThuoc SET maDonGia = NULL WHERE maDonGia = ? " ;
+            String sql = "UPDATE ChiTietLoThuoc SET soLuongCon = ? WHERE maDonGia = ?" ;
             statement = con.prepareStatement(sql);
 
-            statement.setString(1, donGiaThuoc.getMaDonGia());
+            int soLuongCon = chiTietLoThuoc.getSoLuongCon() - soLuong;
+
+            statement.setInt(1, soLuongCon);
+            statement.setString(2, chiTietLoThuoc.getDonGiaThuoc().getMaDonGia());
 
             n = statement.executeUpdate();
         } catch (SQLException e) {
@@ -485,4 +493,57 @@ public class ChiTietLoThuoc_DAO {
 
         return n > 0;
     }
+
+    public boolean updateTongSoLuongConCuaCTThuoc(ChiTietLoThuoc chiTietLoThuocCu, ChiTietLoThuoc chiTietLoThuocMoi) {
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try (Connection con = ConnectDB.getConnection()) {
+            if (con == null || con.isClosed()) {
+                System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return false;
+            }
+
+            String sql1 = "UPDATE ChiTietLoThuoc SET soLuongCon = 0 WHERE maDonGia = ?";
+            statement = con.prepareStatement(sql1);
+            statement.setString(1, chiTietLoThuocCu.getDonGiaThuoc().getMaDonGia());
+            n = statement.executeUpdate();
+
+            if (n <= 0) {
+                System.out.println("Không thể cập nhật số lượng thuốc cũ!");
+                return false;
+            }
+
+            int soLuongCTMoi = chiTietLoThuocCu.getSoLuongCon();
+            int soLuongCTSauCung = chiTietLoThuocMoi.getSoLuongCon() + soLuongCTMoi;
+
+            String sql2 = "UPDATE ChiTietLoThuoc SET soLuongCon = ? WHERE maDonGia = ?";
+            statement = con.prepareStatement(sql2);
+            statement.setInt(1, soLuongCTSauCung);
+            statement.setString(2, chiTietLoThuocMoi.getDonGiaThuoc().getMaDonGia());
+
+            n = statement.executeUpdate();
+
+            if (n > 0) {
+                System.out.println("Cập nhật thành công!");
+            } else {
+                System.out.println("Không thể cập nhật số lượng thuốc mới!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
 }
