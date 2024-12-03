@@ -265,8 +265,6 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                 }
             }
         }
-
-
         double tongloiNhuan = tongDoanhThu - tongTienThue - tongGiaNhapSP;
         lblLoiNhuanValue.setText(String.format("%,.0f VND", tongloiNhuan));
     }

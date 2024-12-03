@@ -184,13 +184,13 @@ public class ChiTietHoaDon_DAO {
             while (rs.next()) {
                 ChiTietHoaDon cthd = new ChiTietHoaDon();
 
-                // Tạo đối tượng HoaDon
+                // tạo đối tượng HoaDon
                 HoaDon hd = new HoaDon();
                 hd.setMaHD(rs.getString("maHD"));
 
                 cthd.setHoaDon(hd);
 
-                // Tạo đối tượng Thuoc
+                // tạo đối tượng Thuoc
                 Thuoc thuoc = new Thuoc();
                 thuoc.setMaThuoc(rs.getString("maThuoc"));
 
@@ -209,9 +209,8 @@ public class ChiTietHoaDon_DAO {
                 listCTHD.add(cthd);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // In ra ngoại lệ nếu có
+            e.printStackTrace();
         } finally {
-            // Đóng kết nối và các đối tượng sau khi sử dụng
             if (rs != null) {
                 rs.close();
             }
@@ -223,7 +222,7 @@ public class ChiTietHoaDon_DAO {
             }
         }
 
-        return listCTHD; // Trả về danh sách chi tiết hóa đơn
+        return listCTHD;
     }
 
     // lấy thành tiền khi biết mã hóa đơn và mã thuốc

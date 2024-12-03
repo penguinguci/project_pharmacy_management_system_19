@@ -56,7 +56,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
 
         //Khởi tạo các component
         //Label
-        lblTitle = new JLabel("Quản lý đổi trả", JLabel.CENTER);
+        lblTitle = new JLabel("QUẢN LÝ ĐỔI TRẢ", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblMaPhieu = new JLabel("Mã phiếu đổi/trả   ");
         lblLyDo = new JLabel("Lý do");

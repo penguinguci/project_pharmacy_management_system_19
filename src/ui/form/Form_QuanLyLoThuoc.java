@@ -142,7 +142,7 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
             }
         });
 
-        String[] colsnameChiTietHoaDon = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Số lượng còn", "Đơn giá"};
+        String[] colsnameChiTietHoaDon = {"Mã thuốc", "Số hiệu thuốc", "Tên thuốc", "Ngày sản xuất", "Ngày hết hạn", "Số lượng còn", "Đơn giá"};
         modelChiTiet = new DefaultTableModel(colsnameChiTietHoaDon, 0);
         tableChiTiet = new JTable(modelChiTiet);
         tableChiTiet.setRowHeight(30);
@@ -254,6 +254,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
                     thuoc.getMaThuoc(),
                     ct.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
+                    ct.getNgaySX(),
+                    ct.getHSD(),
                     ct.getSoLuongCon(),
                     donGia != 0.0 ? String.format("%,.0f", donGia) + "đ" : ""
             });

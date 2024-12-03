@@ -88,6 +88,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public JMenuItem itemXoa, itemXoaAll;
     private GUI_TrangChu trangChu;
     public static ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    public DiemTichLuy_DAO diemTichLuy_dao;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -100,6 +101,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         donDatThuocDao = new DonDatThuoc_DAO();
         chiTietDonDatThuocDao = new ChiTietDonDatThuoc_DAO();
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+        diemTichLuy_dao = new DiemTichLuy_DAO();
 
         // Panel Content Center
         JPanel panelContentCenter = new JPanel(new BorderLayout());
@@ -1284,7 +1286,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         }
 
         // lấy thông tin khách hàng
-        String SDT = txtTimKiemKH.getText().trim();
+        String SDT = txtSDTKH.getText().trim();
         if(!SDT.isEmpty()) {
             KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
             if (cbxDoiDiem.isSelected()) {
@@ -1349,18 +1351,31 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 donDatThuocDao.xoaDonDatThuoc(maDon);
             }
 
+            // cập nhật điểm tích lũy, xếp hạng
+            if(!SDT.isEmpty()) {
+                KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
+                DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
+                diemTichLuy_dao.capNhatDiemTichLuyVaXepHangTheoMaKH(diemTichLuy, hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
+            }
 
+            // cập nhật lại số lượng
             for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+                // cập nhật tổng số lượng của thuốc
                 String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
                 int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
                 Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
                 thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
 
-//                // cập nhật tổng số lượng thuốc sau thanh toán
-//                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.layDonGiaThuocTheoMaThuoc(thuoc.getMaThuoc());
-//                for (DonGiaThuoc dg : dsDonGiaThuoc) {
-//
-//                }
+                // cập nhật tổng số lượng thuốc còn của lô thuốc sau thanh toán
+                String donViTinh = modelGioHang.getValueAt(i, 1).toString();
+                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.getDanhSachDGThuocTheoMaThuocVaDVT(thuoc.getMaThuoc(), donViTinh);
+                for (DonGiaThuoc dg : dsDonGiaThuoc) {
+                    if (dg.isTrangThai()) {
+                        ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(dg.getMaDonGia(), thuoc.getMaThuoc());
+                        System.out.println(chiTietLoThuoc);
+                        chiTietLoThuoc_dao.updateSoLuongCon(chiTietLoThuoc, soLuong);
+                    }
+                }
             }
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
@@ -1425,11 +1440,15 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         }
 
         // lấy thông tin khách hàng
-        String SDT = txtTimKiemKH.getText().trim();
+        String SDT = txtSDTKH.getText().trim();
         if(!SDT.isEmpty()) {
             KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
-            DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
-            khachHang.setDiemTichLuy(diemTichLuy);
+            if (cbxDoiDiem.isSelected()) {
+                DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
+                khachHang.setDiemTichLuy(diemTichLuy);
+            } else {
+                khachHang.setDiemTichLuy(null);
+            }
             hoaDon.setKhachHang(khachHang);
         } else {
             KhachHang khachLe = new KhachHang();
@@ -1486,12 +1505,31 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 donDatThuocDao.xoaDonDatThuoc(maDon);
             }
 
-            // cập nhật tổng số lượng thuốc sau thanh toán
+            // cập nhật điểm tích lũy, xếp hạng
+            if(!SDT.isEmpty()) {
+                KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
+                DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
+                diemTichLuy_dao.capNhatDiemTichLuyVaXepHangTheoMaKH(diemTichLuy, hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
+            }
+
+            // cập nhật lại số lượng
             for (int i = 0; i < modelGioHang.getRowCount(); i++) {
+                // cập nhật tổng số lượng của thuốc
                 String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
                 int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
                 Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
                 thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
+
+                // cập nhật tổng số lượng thuốc còn của lô thuốc sau thanh toán
+                String donViTinh = modelGioHang.getValueAt(i, 1).toString();
+                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.getDanhSachDGThuocTheoMaThuocVaDVT(thuoc.getMaThuoc(), donViTinh);
+                for (DonGiaThuoc dg : dsDonGiaThuoc) {
+                    if (dg.isTrangThai()) {
+                        ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(dg.getMaDonGia(), thuoc.getMaThuoc());
+                        System.out.println(chiTietLoThuoc);
+                        chiTietLoThuoc_dao.updateSoLuongCon(chiTietLoThuoc, soLuong);
+                    }
+                }
             }
 
             JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
@@ -1502,6 +1540,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             JOptionPane.showMessageDialog(this, "Thanh toán thất bại, vui lòng thử lại!");
         }
     }
+
 
 
     // Hàm xóa giỏ hàng sau khi thanh toán
