@@ -207,6 +207,7 @@ CREATE TABLE HoaDon (
     FOREIGN KEY (maThue) REFERENCES Thue(maThue)
 );
 
+
 -- Bảng ChiTietHoaDon
 CREATE TABLE ChiTietHoaDon (
     maHD VARCHAR(20) NOT NULL,
@@ -833,13 +834,14 @@ END
 GO
 
 
+
 -- lấy giá bán thuốc theo mã thuốc và đơn vị
 CREATE PROCEDURE layGiaThuocTheoMaVaDV @maThuoc VARCHAR(10), @donViTinh NVARCHAR(50)
 AS
 BEGIN
 	SELECT donGia
 	FROM DonGiaThuoc
-	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh
+	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh AND trangThai = 1
 END
 GO
 
@@ -1257,7 +1259,7 @@ BEGIN
 	SELECT *
 	FROM ChiTietLoThuoc lt
 	JOIN DonGiaThuoc dg ON lt.maDonGia = dg.maDonGia
-	WHERE dg.maDonGia = @maDG AND lt.maThuoc = @maThuoc
+	WHERE lt.maDonGia = @maDG AND lt.maThuoc = @maThuoc
 END
 GO
 
@@ -1304,85 +1306,64 @@ END
 GO
 
 
-
-
--- --------- TRIGGER
--- cập nhật điểm tích lũy sau khi thanh toán
-CREATE TRIGGER trg_CapNhatDiemTichLuy
-ON HoaDon
-AFTER INSERT
-AS
+-- tính tổng chi tiêu của khách hàng
+CREATE PROCEDURE tinhTongChiTieuKhachHang @maKH VARCHAR(20)
+AS 
 BEGIN
-    -- Kiểm tra nếu hóa đơn có trạng thái đã thanh toán và có mã khách hàng
-    IF EXISTS (
-        SELECT 1
-        FROM inserted
-        WHERE trangThai = 1 AND maKhachHang IS NOT NULL
-    )
-    BEGIN
-        UPDATE DiemTichLuy
-        SET diemTong = diemTong + (hd.tongTien * 0.01),
-            diemHienTai = diemHienTai + (hd.tongTien * 0.01)
-        FROM DiemTichLuy dtl
-        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
-        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
-        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
-
-        -- Cập nhật xếp hạng dựa trên điểm tích lũy tổng
-        UPDATE DiemTichLuy
-        SET xepHang = CASE
-            WHEN diemTong < 30000 THEN N'Đồng'
-            WHEN diemTong < 50000 THEN N'Bạc'
-            WHEN diemTong < 100000 THEN N'Vàng'
-            WHEN diemTong < 300000 THEN N'Bạch kim'
-            WHEN diemTong >= 500000 THEN N'Kim cương'
-            ELSE xepHang -- Giữ nguyên hạng nếu không thuộc các điều kiện trên
-        END
-        FROM DiemTichLuy dtl
-        INNER JOIN KhachHang kh ON dtl.maDTL = kh.maDTL
-        INNER JOIN inserted hd ON kh.maKH = hd.maKhachHang
-        WHERE hd.maKhachHang IS NOT NULL AND kh.maDTL IS NOT NULL;
-    END
-END;
+	SELECT tongChiTieu = SUM(hd.tongTien)
+	FROM HoaDon hd
+	WHERE hd.maKhachHang = @maKH
+END
 GO
 
 
----- cập nhật số lượng thuốc sau khi thanh toán thành công
---CREATE TRIGGER trg_UpdateSoLuongThuoc
---ON HoaDon
---AFTER INSERT
---AS
---BEGIN
---    IF EXISTS (
---        SELECT 1
---        FROM inserted i
---        WHERE i.trangThai = 1
---    )
---    BEGIN
---        UPDATE t
---        SET t.soLuongCon = t.soLuongCon - cthd.soLuong
---        FROM Thuoc t
---        INNER JOIN ChiTietHoaDon cthd ON t.soHieuThuoc = cthd.soHieuThuoc AND t.maThuoc = cthd.maThuoc
---        INNER JOIN HoaDon h ON h.maHD = cthd.maHD
---        INNER JOIN inserted i ON h.maHD = i.maHD
---        WHERE i.trangThai = 1
---          AND t.soLuongCon >= cthd.soLuong;
+-- cập nhật điểm tích lũy và xếp hạng
+CREATE PROCEDURE capNhatDiemTLVaXepHang
+	@maDTL VARCHAR(20),
+	@xepHang NVARCHAR(50),
+	@diemTong FLOAT,
+	@diemHienTai FLOAT
+AS
+BEGIN
+	UPDATE DiemTichLuy
+	SET
+		xepHang = @xepHang,
+		diemHienTai = @diemHienTai,
+		diemTong = @diemTong
+	WHERE maDTL = @maDTL
+END
+GO
 
---        IF @@ROWCOUNT = 0
---        BEGIN
---            PRINT 'Không có bản ghi nào được cập nhật.';
---        END
---        ELSE
---        BEGIN
---            PRINT 'Số lượng thuốc đã được cập nhật thành công.';
---        END
---    END
---    ELSE
---    BEGIN
---        PRINT 'Hóa đơn không có trạng thái đã thanh toán.';
---    END
---END;a
---GO
+-- lấy đơn giá thuốc theo mã thuốc, đơn vị tính
+CREATE PROCEDURE getDGThuocTheoMaThuocVaDVT 
+@maThuoc VARCHAR(20),
+@donViTinh NVARCHAR(50)
+AS
+BEGIN
+	SELECT * 
+	FROM DonGiaThuoc dg 
+	JOIN Thuoc t ON dg.maThuoc = t.maThuoc 
+	WHERE dg.maThuoc = @maThuoc AND dg.donViTinh = @donViTinh AND dg.trangThai = 1
+END
+GO
+
+
+-- lấy DS đơn giá thuốc theo mã thuốc, đơn vị tính
+CREATE PROCEDURE getDanhSachDGThuocTheoMaThuocVaDVT 
+@maThuoc VARCHAR(20),
+@donViTinh NVARCHAR(50)
+AS
+BEGIN
+	SELECT * 
+	FROM DonGiaThuoc 
+	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh 
+END
+GO
+
+
+SELECT * 
+	FROM DonGiaThuoc dg 
+	WHERE dg.maThuoc = 'T010' AND dg.donViTinh = N'Viên' 
 
 
 

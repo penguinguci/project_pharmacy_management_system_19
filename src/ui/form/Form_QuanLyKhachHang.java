@@ -113,7 +113,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnSua.setPreferredSize(new Dimension(100, 25));
 
         //Table
-        String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Xếp hạng"};
+        String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Tổng điểm", "Xếp hạng"};
         dtmKhachHang = new DefaultTableModel(colsNameKhachHang, 0);
         tabKhachHang = new JTable(dtmKhachHang);
         tabKhachHang.setRowHeight(30);
@@ -319,7 +319,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             } else {
                 gt = "Nam";
             }
-            Object[] data = {x.getMaKH(), x.getHoKH()+" "+x.getTenKH(), x.getSDT(), gt, x.getDiemTichLuy().getDiemHienTai(),x.getDiemTichLuy().getXepHang()};
+            Object[] data = {x.getMaKH(), x.getHoKH()+" "+x.getTenKH(), x.getSDT(), gt, x.getDiemTichLuy().getDiemHienTai(), x.getDiemTichLuy().getDiemTong(),x.getDiemTichLuy().getXepHang()};
             dtmKhachHang.addRow(data);
         }
     }

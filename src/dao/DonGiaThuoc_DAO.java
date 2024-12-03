@@ -59,13 +59,13 @@ public class DonGiaThuoc_DAO {
 
     public DonGiaThuoc getDonGiaByMaThuocVaDonViTinh(String idThuoc, String dvt) {
         Connection con = null;
-        PreparedStatement statement = null;
+        CallableStatement statement = null;
         ResultSet rs = null;
         DonGiaThuoc donGiaThuoc = null;
         try {
             con = ConnectDB.getConnection();
-            String sql = "SELECT * FROM DonGiaThuoc dg JOIN Thuoc t ON dg.maThuoc = t.maThuoc WHERE dg.maThuoc = ? AND dg.donViTinh LIKE ?";
-            statement = con.prepareStatement(sql);
+            String sql = "{CALL getDGThuocTheoMaThuocVaDVT(?, ?)}";
+            statement = con.prepareCall(sql);
             statement.setString(1, idThuoc);
             statement.setString(2, dvt);
             rs = statement.executeQuery();
@@ -239,40 +239,7 @@ public class DonGiaThuoc_DAO {
         return n > 0;
     }
 
-    public boolean updateGiaMoi(DonGiaThuoc donGiaThuoc) throws SQLException {
-        ConnectDB.getInstance();
-        Connection con = ConnectDB.getConnection();
 
-        if (con == null || con.isClosed()) {
-            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
-            return false;
-        }
-
-        PreparedStatement statement = null;
-        int n = 0;
-
-        try {
-            String sql = "UPDATE DonGiaThuoc SET donGia = ? WHERE maDonGia = ? " ;
-            statement = con.prepareStatement(sql);
-
-            statement.setString(2, donGiaThuoc.getMaDonGia());
-            statement.setDouble(1, donGiaThuoc.getDonGia());
-
-            n = statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return n > 0;
-    }
 
     public boolean updateTrangThai(DonGiaThuoc donGiaThuoc) throws SQLException {
         ConnectDB.getInstance();
@@ -309,25 +276,43 @@ public class DonGiaThuoc_DAO {
         return n > 0;
     }
 
-    // xóa đơn giá thuốc
-    public boolean deleteDonGiaThuoc(DonGiaThuoc donGiaThuoc) {
-        ConnectDB.getInstance();
-        Connection con = ConnectDB.getConnection();
-        PreparedStatement statement = null;
-        int n = 0;
+
+    // lấy danh sách 2 đơn vị tính theo mã thuốc và đơn vị tính
+    public ArrayList<DonGiaThuoc> getDanhSachDGThuocTheoMaThuocVaDVT(String maThuoc, String dvt) {
+        Connection con = null;
+        CallableStatement callableStatement = null;
+        ResultSet rs = null;
+        ArrayList<DonGiaThuoc> danhSachDonGia = new ArrayList<>();
+
         try {
-            statement = con.prepareStatement("DELETE FROM DonGiaThuoc WHERE maDonGia = ?");
-            statement.setString(1, donGiaThuoc.getMaDonGia());
-            n = statement.executeUpdate();
+            con = ConnectDB.getConnection();
+            String sql = "{call getDanhSachDGThuocTheoMaThuocVaDVT(?, ?)}";
+            callableStatement = con.prepareCall(sql);
+            callableStatement.setString(1, maThuoc);
+            callableStatement.setString(2, dvt);
+            rs = callableStatement.executeQuery();
+
+            while (rs.next()) {
+                String maDonGia = rs.getString("maDonGia");
+                Thuoc thuoc = new Thuoc(rs.getString("maThuoc"));
+                String donViTinh = rs.getString("donViTinh");
+                double donGia = rs.getDouble("donGia");
+                boolean trangThai = rs.getBoolean("trangThai");
+
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc(maDonGia, donViTinh, thuoc, donGia, trangThai);
+                danhSachDonGia.add(donGiaThuoc);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                statement.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
+                if (rs != null) rs.close();
+                if (callableStatement != null) callableStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
-        return n > 0;
+
+        return danhSachDonGia;
     }
 }

@@ -1,9 +1,7 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.DiemTichLuy;
-import entity.KhachHang;
-import entity.PhieuNhapThuoc;
+import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -160,4 +158,74 @@ public class DiemTichLuy_DAO {
         return "null";
     }
 
+
+    //  cập nhật điểm tích lũy và xếp hàng
+    public boolean capNhatDiemTichLuyVaXepHangTheoMaKH(DiemTichLuy diemTichLuy, HoaDon hoaDon, ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai) {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement callableStatement = null;
+        int n = 0;
+
+        try {
+            String sql = "{CALL capNhatDiemTLVaXepHang(?, ?, ?, ?)}";
+            callableStatement = con.prepareCall(sql);
+
+            double tienThue = hoaDon.tinhTienThue(dsChiTietHoaDon);
+            double tienGiam = 0;
+            if(hoaDon.getKhachHang().getTenKH() != "Khách hàng lẻ") {
+                tienGiam = hoaDon.tinhTienGiam();
+            } else {
+                tienGiam = 0;
+            }
+            double tienKhuyenMai = hoaDon.tinhTienKhuyenMai(dsChiTietHoaDon, dsChiTietKhuyenMai);
+
+            double tongTien = hoaDon.tinhTongTien(
+                    dsChiTietHoaDon.stream().mapToDouble(ChiTietHoaDon::tinhThanhTien).sum(),
+                    tienThue,
+                    tienGiam,
+                    tienKhuyenMai
+            );
+
+            double diemHienTai = 0;
+            double diemTong = 0;
+            if (hoaDon.getKhachHang().getDiemTichLuy() == null) {
+                diemHienTai = diemTichLuy.getDiemHienTai() + tongTien * 0.01;
+                diemTong = diemTichLuy.getDiemTong() + tongTien * 0.01;
+            } else {
+                diemHienTai = tongTien * 0.01;
+                diemTong = diemTichLuy.getDiemTong() + tongTien * 0.01;
+            }
+
+            String xepHang = null;
+            if (diemTong < 30000){
+                xepHang = "Đồng";
+            } else if (diemTong < 50000) {
+                xepHang = "Bạc";
+            } else if (diemTong < 100000) {
+                xepHang = "Vàng";
+            } else if (diemTong < 300000) {
+                xepHang = "Bạch kim";
+            } else if (diemTong >= 500000) {
+                xepHang = "Kim cương";
+            } else {
+                xepHang = diemTichLuy.getXepHang();
+            }
+
+            callableStatement.setString(1, diemTichLuy.getMaDTL());
+            callableStatement.setString(2, xepHang);
+            callableStatement.setDouble(3, diemTong);
+            callableStatement.setDouble(4, diemHienTai);
+
+            n = callableStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                callableStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
 }

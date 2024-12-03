@@ -6,6 +6,8 @@ import entity.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static connectDB.ConnectDB.getConnection;
+
 public class KhachHang_DAO {
     private ArrayList<KhachHang> list;
 
@@ -486,5 +488,36 @@ public class KhachHang_DAO {
             if (con != null) con.close();
         }
         return dsKH;
+    }
+
+    public double tinhTongChiTieuKhachHang(String maKH) {
+        double tongChiTieu = 0;
+        Connection con = null;
+        CallableStatement cstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = ConnectDB.getConnection();
+
+            String sql = "{CALL tinhTongChiTieuKhachHang(?)}";
+            cstmt = con.prepareCall(sql);
+            cstmt.setString(1, maKH);
+
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                tongChiTieu = rs.getDouble("tongChiTieu");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (cstmt != null) cstmt.close();
+                if (con != null) con.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return tongChiTieu;
     }
 }
