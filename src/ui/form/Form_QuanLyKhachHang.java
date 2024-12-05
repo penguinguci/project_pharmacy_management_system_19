@@ -103,9 +103,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
         btnThem.setBackground(new Color(0, 102, 204));
         btnThem.setForeground(Color.WHITE);
-        btnSua.setBackground(new Color(212, 112, 236));
+        btnSua.setBackground(new Color(0, 102, 204));
         btnSua.setForeground(Color.WHITE);
-        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setBackground(new Color(0, 102, 204));
         btnXoa.setForeground(Color.WHITE);
 
         btnThem.setPreferredSize(new Dimension(100, 25));
@@ -241,9 +241,9 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         Box boxBtn = Box.createHorizontalBox();
         boxBtn.add(Box.createHorizontalGlue());
         boxBtn.add(btnThem);
-        boxBtn.add(Box.createHorizontalStrut(5));
+        boxBtn.add(Box.createHorizontalStrut(10));
         boxBtn.add(btnXoa);
-        boxBtn.add(Box.createHorizontalStrut(5));
+        boxBtn.add(Box.createHorizontalStrut(10));
         boxBtn.add(btnSua);
         boxBtn.add(Box.createHorizontalGlue());
 
