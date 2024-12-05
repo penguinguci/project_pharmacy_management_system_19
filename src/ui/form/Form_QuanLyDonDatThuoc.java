@@ -93,8 +93,16 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
 
         txtTimKiem = new JTextField(20);
-        btnTimKiemDon = new JButton("Tìm kiếm");
         txtTimKiem.setPreferredSize(new Dimension(200, 25));
+
+        btnTimKiemDon = new JButton("Tìm kiếm");
+        btnTimKiemDon.setBackground(new Color(0, 102, 204));
+        btnTimKiemDon.setForeground(Color.WHITE);
+        btnTimKiemDon.setFont(new Font("Arial", Font.BOLD, 13));
+        btnTimKiemDon.setOpaque(true);
+        btnTimKiemDon.setFocusPainted(false);
+        btnTimKiemDon.setBorderPainted(false);
+        btnTimKiemDon.setPreferredSize(new Dimension(100, 30));
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -103,7 +111,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
         btnLamMoi = new JButton("Làm mới", scaledIconLamMoi);
         btnLamMoi.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
@@ -179,7 +187,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         btnThanhToan = new JButton("Thanh toán");
-        btnThanhToan.setBackground(new Color(0, 102, 0));
+        btnThanhToan.setBackground(new Color(0, 102, 204));
         btnThanhToan.setForeground(Color.WHITE);
         btnThanhToan.setOpaque(true);
         btnThanhToan.setFocusPainted(false);
@@ -188,7 +196,7 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnThanhToan.setPreferredSize(new Dimension(120, 34));
 
         btnChinhSua = new JButton("Chỉnh sửa");
-        btnChinhSua.setBackground(new Color(0, 0, 153));
+        btnChinhSua.setBackground(new Color(0, 102, 204));
         btnChinhSua.setForeground(Color.WHITE);
         btnChinhSua.setOpaque(true);
         btnChinhSua.setFocusPainted(false);
@@ -197,19 +205,20 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnChinhSua.setPreferredSize(new Dimension(120, 34));
 
         btnHuy = new JButton("Huỷ");
-        btnHuy.setBackground(new Color(204, 0, 0));
+        btnHuy.setBackground(new Color(0, 102, 204));
         btnHuy.setForeground(Color.WHITE);
         btnHuy.setOpaque(true);
         btnHuy.setFocusPainted(false);
         btnHuy.setBorderPainted(false);
         btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
-        btnHuy.setPreferredSize(new Dimension(70, 34));
+        btnHuy.setPreferredSize(new Dimension(120, 34));
 
         footerPanel.add(btnThanhToan);
+        footerPanel.add(Box.createHorizontalStrut(10));
         footerPanel.add(btnChinhSua);
+        footerPanel.add(Box.createHorizontalStrut(10));
         footerPanel.add(btnHuy);
 
-        //Tải dữ liệu bảng
         try {
             loadDataTableDonDatThuoc(donDatThuoc_dao.getAllDonDatThuoc());
         } catch (Exception e){

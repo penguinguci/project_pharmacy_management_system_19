@@ -25,13 +25,10 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public JPanel imgProduct;
     public JPanel pProductDetail, pInforDetail, panelTieuDe;
     public JLabel imageLabel;
-    public JScrollPane scrMoTa, spCongDung, spCachDung;
-    public JLabel lblMaThuoc, lblThanhPhan, lblMoTa, lblHamLuong, lblDangBaoChe, lblChiDinh, lblCachDung, lblBaoQuan;
     public JTextArea txaMoTa, txaCongDung, txaCachDung;
     public JTextField txtMaThuoc, txtThanhPhan, txtHamLuong, txtDangBaoChe, txtChiDinh, txtBaoQuan;
     public JLabel lblSearch;
     public JLabel lblPageInfo;
-    public JLabel lblCongDung;
     public JScrollPane scrollListProduct;
     public JTable tProduct;
     public JButton btnAdd, btnUpdate, btnDelete, btnReload, btnBack;
@@ -62,7 +59,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         heightScreen = screen.height-60;
 
         setPreferredSize(new Dimension( widthScreen,heightScreen));
-        //Set layout NORTH
+
         panelTieuDe = new JPanel();
 
         JPanel panelButton_left = new JPanel();
@@ -120,7 +117,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnAdd = new JButton(iconAdd);
         btnAdd.setText("Thêm thuốc");
         btnAdd.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnAdd.setBackground(new Color(65, 192, 201));
+        btnAdd.setBackground(new Color(0, 102, 204));
         btnAdd.setForeground(Color.WHITE);
         btnAdd.setOpaque(true);
         btnAdd.setFocusPainted(false);
@@ -131,7 +128,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnUpdate = new JButton(iconUpdate);
         btnUpdate.setText("Cập nhật");
         btnUpdate.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnUpdate.setBackground(new Color(65, 192, 201));
+        btnUpdate.setBackground(new Color(0, 102, 204));
         btnUpdate.setForeground(Color.WHITE);
         btnUpdate.setOpaque(true);
         btnUpdate.setFocusPainted(false);
@@ -142,7 +139,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnDelete = new JButton(iconDelete);
         btnDelete.setText("Xoá thuốc");
         btnDelete.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnDelete.setBackground(Color.RED);
+        btnDelete.setBackground(new Color(0, 102, 204));
         btnDelete.setForeground(Color.WHITE);
         btnDelete.setOpaque(true);
         btnDelete.setFocusPainted(false);
@@ -153,7 +150,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnReload = new JButton(iconReload);
         btnReload.setText("Làm mới");
         btnReload.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnReload.setBackground(new Color(65, 192, 201));
+        btnReload.setBackground(new Color(0, 102, 204));
         btnReload.setForeground(Color.WHITE);
         btnReload.setOpaque(true);
         btnReload.setFocusPainted(false);
@@ -193,7 +190,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         JPanel pPag = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         btnFirst = new JButton("<<");
-        btnFirst.setBackground(new Color(65, 192, 201));
+        btnFirst.setBackground(new Color(0, 102, 204));
         btnFirst.setFont(new Font("Arial", Font.BOLD, 13));
         btnFirst.setFocusPainted(false);
         btnFirst.setForeground(Color.WHITE);
@@ -204,7 +201,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnFirst.setMinimumSize(new Dimension(50,25));
 
         btnPrev = new JButton("<");
-        btnPrev.setBackground(new Color(65, 192, 201));
+        btnPrev.setBackground(new Color(0, 102, 204));
         btnPrev.setFont(new Font("Arial", Font.BOLD, 13));
         btnPrev.setFocusPainted(false);
         btnPrev.setForeground(Color.WHITE);
@@ -215,7 +212,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnPrev.setMinimumSize(new Dimension(50,25));
 
         btnNext = new JButton(">");
-        btnNext.setBackground(new Color(65, 192, 201));
+        btnNext.setBackground(new Color(0, 102, 204));
         btnNext.setFont(new Font("Arial", Font.BOLD, 13));
         btnNext.setFocusPainted(false);
         btnNext.setForeground(Color.WHITE);
@@ -226,7 +223,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnNext.setMinimumSize(new Dimension(50,25));
 
         btnLast = new JButton(">>");
-        btnLast.setBackground(new Color(65, 192, 201));
+        btnLast.setBackground(new Color(0, 102, 204));
         btnLast.setFont(new Font("Arial", Font.BOLD, 13));
         btnLast.setFocusPainted(false);
         btnLast.setForeground(Color.WHITE);
@@ -263,7 +260,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         // Tên sản phẩm
         lblTenSanPham = new JLabel("Tên sản phẩm");
         lblTenSanPham.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTenSanPham.setForeground(new Color(65, 192, 201));
+        lblTenSanPham.setForeground(new Color(0, 102, 204));
         lblTenSanPham.setFont(new Font("Arial", Font.BOLD, 20));
 
         // Ảnh sản phẩm

@@ -148,36 +148,40 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         // Nút chức năng
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         btnThem = new JButton("Thêm");
-        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
         btnThem.setBackground(new Color(0, 102, 204));
-        btnThem.setFocusPainted(false);
         btnThem.setForeground(Color.WHITE);
         btnThem.setOpaque(true);
+        btnThem.setFocusPainted(false);
         btnThem.setBorderPainted(false);
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setPreferredSize(new Dimension(100, 30));
 
         btnXoa = new JButton("Xóa");
-        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setBackground(new Color(0, 102, 204));
         btnXoa.setForeground(Color.WHITE);
         btnXoa.setOpaque(true);
         btnXoa.setFocusPainted(false);
         btnXoa.setBorderPainted(false);
+        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setPreferredSize(new Dimension(100, 30));
 
         btnCapNhat = new JButton("Cập nhật");
-        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
-        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setBackground(new Color(0, 102, 204));
         btnCapNhat.setForeground(Color.WHITE);
         btnCapNhat.setOpaque(true);
         btnCapNhat.setFocusPainted(false);
         btnCapNhat.setBorderPainted(false);
+        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.setPreferredSize(new Dimension(100, 30));
 
         btnLamMoi = new JButton("Làm mới");
-        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setPreferredSize(new Dimension(100, 30));
 
 
         buttonPanel.add(btnThem);
@@ -308,7 +312,8 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
 
         btGoKMThuoc = new JButton("Gỡ khuyến mãi");
         btGoKMThuoc.setFont(new Font("Arial", Font.BOLD, 13));
-        btGoKMThuoc.setBackground(new Color(204, 0, 0));
+//        btGoKMThuoc.setBackground(new Color(204, 0, 0));
+        btGoKMThuoc.setBackground(new Color(0, 102, 204));
         btGoKMThuoc.setForeground(Color.WHITE);
         btGoKMThuoc.setOpaque(true);
         btGoKMThuoc.setFocusPainted(false);

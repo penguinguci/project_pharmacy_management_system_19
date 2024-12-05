@@ -208,6 +208,7 @@ CREATE TABLE HoaDon (
 );
 
 
+
 -- Bảng ChiTietHoaDon
 CREATE TABLE ChiTietHoaDon (
     maHD VARCHAR(20) NOT NULL,
@@ -220,6 +221,7 @@ CREATE TABLE ChiTietHoaDon (
     FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
+
 
 -- Bảng DoiTra
 CREATE TABLE PhieuDoiTra (
@@ -483,6 +485,57 @@ VALUES
 ('HD002', 'SH003', 'T003', N'Hộp', 1, 150000),
 ('HD002', 'SH004', 'T004', N'Hộp', 1, 75000),
 ('HD002', 'SH005', 'T005', N'Viên', 5, 100000)
+
+
+-- Bảng HoaDon
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD00123', 'KH001', 'NV001', 'THUE001', '2024-11-01', N'Tiền mặt', 187000, 1),
+('HD00456', 'KH002', 'NV002', 'THUE001', '2024-11-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD00123', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD00123', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD00456', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD00456', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD00456', 'SH005', 'T005', N'Viên', 5, 100000)
+
+
+-- Bảng HoaDon
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD00999', 'KH001', 'NV001', 'THUE001', '2024-10-01', N'Tiền mặt', 187000, 1),
+('HD00491', 'KH002', 'NV002', 'THUE001', '2024-10-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD00999', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD00999', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD00491', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD00491', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD00491', 'SH005', 'T005', N'Viên', 5, 100000)
+
+
+-- Bảng HoaDon
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD001111', 'KH001', 'NV001', 'THUE001', '2023-10-01', N'Tiền mặt', 187000, 1),
+('HD002222', 'KH002', 'NV002', 'THUE001', '2023-10-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD001111', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD001111', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD002222', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD002222', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD002222', 'SH005', 'T005', N'Viên', 5, 100000)
 
 
 ---- Bảng DonDatThuoc
@@ -983,6 +1036,7 @@ BEGIN
 	LEFT JOIN ChiTietKhuyenMai ctkm ON t.maThuoc = ctkm.maThuoc
 	LEFT JOIN ChiTietLoThuoc ctlt ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
+	WHERE dg.trangThai = 1
 	ORDER BY ctkm.tyLeKhuyenMai DESC
 END
 GO
@@ -1361,10 +1415,179 @@ END
 GO
 
 
-SELECT * 
-	FROM DonGiaThuoc dg 
-	WHERE dg.maThuoc = 'T010' AND dg.donViTinh = N'Viên' 
+-- báo cáo doanh thu theo ngày trong năm  
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoNgayTrongThang @nam INT, @thang INT
+AS
+BEGIN
+    WITH DoanhThuTheoNgay AS (
+        SELECT 
+            CAST(ngayLap AS DATE) AS Ngay,
+            COUNT(maHD) AS SoHoaDon,
+            SUM(tongTien) AS TongDoanhThu
+        FROM 
+            HoaDon
+        WHERE 
+            YEAR(ngayLap) = @nam AND MONTH(ngayLap) = @thang
+        GROUP BY 
+            CAST(ngayLap AS DATE)
+    )
+	-- Lay du lieu cho all cac ngay trong thang va muc tang giam so voi ngay truoc va ngay sau
+    SELECT 
+        dt1.Ngay,
+        dt1.SoHoaDon,
+        dt1.TongDoanhThu,
+        CASE 
+            WHEN dt2.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu ngay truoc
+            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc tang ngay sau
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc giam ngay truoc
+        END AS MucTangNgayTruoc,
+        CASE 
+            WHEN dt3.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu ngay sau
+            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') --  muc tang ngay sau
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') -- muc giam ngay truoc
+        END AS MucTangNgaySau
+    FROM 
+        DoanhThuTheoNgay dt1
+    LEFT JOIN 
+        DoanhThuTheoNgay dt2
+    ON 
+        dt1.Ngay = DATEADD(DAY, 1, dt2.Ngay) -- ngay truoc
+    LEFT JOIN 
+        DoanhThuTheoNgay dt3
+    ON 
+        dt1.Ngay = DATEADD(DAY, -1, dt3.Ngay) -- ngay sau
+    ORDER BY 
+        dt1.Ngay;
+END
+GO
 
 
+
+-- báo cáo doanh thu theo tháng trong năm (có tính tăng/giảm so với tháng trước)
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoThangTrongNam 
+    @nam INT, 
+    @thang INT
+AS
+BEGIN
+    WITH DoanhThuTheoThang AS (
+        SELECT 
+            YEAR(ngayLap) AS Nam,
+            MONTH(ngayLap) AS Thang,
+            COUNT(maHD) AS SoHoaDon,
+            SUM(tongTien) AS TongDoanhThu
+        FROM 
+            HoaDon
+        GROUP BY 
+            YEAR(ngayLap), MONTH(ngayLap)
+    ),
+    -- them du lieu cua thang truoc va thang sau
+    DoanhThuLiênQuan AS (
+        SELECT 
+            dt1.Nam,
+            dt1.Thang,
+            dt1.TongDoanhThu,
+            dt1.SoHoaDon,
+            dt2.TongDoanhThu AS DoanhThuThangTruoc,
+            dt3.TongDoanhThu AS DoanhThuThangSau
+        FROM 
+            DoanhThuTheoThang dt1
+        LEFT JOIN 
+            DoanhThuTheoThang dt2
+        ON 
+            (dt1.Nam = dt2.Nam AND dt1.Thang = dt2.Thang + 1) -- cung nam, thang sau
+            OR (dt1.Nam = dt2.Nam + 1 AND dt1.Thang = 1 AND dt2.Thang = 12) -- chuyen nam
+        LEFT JOIN 
+            DoanhThuTheoThang dt3
+        ON 
+            (dt1.Nam = dt3.Nam AND dt1.Thang = dt3.Thang - 1) -- cung nam, thang sau
+            OR (dt1.Nam = dt3.Nam - 1 AND dt1.Thang = 12 AND dt3.Thang = 1) -- chuyen nam
+    )
+    -- hien thi du lieu muc giam
+    SELECT 
+        Nam,
+        Thang,
+        TongDoanhThu,
+        SoHoaDon,
+        CASE 
+            WHEN DoanhThuThangTruoc IS NULL THEN 'N/A'
+            WHEN (TongDoanhThu - DoanhThuThangTruoc) >= 0 THEN 
+                CONCAT('+', ROUND((TongDoanhThu - DoanhThuThangTruoc) * 100.0 / DoanhThuThangTruoc, 2), '%')
+            ELSE 
+                CONCAT('-', ROUND(ABS(TongDoanhThu - DoanhThuThangTruoc) * 100.0 / DoanhThuThangTruoc, 2), '%')
+        END AS MucTangGiamThangTruoc,
+        CASE 
+            WHEN DoanhThuThangSau IS NULL THEN 'N/A'
+            WHEN (DoanhThuThangSau - TongDoanhThu) >= 0 THEN 
+                CONCAT('+', ROUND((DoanhThuThangSau - TongDoanhThu) * 100.0 / TongDoanhThu, 2), '%')
+            ELSE 
+                CONCAT('-', ROUND(ABS(DoanhThuThangSau - TongDoanhThu) * 100.0 / TongDoanhThu, 2), '%')
+        END AS MucTangGiamThangSau
+    FROM 
+        DoanhThuLiênQuan
+    WHERE 
+        (Nam = @nam AND Thang = @thang) -- thang hien tai
+        OR (Nam = @nam AND Thang = @thang - 1) -- thang truoc
+        OR (Nam = @nam AND Thang = @thang + 1) -- thang sau
+        OR (Nam = @nam - 1 AND @thang = 1 AND Thang = 12) -- thang truoc chuyen nam
+        OR (Nam = @nam + 1 AND @thang = 12 AND Thang = 1) -- thang sau chuyen nam
+    ORDER BY 
+        Nam, Thang;
+END
+GO
+
+
+-- báo cáo doanh thu theo năm (có tính tăng/giảm so với năm trước)
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoNam @nam INT
+AS
+BEGIN
+    WITH DoanhThuTheoNam AS (
+        SELECT 
+            YEAR(ngayLap) AS Nam,
+            COUNT(maHD) AS SoHoaDon,
+            SUM(tongTien) AS TongDoanhThu
+        FROM 
+            HoaDon
+        GROUP BY 
+            YEAR(ngayLap)
+    )
+    -- lay du lieu nam hien tai, nam truoc va nam sau
+    SELECT 
+        dt1.Nam,
+        dt1.TongDoanhThu,
+        dt1.SoHoaDon,
+        CASE 
+            WHEN dt2.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu nam truoc
+            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc tang nam truoc
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc giam nam sau
+        END AS MucTangNamTruoc,
+        CASE 
+            WHEN dt3.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu nam sau
+            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') --  muc tang nam truoc
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') -- muc giam nam sau
+        END AS MucTangNamSau
+    FROM 
+        DoanhThuTheoNam dt1
+    LEFT JOIN 
+        DoanhThuTheoNam dt2
+    ON 
+        dt1.Nam = dt2.Nam + 1 -- nam truoc
+    LEFT JOIN 
+        DoanhThuTheoNam dt3
+    ON 
+        dt1.Nam = dt3.Nam - 1 -- nam sau
+    WHERE 
+        dt1.Nam = @nam OR dt1.Nam = @nam - 1 OR dt1.Nam = @nam + 1 -- lay nam hien tai, nam truoc va nam sau
+    ORDER BY 
+        dt1.Nam;
+END
+GO
 
 

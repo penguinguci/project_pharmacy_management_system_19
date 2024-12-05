@@ -74,20 +74,26 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         btnSua = new JButton("Cập nhật");
 
         btnTimKiem = new JButton("Tìm kiếm");
-        btnTimKiem.setBackground(new Color(65, 192, 201));
+        btnTimKiem.setBackground(new Color(0, 102, 204));
         btnTimKiem.setForeground(Color.WHITE);
         btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
         btnTimKiem.setOpaque(true);
         btnTimKiem.setFocusPainted(false);
         btnTimKiem.setBorderPainted(false);
+        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.setMaximumSize(new Dimension(100, 30));
+        btnTimKiem.setMinimumSize(new Dimension(100, 30));
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setBackground(new Color(65, 192, 201));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.setMaximumSize(new Dimension(100, 30));
+        btnLamMoi.setMinimumSize(new Dimension(100, 30));
 
         //ComboBox
         dcmGioiTinh = new DefaultComboBoxModel<>(dataComboGioiTinh);

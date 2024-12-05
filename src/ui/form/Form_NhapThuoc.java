@@ -1,5 +1,7 @@
 package ui.form;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import dao.*;
 import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -7,7 +9,6 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -15,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelectionListener {
     private JComboBox<String> cbbNhaCungCap, cbbThuoc, cbbDonViTinh;
@@ -41,6 +44,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
     private NhanVien nhanVienDN;
     private JDatePickerImpl datePickerNgaySanXuat, datePickerNgayHetHan;
     private UtilDateModel modelNgaySanXuat, modelNgayHetHan;
+    private List<Object[]> tempData = new ArrayList<>();
 
     public Form_NhapThuoc() throws Exception {
         // khởi tạo
@@ -185,36 +189,36 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
         Dimension btnInputSize = new Dimension(100, 30);
         btnThem.setPreferredSize(btnInputSize);
-        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
         btnThem.setBackground(new Color(0, 102, 204));
-        btnThem.setFocusPainted(false);
         btnThem.setForeground(Color.WHITE);
         btnThem.setOpaque(true);
+        btnThem.setFocusPainted(false);
         btnThem.setBorderPainted(false);
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
 
         btnXoa.setPreferredSize(btnInputSize);
-        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setBackground(new Color(0, 102, 204));
         btnXoa.setForeground(Color.WHITE);
         btnXoa.setOpaque(true);
         btnXoa.setFocusPainted(false);
         btnXoa.setBorderPainted(false);
+        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
 
         btnCapNhat.setPreferredSize(btnInputSize);
-        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
-        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setBackground(new Color(0, 102, 204));
         btnCapNhat.setForeground(Color.WHITE);
         btnCapNhat.setOpaque(true);
         btnCapNhat.setFocusPainted(false);
         btnCapNhat.setBorderPainted(false);
+        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
 
         btnLamMoiInput.setPreferredSize(btnInputSize);
-        btnLamMoiInput.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoiInput.setBackground(new Color(251, 185, 91));
+        btnLamMoiInput.setBackground(new Color(0, 102, 204));
         btnLamMoiInput.setForeground(Color.WHITE);
         btnLamMoiInput.setOpaque(true);
         btnLamMoiInput.setFocusPainted(false);
         btnLamMoiInput.setBorderPainted(false);
+        btnLamMoiInput.setFont(new Font("Arial", Font.BOLD, 13));
 
         pnlInputButtons.add(btnThem);
         pnlInputButtons.add(Box.createHorizontalStrut(15));
@@ -411,7 +415,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 String ngaySXFormatted = dateFormat.format(ngaySX);
                 String ngayHHFormatted = dateFormat.format(ngayHH);
-                modelChiTietThuoc.addRow(new Object[]{
+                Object[] row = new Object[]{
                         thuoc.getMaThuoc(),
                         thuoc.getTenThuoc(),
                         nhaCungCap,
@@ -422,7 +426,8 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                         String.format("%,.0f", giaNhap) + "đ",
                         String.format("%,.0f", giaBan) + "đ",
                         String.format("%,.0f", thanhTien) + "đ"
-                });
+                };
+                modelChiTietThuoc.addRow(row);
                 lamMoiThongTinNhap();
             }
         } else if (o == btnNhapThuoc) {
@@ -624,6 +629,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
             }
         }
     }
+
 
     public boolean valiDataNhapThuoc() {
         String nhaCungCap = String.valueOf(cbbNhaCungCap.getSelectedItem());

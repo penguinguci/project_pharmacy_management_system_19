@@ -156,7 +156,7 @@ public class Form_TaiKhoan extends JPanel implements ActionListener {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         btnDoiMatKhau = new JButton("Đổi Mật Khẩu");
-        btnDoiMatKhau.setBackground(new Color(65, 192, 201));
+        btnDoiMatKhau.setBackground(new Color(0, 102, 204));
         btnDoiMatKhau.setForeground(Color.WHITE);
         btnDoiMatKhau.setOpaque(true);
         btnDoiMatKhau.setFocusPainted(false);

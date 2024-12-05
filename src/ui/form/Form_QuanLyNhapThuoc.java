@@ -99,7 +99,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         txtTimKiem.setPreferredSize(new Dimension(400, 30));
 
         btnTimKiemDon = new JButton("Tìm kiếm");
-        btnTimKiemDon.setBackground(new Color(65, 192, 201));
+        btnTimKiemDon.setBackground(new Color(0, 102, 204));
         btnTimKiemDon.setForeground(Color.WHITE);
         btnTimKiemDon.setOpaque(true);
         btnTimKiemDon.setFocusPainted(false);
@@ -181,7 +181,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         btnXemHD.setFocusPainted(false);
         btnXemHD.setBorderPainted(false);
         btnXemHD.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXemHD.setPreferredSize(new Dimension(140, 34));
+        btnXemHD.setPreferredSize(new Dimension(135, 35));
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -189,9 +189,9 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         ImageIcon scaledIconLamMoi = new ImageIcon(scaledImageLamMoi);
 
         btnLamMoi = new JButton("Làm mới", scaledIconLamMoi);
-        btnLamMoi.setPreferredSize(new Dimension(120, 34));
-        btnLamMoi.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setPreferredSize(new Dimension(120, 35));
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);

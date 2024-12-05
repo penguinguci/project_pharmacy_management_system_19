@@ -210,18 +210,7 @@ public class ChiTietHoaDon_DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (cstmt != null) {
-                cstmt.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
         }
-
         return listCTHD;
     }
 

@@ -5,6 +5,15 @@ import entity.KhachHang;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -14,8 +23,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionListener {
 
@@ -67,7 +78,7 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         panelBieuDo.setBackground(Color.WHITE);
 
         // biểu đồ top khách hàng dựa trên tổng điểm tích lũy
-        JFreeChart chartTopKhachHang = createChartTopKhachHang(dsKhachHang);
+        JFreeChart chartTopKhachHang = createChartTop5KhachHang(dsKhachHang);
         ChartPanel chartPanelTop = new ChartPanel(chartTopKhachHang);
         chartPanelTop.setBorder(BorderFactory.createTitledBorder("Top Khách Hàng"));
 
@@ -75,6 +86,7 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         JFreeChart chartXepHang = createChartXepHang(dsKhachHang);
         ChartPanel chartPanelHang = new ChartPanel(chartXepHang);
         chartPanelHang.setBorder(BorderFactory.createTitledBorder("Phân Bố Hạng Khách Hàng"));
+
 
         // Thêm các biểu đồ vào panel
         panelBieuDo.add(chartPanelTop);
@@ -124,7 +136,7 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         btnXemChiTiet.setFocusPainted(false);
         btnXemChiTiet.setBorderPainted(false);
         btnXemChiTiet.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXemChiTiet.setPreferredSize(new Dimension(130, 30));
+        btnXemChiTiet.setPreferredSize(new Dimension(120, 30));
 
         btnInBaoCao = new JButton("In Báo Cáo");
         btnInBaoCao.setBackground(new Color(0, 102, 204));
@@ -133,7 +145,7 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         btnInBaoCao.setFocusPainted(false);
         btnInBaoCao.setBorderPainted(false);
         btnInBaoCao.setFont(new Font("Arial", Font.BOLD, 13));
-        btnInBaoCao.setPreferredSize(new Dimension(130, 30));
+        btnInBaoCao.setPreferredSize(new Dimension(120, 30));
 
         panelNut.add(btnXemChiTiet);
         panelNut.add(Box.createHorizontalStrut(10));
@@ -152,24 +164,67 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         }
     }
 
-    // Hàm tạo biểu đồ top khách hàng mua hàng nhiều nhất
-    private JFreeChart createChartTopKhachHang(List<KhachHang> dsKhachHang) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (KhachHang kh : dsKhachHang) {
-            dataset.addValue(kh.getDiemTichLuy().getDiemTong(), kh.getHoKH() + " " + kh.getTenKH(), "Khách Hàng");
-        }
-        return ChartFactory.createBarChart(
-                "Top Khách Hàng Dựa Trên Tổng Điểm Tích Lũy",
-                "Khách Hàng",
-                "Tổng Điểm",
-                dataset
-        );
-    }
+    // hàm tạo biểu đồ top khách hàng mua hàng nhiều nhất
+        private JFreeChart createChartTop5KhachHang(List<KhachHang> dsKhachHang) {
+            // sắp xếp ds khách hàng theo điểm tl giảm dần
+            dsKhachHang.sort((kh1, kh2) -> Double.compare(kh2.getDiemTichLuy().getDiemTong(), kh1.getDiemTichLuy().getDiemTong()));
 
-    // Hàm tạo biểu đồ phân bố các hạng khách hàng
+            // 5 khách hàng đầu
+            List<KhachHang> top5KhachHang = dsKhachHang.stream().limit(5).collect(Collectors.toList());
+
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            for (KhachHang kh : top5KhachHang) {
+                dataset.addValue(kh.getDiemTichLuy().getDiemTong(), kh.getHoKH() + " " + kh.getTenKH(), "");
+            }
+
+            JFreeChart chart =  ChartFactory.createBarChart(
+                    "Top Khách Hàng Dựa Trên Tổng Điểm Tích Lũy",
+                    "Khách Hàng",
+                    "Tổng Điểm",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    false,
+                    true,
+                    false
+            );
+
+            CategoryPlot plot = chart.getCategoryPlot();
+            plot.setBackgroundPaint(Color.WHITE);
+            plot.setDomainGridlinePaint(Color.LIGHT_GRAY); // đường lưới ngang
+            plot.setRangeGridlinePaint(Color.LIGHT_GRAY); // đường lưới dọc
+
+            // màu săcs
+            BarRenderer renderer = (BarRenderer) plot.getRenderer();
+            Color[] modernColors = {
+                    new Color(102, 204, 255),
+                    new Color(51, 153, 255),
+                    new Color(0, 102, 204),
+                    new Color(255, 153, 51),
+                    new Color(255, 102, 102)
+            };
+
+            for (int i = 0; i < dataset.getRowCount(); i++) {
+                renderer.setSeriesPaint(i, modernColors[i % modernColors.length]);
+            }
+
+            // thêm giá trị cụ thể lên cột
+            renderer.setDefaultItemLabelsVisible(true);
+            renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+            renderer.setDefaultItemLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+
+            // thêm chú thích
+            LegendTitle chuThich = new LegendTitle(plot);
+            chuThich.setPosition(RectangleEdge.RIGHT);
+            chart.addSubtitle(chuThich);
+
+            return chart;
+        }
+
+    // hàm tạo biểu đồ phân bố các hạng khách hàng
     private JFreeChart createChartXepHang(List<KhachHang> dsKhachHang) {
         DefaultPieDataset dataset = new DefaultPieDataset();
         int dong = 0, bac = 0, vang = 0, bachKim = 0, kimCuong = 0;
+        int tongKhachHang = dsKhachHang.size();
 
         for (KhachHang kh : dsKhachHang) {
             double tongDiem = kh.getDiemTichLuy().getDiemTong();
@@ -186,16 +241,50 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         dataset.setValue("Bạch Kim", bachKim);
         dataset.setValue("Kim Cương", kimCuong);
 
-        return ChartFactory.createPieChart(
+        JFreeChart chart =  ChartFactory.createPieChart(
                 "Phân Bố Hạng Khách Hàng",
                 dataset,
-                true, true, false
+                false, // không chú thích
+                true,
+                false
         );
+
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+
+        // màu sắc
+        Color[] modernColors = {
+                new Color(255, 204, 153),
+                new Color(153, 204, 255),
+                new Color(255, 153, 204),
+                new Color(153, 255, 153),
+                new Color(255, 255, 102)
+        };
+
+        for (int i = 0; i < dataset.getItemCount(); i++) {
+            plot.setSectionPaint(dataset.getKey(i), modernColors[i % modernColors.length]);
+        }
+
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+                "{0}: {2}",
+                new DecimalFormat("0"),
+                new DecimalFormat("0.00%")
+        ));
+        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+        plot.setCircular(true);
+
+        // thêm chú thích
+        LegendTitle chuThich = new LegendTitle(plot);
+        chuThich.setPosition(RectangleEdge.RIGHT);
+        chart.addSubtitle(chuThich);
+
+        return chart;
     }
 
     // Hàm điền dữ liệu vào bảng
     private void fillTable(List<KhachHang> dsKhachHang) {
         for (KhachHang kh : dsKhachHang) {
+            double tongChiTieu = khachHang_dao.tinhTongChiTieuKhachHang(kh.getMaKH());
             tableModel.addRow(new Object[]{
                     kh.getMaKH(),
                     kh.getHoKH() + " " + kh.getTenKH(),
@@ -204,7 +293,7 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
                     kh.getDiemTichLuy().getDiemHienTai(),
                     kh.getDiemTichLuy().getDiemTong(),
                     kh.getDiemTichLuy().getXepHang(),
-                    khachHang_dao.tinhTongChiTieuKhachHang(kh.getMaKH())
+                    String.format("%,.0f", tongChiTieu) + "đ"
             });
         }
     }

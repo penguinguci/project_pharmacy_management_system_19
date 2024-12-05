@@ -31,7 +31,7 @@ public class LoThuoc_DAO {
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from LoThuoc";
+        String sql = "select * from LoThuoc order by ngayNhap";
         try {
             ps = con.getConnection().prepareStatement(sql);
             rs = ps.executeQuery();
