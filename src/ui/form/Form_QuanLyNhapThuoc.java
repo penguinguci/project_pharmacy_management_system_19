@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -303,6 +305,28 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
             tablePN.clearSelection();
             modelChiTiet.setRowCount(0);
             txtTimKiem.setText("");
+        } else if (o == btnXemHD) {
+            int row = tablePN.getSelectedRow();
+            if (row >= 0) {
+                String maPN = modelPN.getValueAt(row, 0).toString();
+                String fileName = maPN + ".pdf";
+                String filePath = "PhieuNhap_PDF\\" + fileName;
+                openPDF(filePath);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn muốn xem!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void openPDF(String filePath) {
+        try {
+            File pdfFile = new File(filePath);
+            if (pdfFile.exists()) {
+                Desktop.getDesktop().open(pdfFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
