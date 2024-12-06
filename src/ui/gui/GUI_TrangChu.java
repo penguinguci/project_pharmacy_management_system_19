@@ -860,7 +860,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         } else if(o == btnTKDoanhThu) {
             try {
                 formThongKeDoanhThu = new Form_ThongKeDoanhThu();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
             centerPanel.add(formThongKeDoanhThu, "formThongKeDoanhThu");

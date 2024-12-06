@@ -54,7 +54,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     public ChiTietPhieuNhap_DAO chiTietPhieuNhap_dao;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
 
-    public Form_ThongKeDoanhThu() throws SQLException {
+    public Form_ThongKeDoanhThu() throws Exception {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -237,7 +237,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     }
 
     // update tổng lợi nhuận
-    public void updateTongLoiNhuan() throws SQLException {
+    public void updateTongLoiNhuan() throws Exception {
         double tongDoanhThu = 0;
         double tongTienThue = 0;
         double tongGiaNhapSP = 0;
@@ -295,7 +295,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     }
 
     // update DS hóa đơn theo năm
-    private void updateDSHDtheoNam(int nam) throws SQLException {
+    private void updateDSHDtheoNam(int nam) throws Exception {
         ArrayList<HoaDon> dsHD = hoaDon_dao.getDanhSachHoaDonByYear(nam);
         updateTableHD(dsHD);
         updateTongDoanhThu();
@@ -303,7 +303,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     }
 
     // update DS hóa đơn theo tháng trong năm
-    private void updateDSHDtheoThangTrongNam(int nam, int thang) throws SQLException {
+    private void updateDSHDtheoThangTrongNam(int nam, int thang) throws Exception {
         ArrayList<HoaDon> dsHD = hoaDon_dao.getDanhSachHoaDonTheoThangTrongNam(nam, thang);
         updateTableHD(dsHD);
         updateTongDoanhThu();
@@ -311,7 +311,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     }
 
     // update DS hóa đơn theo tuần của tháng trong
-    private void updateDSHDtheoTuanCuaThangTrongNam(int nam, int thang, int tuan) throws SQLException {
+    private void updateDSHDtheoTuanCuaThangTrongNam(int nam, int thang, int tuan) throws Exception {
         ArrayList<HoaDon> dsHD = hoaDon_dao.getDanhSachHoaDonTheoTuanCuaThangTrongNam(nam, thang, tuan);
         updateTableHD(dsHD);
         updateTongDoanhThu();
@@ -450,7 +450,11 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                 int year = Integer.parseInt((String) cmbNam.getSelectedItem());
                 try {
                     updateChartForYear(year);
-                    updateDSHDtheoNam(year);
+                    try {
+                        updateDSHDtheoNam(year);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -459,7 +463,11 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                 int month = cmbThang.getSelectedIndex() + 1;
                 try {
                     updateChartForMonth(year, month);
-                    updateDSHDtheoThangTrongNam(year, month);
+                    try {
+                        updateDSHDtheoThangTrongNam(year, month);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -469,7 +477,11 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                 int week = cmbTuan.getSelectedIndex() + 1;
                 try {
                     updateChartForWeek(year, month, week);
-                    updateDSHDtheoTuanCuaThangTrongNam(year, month, week);
+                    try {
+                        updateDSHDtheoTuanCuaThangTrongNam(year, month, week);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

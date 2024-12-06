@@ -41,7 +41,7 @@ public class ChiTietKhuyenMai_DAO {
                 int soLuongToiThieu = rs.getInt("soLuongToiThieu");
 
                 chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
-                ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(rs.getString("maDonGia"), rs.getString("maThuoc"));
+                ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoSoHieuThuoc(rs.getString("soHieuThuoc"));
 
                 ChiTietKhuyenMai chiTietKhuyenMai = new ChiTietKhuyenMai(chuongTrinhKhuyenMai, thuoc, tyLeKhuyenMai, soLuongToiThieu, chiTietLoThuoc);
 
