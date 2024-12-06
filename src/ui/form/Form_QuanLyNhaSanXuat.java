@@ -171,6 +171,8 @@ public class Form_QuanLyNhaSanXuat  extends JPanel implements ListSelectionListe
         tblNhaSX = new JTable(model);
         tblNhaSX.setRowHeight(30);
         tblNhaSX.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblNhaSX.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblNhaSX.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(tblNhaSX);
 

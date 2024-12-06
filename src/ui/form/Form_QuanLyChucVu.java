@@ -144,6 +144,8 @@ public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener, 
         tblChucVu = new JTable(model);
         tblChucVu.setRowHeight(30);
         tblChucVu.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblChucVu.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblChucVu.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(tblChucVu);
 

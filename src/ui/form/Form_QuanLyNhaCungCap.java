@@ -184,6 +184,8 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         tblNhaCC = new JTable(model);
         tblNhaCC.setRowHeight(30);
         tblNhaCC.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblNhaCC.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblNhaCC.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(tblNhaCC);
 

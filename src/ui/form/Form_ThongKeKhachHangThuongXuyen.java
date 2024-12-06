@@ -2,6 +2,11 @@ package ui.form;
 
 import dao.KhachHang_DAO;
 import entity.KhachHang;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -18,14 +23,19 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionListener {
@@ -88,18 +98,21 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         chartPanelHang.setBorder(BorderFactory.createTitledBorder("Phân Bố Hạng Khách Hàng"));
 
 
-        // Thêm các biểu đồ vào panel
+        // thêm các biểu đồ vào panel
         panelBieuDo.add(chartPanelTop);
         panelBieuDo.add(chartPanelHang);
         panelCenter.add(panelBieuDo, BorderLayout.CENTER);
 
-        // Tạo bảng danh sách khách hàng
+        // bảng danh sách khách hàng
         tableModel = new DefaultTableModel(new Object[]{
-                "Mã KH", "Họ tên", "SĐT", "Email", "Điểm hiện tại", "Tổng điểm", "Hạng", "Số tiền chi tiêu"
+                "Mã khách hàng", "Họ tên", "Số điện thoại", "Email", "Điểm hiện tại", "Tổng điểm", "Hạng", "Số tiền chi tiêu"
         }, 0);
         table = new JTable(tableModel);
         table.setRowHeight(30);
-        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.setFont(new Font("Arial", Font.PLAIN, 13));
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        table.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Danh Sách Khách Hàng"));
         scrollPane.setPreferredSize(new Dimension(getWidth(), 300));
@@ -154,6 +167,8 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
 
         // thêm sự kiện
         btnQuayLai.addActionListener(this);
+        btnXemChiTiet.addActionListener(this);
+        btnInBaoCao.addActionListener(this);
     }
 
     @Override
@@ -161,8 +176,105 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         Object o = e.getSource();
         if (o == btnQuayLai) {
             setVisible(false);
+        } else if (o == btnXemChiTiet) {
+            int row = table.getSelectedRow();
+            if (row >= 0) {
+                String makH = tableModel.getValueAt(row, 0).toString();
+                KhachHang khachHang = khachHang_dao.getOneKhachHangByMaKH(makH);
+
+                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Danh sách hóa đơn của " + khachHang.getHoKH() + " " + khachHang.getTenKH(), true);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                Form_DanhSachHoaDonKhachHang form_danhSachHoaDonKhachHang = new Form_DanhSachHoaDonKhachHang(khachHang);
+                dialog.add(form_danhSachHoaDonKhachHang);
+                dialog.setSize(1000,600);
+                dialog.setMaximumSize(new Dimension(1000,600));
+                dialog.setLocationRelativeTo(null);
+                dialog.setResizable(false);
+                dialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một khách hàng để xem!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (o == btnInBaoCao) {
+            inBaoCao();
         }
     }
+
+
+    public void inBaoCao() {
+        List<Map<String, Object>> dsBaoCao = khachHang_dao.thongKeKhachHangTXVaSPYeuThich();
+        if (dsBaoCao.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu để xuất báo cáo!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu báo cáo");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx"));
+        int nguoDungChon = fileChooser.showSaveDialog(this);
+
+        if(nguoDungChon == JFileChooser.APPROVE_OPTION) {
+            File fileDuocLuu = fileChooser.getSelectedFile();
+            String duongDan = fileDuocLuu.getAbsolutePath();
+
+            if (!duongDan.endsWith(".xlsx")) {
+                duongDan += ".xlsx";
+            }
+
+            try (Workbook workbook = new HSSFWorkbook()) {
+                Sheet sheet = workbook.createSheet("Báo cáo khách hàng");
+                String[] headers = {"Mã khách hàng", "Họ tên", "Hạng khách hàng", "Tổng điểm", "Tổng chi tiêu", "Số lần mua", "Sản phẩm yêu thích"};
+                Row headerRow = sheet.createRow(0);
+
+                for (int i = 0; i < headers.length; i++) {
+                    Cell cell = headerRow.createCell(i);
+                    cell.setCellValue(headers[i]);
+                }
+
+                // điền dữ liệu
+                int rowNum = 1;
+                for (Map<String, Object> banGhi : dsBaoCao) {
+                    Row row = sheet.createRow(rowNum++);
+                    row.createCell(0).setCellValue((String) banGhi.get("maKhachHang"));
+                    row.createCell(1).setCellValue((String) banGhi.get("hoTen"));
+                    row.createCell(2).setCellValue((String) banGhi.get("hangKhachHang"));
+                    row.createCell(3).setCellValue((Double) banGhi.get("tongDiem"));
+                    row.createCell(4).setCellValue((Double) banGhi.get("tongChiTieu"));
+                    row.createCell(5).setCellValue((Integer) banGhi.get("soLanMua"));
+                    row.createCell(6).setCellValue((String) banGhi.get("SanPhamYeuThich"));
+                }
+
+                // điều chỉnh kích thước các cột
+                for (int i = 0; i < headers.length; i++) {
+                    sheet.autoSizeColumn(i);
+                }
+
+                // ghi excel
+                try (FileOutputStream fos = new FileOutputStream(duongDan)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(this, "Báo cáo đã được lưu thành công tại: " + duongDan,
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+
+                // mở file excel vừa lưu
+                try {
+                    File file = new File(duongDan);
+                    if (file.exists()) {
+                        Desktop.getDesktop().open(file);
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Không thể mở file Excel: " + e.getMessage(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tạo file Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        }
+    }
+
 
     // hàm tạo biểu đồ top khách hàng mua hàng nhiều nhất
         private JFreeChart createChartTop5KhachHang(List<KhachHang> dsKhachHang) {

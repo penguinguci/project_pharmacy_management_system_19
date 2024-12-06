@@ -93,6 +93,8 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         tabNCC = new JTable(dtmNCC);
         tabNCC.setRowHeight(30);
         tabNCC.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabNCC.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabNCC.getTableHeader().setReorderingAllowed(false);
 
         scrNCC = new JScrollPane(tabNCC);
 

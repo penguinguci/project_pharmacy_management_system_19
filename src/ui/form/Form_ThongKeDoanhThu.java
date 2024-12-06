@@ -152,10 +152,12 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         panelDSHoaDon.add(lblTieuDeDSHD, BorderLayout.NORTH);
 
         // Bảng danh sách hóa đơn
-        modelHD = new DefaultTableModel(new Object[]{"Mã HD", "Khách hàng", "Nhân viên", "Ngày lập hóa đơn" , "Tổng tiền"}, 0);
+        modelHD = new DefaultTableModel(new Object[]{"Mã hóa đơn", "Khách hàng", "Nhân viên", "Ngày lập hóa đơn" , "Tổng tiền"}, 0);
         table = new JTable(modelHD);
         table.setRowHeight(30);
         table.setFont(new Font("Arial", Font.PLAIN, 13));
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -667,8 +669,8 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
                 // lưu và mở pdf
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-                String fileName = "hoa_don_" + timeStamp + ".pdf";
-                String filePath = "HoaDon_PDF\\" + fileName;
+                String fileName = "BCDT_" + timeStamp + ".pdf";
+                String filePath = "BaoCao_PDF\\" + fileName;
                 document.save(filePath);
                 openPDF(filePath);
 
@@ -823,8 +825,8 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
                 // lưu và mở pdf
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-                String fileName = "hoa_don_" + timeStamp + ".pdf";
-                String filePath = "HoaDon_PDF\\" + fileName;
+                String fileName = "BCDT_" + timeStamp + ".pdf";
+                String filePath = "BaoCao_PDF\\" + fileName;
                 document.save(filePath);
                 openPDF(filePath);
 
@@ -992,8 +994,8 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
 
                 // lưu và mở pdf
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-                String fileName = "hoa_don_" + timeStamp + ".pdf";
-                String filePath = "HoaDon_PDF\\" + fileName;
+                String fileName = "BCDT_" + timeStamp + ".pdf";
+                String filePath = "BaoCao_PDF\\" + fileName;
                 document.save(filePath);
                 openPDF(filePath);
 

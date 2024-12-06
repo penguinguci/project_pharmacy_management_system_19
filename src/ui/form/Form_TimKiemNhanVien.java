@@ -114,6 +114,8 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         tabNhanVien = new JTable(dtmNhanVien);
         tabNhanVien.setRowHeight(30);
         tabNhanVien.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabNhanVien.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabNhanVien.getTableHeader().setReorderingAllowed(false);
 
         scrNhanVien = new JScrollPane(tabNhanVien);
 

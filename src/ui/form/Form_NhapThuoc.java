@@ -248,7 +248,10 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         modelChiTietThuoc = new DefaultTableModel(columnNames,  0);
         tblChiTietThuoc = new JTable(modelChiTietThuoc);
         tblChiTietThuoc.setRowHeight(25);
-        tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        tblChiTietThuoc.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblChiTietThuoc.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane scrollPane = new JScrollPane(tblChiTietThuoc);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết thuốc nhập"));
 

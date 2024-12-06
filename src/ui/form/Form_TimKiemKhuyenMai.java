@@ -167,6 +167,9 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         tblChuongTrinhKhuyenMai = new JTable(modelChuongTrinhKM);
         tblChuongTrinhKhuyenMai.setRowHeight(30);
         tblChuongTrinhKhuyenMai.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblChuongTrinhKhuyenMai.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblChuongTrinhKhuyenMai.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane promoScrollPane = new JScrollPane(tblChuongTrinhKhuyenMai);
         promoScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách chương trình khuyến mãi"));
 
