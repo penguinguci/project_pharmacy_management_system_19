@@ -128,6 +128,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         tableLT = new JTable(modelLT);
         tableLT.setRowHeight(30);
         tableLT.setFont(new Font("Arial", Font.PLAIN, 13));
+        tableLT.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tableLT.getTableHeader().setReorderingAllowed(false);
 
         scrollLT = new JScrollPane(tableLT);
 
@@ -149,6 +151,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         tableChiTiet = new JTable(modelChiTiet);
         tableChiTiet.setRowHeight(30);
         tableChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
+        tableChiTiet.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tableChiTiet.getTableHeader().setReorderingAllowed(false);
 
         scrollChiTiet = new JScrollPane(tableChiTiet);
 

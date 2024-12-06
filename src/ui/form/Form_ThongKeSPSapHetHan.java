@@ -60,7 +60,9 @@ public class Form_ThongKeSPSapHetHan extends JPanel {
         }, 0);
         table = new JTable(tableModel);
         table.setRowHeight(30);
-        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.setFont(new Font("Arial", Font.PLAIN, 13));
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        table.getTableHeader().setReorderingAllowed(false);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Danh Sách Thuốc Sắp Hết Hạn"));
 

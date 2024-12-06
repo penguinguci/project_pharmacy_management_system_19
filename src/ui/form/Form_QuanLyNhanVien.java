@@ -260,6 +260,9 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         tblNhanVien = new JTable(model);
         tblNhanVien.setRowHeight(30);
         tblNhanVien.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblNhanVien.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblNhanVien.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane scrollPane = new JScrollPane(tblNhanVien);
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

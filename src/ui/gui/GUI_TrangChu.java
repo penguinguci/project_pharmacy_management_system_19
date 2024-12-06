@@ -951,7 +951,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             // tieu de
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.gridwidth = 2; // chiem 2 cit
+            gbc.gridwidth = 2; // chiem 2 cot
             gbc.weightx = 1.0; // chiem toan bo chieu rong
             lblTieuDe = new JLabel(tieuDe);
             lblTieuDe.setFont(new Font("Arial", Font.BOLD, 14));

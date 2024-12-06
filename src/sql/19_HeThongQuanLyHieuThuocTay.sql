@@ -202,11 +202,10 @@ CREATE TABLE HoaDon (
 	trangThai bit,
     tienThue FLOAT(10),
     tongTien FLOAT(10),
-    FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
+    FOREIGN KEY (maKhachHang) REFERENC ES KhachHang(maKH),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
     FOREIGN KEY (maThue) REFERENCES Thue(maThue)
 );
-
 
 
 -- Bảng ChiTietHoaDon
@@ -622,7 +621,8 @@ BEGIN
 	FROM ChiTietHoaDon cthd
 	JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
 	JOIN DonGiaThuoc dgt ON t.maThuoc = dgt.maThuoc AND dgt.donViTinh = cthd.donViTinh
-	WHERE maHD = @maHD
+	JOIN ChiTietLoThuoc ctlt ON dgt.maDonGia = ctlt.maDonGia
+	WHERE maHD = @maHD AND dgt.trangThai = 1
 END
 GO
 
@@ -1030,11 +1030,11 @@ GO
 CREATE PROCEDURE getDSCTKhuyenMai
 AS
 BEGIN
-	SELECT *
+	SELECT ct.maCTKM, ct.loaiKhuyenMai, t.maThuoc, t.tenThuoc, ctkm.tyLeKhuyenMai, ctkm.soLuongToiThieu, dg.maDonGia, ctlt.soHieuThuoc
 	FROM Thuoc t
 	JOIN DonGiaThuoc dg ON t.maThuoc = dg.maThuoc
-	LEFT JOIN ChiTietKhuyenMai ctkm ON t.maThuoc = ctkm.maThuoc
-	LEFT JOIN ChiTietLoThuoc ctlt ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
+	LEFT JOIN ChiTietLoThuoc ctlt ON dg.maDonGia = ctlt.maDonGia 
+	LEFT JOIN ChiTietKhuyenMai ctkm ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
 	WHERE dg.trangThai = 1
 	ORDER BY ctkm.tyLeKhuyenMai DESC
@@ -1587,6 +1587,42 @@ BEGIN
         dt1.Nam = @nam OR dt1.Nam = @nam - 1 OR dt1.Nam = @nam + 1 -- lay nam hien tai, nam truoc va nam sau
     ORDER BY 
         dt1.Nam;
+END
+GO
+
+
+
+-- thống kê top khách hàng thường xuyên
+CREATE PROCEDURE ThongKeKhachHangThuongXuyen
+AS
+BEGIN
+    SELECT 
+        kh.maKH AS maKhachHang,
+        CONCAT(kh.hoKH, ' ', kh.tenKH) AS hoTen,
+        dtl.xepHang AS hangKhachHang,
+        dtl.diemTong AS tongDiem,
+        SUM(hd.tongTien) AS tongChiTieu,
+        COUNT(hd.maHD) AS soLanMua,
+        (
+            SELECT TOP 1 t.tenThuoc
+            FROM ChiTietHoaDon cthd
+            JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
+            WHERE cthd.maHD IN (
+                SELECT maHD FROM HoaDon WHERE maKhachHang = kh.maKH
+            )
+            GROUP BY t.tenThuoc
+            ORDER BY SUM(cthd.soLuong) DESC
+        ) AS SanPhamYeuThich
+    FROM 
+        KhachHang kh
+    JOIN 
+        DiemTichLuy dtl ON kh.maDTL = dtl.maDTL
+    LEFT JOIN 
+        HoaDon hd ON kh.maKH = hd.maKhachHang
+    GROUP BY 
+        kh.maKH, kh.hoKH, kh.tenKH, dtl.xepHang, dtl.diemTong
+    ORDER BY 
+        SUM(hd.tongTien) DESC;
 END
 GO
 

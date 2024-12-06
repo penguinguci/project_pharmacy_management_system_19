@@ -146,8 +146,10 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         String[] colsNameHoaDon = {"Mã hoá đơn", "Khách hàng", "Người lập", "Ngày lập", "Tổng tiền"};
         dtmHoaDon = new DefaultTableModel(colsNameHoaDon, 0);
         tabHoaDon = new JTable(dtmHoaDon);
-        tabHoaDon.setRowHeight(30);
+        tabHoaDon.setRowHeight(25);
         tabHoaDon.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabHoaDon.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabHoaDon.getTableHeader().setReorderingAllowed(false);
 
         scrHoaDon = new JScrollPane(tabHoaDon);
 
@@ -170,8 +172,10 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Tên thuốc","Số lượng", "Đơn vị tính", "Thành tiền"};
         dtmChiTiet = new DefaultTableModel(colsNameChiTiet, 0);
         tabChiTiet = new JTable(dtmChiTiet);
-        tabChiTiet.setRowHeight(30);
+        tabChiTiet.setRowHeight(25);
         tabChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabChiTiet.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabChiTiet.getTableHeader().setReorderingAllowed(false);
 
         getScrChiTiet = new JScrollPane(tabChiTiet);
 

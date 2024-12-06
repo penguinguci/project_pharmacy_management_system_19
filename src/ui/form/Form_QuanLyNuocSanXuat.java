@@ -171,6 +171,8 @@ public class Form_QuanLyNuocSanXuat  extends JPanel implements ListSelectionList
         tblNuocSX = new JTable(model);
         tblNuocSX.setRowHeight(30);
         tblNuocSX.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblNuocSX.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblNuocSX.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(tblNuocSX);
 

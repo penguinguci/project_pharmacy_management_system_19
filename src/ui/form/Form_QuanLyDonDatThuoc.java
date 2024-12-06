@@ -138,6 +138,8 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         tabDon = new JTable(dtmDon);
         tabDon.setRowHeight(30);
         tabDon.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabDon.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabDon.getTableHeader().setReorderingAllowed(false);
 
         scrDon = new JScrollPane(tabDon);
 
@@ -159,6 +161,8 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         tabChiTietDon = new JTable(dtmChiTietDon);
         tabChiTietDon.setRowHeight(30);
         tabChiTietDon.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabChiTietDon.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabChiTietDon.getTableHeader().setReorderingAllowed(false);
 
         scrChiTietDon = new JScrollPane(tabChiTietDon);
 

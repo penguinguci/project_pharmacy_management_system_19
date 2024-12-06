@@ -44,7 +44,6 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
 
-        //Tạo và định dạng các thành phần trong Form
         //Label
         lblTitle = new JLabel("Quản lý khách hàng", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
@@ -79,9 +78,10 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         txtEmail.setMaximumSize(maxSize);
         txtXepHang.setMaximumSize(maxSize);
         txtDiemTichLuy.setMaximumSize(maxSize);
-        txtTimKiem.setMaximumSize(maxSize);
 
-        txtTimKiem.setPreferredSize(new Dimension(200, 25));
+        txtTimKiem.setPreferredSize(new Dimension(300, 30));
+        txtTimKiem.setMaximumSize(new Dimension(300, 30));
+        txtTimKiem.setMinimumSize(new Dimension(300, 30));
 
         //Button
         ImageIcon iconBack = new ImageIcon("images\\back.png");
@@ -98,19 +98,57 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnThem = new JButton("Thêm");
         btnXoa = new JButton("Xoá");
         btnSua = new JButton("Cập nhật");
+
         btnTimKiem = new JButton("Tìm kiếm");
+        btnTimKiem.setBackground(new Color(0, 102, 204));
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.setBorderPainted(false);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+
         btnLamMoi = new JButton("Làm mới");
+        btnLamMoi.setBackground(new Color(0, 102, 204));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setPreferredSize(new Dimension(100, 30));
 
         btnThem.setBackground(new Color(0, 102, 204));
         btnThem.setForeground(Color.WHITE);
+        btnThem.setOpaque(true);
+        btnThem.setFocusPainted(false);
+        btnThem.setBorderPainted(false);
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setPreferredSize(new Dimension(100, 30));
+        btnThem.setMaximumSize(new Dimension(100, 30));
+        btnThem.setMinimumSize(new Dimension(100, 30));
+
         btnSua.setBackground(new Color(0, 102, 204));
         btnSua.setForeground(Color.WHITE);
+        btnSua.setOpaque(true);
+        btnSua.setFocusPainted(false);
+        btnSua.setBorderPainted(false);
+        btnSua.setFont(new Font("Arial", Font.BOLD, 13));
+        btnSua.setPreferredSize(new Dimension(100, 30));
+        btnSua.setMaximumSize(new Dimension(100, 30));
+        btnSua.setMinimumSize(new Dimension(100, 30));
+
+
         btnXoa.setBackground(new Color(0, 102, 204));
         btnXoa.setForeground(Color.WHITE);
+        btnXoa.setOpaque(true);
+        btnXoa.setFocusPainted(false);
+        btnXoa.setBorderPainted(false);
+        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.setPreferredSize(new Dimension(100, 30));
+        btnXoa.setMaximumSize(new Dimension(100, 30));
+        btnXoa.setMinimumSize(new Dimension(100, 30));
+        btnXoa.setBackground(new Color(0, 102, 204));
 
-        btnThem.setPreferredSize(new Dimension(100, 25));
-        btnXoa.setPreferredSize(new Dimension(100, 25));
-        btnSua.setPreferredSize(new Dimension(100, 25));
 
         //Table
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Giới tính","Điểm tích luỹ", "Tổng điểm", "Xếp hạng"};
@@ -118,6 +156,8 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         tabKhachHang = new JTable(dtmKhachHang);
         tabKhachHang.setRowHeight(30);
         tabKhachHang.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabKhachHang.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabKhachHang.getTableHeader().setReorderingAllowed(false);
 
         scrKhachHang = new JScrollPane(tabKhachHang);
 

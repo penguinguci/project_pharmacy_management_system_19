@@ -173,7 +173,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         modelGioHang = new DefaultTableModel(cartColumnNames, 0);
         tbGioHang = new JTable(modelGioHang);
         tbGioHang.setFillsViewportHeight(true); // Đảm bảo bảng chiếm hết chiều cao của JScrollPane
-        tbGioHang.setFont(new Font("Arial", Font.PLAIN, 14));
+        tbGioHang.setFont(new Font("Arial", Font.PLAIN, 13));
+        tbGioHang.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tbGioHang.getTableHeader().setReorderingAllowed(false);
         tbGioHang.setRowHeight(30);
 
 

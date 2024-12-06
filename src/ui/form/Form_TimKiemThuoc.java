@@ -140,6 +140,8 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         tabThuoc = new JTable(dtmThuoc);
         tabThuoc.setRowHeight(30);
         tabThuoc.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabThuoc.getTableHeader().setReorderingAllowed(false);
 
         scrThuoc = new JScrollPane(tabThuoc);
 

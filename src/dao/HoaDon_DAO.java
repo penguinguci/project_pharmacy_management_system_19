@@ -96,7 +96,7 @@ public class HoaDon_DAO {
 
             statement.setString(3, hoaDon.getNhanVien().getMaNV());
             statement.setString(4, hoaDon.getThue().getMaThue());
-            statement.setDate(5, new java.sql.Date(hoaDon.getNgayLap().getTime()));
+            statement.setDate(5, new Date(hoaDon.getNgayLap().getTime()));
 
             statement.setString(6, hoaDon.getHinhThucThanhToan());
             statement.setBoolean(7, hoaDon.isTrangThai());
@@ -715,6 +715,63 @@ public class HoaDon_DAO {
             e.printStackTrace();
         }
         return dsBaoCao;
+    }
+
+
+    public ArrayList<HoaDon> getDSHoaDonByKhachHang(String maKH) throws SQLException {
+        ArrayList<HoaDon> hoaDonList = new ArrayList<>();
+        String sql = "SELECT * FROM HoaDon WHERE trangThai = 1 AND maKhachHang = ? ORDER BY ngayLap";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, maKH);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                KhachHang_DAO khachHangDAO = new KhachHang_DAO();
+                NhanVien_DAO nhanVienDAO = new NhanVien_DAO();
+                Thue_DAO thueDAO = new Thue_DAO();
+
+                while (rs.next()) {
+                    HoaDon hoaDon = new HoaDon();
+                    hoaDon.setMaHD(rs.getString("maHD"));
+
+                    // Lấy thông tin khách hàng
+                    String maKhachHang = rs.getString("maKhachHang");
+                    KhachHang khachHang = null;
+                    if (maKhachHang == null) {
+                        khachHang.setHoKH("");
+                        khachHang.setTenKH("Khách hàng lẻ");
+                    } else {
+                        khachHang = khachHangDAO.timKhachHang(maKhachHang);
+                    }
+                    hoaDon.setKhachHang(khachHang);
+
+                    // Lấy thông tin nhân viên
+                    String maNhanVien = rs.getString("maNhanVien");
+                    NhanVien nhanVien = nhanVienDAO.getNVTheoMaNV(maNhanVien);
+                    hoaDon.setNhanVien(nhanVien);
+
+                    // Lấy thông tin thuế
+                    String maThue = rs.getString("maThue");
+                    Thue thue = thueDAO.timThue(maThue);
+                    hoaDon.setThue(thue);
+
+                    // Gán các thông tin khác
+                    hoaDon.setNgayLap(rs.getDate("ngayLap"));
+                    hoaDon.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
+                    hoaDon.setTrangThai(rs.getBoolean("trangThai"));
+
+                    // Thêm hóa đơn vào danh sách
+                    hoaDonList.add(hoaDon);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return hoaDonList;
     }
 
 

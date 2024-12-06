@@ -174,6 +174,10 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         dtListProduct = new DefaultTableModel(hTableListProduct, 0);
         tProduct = new JTable(dtListProduct);
         tProduct.setRowHeight(30);
+        tProduct.setFont(new Font("Arial", Font.PLAIN, 13));
+        tProduct.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tProduct.getTableHeader().setReorderingAllowed(false);
+
         loadDataThuocToTable(currentPage, rowsPerPage);
         JTableHeader jTableHeader =  tProduct.getTableHeader();
         jTableHeader.setPreferredSize(new Dimension(widthScreen-30, 30));

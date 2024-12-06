@@ -158,6 +158,8 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         tblDanhMuc = new JTable(model);
         tblDanhMuc.setRowHeight(30);
         tblDanhMuc.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblDanhMuc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblDanhMuc.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(tblDanhMuc);
 

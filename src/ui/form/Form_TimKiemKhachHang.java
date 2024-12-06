@@ -124,6 +124,8 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         tabKhachHang = new JTable(dtmKhachHang);
         tabKhachHang.setRowHeight(30);
         tabKhachHang.setFont(new Font("Arial", Font.PLAIN, 13));
+        tabKhachHang.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tabKhachHang.getTableHeader().setReorderingAllowed(false);
 
         scrKhachHang = new JScrollPane(tabKhachHang);
 
