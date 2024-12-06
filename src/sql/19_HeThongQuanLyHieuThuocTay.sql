@@ -1,4 +1,4 @@
-﻿USE master
+USE master
 -- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
@@ -622,7 +622,8 @@ BEGIN
 	FROM ChiTietHoaDon cthd
 	JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
 	JOIN DonGiaThuoc dgt ON t.maThuoc = dgt.maThuoc AND dgt.donViTinh = cthd.donViTinh
-	WHERE maHD = @maHD
+	JOIN ChiTietLoThuoc ctlt ON dgt.maDonGia = ctlt.maDonGia
+	WHERE maHD = @maHD AND dgt.trangThai = 1
 END
 GO
 
@@ -1030,11 +1031,11 @@ GO
 CREATE PROCEDURE getDSCTKhuyenMai
 AS
 BEGIN
-	SELECT *
+	SELECT ct.maCTKM, ct.loaiKhuyenMai, t.maThuoc, t.tenThuoc, ctkm.tyLeKhuyenMai, ctkm.soLuongToiThieu, dg.maDonGia, ctlt.soHieuThuoc
 	FROM Thuoc t
 	JOIN DonGiaThuoc dg ON t.maThuoc = dg.maThuoc
-	LEFT JOIN ChiTietKhuyenMai ctkm ON t.maThuoc = ctkm.maThuoc
-	LEFT JOIN ChiTietLoThuoc ctlt ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
+	LEFT JOIN ChiTietLoThuoc ctlt ON dg.maDonGia = ctlt.maDonGia 
+	LEFT JOIN ChiTietKhuyenMai ctkm ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
 	WHERE dg.trangThai = 1
 	ORDER BY ctkm.tyLeKhuyenMai DESC
