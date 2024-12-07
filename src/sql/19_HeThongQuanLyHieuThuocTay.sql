@@ -10,6 +10,7 @@ CREATE TABLE ChucVu (
 	maChucVu SMALLINT PRIMARY KEY NOT NULL,
 	tenChucVu NVARCHAR(50) NOT NULL
 );
+GO
 
 -- Bảng NhanVien
 CREATE TABLE NhanVien (
@@ -25,7 +26,7 @@ CREATE TABLE NhanVien (
     trangThai BIT NOT NULL,
     FOREIGN KEY (vaiTro) REFERENCES ChucVu(maChucVu)
 );
-
+GO
 
 -- Bảng TaiKhoan
 CREATE TABLE TaiKhoan (
@@ -34,7 +35,7 @@ CREATE TABLE TaiKhoan (
     ngayCapNhat DATE,
     FOREIGN KEY (taiKhoan) REFERENCES NhanVien(maNV)
 );
-
+GO
 
 -- Bảng DiemTichLuy
 CREATE TABLE DiemTichLuy (
@@ -43,6 +44,7 @@ CREATE TABLE DiemTichLuy (
 	diemTong FLOAT NOT NULL,
 	diemHienTai FLOAT NOT NULL
 );
+GO
 
 -- Bảng KhachHang
 CREATE TABLE KhachHang (
@@ -58,7 +60,7 @@ CREATE TABLE KhachHang (
 	maDTL VARCHAR(20),
 	FOREIGN KEY (maDTL) REFERENCES DiemTichLuy(maDTL)
 );
-
+GO
 
 -- Bảng Thue
 CREATE TABLE Thue (
@@ -66,6 +68,7 @@ CREATE TABLE Thue (
     loaiThue NVARCHAR(50) NOT NULL,
     tyLeThue FLOAT(10) NOT NULL
 );
+GO
 
 -- Bảng NhaCungCap
 CREATE TABLE NhaCungCap (
@@ -74,12 +77,14 @@ CREATE TABLE NhaCungCap (
     diaChi NVARCHAR(255),
     email VARCHAR(50)
 );
+GO
 
 -- Bảng DanhMuc
 CREATE TABLE DanhMuc (
     maDanhMuc VARCHAR(20) NOT NULL PRIMARY KEY,
     tenDanhMuc NVARCHAR(50)
 );
+GO
 
 -- Bảng NhaSanXuat
 CREATE TABLE NhaSanXuat (
@@ -87,6 +92,7 @@ CREATE TABLE NhaSanXuat (
     tenNhaSX NVARCHAR(50),
     diaChi NVARCHAR(255)
 );
+GO
 
 -- Bảng KeThuoc
 CREATE TABLE KeThuoc (
@@ -95,12 +101,14 @@ CREATE TABLE KeThuoc (
     maNhanVien VARCHAR(20),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV)
 );
+GO
 
 -- Bảng NuocSanXuat
 CREATE TABLE NuocSanXuat (
     maNuoc VARCHAR(20) NOT NULL PRIMARY KEY,
 	tenNuoc NVARCHAR(50) NOT NULL
 );
+GO
 
 -- Bảng DonGiaThuoc
 CREATE TABLE DonGiaThuoc (
@@ -109,7 +117,8 @@ CREATE TABLE DonGiaThuoc (
 	donViTinh NVARCHAR(50) NOT NULL,
 	donGia FLOAT(10), 
 	trangThai BIT
-)
+);
+GO
 
 
 -- Bảng Thuoc (Sản phẩm thuốc)
@@ -138,7 +147,7 @@ CREATE TABLE Thuoc (
     FOREIGN KEY (maKe) REFERENCES KeThuoc(maKe),
 	FOREIGN KEY (maNuocSanXuat) REFERENCES NuocSanXuat(maNuoc),
 );
-
+GO
 
 -- Bảng PhieuNhapThuoc
 CREATE TABLE PhieuNhapThuoc (
@@ -150,6 +159,7 @@ CREATE TABLE PhieuNhapThuoc (
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
     FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC)
 );
+GO
 
 -- Bảng ChiTietPhieuNhap
 CREATE TABLE ChiTietPhieuNhap (
@@ -165,7 +175,7 @@ CREATE TABLE ChiTietPhieuNhap (
     FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
     FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
-
+GO
 
 -- Bảng LoThuoc
 CREATE TABLE LoThuoc (
@@ -175,6 +185,7 @@ CREATE TABLE LoThuoc (
 	tongTien FLOAT(10)
 	FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
 )
+GO
 
 -- Bảng ChiTietLoThuoc
 CREATE TABLE ChiTietLoThuoc (
@@ -185,11 +196,12 @@ CREATE TABLE ChiTietLoThuoc (
 	HSD DATE not null,
 	soLuongCon INT not null,
 	maDonGia VARCHAR(20),
+	trangThaiXem INT DEFAULT 1
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
 	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 	FOREIGN KEY (maLoThuoc) REFERENCES LoThuoc(maLoThuoc)
 )
-
+GO
 
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
@@ -202,11 +214,11 @@ CREATE TABLE HoaDon (
 	trangThai bit,
     tienThue FLOAT(10),
     tongTien FLOAT(10),
-    FOREIGN KEY (maKhachHang) REFERENC ES KhachHang(maKH),
+    FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
     FOREIGN KEY (maThue) REFERENCES Thue(maThue)
 );
-
+GO
 
 -- Bảng ChiTietHoaDon
 CREATE TABLE ChiTietHoaDon (
@@ -220,7 +232,7 @@ CREATE TABLE ChiTietHoaDon (
     FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
-
+GO
 
 -- Bảng DoiTra
 CREATE TABLE PhieuDoiTra (
@@ -233,6 +245,8 @@ CREATE TABLE PhieuDoiTra (
 	FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
 	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV)
 );
+GO
+
 -- Bảng DonDatThuoc
 CREATE TABLE DonDatThuoc (
     maDon VARCHAR(20) NOT NULL PRIMARY KEY,
@@ -243,6 +257,7 @@ CREATE TABLE DonDatThuoc (
     FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV)
 );
+GO
 
 -- Bảng ChiTietDonDatThuoc
 CREATE TABLE ChiTietDonDatThuoc (
@@ -257,7 +272,7 @@ CREATE TABLE ChiTietDonDatThuoc (
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
-
+GO
 
 
 -- Bảng ChuongTrinhKhuyenMai
@@ -268,6 +283,7 @@ CREATE TABLE ChuongTrinhKhuyenMai (
     ngayBatDau DATE,
     ngayKetThuc DATE
 );
+GO
 
 -- Bảng ChiTietKhuyenMai
 CREATE TABLE ChiTietKhuyenMai (
@@ -281,6 +297,7 @@ CREATE TABLE ChiTietKhuyenMai (
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
+GO
 
 -- Bảng ChiTietPhieuDoiTra
 CREATE TABLE ChiTietPhieuDoiTra (
@@ -293,8 +310,7 @@ CREATE TABLE ChiTietPhieuDoiTra (
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
-
-
+GO
 
 
 ---- Thêm dữ liệu
@@ -467,6 +483,38 @@ VALUES
 ('SH009', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
 ('SH010', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
 ('SH011', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH012', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH013', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH014', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH015', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH016', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH017', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2024-12-30'),
+('SH018', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH019', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH020', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH021', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH022', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH023', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH024', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2024-12-1'),
+('SH025', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH026', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH027', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH028', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH029', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH030', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-1'),
+('SH031', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
 
 
 -- Bảng HoaDon
@@ -1627,3 +1675,79 @@ END
 GO
 
 
+-- bảng view Thuoc Het Han
+CREATE TABLE ThuocHetHan (
+    soHieuThuoc NVARCHAR(50) PRIMARY KEY,
+    tenThuoc NVARCHAR(255),
+    hinhAnh VARCHAR(MAX),
+    ngaySX DATE,
+    HSD DATE,
+    soLuongCon INT,
+    donGia FLOAT,
+    thongBaoTieuDe NVARCHAR(255),
+    thongBaoNoiDung NVARCHAR(MAX),
+    thoiGianThongBao DATE,
+    trangThaiXem BIT DEFAULT 1
+);
+GO
+
+
+CREATE TRIGGER trg_InsertThuocHetHan
+ON ThuocHetHan
+AFTER INSERT
+AS
+BEGIN
+    BEGIN TRY
+        -- Chèn dữ liệu vào bảng ThuocHetHan nếu thỏa mãn điều kiện "sắp hết hạn"
+        INSERT INTO ThuocHetHan (soHieuThuoc, tenThuoc, hinhAnh, ngaySX, HSD, soLuongCon, donGia, thongBaoTieuDe, thongBaoNoiDung, thoiGianThongBao, trangThaiXem)
+        SELECT
+            c.soHieuThuoc,
+            t.tenThuoc,
+            t.hinhAnh,
+            c.ngaySX,
+            c.HSD,
+            c.soLuongCon,
+            dg.donGia,
+            N'Thuốc sắp hết hạn',
+            N'Thuốc ' + t.tenThuoc + N' sắp hết hạn sử dụng, (còn ' + CAST(DATEDIFF(DAY, GETDATE(), c.HSD) AS NVARCHAR) + N' ngày)',
+            c.HSD,
+            1
+        FROM ChiTietLoThuoc c
+        JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
+        JOIN Thuoc t ON dg.maThuoc = t.maThuoc
+        WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0
+        AND NOT EXISTS (
+            SELECT 1
+            FROM ThuocHetHan th
+            WHERE th.soHieuThuoc = c.soHieuThuoc
+        );
+
+    END TRY
+    BEGIN CATCH
+        PRINT 'Error: ' + ERROR_MESSAGE();
+    END CATCH
+END;
+GO
+
+-- danh sách thông báo thuốc hết hạn
+CREATE PROCEDURE getDSThongBaoThuocHetHan
+AS 
+BEGIN 
+	SELECT
+		c.soHieuThuoc,
+		t.tenThuoc,
+		t.hinhAnh,
+		c.ngaySX,
+		c.HSD,
+		c.soLuongCon,
+		dg.donGia,
+		N'Thuốc sắp hết hạn' AS thongBaoTieuDe,
+		N'Thuốc ' + t.tenThuoc + N' sắp hết hạn sử dụng, (còn ' + CAST(DATEDIFF(DAY, GETDATE(), c.HSD) AS NVARCHAR) + N' ngày)' AS thongBaoNoiDung,
+		c.HSD AS thoiGianThongBao, 
+		c.trangThaiXem
+	FROM ChiTietLoThuoc c
+	JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
+	JOIN Thuoc t ON dg.maThuoc = t.maThuoc
+	WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0
+END
+GO

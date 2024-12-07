@@ -331,6 +331,34 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         }
     }
 
+
+    // hàm truy với thông tin chi tiết lô thuốc
+    public void truyThongTinCTLoThuoc(String soHieuThuoc) {
+        ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoSoHieuThuoc(soHieuThuoc);
+        String maLoThuoc = chiTietLoThuoc.getLoThuoc().getMaLoThuoc();
+
+        for (int i = 0; i < modelLT.getRowCount(); i++) {
+            String maLTCheck = modelLT.getValueAt(i, 0).toString();
+            if (maLTCheck.equals(maLoThuoc)) {
+                tableLT.setRowSelectionInterval(i, i);
+                Rectangle cellRect = tableLT.getCellRect(i, 0, true);
+                tableLT.scrollRectToVisible(cellRect);
+                break;
+            }
+        }
+
+        for (int i = 0; i < modelChiTiet.getRowCount(); i++) {
+            String SHT = modelChiTiet.getValueAt(i, 1).toString();
+            if (SHT.equals(chiTietLoThuoc.getSoHieuThuoc())) {
+                tableChiTiet.setRowSelectionInterval(i, i);
+                Rectangle cellRect = tableChiTiet.getCellRect(i, 0, true);
+                tableChiTiet.scrollRectToVisible(cellRect);
+                break;
+            }
+        }
+    }
+
+
     public class DateTimeLabelFormatter  extends JFormattedTextField.AbstractFormatter {
 
         private String datePattern = "dd-MM-yyyy";
