@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static connectDB.ConnectDB.getConnection;
 
@@ -32,7 +34,7 @@ public class HoaDon_DAO {
         getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from HoaDon where trangThai = 1";
+        String sql = "select * from HoaDon where trangThai = 1 order by ngayLap";
         ps = getConnection().prepareStatement(sql);
         rs = ps.executeQuery();
         while(rs.next()){
@@ -94,7 +96,7 @@ public class HoaDon_DAO {
 
             statement.setString(3, hoaDon.getNhanVien().getMaNV());
             statement.setString(4, hoaDon.getThue().getMaThue());
-            statement.setDate(5, new java.sql.Date(hoaDon.getNgayLap().getTime()));
+            statement.setDate(5, new Date(hoaDon.getNgayLap().getTime()));
 
             statement.setString(6, hoaDon.getHinhThucThanhToan());
             statement.setBoolean(7, hoaDon.isTrangThai());
@@ -327,20 +329,16 @@ public class HoaDon_DAO {
         ResultSet rs = null;
 
         try {
-            // Chuẩn bị callable statement để gọi thủ tục
-            String sql = "{call getDanhSachHoaDonByYear(?)}";
+            String sql = "{CALL getDanhSachHoaDonByYear(?)}";
             callableStatement = connection.prepareCall(sql);
             callableStatement.setInt(1, nam);
 
-            // Thực thi thủ tục và lấy kết quả
             rs = callableStatement.executeQuery();
 
-            // Xử lý kết quả trả về từ ResultSet
             while (rs.next()) {
                 HoaDon hd = new HoaDon();
                 hd.setMaHD(rs.getString("maHD"));
 
-                // Lấy thông tin khách hàng từ bảng KhachHang
                 khachHang_dao = new KhachHang_DAO();
                 KhachHang kh = new KhachHang();
                 if(rs.getString("maKhachHang") == null) {
@@ -351,28 +349,21 @@ public class HoaDon_DAO {
                 }
                 hd.setKhachHang(kh);
 
-                // Lấy thông tin nhân viên từ bảng NhanVien
                 NhanVien nv = new NhanVien_DAO().getNVTheoMaNV(rs.getString("maNhanVien"));
                 hd.setNhanVien(nv);
 
-                // Lấy thông tin thuế từ bảng Thue
                 Thue thue = new Thue_DAO().timThue(rs.getString("maThue"));
                 hd.setThue(thue);
 
-                // Lấy thông tin ngày lập, hình thức thanh toán, trạng thái, và các thông tin khác
                 hd.setNgayLap(rs.getDate("ngayLap"));
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                // Thêm hóa đơn vào danh sách
-                if(timHoaDon(hd.getMaHD()) == null) {
-                    danhSachHoaDon.add(hd);
-                }
+                danhSachHoaDon.add(hd);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Đảm bảo đóng tất cả tài nguyên
             try {
                 if (rs != null) rs.close();
                 if (callableStatement != null) callableStatement.close();
@@ -394,19 +385,16 @@ public class HoaDon_DAO {
         ResultSet rs = null;
 
         try {
-            // Chuẩn bị CallableStatement để gọi thủ tục
             String sql = "{call getDanhSachHoaDonTheoThangTrongNam(?, ?)}";
             callableStatement = connection.prepareCall(sql);
             callableStatement.setInt(1, nam);
             callableStatement.setInt(2, thang);
 
-            // Thực thi và xử lý kết quả
             rs = callableStatement.executeQuery();
             while (rs.next()) {
                 HoaDon hd = new HoaDon();
                 hd.setMaHD(rs.getString("maHD"));
 
-                // Lấy các thông tin khác từ ResultSet
                 khachHang_dao = new KhachHang_DAO();
                 KhachHang kh = new KhachHang();
                 if(rs.getString("maKhachHang") == null) {
@@ -427,9 +415,7 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                if(timHoaDon(hd.getMaHD()) == null) {
-                    danhSachHoaDon.add(hd);
-                }
+                danhSachHoaDon.add(hd);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -487,9 +473,7 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                if(timHoaDon(hd.getMaHD()) == null) {
-                    danhSachHoaDon.add(hd);
-                }
+                danhSachHoaDon.add(hd);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -651,4 +635,144 @@ public class HoaDon_DAO {
         String hoaDonID = "HD" + timePart + randomPart;
         return hoaDonID;
     }
+
+
+    // báo cáo doanh thu theo ngày trong năm
+    public List<Map<String, Object>> getBaoCaoDoanhThuTheoNgayCuaThangTrongNam(int nam, int thang) {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        String sql = "{CALL sp_BaoCaoDoanhThuTheoNgayTrongThang(?, ?)}";
+
+        try (Connection conn = getConnection();
+            CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setInt(1, nam);
+            stmt.setInt(2, thang);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("Ngay", rs.getDate("Ngay"));
+                    row.put("SoHoaDon", rs.getInt("SoHoaDon"));
+                    row.put("TongDoanhThu", rs.getDouble("TongDoanhThu"));
+                    row.put("MucTangNgayTruoc", rs.getString("MucTangNgayTruoc"));
+                    row.put("MucTangNgaySau", rs.getString("MucTangNgaySau"));
+                    dsBaoCao.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dsBaoCao;
+    }
+
+    public List<Map<String, Object>> getBaoCaoDoanhThuTheoThang(int nam, int thang) {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        String sql = "{call sp_BaoCaoDoanhThuTheoThangTrongNam(?, ?)}";
+
+        try (Connection conn = getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setInt(1, nam);
+            stmt.setInt(2, thang);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("Nam", rs.getInt("Nam"));
+                    row.put("Thang", rs.getInt("Thang"));
+                    row.put("TongDoanhThu", rs.getDouble("TongDoanhThu"));
+                    row.put("SoHoaDon", rs.getInt("SoHoaDon"));
+                    row.put("MucTangGiamThangTruoc", rs.getString("MucTangGiamThangTruoc"));
+                    row.put("MucTangGiamThangSau", rs.getString("MucTangGiamThangSau"));
+                    dsBaoCao.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dsBaoCao;
+    }
+
+
+    public List<Map<String, Object>> getBaoCaoDoanhThuTheoNam(int nam) {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        String sql = "{call sp_BaoCaoDoanhThuTheoNam(?)}";
+
+        try (Connection conn = getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setInt(1, nam);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("Nam", rs.getInt("Nam"));
+                    row.put("TongDoanhThu", rs.getDouble("TongDoanhThu"));
+                    row.put("SoHoaDon", rs.getInt("SoHoaDon"));
+                    row.put("MucTangNamTruoc", rs.getString("MucTangNamTruoc"));
+                    row.put("MucTangNamSau", rs.getString("MucTangNamSau"));
+                    dsBaoCao.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dsBaoCao;
+    }
+
+
+    public ArrayList<HoaDon> getDSHoaDonByKhachHang(String maKH) throws SQLException {
+        ArrayList<HoaDon> hoaDonList = new ArrayList<>();
+        String sql = "SELECT * FROM HoaDon WHERE trangThai = 1 AND maKhachHang = ? ORDER BY ngayLap";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, maKH);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                KhachHang_DAO khachHangDAO = new KhachHang_DAO();
+                NhanVien_DAO nhanVienDAO = new NhanVien_DAO();
+                Thue_DAO thueDAO = new Thue_DAO();
+
+                while (rs.next()) {
+                    HoaDon hoaDon = new HoaDon();
+                    hoaDon.setMaHD(rs.getString("maHD"));
+
+                    // Lấy thông tin khách hàng
+                    String maKhachHang = rs.getString("maKhachHang");
+                    KhachHang khachHang = null;
+                    if (maKhachHang == null) {
+                        khachHang.setHoKH("");
+                        khachHang.setTenKH("Khách hàng lẻ");
+                    } else {
+                        khachHang = khachHangDAO.timKhachHang(maKhachHang);
+                    }
+                    hoaDon.setKhachHang(khachHang);
+
+                    // Lấy thông tin nhân viên
+                    String maNhanVien = rs.getString("maNhanVien");
+                    NhanVien nhanVien = nhanVienDAO.getNVTheoMaNV(maNhanVien);
+                    hoaDon.setNhanVien(nhanVien);
+
+                    // Lấy thông tin thuế
+                    String maThue = rs.getString("maThue");
+                    Thue thue = thueDAO.timThue(maThue);
+                    hoaDon.setThue(thue);
+
+                    // Gán các thông tin khác
+                    hoaDon.setNgayLap(rs.getDate("ngayLap"));
+                    hoaDon.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
+                    hoaDon.setTrangThai(rs.getBoolean("trangThai"));
+
+                    // Thêm hóa đơn vào danh sách
+                    hoaDonList.add(hoaDon);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return hoaDonList;
+    }
+
+
 }

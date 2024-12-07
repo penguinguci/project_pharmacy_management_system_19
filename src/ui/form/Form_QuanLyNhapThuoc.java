@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -99,7 +101,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         txtTimKiem.setPreferredSize(new Dimension(400, 30));
 
         btnTimKiemDon = new JButton("Tìm kiếm");
-        btnTimKiemDon.setBackground(new Color(65, 192, 201));
+        btnTimKiemDon.setBackground(new Color(0, 102, 204));
         btnTimKiemDon.setForeground(Color.WHITE);
         btnTimKiemDon.setOpaque(true);
         btnTimKiemDon.setFocusPainted(false);
@@ -126,6 +128,8 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         tablePN = new JTable(modelPN);
         tablePN.setRowHeight(30);
         tablePN.setFont(new Font("Arial", Font.PLAIN, 13));
+        tablePN.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tablePN.getTableHeader().setReorderingAllowed(false);
 
         scrollPN = new JScrollPane(tablePN);
 
@@ -147,6 +151,8 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         tableChiTiet = new JTable(modelChiTiet);
         tableChiTiet.setRowHeight(30);
         tableChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
+        tableChiTiet.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tableChiTiet.getTableHeader().setReorderingAllowed(false);
 
         scrollChiTiet = new JScrollPane(tableChiTiet);
 
@@ -181,7 +187,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         btnXemHD.setFocusPainted(false);
         btnXemHD.setBorderPainted(false);
         btnXemHD.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXemHD.setPreferredSize(new Dimension(140, 34));
+        btnXemHD.setPreferredSize(new Dimension(135, 35));
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -189,9 +195,9 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         ImageIcon scaledIconLamMoi = new ImageIcon(scaledImageLamMoi);
 
         btnLamMoi = new JButton("Làm mới", scaledIconLamMoi);
-        btnLamMoi.setPreferredSize(new Dimension(120, 34));
-        btnLamMoi.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setPreferredSize(new Dimension(120, 35));
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
@@ -303,6 +309,28 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
             tablePN.clearSelection();
             modelChiTiet.setRowCount(0);
             txtTimKiem.setText("");
+        } else if (o == btnXemHD) {
+            int row = tablePN.getSelectedRow();
+            if (row >= 0) {
+                String maPN = modelPN.getValueAt(row, 0).toString();
+                String fileName = maPN + ".pdf";
+                String filePath = "PhieuNhap_PDF\\" + fileName;
+                openPDF(filePath);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn muốn xem!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void openPDF(String filePath) {
+        try {
+            File pdfFile = new File(filePath);
+            if (pdfFile.exists()) {
+                Desktop.getDesktop().open(pdfFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

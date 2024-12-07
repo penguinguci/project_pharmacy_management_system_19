@@ -129,20 +129,26 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         // Nút chức năng
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         btnTimKiem = new JButton("Tìm kiếm");
-        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
         btnTimKiem.setBackground(new Color(0, 102, 204));
-        btnTimKiem.setFocusPainted(false);
         btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
         btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
         btnTimKiem.setBorderPainted(false);
+        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.setMaximumSize(new Dimension(100, 30));
+        btnTimKiem.setMinimumSize(new Dimension(100, 30));
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setBackground(new Color(251, 185, 91));
+        btnLamMoi.setBackground(new Color(65, 192, 201));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.setMaximumSize(new Dimension(100, 30));
+        btnLamMoi.setMinimumSize(new Dimension(100, 30));
 
 
         buttonPanel.add(btnTimKiem);
@@ -161,6 +167,9 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         tblChuongTrinhKhuyenMai = new JTable(modelChuongTrinhKM);
         tblChuongTrinhKhuyenMai.setRowHeight(30);
         tblChuongTrinhKhuyenMai.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblChuongTrinhKhuyenMai.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblChuongTrinhKhuyenMai.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane promoScrollPane = new JScrollPane(tblChuongTrinhKhuyenMai);
         promoScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách chương trình khuyến mãi"));
 

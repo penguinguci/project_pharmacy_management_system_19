@@ -1,13 +1,18 @@
 package ui.form;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import dao.*;
 import entity.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -15,7 +20,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -23,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelectionListener {
     private JComboBox<String> cbbNhaCungCap, cbbThuoc, cbbDonViTinh;
@@ -41,6 +49,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
     private NhanVien nhanVienDN;
     private JDatePickerImpl datePickerNgaySanXuat, datePickerNgayHetHan;
     private UtilDateModel modelNgaySanXuat, modelNgayHetHan;
+    private List<Object[]> tempData = new ArrayList<>();
 
     public Form_NhapThuoc() throws Exception {
         // khởi tạo
@@ -185,36 +194,36 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
         Dimension btnInputSize = new Dimension(100, 30);
         btnThem.setPreferredSize(btnInputSize);
-        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
         btnThem.setBackground(new Color(0, 102, 204));
-        btnThem.setFocusPainted(false);
         btnThem.setForeground(Color.WHITE);
         btnThem.setOpaque(true);
+        btnThem.setFocusPainted(false);
         btnThem.setBorderPainted(false);
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
 
         btnXoa.setPreferredSize(btnInputSize);
-        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXoa.setBackground(new Color(204, 0, 0));
+        btnXoa.setBackground(new Color(0, 102, 204));
         btnXoa.setForeground(Color.WHITE);
         btnXoa.setOpaque(true);
         btnXoa.setFocusPainted(false);
         btnXoa.setBorderPainted(false);
+        btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
 
         btnCapNhat.setPreferredSize(btnInputSize);
-        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
-        btnCapNhat.setBackground(new Color(212, 112, 236));
+        btnCapNhat.setBackground(new Color(0, 102, 204));
         btnCapNhat.setForeground(Color.WHITE);
         btnCapNhat.setOpaque(true);
         btnCapNhat.setFocusPainted(false);
         btnCapNhat.setBorderPainted(false);
+        btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
 
         btnLamMoiInput.setPreferredSize(btnInputSize);
-        btnLamMoiInput.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoiInput.setBackground(new Color(251, 185, 91));
+        btnLamMoiInput.setBackground(new Color(0, 102, 204));
         btnLamMoiInput.setForeground(Color.WHITE);
         btnLamMoiInput.setOpaque(true);
         btnLamMoiInput.setFocusPainted(false);
         btnLamMoiInput.setBorderPainted(false);
+        btnLamMoiInput.setFont(new Font("Arial", Font.BOLD, 13));
 
         pnlInputButtons.add(btnThem);
         pnlInputButtons.add(Box.createHorizontalStrut(15));
@@ -239,7 +248,10 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         modelChiTietThuoc = new DefaultTableModel(columnNames,  0);
         tblChiTietThuoc = new JTable(modelChiTietThuoc);
         tblChiTietThuoc.setRowHeight(25);
-        tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        tblChiTietThuoc.setFont(new Font("Arial", Font.PLAIN, 13));
+        tblChiTietThuoc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tblChiTietThuoc.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane scrollPane = new JScrollPane(tblChiTietThuoc);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết thuốc nhập"));
 
@@ -411,7 +423,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 String ngaySXFormatted = dateFormat.format(ngaySX);
                 String ngayHHFormatted = dateFormat.format(ngayHH);
-                modelChiTietThuoc.addRow(new Object[]{
+                Object[] row = new Object[]{
                         thuoc.getMaThuoc(),
                         thuoc.getTenThuoc(),
                         nhaCungCap,
@@ -422,7 +434,8 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                         String.format("%,.0f", giaNhap) + "đ",
                         String.format("%,.0f", giaBan) + "đ",
                         String.format("%,.0f", thanhTien) + "đ"
-                });
+                };
+                modelChiTietThuoc.addRow(row);
                 lamMoiThongTinNhap();
             }
         } else if (o == btnNhapThuoc) {
@@ -597,6 +610,11 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 if (phieuNhapDuocTao && chiTietPhieuNhapDuocTao && loThuocDuocTao && chiTietLoDuocTao) {
                     JOptionPane.showMessageDialog(this, "Nhập thuốc từ nhà cung cấp thành công!");
 
+                    // in phiếu nhập
+                    PhieuNhapPrinter printer = new PhieuNhapPrinter(phieuNhapThuoc, dsCTPN, loThuoc, dsCTLoThuoc);
+                    printer.printPhieuNhap();
+                    printer.printLoThuoc();
+
                     // cập nhật số lượng lô cũ vào lô mới nếu lô cũ chưa hết hạn
                     if (donGiaThuocCheck != null) {
                         ChiTietLoThuoc chiTietLoThuocCu = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuocCheck.getMaDonGia(), thuoc.getMaThuoc());
@@ -624,6 +642,465 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
             }
         }
     }
+
+
+    // in phiếu nhập
+    public class PhieuNhapPrinter {
+        private PhieuNhapThuoc phieuNhapThuoc;
+        private ArrayList<ChiTietPhieuNhap> dsChiTietPhieuNhap;
+        private LoThuoc loThuoc;
+        private ArrayList<ChiTietLoThuoc> dsChiTietLoThuoc;
+
+        public PhieuNhapPrinter(PhieuNhapThuoc phieuNhapThuoc, ArrayList<ChiTietPhieuNhap> dsChiTietPhieuNhap, LoThuoc loThuoc, ArrayList<ChiTietLoThuoc> dsChiTietLoThuoc) {
+            this.phieuNhapThuoc = phieuNhapThuoc;
+            this.dsChiTietPhieuNhap = dsChiTietPhieuNhap;
+            this.loThuoc = loThuoc;
+            this.dsChiTietLoThuoc = dsChiTietLoThuoc;
+        }
+
+        public void printPhieuNhap() {
+            try (PDDocument document = new PDDocument()) {
+                PDPage page = new PDPage();
+                document.addPage(page);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                    // font
+                    PDType0Font headerfont = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Bold.ttf"));
+                    PDType0Font font = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Light.ttf"));
+                    PDType0Font fontOther = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Regular.ttf"));
+                    PDType0Font fontItalic = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-MediumItalic.ttf"));
+
+                    // lấy chiều dài trang
+                    float pageWidth = page.getMediaBox().getWidth();
+
+                    // định dạng biến vị trí
+                    float xPosition, yPosition = 750;
+                    float lineSpacing = 20;
+
+                    // thông tin
+                    String tenNhaThuoc = "NHÀ THUỐC BVD";
+                    String diaChi = "12 Nguyễn Văn Bảo, Phường 4, Q. Gò Vấp, TP Hồ Chí Minh";
+                    String email = "nhathuocbvd@gmail.com";
+                    String sdt = "Hotline: 0915020803";
+
+                    contentStream.setFont(headerfont, 15);
+                    float textWidth = font.getStringWidth(tenNhaThuoc) / 1000 * 15;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(tenNhaThuoc);
+                    contentStream.endText();
+
+                    // địa chỉ
+                    contentStream.setFont(font, 12);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(diaChi) / 1000 * 12;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(diaChi);
+                    contentStream.endText();
+
+                    // gmail
+                    contentStream.setFont(headerfont, 11);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(email) / 1000 * 11;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(email);
+                    contentStream.endText();
+
+                    // sdt
+                    contentStream.setFont(headerfont, 11);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(sdt) / 1000 * 11;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(sdt);
+                    contentStream.endText();
+
+                    // tiêu đề
+                    contentStream.setFont(headerfont, 16);
+                    yPosition -= 35;
+                    String headerText = "PHIẾU NHẬP THUỐC";
+                    textWidth = headerfont.getStringWidth(headerText) / 1000 * 16;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(headerText);
+                    contentStream.endText();
+
+                    // ngày, đơn hàng, thu ngân
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    String ngayLapFormatted = dateFormat.format(phieuNhapThuoc.getNgayLapPhieu());
+                    yPosition -= 30;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.showText("NGÀY: " + ngayLapFormatted);
+                    contentStream.endText();
+
+                    yPosition -= 20;
+                    contentStream.setFont(headerfont, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("PHIẾU NHẬP: " + phieuNhapThuoc.getMaPhieuNhap());
+                    contentStream.endText();
+
+                    yPosition -= 20;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("NHÂN VIÊN: " + phieuNhapThuoc.getNhanVien().getHoNV() + " " + phieuNhapThuoc.getNhanVien().getTenNV());
+                    contentStream.endText();
+
+                    yPosition -= 20;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("NHÀ CUNG CẤP: " + phieuNhapThuoc.getNhaCungCap().getTenNCC());
+                    contentStream.endText();
+
+
+                    // header cho chi tiết
+                    yPosition -= 30;
+                    contentStream.setFont(headerfont, 13);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("CHI TIẾT PHIẾU NHẬP:");
+                    contentStream.endText();
+
+                    // header bảng
+                    yPosition -= 20;
+                    contentStream.setFont(headerfont, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("Tên Thuốc           Ngày sản xuất   Ngày hết hạn    Đơn vị tính    Số lượng     Giá nhập       Thành Tiền");
+                    contentStream.endText();
+
+                    // đường ngang sau header
+                    yPosition -= 10;
+                    contentStream.moveTo(45, yPosition);
+                    contentStream.lineTo(pageWidth - 45, yPosition);
+                    contentStream.stroke();
+
+                    // font cho các dòng
+                    contentStream.setFont(fontOther, 12);
+                    NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+                    currencyFormat.setMinimumFractionDigits(0);
+                    currencyFormat.setMaximumFractionDigits(0);
+
+                    double tongTienTemp = 0;
+                    SimpleDateFormat ngayFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+                    for (ChiTietPhieuNhap ct : dsChiTietPhieuNhap) {
+                        String tenThuoc = ct.getThuoc().getTenThuoc();
+                        if (tenThuoc.length() > 30) {
+                            tenThuoc = tenThuoc.substring(0, 20) + "...";
+                        }
+
+                        String ngaySX = ngayFormat.format(ct.getNgaySX());
+                        String ngayHH = ngayFormat.format(ct.getHSD());
+                        String donViTinh = ct.getDonViTinh();
+                        String soLuongNhap = String.valueOf(ct.getSoLuongNhap());
+                        String donGiaNhap = currencyFormat.format(ct.getDonGiaNhap()) + "đ";
+                        String thanhTien = currencyFormat.format(ct.tinhThanhTien()) + "đ";
+
+
+                        yPosition -= 15; // Cách dòng
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(45, yPosition);
+
+                        contentStream.showText(tenThuoc);
+                        contentStream.newLineAtOffset(94, 0);
+                        contentStream.showText(ngaySX);
+                        contentStream.newLineAtOffset(84, 0);
+                        contentStream.showText(ngayHH);
+                        contentStream.newLineAtOffset(98, 0);
+                        contentStream.showText(donViTinh);
+                        contentStream.newLineAtOffset(66, 0);
+                        contentStream.showText(soLuongNhap);
+                        contentStream.newLineAtOffset(50, 0);
+                        contentStream.showText(donGiaNhap);
+                        contentStream.newLineAtOffset(70, 0);
+                        contentStream.showText(thanhTien);
+
+                        contentStream.endText();
+
+                        // đường ngang giữa các dòng
+                        yPosition -= 10;
+                        contentStream.moveTo(45, yPosition);
+                        contentStream.lineTo(pageWidth - 45, yPosition);
+                        contentStream.stroke();
+
+                        tongTienTemp += ct.tinhThanhTien();
+                    }
+
+
+                    yPosition -= 30;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.setFont(headerfont, 13);
+                    contentStream.showText("Tổng Tiền: ");
+                    contentStream.newLineAtOffset(460, 0);
+                    contentStream.showText(currencyFormat.format(tongTienTemp) + "đ");
+                    contentStream.endText();
+
+
+                    // cảm ơn
+                    contentStream.setFont(fontItalic, 12);
+                    yPosition -= 50;
+                    String thankText = "BVD cảm ơn bạn!!! ^_^";
+                    textWidth = fontItalic.getStringWidth(headerText) / 1000 * 16;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(thankText);
+                    contentStream.endText();
+
+                }
+
+                // lưu và mở pdf
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String fileName = phieuNhapThuoc.getMaPhieuNhap() + ".pdf";
+                String filePath = "PhieuNhap_PDF\\" + fileName;
+                document.save(filePath);
+                openPDF(filePath);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void printLoThuoc() {
+            try (PDDocument document = new PDDocument()) {
+                PDPage page = new PDPage();
+                document.addPage(page);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                    // font
+                    PDType0Font headerfont = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Bold.ttf"));
+                    PDType0Font font = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Light.ttf"));
+                    PDType0Font fontOther = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Regular.ttf"));
+                    PDType0Font fontItalic = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-MediumItalic.ttf"));
+
+                    // lấy chiều dài trang
+                    float pageWidth = page.getMediaBox().getWidth();
+
+                    // định dạng biến vị trí
+                    float xPosition, yPosition = 750;
+                    float lineSpacing = 20;
+
+                    // thông tin
+                    String tenNhaThuoc = "NHÀ THUỐC BVD";
+                    String diaChi = "12 Nguyễn Văn Bảo, Phường 4, Q. Gò Vấp, TP Hồ Chí Minh";
+                    String email = "nhathuocbvd@gmail.com";
+                    String sdt = "Hotline: 0915020803";
+
+                    contentStream.setFont(headerfont, 15);
+                    float textWidth = font.getStringWidth(tenNhaThuoc) / 1000 * 15;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(tenNhaThuoc);
+                    contentStream.endText();
+
+                    // địa chỉ
+                    contentStream.setFont(font, 12);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(diaChi) / 1000 * 12;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(diaChi);
+                    contentStream.endText();
+
+                    // gmail
+                    contentStream.setFont(headerfont, 11);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(email) / 1000 * 11;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(email);
+                    contentStream.endText();
+
+                    // sdt
+                    contentStream.setFont(headerfont, 11);
+                    yPosition -= lineSpacing;
+                    textWidth = font.getStringWidth(sdt) / 1000 * 11;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(sdt);
+                    contentStream.endText();
+
+                    // tiêu đề
+                    contentStream.setFont(headerfont, 16);
+                    yPosition -= 35;
+                    String headerText = "LÔ THUỐC";
+                    textWidth = headerfont.getStringWidth(headerText) / 1000 * 16;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(headerText);
+                    contentStream.endText();
+
+                    // ngày, đơn hàng, thu ngân
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    String ngayLapFormatted = dateFormat.format(loThuoc.getNgayNhapThuoc());
+                    yPosition -= 30;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.showText("NGÀY: " + ngayLapFormatted);
+                    contentStream.endText();
+
+                    yPosition -= 20;
+                    contentStream.setFont(headerfont, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("LÔ THUỐC: " + loThuoc.getMaLoThuoc());
+                    contentStream.endText();
+
+                    yPosition -= 20;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("NHÂN VIÊN: " + phieuNhapThuoc.getNhanVien().getHoNV() + " " + phieuNhapThuoc.getNhanVien().getTenNV());
+                    contentStream.endText();
+
+                    yPosition -= 20;
+                    contentStream.setFont(fontOther, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("NHÀ CUNG CẤP: " + phieuNhapThuoc.getNhaCungCap().getTenNCC());
+                    contentStream.endText();
+
+
+                    // header cho chi tiết
+                    yPosition -= 30;
+                    contentStream.setFont(headerfont, 13);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("CHI TIẾT LÔ THUỐC:");
+                    contentStream.endText();
+
+                    // header bảng
+                    yPosition -= 20;
+                    contentStream.setFont(headerfont, 12);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.showText("Tên Thuốc           Ngày sản xuất   Ngày hết hạn    Đơn vị tính    Số lượng     Giá bán        Thành Tiền");
+                    contentStream.endText();
+
+                    // đường ngang sau header
+                    yPosition -= 10;
+                    contentStream.moveTo(45, yPosition);
+                    contentStream.lineTo(pageWidth - 45, yPosition);
+                    contentStream.stroke();
+
+                    // font cho các dòng
+                    contentStream.setFont(fontOther, 12);
+                    NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+                    currencyFormat.setMinimumFractionDigits(0);
+                    currencyFormat.setMaximumFractionDigits(0);
+
+                    double tongTienTemp = 0;
+                    SimpleDateFormat ngayFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+                    for (ChiTietLoThuoc ct : dsChiTietLoThuoc) {
+                        String tenThuoc = ct.getThuoc().getTenThuoc();
+                        if (tenThuoc.length() > 30) {
+                            tenThuoc = tenThuoc.substring(0, 20) + "...";
+                        }
+
+                        String ngaySX = ngayFormat.format(ct.getNgaySX());
+                        String ngayHH = ngayFormat.format(ct.getHSD());
+                        String donViTinh = ct.getDonGiaThuoc().getDonViTinh();
+                        String soLuongNhap = String.valueOf(ct.getSoLuongCon());
+                        String donGiaNhap = currencyFormat.format(ct.getDonGiaThuoc().getDonGia()) + "đ";
+
+                        double thanhTien = ct.getSoLuongCon() * ct.getDonGiaThuoc().getDonGia();
+                        String thanhTienStr = currencyFormat.format(thanhTien) + "đ";
+
+
+                        yPosition -= 15; // Cách dòng
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(45, yPosition);
+
+                        contentStream.showText(tenThuoc);
+                        contentStream.newLineAtOffset(94, 0);
+                        contentStream.showText(ngaySX);
+                        contentStream.newLineAtOffset(84, 0);
+                        contentStream.showText(ngayHH);
+                        contentStream.newLineAtOffset(98, 0);
+                        contentStream.showText(donViTinh);
+                        contentStream.newLineAtOffset(66, 0);
+                        contentStream.showText(soLuongNhap);
+                        contentStream.newLineAtOffset(50, 0);
+                        contentStream.showText(donGiaNhap);
+                        contentStream.newLineAtOffset(70, 0);
+                        contentStream.showText(thanhTienStr);
+
+                        contentStream.endText();
+
+                        // đường ngang giữa các dòng
+                        yPosition -= 10;
+                        contentStream.moveTo(45, yPosition);
+                        contentStream.lineTo(pageWidth - 45, yPosition);
+                        contentStream.stroke();
+
+                        tongTienTemp += thanhTien;
+                    }
+
+
+                    yPosition -= 30;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(45, yPosition);
+                    contentStream.setFont(headerfont, 13);
+                    contentStream.showText("Tổng Tiền: ");
+                    contentStream.newLineAtOffset(460, 0);
+                    contentStream.showText(currencyFormat.format(tongTienTemp) + "đ");
+                    contentStream.endText();
+
+
+                    // cảm ơn
+                    contentStream.setFont(fontItalic, 12);
+                    yPosition -= 50;
+                    String thankText = "BVD cảm ơn bạn!!! ^_^";
+                    textWidth = fontItalic.getStringWidth(headerText) / 1000 * 16;
+                    xPosition = (pageWidth - textWidth) / 2;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(xPosition, yPosition);
+                    contentStream.showText(thankText);
+                    contentStream.endText();
+                }
+
+                // lưu và mở pdf
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String fileName = loThuoc.getMaLoThuoc() + ".pdf";
+                String filePath = "LoThuoc_PDF\\" + fileName;
+                document.save(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void openPDF(String filePath) {
+            try {
+                File pdfFile = new File(filePath);
+                if (pdfFile.exists()) {
+                    Desktop.getDesktop().open(pdfFile);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public boolean valiDataNhapThuoc() {
         String nhaCungCap = String.valueOf(cbbNhaCungCap.getSelectedItem());

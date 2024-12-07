@@ -2,6 +2,10 @@ package ui.form;
 
 import dao.*;
 import entity.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -16,12 +20,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Properties;
+import java.util.*;
 
 public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSelectionListener, ActionListener {
     public JButton btnQuayLai, btnThanhToan, btnChinhSua, btnHuy, btnTimKiemDon, btnLamMoi, btnXemHD;
@@ -39,10 +44,14 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
     public Thuoc_DAO thuoc_dao;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DonGiaThuoc_DAO donGiaThuoc_dao;
+    public ChiTietKhuyenMai_DAO chiTietKhuyenMai_dao;
+    public ChuongTrinhKhuyenMai_DAO chuongTrinhKhuyenMai_dao;
 
     public Form_QuanLyHoaDon() throws Exception {
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         donGiaThuoc_dao = new DonGiaThuoc_DAO();
+        chiTietKhuyenMai_dao = new ChiTietKhuyenMai_DAO();
+        chuongTrinhKhuyenMai_dao = new ChuongTrinhKhuyenMai_DAO();
 
         setLayout(new BorderLayout());
 
@@ -93,7 +102,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         txtTimKiem.setPreferredSize(new Dimension(400, 30));
 
         btnTimKiemDon = new JButton("Tìm kiếm");
-        btnTimKiemDon.setBackground(new Color(65, 192, 201));
+        btnTimKiemDon.setBackground(new Color(0, 102, 204));
         btnTimKiemDon.setForeground(Color.WHITE);
         btnTimKiemDon.setOpaque(true);
         btnTimKiemDon.setFocusPainted(false);
@@ -120,6 +129,8 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         tableHD = new JTable(modelHD);
         tableHD.setRowHeight(30);
         tableHD.setFont(new Font("Arial", Font.PLAIN, 13));
+        tableHD.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tableHD.getTableHeader().setReorderingAllowed(false);
 
         scrollHD = new JScrollPane(tableHD);
 
@@ -141,6 +152,8 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         tableChiTiet = new JTable(modelChiTiet);
         tableChiTiet.setRowHeight(30);
         tableChiTiet.setFont(new Font("Arial", Font.PLAIN, 13));
+        tableChiTiet.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tableChiTiet.getTableHeader().setReorderingAllowed(false);
 
         scrollChiTiet = new JScrollPane(tableChiTiet);
 
@@ -175,7 +188,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         btnXemHD.setFocusPainted(false);
         btnXemHD.setBorderPainted(false);
         btnXemHD.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXemHD.setPreferredSize(new Dimension(120, 34));
+        btnXemHD.setPreferredSize(new Dimension(120, 35));
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -183,9 +196,9 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         ImageIcon scaledIconLamMoi = new ImageIcon(scaledImageLamMoi);
 
         btnLamMoi = new JButton("Làm mới", scaledIconLamMoi);
-        btnLamMoi.setPreferredSize(new Dimension(120, 34));
-        btnLamMoi.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setPreferredSize(new Dimension(120, 35));
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
@@ -258,9 +271,9 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         }
     }
 
-    public void updateChiTietHD(int row) throws SQLException {
+    public void updateChiTietHD(int row) throws Exception {
         String maHD = modelHD.getValueAt(row, 0).toString();
-        ArrayList<ChiTietHoaDon> dsCTHD = chiTietHoaDon_dao.getDSChiTietHD(maHD);
+        ArrayList<ChiTietHoaDon> dsCTHD = chiTietHoaDon_dao.getCTHDForHD(maHD);
         modelChiTiet.setRowCount(0);
         for (ChiTietHoaDon ct: dsCTHD) {
             if (dsCTHD != null) {
@@ -279,6 +292,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
             }
         }
     }
+
 
     @Override
     public void focusGained(FocusEvent e) {
@@ -304,6 +318,8 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                 updateChiTietHD(row);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -313,8 +329,36 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         Object o = e.getSource();
         if (o == btnQuayLai) {
             setVisible(false);
+        } else if (o == btnLamMoi) {
+            modelChiTiet.setRowCount(0);
+            tableHD.clearSelection();
+            txtTimKiem.setText("");
+            cbxMaHD.setSelectedIndex(0);
+        } else if (o == btnXemHD) {
+            int row = tableHD.getSelectedRow();
+            if (row >= 0) {
+                String maHD = modelHD.getValueAt(row, 0).toString();
+                String fileName = maHD + ".pdf";
+                String filePath = "HoaDon_PDF\\" + fileName;
+                openPDF(filePath);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn muốn xem!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
+
+    private void openPDF(String filePath) {
+        try {
+            File pdfFile = new File(filePath);
+            if (pdfFile.exists()) {
+                Desktop.getDesktop().open(pdfFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public class DateTimeLabelFormatter  extends JFormattedTextField.AbstractFormatter {
 

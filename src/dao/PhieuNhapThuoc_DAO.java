@@ -33,7 +33,7 @@ public class PhieuNhapThuoc_DAO {
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from PhieuNhapThuoc";
+        String sql = "select * from PhieuNhapThuoc order by ngayLapPhieu";
         try {
             ps = con.getConnection().prepareStatement(sql);
             rs = ps.executeQuery();

@@ -1,4 +1,4 @@
-﻿USE master
+USE master
 -- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
@@ -10,6 +10,7 @@ CREATE TABLE ChucVu (
 	maChucVu SMALLINT PRIMARY KEY NOT NULL,
 	tenChucVu NVARCHAR(50) NOT NULL
 );
+GO
 
 -- Bảng NhanVien
 CREATE TABLE NhanVien (
@@ -25,7 +26,7 @@ CREATE TABLE NhanVien (
     trangThai BIT NOT NULL,
     FOREIGN KEY (vaiTro) REFERENCES ChucVu(maChucVu)
 );
-
+GO
 
 -- Bảng TaiKhoan
 CREATE TABLE TaiKhoan (
@@ -34,7 +35,7 @@ CREATE TABLE TaiKhoan (
     ngayCapNhat DATE,
     FOREIGN KEY (taiKhoan) REFERENCES NhanVien(maNV)
 );
-
+GO
 
 -- Bảng DiemTichLuy
 CREATE TABLE DiemTichLuy (
@@ -43,6 +44,7 @@ CREATE TABLE DiemTichLuy (
 	diemTong FLOAT NOT NULL,
 	diemHienTai FLOAT NOT NULL
 );
+GO
 
 -- Bảng KhachHang
 CREATE TABLE KhachHang (
@@ -58,7 +60,7 @@ CREATE TABLE KhachHang (
 	maDTL VARCHAR(20),
 	FOREIGN KEY (maDTL) REFERENCES DiemTichLuy(maDTL)
 );
-
+GO
 
 -- Bảng Thue
 CREATE TABLE Thue (
@@ -66,6 +68,7 @@ CREATE TABLE Thue (
     loaiThue NVARCHAR(50) NOT NULL,
     tyLeThue FLOAT(10) NOT NULL
 );
+GO
 
 -- Bảng NhaCungCap
 CREATE TABLE NhaCungCap (
@@ -74,12 +77,14 @@ CREATE TABLE NhaCungCap (
     diaChi NVARCHAR(255),
     email VARCHAR(50)
 );
+GO
 
 -- Bảng DanhMuc
 CREATE TABLE DanhMuc (
     maDanhMuc VARCHAR(20) NOT NULL PRIMARY KEY,
     tenDanhMuc NVARCHAR(50)
 );
+GO
 
 -- Bảng NhaSanXuat
 CREATE TABLE NhaSanXuat (
@@ -87,6 +92,7 @@ CREATE TABLE NhaSanXuat (
     tenNhaSX NVARCHAR(50),
     diaChi NVARCHAR(255)
 );
+GO
 
 -- Bảng KeThuoc
 CREATE TABLE KeThuoc (
@@ -95,12 +101,14 @@ CREATE TABLE KeThuoc (
     maNhanVien VARCHAR(20),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV)
 );
+GO
 
 -- Bảng NuocSanXuat
 CREATE TABLE NuocSanXuat (
     maNuoc VARCHAR(20) NOT NULL PRIMARY KEY,
 	tenNuoc NVARCHAR(50) NOT NULL
 );
+GO
 
 -- Bảng DonGiaThuoc
 CREATE TABLE DonGiaThuoc (
@@ -109,7 +117,8 @@ CREATE TABLE DonGiaThuoc (
 	donViTinh NVARCHAR(50) NOT NULL,
 	donGia FLOAT(10), 
 	trangThai BIT
-)
+);
+GO
 
 
 -- Bảng Thuoc (Sản phẩm thuốc)
@@ -138,7 +147,7 @@ CREATE TABLE Thuoc (
     FOREIGN KEY (maKe) REFERENCES KeThuoc(maKe),
 	FOREIGN KEY (maNuocSanXuat) REFERENCES NuocSanXuat(maNuoc),
 );
-
+GO
 
 -- Bảng PhieuNhapThuoc
 CREATE TABLE PhieuNhapThuoc (
@@ -150,6 +159,7 @@ CREATE TABLE PhieuNhapThuoc (
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
     FOREIGN KEY (maNhaCungCap) REFERENCES NhaCungCap(maNCC)
 );
+GO
 
 -- Bảng ChiTietPhieuNhap
 CREATE TABLE ChiTietPhieuNhap (
@@ -165,7 +175,7 @@ CREATE TABLE ChiTietPhieuNhap (
     FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
     FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
-
+GO
 
 -- Bảng LoThuoc
 CREATE TABLE LoThuoc (
@@ -175,6 +185,7 @@ CREATE TABLE LoThuoc (
 	tongTien FLOAT(10)
 	FOREIGN KEY (maPhieuNhap) REFERENCES PhieuNhapThuoc(maPhieuNhap),
 )
+GO
 
 -- Bảng ChiTietLoThuoc
 CREATE TABLE ChiTietLoThuoc (
@@ -185,11 +196,12 @@ CREATE TABLE ChiTietLoThuoc (
 	HSD DATE not null,
 	soLuongCon INT not null,
 	maDonGia VARCHAR(20),
+	trangThaiXem INT DEFAULT 1
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
 	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 	FOREIGN KEY (maLoThuoc) REFERENCES LoThuoc(maLoThuoc)
 )
-
+GO
 
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
@@ -206,7 +218,7 @@ CREATE TABLE HoaDon (
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV),
     FOREIGN KEY (maThue) REFERENCES Thue(maThue)
 );
-
+GO
 
 -- Bảng ChiTietHoaDon
 CREATE TABLE ChiTietHoaDon (
@@ -220,6 +232,7 @@ CREATE TABLE ChiTietHoaDon (
     FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
+GO
 
 -- Bảng DoiTra
 CREATE TABLE PhieuDoiTra (
@@ -232,6 +245,8 @@ CREATE TABLE PhieuDoiTra (
 	FOREIGN KEY (maHD) REFERENCES HoaDon(maHD),
 	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV)
 );
+GO
+
 -- Bảng DonDatThuoc
 CREATE TABLE DonDatThuoc (
     maDon VARCHAR(20) NOT NULL PRIMARY KEY,
@@ -242,6 +257,7 @@ CREATE TABLE DonDatThuoc (
     FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
     FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNV)
 );
+GO
 
 -- Bảng ChiTietDonDatThuoc
 CREATE TABLE ChiTietDonDatThuoc (
@@ -256,7 +272,7 @@ CREATE TABLE ChiTietDonDatThuoc (
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc)
 );
-
+GO
 
 
 -- Bảng ChuongTrinhKhuyenMai
@@ -267,6 +283,7 @@ CREATE TABLE ChuongTrinhKhuyenMai (
     ngayBatDau DATE,
     ngayKetThuc DATE
 );
+GO
 
 -- Bảng ChiTietKhuyenMai
 CREATE TABLE ChiTietKhuyenMai (
@@ -280,6 +297,7 @@ CREATE TABLE ChiTietKhuyenMai (
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
+GO
 
 -- Bảng ChiTietPhieuDoiTra
 CREATE TABLE ChiTietPhieuDoiTra (
@@ -292,8 +310,7 @@ CREATE TABLE ChiTietPhieuDoiTra (
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
 );
-
-
+GO
 
 
 ---- Thêm dữ liệu
@@ -467,6 +484,55 @@ VALUES
 ('SH010', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
 ('SH011', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
 
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH012', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH013', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH014', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH015', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH016', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH017', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2024-12-30'),
+('SH018', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH019', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH020', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH021', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH022', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH023', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH024', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2024-12-1'),
+('SH025', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2025-12-1'),
+('SH026', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH027', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH028', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH029', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH030', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-1'),
+('SH031', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH032', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH033', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH034', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH035', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-1'),
+('SH036', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
+
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH037', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2024-12-30'),
+('SH038', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH039', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH040', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-30'),
+('SH041', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
+
 
 -- Bảng HoaDon
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
@@ -483,6 +549,57 @@ VALUES
 ('HD002', 'SH003', 'T003', N'Hộp', 1, 150000),
 ('HD002', 'SH004', 'T004', N'Hộp', 1, 75000),
 ('HD002', 'SH005', 'T005', N'Viên', 5, 100000)
+
+
+-- Bảng HoaDon
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD00123', 'KH001', 'NV001', 'THUE001', '2024-11-01', N'Tiền mặt', 187000, 1),
+('HD00456', 'KH002', 'NV002', 'THUE001', '2024-11-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD00123', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD00123', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD00456', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD00456', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD00456', 'SH005', 'T005', N'Viên', 5, 100000)
+
+
+-- Bảng HoaDon
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD00999', 'KH001', 'NV001', 'THUE001', '2024-10-01', N'Tiền mặt', 187000, 1),
+('HD00491', 'KH002', 'NV002', 'THUE001', '2024-10-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD00999', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD00999', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD00491', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD00491', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD00491', 'SH005', 'T005', N'Viên', 5, 100000)
+
+
+-- Bảng HoaDon
+INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
+VALUES
+('HD001111', 'KH001', 'NV001', 'THUE001', '2023-10-01', N'Tiền mặt', 187000, 1),
+('HD002222', 'KH002', 'NV002', 'THUE001', '2023-10-02', N'Tiền mặt', 357500, 1)
+
+
+-- Bảng ChiTietHoaDon
+INSERT INTO ChiTietHoaDon (maHD, soHieuThuoc, maThuoc, donViTinh, soLuong, thanhTien)
+VALUES
+('HD001111', 'SH001', 'T001', N'Hộp', 1, 100000),
+('HD001111', 'SH002', 'T002', N'Hộp', 2, 35000),
+('HD002222', 'SH003', 'T003', N'Hộp', 1, 150000),
+('HD002222', 'SH004', 'T004', N'Hộp', 1, 75000),
+('HD002222', 'SH005', 'T005', N'Viên', 5, 100000)
 
 
 ---- Bảng DonDatThuoc
@@ -569,7 +686,8 @@ BEGIN
 	FROM ChiTietHoaDon cthd
 	JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
 	JOIN DonGiaThuoc dgt ON t.maThuoc = dgt.maThuoc AND dgt.donViTinh = cthd.donViTinh
-	WHERE maHD = @maHD
+	JOIN ChiTietLoThuoc ctlt ON dgt.maDonGia = ctlt.maDonGia
+	WHERE maHD = @maHD AND dgt.trangThai = 1
 END
 GO
 
@@ -977,12 +1095,13 @@ GO
 CREATE PROCEDURE getDSCTKhuyenMai
 AS
 BEGIN
-	SELECT *
+	SELECT ct.maCTKM, ct.loaiKhuyenMai, t.maThuoc, t.tenThuoc, ctkm.tyLeKhuyenMai, ctkm.soLuongToiThieu, dg.maDonGia, ctlt.soHieuThuoc
 	FROM Thuoc t
 	JOIN DonGiaThuoc dg ON t.maThuoc = dg.maThuoc
-	LEFT JOIN ChiTietKhuyenMai ctkm ON t.maThuoc = ctkm.maThuoc
-	LEFT JOIN ChiTietLoThuoc ctlt ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
+	LEFT JOIN ChiTietLoThuoc ctlt ON dg.maDonGia = ctlt.maDonGia 
+	LEFT JOIN ChiTietKhuyenMai ctkm ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
+	WHERE dg.trangThai = 1
 	ORDER BY ctkm.tyLeKhuyenMai DESC
 END
 GO
@@ -1361,10 +1480,293 @@ END
 GO
 
 
-SELECT * 
-	FROM DonGiaThuoc dg 
-	WHERE dg.maThuoc = 'T010' AND dg.donViTinh = N'Viên' 
+-- báo cáo doanh thu theo ngày trong năm  
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoNgayTrongThang @nam INT, @thang INT
+AS
+BEGIN
+    WITH DoanhThuTheoNgay AS (
+        SELECT 
+            CAST(ngayLap AS DATE) AS Ngay,
+            COUNT(maHD) AS SoHoaDon,
+            SUM(tongTien) AS TongDoanhThu
+        FROM 
+            HoaDon
+        WHERE 
+            YEAR(ngayLap) = @nam AND MONTH(ngayLap) = @thang
+        GROUP BY 
+            CAST(ngayLap AS DATE)
+    )
+	-- Lay du lieu cho all cac ngay trong thang va muc tang giam so voi ngay truoc va ngay sau
+    SELECT 
+        dt1.Ngay,
+        dt1.SoHoaDon,
+        dt1.TongDoanhThu,
+        CASE 
+            WHEN dt2.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu ngay truoc
+            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc tang ngay sau
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc giam ngay truoc
+        END AS MucTangNgayTruoc,
+        CASE 
+            WHEN dt3.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu ngay sau
+            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') --  muc tang ngay sau
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') -- muc giam ngay truoc
+        END AS MucTangNgaySau
+    FROM 
+        DoanhThuTheoNgay dt1
+    LEFT JOIN 
+        DoanhThuTheoNgay dt2
+    ON 
+        dt1.Ngay = DATEADD(DAY, 1, dt2.Ngay) -- ngay truoc
+    LEFT JOIN 
+        DoanhThuTheoNgay dt3
+    ON 
+        dt1.Ngay = DATEADD(DAY, -1, dt3.Ngay) -- ngay sau
+    ORDER BY 
+        dt1.Ngay;
+END
+GO
 
 
 
+-- báo cáo doanh thu theo tháng trong năm (có tính tăng/giảm so với tháng trước)
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoThangTrongNam 
+    @nam INT, 
+    @thang INT
+AS
+BEGIN
+    WITH DoanhThuTheoThang AS (
+        SELECT 
+            YEAR(ngayLap) AS Nam,
+            MONTH(ngayLap) AS Thang,
+            COUNT(maHD) AS SoHoaDon,
+            SUM(tongTien) AS TongDoanhThu
+        FROM 
+            HoaDon
+        GROUP BY 
+            YEAR(ngayLap), MONTH(ngayLap)
+    ),
+    -- them du lieu cua thang truoc va thang sau
+    DoanhThuLiênQuan AS (
+        SELECT 
+            dt1.Nam,
+            dt1.Thang,
+            dt1.TongDoanhThu,
+            dt1.SoHoaDon,
+            dt2.TongDoanhThu AS DoanhThuThangTruoc,
+            dt3.TongDoanhThu AS DoanhThuThangSau
+        FROM 
+            DoanhThuTheoThang dt1
+        LEFT JOIN 
+            DoanhThuTheoThang dt2
+        ON 
+            (dt1.Nam = dt2.Nam AND dt1.Thang = dt2.Thang + 1) -- cung nam, thang sau
+            OR (dt1.Nam = dt2.Nam + 1 AND dt1.Thang = 1 AND dt2.Thang = 12) -- chuyen nam
+        LEFT JOIN 
+            DoanhThuTheoThang dt3
+        ON 
+            (dt1.Nam = dt3.Nam AND dt1.Thang = dt3.Thang - 1) -- cung nam, thang sau
+            OR (dt1.Nam = dt3.Nam - 1 AND dt1.Thang = 12 AND dt3.Thang = 1) -- chuyen nam
+    )
+    -- hien thi du lieu muc giam
+    SELECT 
+        Nam,
+        Thang,
+        TongDoanhThu,
+        SoHoaDon,
+        CASE 
+            WHEN DoanhThuThangTruoc IS NULL THEN 'N/A'
+            WHEN (TongDoanhThu - DoanhThuThangTruoc) >= 0 THEN 
+                CONCAT('+', ROUND((TongDoanhThu - DoanhThuThangTruoc) * 100.0 / DoanhThuThangTruoc, 2), '%')
+            ELSE 
+                CONCAT('-', ROUND(ABS(TongDoanhThu - DoanhThuThangTruoc) * 100.0 / DoanhThuThangTruoc, 2), '%')
+        END AS MucTangGiamThangTruoc,
+        CASE 
+            WHEN DoanhThuThangSau IS NULL THEN 'N/A'
+            WHEN (DoanhThuThangSau - TongDoanhThu) >= 0 THEN 
+                CONCAT('+', ROUND((DoanhThuThangSau - TongDoanhThu) * 100.0 / TongDoanhThu, 2), '%')
+            ELSE 
+                CONCAT('-', ROUND(ABS(DoanhThuThangSau - TongDoanhThu) * 100.0 / TongDoanhThu, 2), '%')
+        END AS MucTangGiamThangSau
+    FROM 
+        DoanhThuLiênQuan
+    WHERE 
+        (Nam = @nam AND Thang = @thang) -- thang hien tai
+        OR (Nam = @nam AND Thang = @thang - 1) -- thang truoc
+        OR (Nam = @nam AND Thang = @thang + 1) -- thang sau
+        OR (Nam = @nam - 1 AND @thang = 1 AND Thang = 12) -- thang truoc chuyen nam
+        OR (Nam = @nam + 1 AND @thang = 12 AND Thang = 1) -- thang sau chuyen nam
+    ORDER BY 
+        Nam, Thang;
+END
+GO
+
+
+-- báo cáo doanh thu theo năm (có tính tăng/giảm so với năm trước)
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoNam @nam INT
+AS
+BEGIN
+    WITH DoanhThuTheoNam AS (
+        SELECT 
+            YEAR(ngayLap) AS Nam,
+            COUNT(maHD) AS SoHoaDon,
+            SUM(tongTien) AS TongDoanhThu
+        FROM 
+            HoaDon
+        GROUP BY 
+            YEAR(ngayLap)
+    )
+    -- lay du lieu nam hien tai, nam truoc va nam sau
+    SELECT 
+        dt1.Nam,
+        dt1.TongDoanhThu,
+        dt1.SoHoaDon,
+        CASE 
+            WHEN dt2.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu nam truoc
+            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc tang nam truoc
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc giam nam sau
+        END AS MucTangNamTruoc,
+        CASE 
+            WHEN dt3.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu nam sau
+            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN 
+                CONCAT('+', ROUND((dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') --  muc tang nam truoc
+            ELSE 
+                CONCAT('-', ROUND(ABS(dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') -- muc giam nam sau
+        END AS MucTangNamSau
+    FROM 
+        DoanhThuTheoNam dt1
+    LEFT JOIN 
+        DoanhThuTheoNam dt2
+    ON 
+        dt1.Nam = dt2.Nam + 1 -- nam truoc
+    LEFT JOIN 
+        DoanhThuTheoNam dt3
+    ON 
+        dt1.Nam = dt3.Nam - 1 -- nam sau
+    WHERE 
+        dt1.Nam = @nam OR dt1.Nam = @nam - 1 OR dt1.Nam = @nam + 1 -- lay nam hien tai, nam truoc va nam sau
+    ORDER BY 
+        dt1.Nam;
+END
+GO
+
+
+
+-- thống kê top khách hàng thường xuyên
+CREATE PROCEDURE ThongKeKhachHangThuongXuyen
+AS
+BEGIN
+    SELECT 
+        kh.maKH AS maKhachHang,
+        CONCAT(kh.hoKH, ' ', kh.tenKH) AS hoTen,
+        dtl.xepHang AS hangKhachHang,
+        dtl.diemTong AS tongDiem,
+        SUM(hd.tongTien) AS tongChiTieu,
+        COUNT(hd.maHD) AS soLanMua,
+        (
+            SELECT TOP 1 t.tenThuoc
+            FROM ChiTietHoaDon cthd
+            JOIN Thuoc t ON cthd.maThuoc = t.maThuoc
+            WHERE cthd.maHD IN (
+                SELECT maHD FROM HoaDon WHERE maKhachHang = kh.maKH
+            )
+            GROUP BY t.tenThuoc
+            ORDER BY SUM(cthd.soLuong) DESC
+        ) AS SanPhamYeuThich
+    FROM 
+        KhachHang kh
+    JOIN 
+        DiemTichLuy dtl ON kh.maDTL = dtl.maDTL
+    LEFT JOIN 
+        HoaDon hd ON kh.maKH = hd.maKhachHang
+    GROUP BY 
+        kh.maKH, kh.hoKH, kh.tenKH, dtl.xepHang, dtl.diemTong
+    ORDER BY 
+        SUM(hd.tongTien) DESC;
+END
+GO
+
+
+-- bảng view Thuoc Het Han
+CREATE TABLE ThuocHetHan (
+    soHieuThuoc NVARCHAR(50) PRIMARY KEY,
+    tenThuoc NVARCHAR(255),
+    hinhAnh VARCHAR(MAX),
+    ngaySX DATE,
+    HSD DATE,
+    soLuongCon INT,
+    donGia FLOAT,
+    thongBaoTieuDe NVARCHAR(255),
+    thongBaoNoiDung NVARCHAR(MAX),
+    thoiGianThongBao DATE,
+    trangThaiXem BIT DEFAULT 1
+);
+GO
+
+
+CREATE TRIGGER trg_InsertThuocHetHan
+ON ThuocHetHan
+AFTER INSERT
+AS
+BEGIN
+    BEGIN TRY
+        -- Chèn dữ liệu vào bảng ThuocHetHan nếu thỏa mãn điều kiện "sắp hết hạn"
+        INSERT INTO ThuocHetHan (soHieuThuoc, tenThuoc, hinhAnh, ngaySX, HSD, soLuongCon, donGia, thongBaoTieuDe, thongBaoNoiDung, thoiGianThongBao, trangThaiXem)
+        SELECT
+            c.soHieuThuoc,
+            t.tenThuoc,
+            t.hinhAnh,
+            c.ngaySX,
+            c.HSD,
+            c.soLuongCon,
+            dg.donGia,
+            N'Thuốc sắp hết hạn',
+            N'Thuốc ' + t.tenThuoc + N' sắp hết hạn sử dụng, (còn ' + CAST(DATEDIFF(DAY, GETDATE(), c.HSD) AS NVARCHAR) + N' ngày)',
+            c.HSD,
+            1
+        FROM ChiTietLoThuoc c
+        JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
+        JOIN Thuoc t ON dg.maThuoc = t.maThuoc
+        WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0
+        AND NOT EXISTS (
+            SELECT 1
+            FROM ThuocHetHan th
+            WHERE th.soHieuThuoc = c.soHieuThuoc
+        );
+
+    END TRY
+    BEGIN CATCH
+        PRINT 'Error: ' + ERROR_MESSAGE();
+    END CATCH
+END;
+GO
+
+-- danh sách thông báo thuốc hết hạn
+CREATE PROCEDURE getDSThongBaoThuocHetHan
+AS 
+BEGIN 
+	SELECT
+		c.soHieuThuoc,
+		t.tenThuoc,
+		t.hinhAnh,
+		c.ngaySX,
+		c.HSD,
+		c.soLuongCon,
+		dg.donGia,
+		N'Thuốc sắp hết hạn' AS thongBaoTieuDe,
+		N'Thuốc ' + t.tenThuoc + N' sắp hết hạn sử dụng, (còn ' + CAST(DATEDIFF(DAY, GETDATE(), c.HSD) AS NVARCHAR) + N' ngày)' AS thongBaoNoiDung,
+		c.HSD AS thoiGianThongBao, 
+		c.trangThaiXem
+	FROM ChiTietLoThuoc c
+	JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
+	JOIN Thuoc t ON dg.maThuoc = t.maThuoc
+	WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0 AND dg.trangThai = 1
+	ORDER BY thoiGianThongBao, trangThaiXem DESC
+END
+GO
 

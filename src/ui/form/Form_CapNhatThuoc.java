@@ -2,24 +2,9 @@ package ui.form;
 
 import dao.*;
 import entity.*;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.SqlDateModel;
-import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Properties;
 
 public class Form_CapNhatThuoc extends Form_ThemThuoc {
     public String hinhAnhMoi;

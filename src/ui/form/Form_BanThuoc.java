@@ -7,11 +7,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -25,10 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -36,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 public class Form_BanThuoc extends JPanel implements ActionListener, DocumentListener {
     public JButton btnBack, btnLamMoi;
@@ -47,26 +40,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     public JPlaceholderTextField txtTimKiem;
     public Thuoc_DAO thuocDao;
     public JPanel panelDSThuoc;
-    private JLabel lblTongTien;
-    private JLabel lbGiaTriDiemTL;
-    private JLabel lbTenKHTK;
-    private JLabel lbSDTKH;
     private static JLabel lbNoiDungMoTa;
-    private static JTextField txtTimKiemKH;
-    public static JTextField txtTienKhachTra;
-    public static JTextField txt_TienKhuyenMai;
-    public static JTextField txt_TienGiam;
-    public static JTextField txt_tongTienValue;
-    public static JTextField text_TienThue;
-    public static JTextField text_TienThoi;
-    private static JButton btnTimKiemKH;
-    private JButton btnThanhToan;
-    private JButton btnThanhToanKhongIn;
-    private JButton btnHuy;
-    private JButton btnLuuDonHang;
+    private static JTextField txtTimKiemKH, txtTienKhachTra, txt_TienKhuyenMai, txt_TienGiam, txt_tongTienValue, text_TienThue, text_TienThoi;
+    private static JButton btnTimKiemKH, btnThanhToan, btnHuy, btnLuuDonHang;
     public static JCheckBox cbxDoiDiem;
     public static JComboBox<String> cboChonLoaiKM;
-    private JLabel lblGiaTriTienThoi;
     private JRadioButton rbtnViDienTu, rbtnTienMat;
     private ButtonGroup paymentMethodGroup;
     private static KhachHang_DAO kh_dao;
@@ -141,7 +119,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         ImageIcon scaledIconLamMoi = new ImageIcon(scaledImageLamMoi);
         panelButton_right.add(btnLamMoi = new JButton("Làm mới", scaledIconLamMoi));
         btnLamMoi.setFont(new Font("Arial", Font.PLAIN, 15));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
@@ -195,7 +173,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         modelGioHang = new DefaultTableModel(cartColumnNames, 0);
         tbGioHang = new JTable(modelGioHang);
         tbGioHang.setFillsViewportHeight(true); // Đảm bảo bảng chiếm hết chiều cao của JScrollPane
-        tbGioHang.setFont(new Font("Arial", Font.PLAIN, 14));
+        tbGioHang.setFont(new Font("Arial", Font.PLAIN, 13));
+        tbGioHang.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        tbGioHang.getTableHeader().setReorderingAllowed(false);
         tbGioHang.setRowHeight(30);
 
 
@@ -261,7 +241,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         JLabel lblTimKiemKH = new JLabel("Tìm kiếm khách hàng:");
         txtTimKiemKH = new JTextField(18);
         btnTimKiemKH = new JButton("Tìm kiếm");
-        btnTimKiemKH.setBackground(new Color(65, 192, 201));
+        btnTimKiemKH.setBackground(new Color(0, 102, 204));
         btnTimKiemKH.setForeground(Color.WHITE);
         btnTimKiemKH.setOpaque(true);
         btnTimKiemKH.setFocusPainted(false);
@@ -465,48 +445,40 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         panelThanhToanButton.setMaximumSize(new Dimension(420, 40));
 
         btnThanhToan = new JButton("Thanh toán");
-        btnThanhToan.setBackground(new Color(0, 102, 0));
+        btnThanhToan.setBackground(new Color(0, 102, 204));
         btnThanhToan.setForeground(Color.WHITE);
         btnThanhToan.setOpaque(true);
         btnThanhToan.setFocusPainted(false);
         btnThanhToan.setBorderPainted(false);
-        btnThanhToan.setFont(new Font("Arial", Font.BOLD, 12));
-        btnThanhToan.setPreferredSize(new Dimension(100, 35));
-
-        btnThanhToanKhongIn = new JButton("Thanh toán không in");
-        btnThanhToanKhongIn.setBackground(new Color(0, 0, 153));
-        btnThanhToanKhongIn.setForeground(Color.WHITE);
-        btnThanhToanKhongIn.setOpaque(true);
-        btnThanhToanKhongIn.setFocusPainted(false);
-        btnThanhToanKhongIn.setBorderPainted(false);
-        btnThanhToanKhongIn.setFont(new Font("Arial", Font.BOLD, 12));
-        btnThanhToanKhongIn.setPreferredSize(new Dimension(150, 35));
+        btnThanhToan.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThanhToan.setPreferredSize(new Dimension(105, 35));
 
         btnHuy = new JButton("Hủy");
-        btnHuy.setBackground(new Color(204, 0, 0));
+        btnHuy.setBackground(new Color(0, 102, 204));
         btnHuy.setForeground(Color.WHITE);
         btnHuy.setOpaque(true);
         btnHuy.setFocusPainted(false);
         btnHuy.setBorderPainted(false);
-        btnHuy.setFont(new Font("Arial", Font.BOLD, 12));
-        btnHuy.setPreferredSize(new Dimension(56, 35));
+        btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
+        btnHuy.setPreferredSize(new Dimension(105, 35));
 
         btnLuuDonHang = new JButton("Lưu đơn");
-        btnLuuDonHang.setBackground(Color.ORANGE);
+        btnLuuDonHang.setBackground(new Color(0, 102, 204));
         btnLuuDonHang.setForeground(Color.WHITE);
         btnLuuDonHang.setOpaque(true);
         btnLuuDonHang.setFocusPainted(false);
         btnLuuDonHang.setBorderPainted(false);
-        btnLuuDonHang.setFont(new Font("Arial", Font.BOLD, 12));
-        btnLuuDonHang.setPreferredSize(new Dimension(85, 35));
+        btnLuuDonHang.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLuuDonHang.setPreferredSize(new Dimension(105, 35));
 
         panelThanhToanButton.add(btnThanhToan);
-        panelThanhToanButton.add(btnThanhToanKhongIn);
+        panelThanhToanButton.add(Box.createHorizontalStrut(10));
         panelThanhToanButton.add(btnHuy);
+        panelThanhToanButton.add(Box.createHorizontalStrut(10));
         panelThanhToanButton.add(btnLuuDonHang);
+        panelThanhToanButton.add(Box.createHorizontalStrut(20));
 
 
-        // Sử dụng BoxLayout cho panelRight để điều chỉnh chiều cao tự động
         panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
         panelRight.add(scrollCart);
         panelRight.add(panelKhachHang);
@@ -515,14 +487,13 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         panelRight.add(panelThanhToanButton);
 
 
-        // Thêm panelLeft và panelRight vào panelCenter
         panelCenter.add(panelLeft, BorderLayout.WEST);
         panelCenter.add(panelRight, BorderLayout.EAST);
 
-        // Thêm panelCenter vào panelContentCenter
+        // thêm panelCenter vào panelContentCenter
         panelContentCenter.add(panelCenter, BorderLayout.CENTER);
 
-        // Khởi tạo dữ liệu
+        // khởi tạo dữ liệu
         ConnectDB.getInstance().connect();
         thuocDao = new Thuoc_DAO();
         donGiaThuoc_dao = new DonGiaThuoc_DAO();
@@ -539,7 +510,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         txtTienKhachTra.getDocument().addDocumentListener(this);
         txt_tongTienValue.getDocument().addDocumentListener(this);
         btnThanhToan.addActionListener(this);
-        btnThanhToanKhongIn.addActionListener(this);
         btnHuy.addActionListener(this);
         btnLuuDonHang.addActionListener(this);
         btnLamMoi.addActionListener(this);
@@ -550,7 +520,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         itemXoa.addActionListener(this);
         itemXoaAll.addActionListener(this);
 
-        //Lấy dữ liệu tìm kiếm khách hàng
+        // lấy dữ liệu tìm kiếm khách hàng
         kh_dao = new KhachHang_DAO();
         dtl_dao = new DiemTichLuy_DAO();
         dm_dao = new DanhMuc_DAO();
@@ -1020,12 +990,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else if(o == btnThanhToanKhongIn) {
-            try {
-                thanhToanKhongIn();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         } else if(o == btnHuy) {
             xoaGioHang();
         } else if(o == btnLuuDonHang) {
@@ -1241,7 +1205,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     }
 
 
-    // thanh toán có in
+    // thanh toán
     public void thanhToan() throws Exception {
         if(modelGioHang.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trước khi thanh toán!!!");
@@ -1274,6 +1238,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 //        if (rbtnViDienTu.isSelected()) {
 //            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
 //        }
+
 
         // khởi tạo hóa đơn
         HoaDon hoaDon = new HoaDon();
@@ -1392,157 +1357,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     }
 
 
-    // thanh toán không in
-    public void thanhToanKhongIn() throws Exception {
-        if(modelGioHang.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm trước khi thanh toán!!!");
-            return;
-        }
-
-        // Kiểm tra phương thức thanh toán
-        if (!rbtnTienMat.isSelected() && !rbtnViDienTu.isSelected()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn phương thức thanh toán!");
-            return;
-        }
-
-        // Kiểm tra nếu chọn phương thức thanh toán là tiền mặt
-        if (rbtnTienMat.isSelected()) {
-            if (txtTienKhachTra.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tiền khách đưa!");
-                return;
-            }
-
-            try {
-                double tienKhachDua = Double.parseDouble(txtTienKhachTra.getText());
-                if (tienKhachDua < 0) {
-                    JOptionPane.showMessageDialog(this, "Tiền khách trả phải lớn hơn hoặc bằng 0!");
-                    return;
-                }
-                // Thực hiện tiếp các xử lý khác nếu tiền khách đưa hợp lệ
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Tiền khách đưa phải là số!");
-                return;
-            }
-        }
-
-//        if (rbtnViDienTu.isSelected()) {
-//            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
-//        }
-
-        // khởi tạo hóa đơn
-        HoaDon hoaDon = new HoaDon();
-        hoaDon.setMaHD(generateHoaDonID());
-
-        if(rbtnTienMat.isSelected()) {
-            hoaDon.setHinhThucThanhToan(rbtnTienMat.getText());
-        } else {
-            hoaDon.setHinhThucThanhToan(rbtnViDienTu.getText());
-        }
-
-        // lấy thông tin khách hàng
-        String SDT = txtSDTKH.getText().trim();
-        if(!SDT.isEmpty()) {
-            KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
-            if (cbxDoiDiem.isSelected()) {
-                DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
-                khachHang.setDiemTichLuy(diemTichLuy);
-            } else {
-                khachHang.setDiemTichLuy(null);
-            }
-            hoaDon.setKhachHang(khachHang);
-        } else {
-            KhachHang khachLe = new KhachHang();
-            khachLe.setTenKH("Khách hàng lẻ");
-            hoaDon.setKhachHang(khachLe);
-        }
-
-        // lấy thông tin nhân viên
-        NhanVien nhanVien = nv_dao.getNVTheoMaNV(nhanVienDN.getMaNV());
-        hoaDon.setNhanVien(nhanVien);
-
-        // Gán thuế
-        hoaDon.setThue(new Thue("THUE001", "VAT", 0.1));
-
-        // Ngày lập hóa đơn
-        hoaDon.setNgayLap(new Date());
-
-        // Cập nhật trang thái hiển thị hóa đơn
-        hoaDon.setTrangThai(true);
-
-        // Cập nhật danh sách chi tiết hóa đơn (từ giỏ hàng)
-        ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<>();
-        for (int i = 0; i < modelGioHang.getRowCount(); i++) {
-            String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
-            String donViTinh = modelGioHang.getValueAt(i, 1).toString();
-            int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
-            double giaBanThuoc = Double.parseDouble(modelGioHang.getValueAt(i, 3).toString().replace("đ", "").replace(",", ""));
-            Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), donViTinh);
-            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), donGiaThuoc.getThuoc().getMaThuoc());
-            chiTietLoThuoc.setDonGiaThuoc(donGiaThuoc);
-            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, donViTinh, soLuong, chiTietLoThuoc);
-            dsChiTietHoaDon.add(chiTietHoaDon);
-        }
-
-
-        ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai = new ArrayList<>();
-        String loaiKM = cboChonLoaiKM.getSelectedItem().toString();
-
-        if (!loaiKM.equals("Chọn loại khuyến mãi")) {
-            ChuongTrinhKhuyenMai chuongTrinhKhuyenMai = chuongtrinh_dao.getCTKNByLoaiKM(loaiKM);
-            if (chuongTrinhKhuyenMai != null) {
-                dsChiTietKhuyenMai = chitiet_dao.getChiTietKMByCTKM(chuongTrinhKhuyenMai);
-            }
-        }
-
-        // Tạo hóa đơn trong cơ sở dữ liệu
-        boolean hoaDonDuocTao = hd_dao.create(hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
-        boolean chiTietHoaDonTao = chiTietHoaDon_dao.create(hoaDon, dsChiTietHoaDon);
-
-        if (hoaDonDuocTao && chiTietHoaDonTao) {
-           // xóa đơn đặt thuốc sau khi thanh toán thành công
-            if (maDon != null) {
-                donDatThuocDao.xoaDonDatThuoc(maDon);
-            }
-
-            // cập nhật điểm tích lũy, xếp hạng
-            if(!SDT.isEmpty()) {
-                KhachHang khachHang = kh_dao.getOneKhachHangBySDT(SDT);
-                DiemTichLuy diemTichLuy = dtl_dao.getDiemTichLuyBySDT(khachHang.getSDT());
-                diemTichLuy_dao.capNhatDiemTichLuyVaXepHangTheoMaKH(diemTichLuy, hoaDon, dsChiTietHoaDon, dsChiTietKhuyenMai);
-            }
-
-            // cập nhật lại số lượng
-            for (int i = 0; i < modelGioHang.getRowCount(); i++) {
-                // cập nhật tổng số lượng của thuốc
-                String tenThuoc = modelGioHang.getValueAt(i, 0).toString();
-                int soLuong = Integer.parseInt(modelGioHang.getValueAt(i, 2).toString());
-                Thuoc thuoc = thuoc_dao.getThuocByTenThuoc(tenThuoc);
-                thuoc_dao.updateTongSoLuongThuocSauKhiThanhToan(thuoc, soLuong);
-
-                // cập nhật tổng số lượng thuốc còn của lô thuốc sau thanh toán
-                String donViTinh = modelGioHang.getValueAt(i, 1).toString();
-                ArrayList<DonGiaThuoc> dsDonGiaThuoc = donGiaThuoc_dao.getDanhSachDGThuocTheoMaThuocVaDVT(thuoc.getMaThuoc(), donViTinh);
-                for (DonGiaThuoc dg : dsDonGiaThuoc) {
-                    if (dg.isTrangThai()) {
-                        ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(dg.getMaDonGia(), thuoc.getMaThuoc());
-                        System.out.println(chiTietLoThuoc);
-                        chiTietLoThuoc_dao.updateSoLuongCon(chiTietLoThuoc, soLuong);
-                    }
-                }
-            }
-
-            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
-
-            // Xóa giỏ hàng
-            xoaGioHang();
-        } else {
-            JOptionPane.showMessageDialog(this, "Thanh toán thất bại, vui lòng thử lại!");
-        }
-    }
-
-
-
     // Hàm xóa giỏ hàng sau khi thanh toán
     private void xoaGioHang() {
         modelGioHang.setRowCount(0);  // Xóa tất cả các dòng trong bảng giỏ hàng
@@ -1604,14 +1418,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     PDType0Font fontOther = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-Regular.ttf"));
                     PDType0Font fontItalic = PDType0Font.load(document, new File("fonts\\Roboto\\Roboto-MediumItalic.ttf"));
 
-                    // Get page width
+                    // lấy chiều dài trang
                     float pageWidth = page.getMediaBox().getWidth();
 
-                    // Formatting variables
+                    // định dạng biến vị trí
                     float xPosition, yPosition = 750;
                     float lineSpacing = 20;
 
-                    // Draw company info
+                    // thông tin
                     String tenNhaThuoc = "NHÀ THUỐC BVD";
                     String diaChi = "12 Nguyễn Văn Bảo, Phường 4, Q. Gò Vấp, TP Hồ Chí Minh";
                     String email = "nhathuocbvd@gmail.com";
@@ -1655,7 +1469,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     contentStream.showText(sdt);
                     contentStream.endText();
 
-                    // Header: Invoice title
+                    // tiêu đề
                     contentStream.setFont(headerfont, 16);
                     yPosition -= 35;
                     String headerText = "HÓA ĐƠN BÁN LẺ";
@@ -1716,7 +1530,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     contentStream.showText("CHI TIẾT HÓA ĐƠN:");
                     contentStream.endText();
 
-                    // Draw table headers
+                    // vẽ header cho table
                     yPosition -= 20;
                     contentStream.setFont(headerfont, 12);
                     contentStream.beginText();
@@ -1724,13 +1538,13 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     contentStream.showText("Tên Thuốc                        Đơn Vị Tính    Số lượng        Đơn giá           Thành Tiền");
                     contentStream.endText();
 
-                    // Horizontal line after header
+                    // đường kẻ ngang sau headeer
                     yPosition -= 10;
                     contentStream.moveTo(100, yPosition);
                     contentStream.lineTo(pageWidth - 100, yPosition);
                     contentStream.stroke();
 
-                    // Set font for the content rows
+                    // set font cho dòng
                     contentStream.setFont(fontOther, 12);
                     NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
                     currencyFormat.setMinimumFractionDigits(0);
@@ -1739,7 +1553,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     double tongTienTemp = 0;
                     for (ChiTietHoaDon ct : dsChiTietHoaDon) {
                         String tenThuoc = ct.getThuoc().getTenThuoc();
-                        if (tenThuoc.length() > 30) tenThuoc = tenThuoc.substring(0, 30) + "..."; // Limit name length
+                        if (tenThuoc.length() > 30) tenThuoc = tenThuoc.substring(0, 30) + "..."; //
 
                         yPosition -= 15;
                         contentStream.beginText();
@@ -1763,7 +1577,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                         contentStream.showText(thanhTien);
                         contentStream.endText();
 
-                        // Horizontal line after each product row
                         yPosition -= 10;
                         contentStream.moveTo(100, yPosition);
                         contentStream.lineTo(pageWidth - 100, yPosition);
@@ -1772,7 +1585,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                         tongTienTemp += ct.tinhThanhTien();
                     }
 
-                    // Display summary (tax, discounts, total)
                     yPosition -= 30;
                     contentStream.beginText();
                     contentStream.newLineAtOffset(100, yPosition);
@@ -1824,9 +1636,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
                 }
 
-                // Save and open PDF
+                // lưu và mở pdf
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String fileName = "hoa_don_" + timeStamp + ".pdf";
+                String fileName = hoaDon.getMaHD() + ".pdf";
                 String filePath = "HoaDon_PDF\\" + fileName;
                 document.save(filePath);
                 openPDF(filePath);

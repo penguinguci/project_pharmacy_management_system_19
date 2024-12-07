@@ -5,6 +5,9 @@ import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static connectDB.ConnectDB.getConnection;
 
@@ -519,5 +522,33 @@ public class KhachHang_DAO {
             }
         }
         return tongChiTieu;
+    }
+
+
+    // thống kê khách hàng thường xuyên và sản phẩm yêu thích
+    public List<Map<String, Object>> thongKeKhachHangTXVaSPYeuThich() {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        String sql = "{call ThongKeKhachHangThuongXuyen}";
+
+        try (Connection conn = getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("maKhachHang", rs.getString("maKhachHang"));
+                    row.put("hoTen", rs.getString("hoTen"));
+                    row.put("hangKhachHang", rs.getString("hangKhachHang"));
+                    row.put("tongDiem", rs.getDouble("tongDiem"));
+                    row.put("tongChiTieu", rs.getDouble("tongChiTieu"));
+                    row.put("soLanMua", rs.getInt("soLanMua"));
+                    row.put("SanPhamYeuThich", rs.getString("SanPhamYeuThich"));
+                    dsBaoCao.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dsBaoCao;
     }
 }
