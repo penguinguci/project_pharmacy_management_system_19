@@ -516,6 +516,23 @@ VALUES
 ('SH030', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-1'),
 ('SH031', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2025-12-1')
 
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH032', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH033', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH034', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH035', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-1'),
+('SH036', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
+
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH037', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2024-12-30'),
+('SH038', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH039', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH040', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-30'),
+('SH041', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
+
 
 -- Bảng HoaDon
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
@@ -1748,6 +1765,8 @@ BEGIN
 	FROM ChiTietLoThuoc c
 	JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
 	JOIN Thuoc t ON dg.maThuoc = t.maThuoc
-	WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0
+	WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0 AND dg.trangThai = 1
+	ORDER BY thoiGianThongBao, trangThaiXem DESC
 END
 GO
+
