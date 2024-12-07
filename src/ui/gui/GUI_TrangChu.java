@@ -1073,37 +1073,26 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         public void actionPerformed(ActionEvent e) {
             Object o = e.getSource();
             if (o == btnXemCTTB) {
-//                try {
-//                    thuocHetHan_dao.updateTrangThaiXemThuocHH(soHieuThuoc);
-//                    setBackground(new Color(220, 220, 220));
-//                    btnXemCTTB.setForeground(new Color(220, 220, 220));
-//                    noiDungArea.setBackground(new Color(220, 220, 220));
-//                    btnXemCTTB.setEnabled(false);
-//
-//                    try {
-//                        formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
-//                    } catch (Exception ex) {
-//                        throw new RuntimeException(ex);
-//                    }
-//                    centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
-//                    formQuanLyLoThuoc.truyThongTinCTLoThuoc(soHieuThuoc);
-//                    centerPanel.revalidate();
-//                    centerPanel.repaint();
-//                    cardLayout.show(centerPanel, "formQuanLyLoThuoc");
-//                } catch (SQLException ex) {
-//                    throw new RuntimeException(ex);
-//                }
-
                 try {
-                    formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
-                } catch (Exception ex) {
+                    thuocHetHan_dao.updateTrangThaiXemThuocHH(soHieuThuoc);
+                    setBackground(new Color(220, 220, 220));
+                    btnXemCTTB.setForeground(new Color(220, 220, 220));
+                    noiDungArea.setBackground(new Color(220, 220, 220));
+                    btnXemCTTB.setEnabled(false);
+
+                    try {
+                        formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
+                    formQuanLyLoThuoc.truyThongTinCTLoThuoc(soHieuThuoc);
+                    centerPanel.revalidate();
+                    centerPanel.repaint();
+                    cardLayout.show(centerPanel, "formQuanLyLoThuoc");
+                } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
-                centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
-                formQuanLyLoThuoc.truyThongTinCTLoThuoc(soHieuThuoc);
-                centerPanel.revalidate();
-                centerPanel.repaint();
-                cardLayout.show(centerPanel, "formQuanLyLoThuoc");
             }
         }
     }
