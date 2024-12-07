@@ -1,11 +1,13 @@
 package ui.gui;
 
+import dao.ThuocHetHan_DAO;
 import entity.ChiTietHoaDon;
 import entity.KhachHang;
 import entity.NhanVien;
 import ui.form.*;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
@@ -13,10 +15,8 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
+import java.util.List;
 
 
 public class GUI_TrangChu extends JFrame implements ActionListener, MouseListener {
@@ -70,7 +70,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public JPopupMenu popupThongBao;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
     public JTextArea noiDungArea;
-    public JButton btnXemCTTB;
+    public ThuocHetHan_DAO thuocHetHan_dao;
+    public JPanel dsTBPanel;
+    public boolean checkTB = false;
 
     public GUI_TrangChu() throws Exception {
         setTitle("Pharmacy Management System");
@@ -415,7 +417,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnThongBao.setFocusPainted(false);
         btnThongBao.setBounds(0, 0, 40, 40);
 
-        RoundedLabel lbSoThongBao = new RoundedLabel("3", 20);
+        lbSoThongBao = new RoundedLabel("3", 20);
         lbSoThongBao.setBounds(20, 0, 20, 20);
 
         layeredPaneThongBao.add(btnThongBao, Integer.valueOf(1)); // icon chuông ở dưới
@@ -425,17 +427,20 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         popupThongBao = new JPopupMenu();
         popupThongBao.setPreferredSize(new Dimension(400, 500));
 
-
-        JPanel dsTBPanel = new JPanel();
+        dsTBPanel = new JPanel();
         dsTBPanel.setLayout(new BoxLayout(dsTBPanel, BoxLayout.Y_AXIS));
 
-        dsTBPanel.add(new ThongBaoPanel("Thông báo 1", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
-        dsTBPanel.add(new ThongBaoPanel("Thông báo 2", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
-        dsTBPanel.add(new ThongBaoPanel("Thông báo 3", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
-        dsTBPanel.add(new ThongBaoPanel("Thông báo 4", "Nội dung thông báo 1", null, "2024-10-12"), BorderLayout.CENTER);
+        JPanel tieuDePanel = new JPanel(new BorderLayout());
+        tieuDePanel.setPreferredSize(new Dimension(395, 20));
+        tieuDePanel.setMinimumSize(new Dimension(395, 20));
+        tieuDePanel.setMaximumSize(new Dimension(395, 20));
+        JLabel tieuDeTB = new JLabel("Thông báo", JLabel.LEFT);
+        tieuDeTB.setFont(new Font("Arial", Font.BOLD, 14));
+        tieuDeTB.setForeground(Color.GRAY);
+        tieuDePanel.add(tieuDeTB, BorderLayout.WEST);
+        dsTBPanel.add(tieuDePanel);
 
         JScrollPane scrollPaneThongBao = new JScrollPane(dsTBPanel);
-//        scrollPaneThongBao.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPaneThongBao.setPreferredSize(new Dimension(380, 480));
         scrollPaneThongBao.getVerticalScrollBar().setUnitIncrement(12);
         scrollPaneThongBao.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -449,6 +454,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 this.trackColor = Color.WHITE; // Đặt màu nền của thanh cuộn
             }
         });
+
+        // load thông báo
+        loadThongBao();
 
         popupThongBao.add(scrollPaneThongBao);
 
@@ -936,67 +944,172 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuThongKe.setVisible(false);
     }
 
-    // lớp tạo khung thông báo
-    public class ThongBaoPanel extends JPanel {
+    // load thông báo
+    public void loadThongBao() {
+        dsTBPanel.removeAll();
+        thuocHetHan_dao = new ThuocHetHan_DAO();
+        List<Map<String, Object>> dsTB = thuocHetHan_dao.getDSThongBaoThuocHetHan();
 
-        public ThongBaoPanel(String tieuDe, String noiDung, ImageIcon hinhAnh, String thoiGian) {
+        if (dsTB.isEmpty()) {
+//            dsTBPanel.add()
+        }
+
+        int soTB = 0;
+        for (Map<String, Object> row : dsTB) {
+            try {
+                String soHieuThuoc = row.getOrDefault("soHieuThuoc", "").toString();
+                String tieuDe = row.getOrDefault("thongBaoTieuDe", "").toString();
+                String hinhAnh = row.getOrDefault("hinhAnh", "").toString();
+                String noiDung = row.getOrDefault("thongBaoNoiDung", "").toString();
+                boolean trangThai = Boolean.parseBoolean(row.getOrDefault("trangThaiXem", true).toString());
+
+                String thoiGian = row.getOrDefault("thoiGianThongBao", "").toString();
+
+                ThongBaoPanel tbPanel = new ThongBaoPanel(soHieuThuoc, tieuDe, hinhAnh, thoiGian, noiDung, trangThai);
+                dsTBPanel.add(tbPanel);
+
+                if (trangThai) {
+                    soTB++;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Lỗi khi xử lý thông báo: " + row);
+            }
+        }
+        lbSoThongBao.setText(String.valueOf(soTB));
+        dsTBPanel.revalidate();
+        dsTBPanel.repaint();
+    }
+
+    // lớp tạo khung thông báo
+    public class ThongBaoPanel extends JPanel implements ActionListener{
+        public JButton btnXemCTTB;
+        private String soHieuThuoc;
+
+        public ThongBaoPanel(String soHieuThuoc, String tieuDe, String hinhAnh, String thoiGian, String noiDung, boolean trangThaiXem) {
+            this.soHieuThuoc = soHieuThuoc;
+
             setLayout(new GridBagLayout());
-            setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            setPreferredSize(new Dimension(300, 150));
+//            setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            setPreferredSize(new Dimension(395, 120));
+            setMaximumSize(new Dimension(395, 120));
+            setMinimumSize(new Dimension(395, 120));
+
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.insets = new Insets(5, 5, 5, 5);
-
             // tieu de
-            gbc.gridx = 0;
+            gbc.gridx = 1;
             gbc.gridy = 0;
-            gbc.gridwidth = 2; // chiem 2 cot
-            gbc.weightx = 1.0; // chiem toan bo chieu rong
+            gbc.gridwidth = 1; // chiem 1 cot
+            gbc.weightx = 0.8; // chiem phần còn lại chiều ngang
+            gbc.insets = new Insets(-35, 10, 0, 10);
             lblTieuDe = new JLabel(tieuDe);
-            lblTieuDe.setFont(new Font("Arial", Font.BOLD, 14));
+            lblTieuDe.setFont(new Font("Arial", Font.BOLD, 15));
             add(lblTieuDe, gbc);
 
             // hinh anh
             gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 1; // chiem 1 cot
+            gbc.weightx = 0.2; // tỉ lệ chiếm không gian theo chiều ngang
+            gbc.insets = new Insets(10, 10, 0, 10);
+            byte[] imageBytes = Base64.getDecoder().decode(hinhAnh);
+            ImageIcon imageIcon = new ImageIcon(imageBytes);
+            Image image = imageIcon.getImage();
+            Image scaledImageThongBao = image.getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+            ImageIcon scaledImage = new ImageIcon(scaledImageThongBao);
+            lblHinhAnh = new JLabel(scaledImage);
+            add(lblHinhAnh, gbc);
+
+
+            gbc.gridx = 0;
             gbc.gridy = 1;
             gbc.gridwidth = 1; // chiem 1 cot
-            lblHinhAnh = new JLabel();
-            if (hinhAnh != null) {
-                lblHinhAnh.setIcon(hinhAnh);
-            }
-            add(lblHinhAnh, gbc);
+            gbc.insets = new Insets(10, 15, 5, 10);
+            gbc.anchor = GridBagConstraints.WEST; // canh le
+            lblThoiGian = new JLabel(thoiGian);
+            lblThoiGian.setFont(new Font("Arial", Font.ITALIC, 12));
+            add(lblThoiGian, gbc);
 
             // noi dung
             gbc.gridx = 1;
             gbc.gridy = 1;
-            gbc.gridwidth= 1;// chiem 1 cot
+            gbc.gridwidth = 1; // chiem 1 cot
+            gbc.insets = new Insets(-80, 10, 5, 10);
             noiDungArea = new JTextArea(noiDung);
+            noiDungArea.setFont(new Font("Arial", Font.PLAIN, 12));
             noiDungArea.setLineWrap(true);
             noiDungArea.setWrapStyleWord(true);
             noiDungArea.setEditable(false);
             add(noiDungArea, gbc);
 
-            // thoi gian
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.gridwidth = 2; // chiem 2 cot
-            gbc.anchor = GridBagConstraints.EAST; // can le phai
-            lblThoiGian = new JLabel(thoiGian.toString());
-            lblThoiGian.setFont(new Font("Arial", Font.ITALIC, 12));
-            add(lblThoiGian, gbc);
-
             // btn xem chi tiet
-            gbc.gridx = 0;
-            gbc.gridy = 3;
-            gbc.gridwidth = 2; // chiem 2 cot
+            gbc.gridx = 1;
+            gbc.gridy = 2;
+            gbc.gridwidth = 1; // chiem 1 cot
+            gbc.insets = new Insets(-20, 180, 10, 0);
             btnXemCTTB = new JButton("Xem chi tiết");
+            btnXemCTTB.setForeground(new Color(0, 102, 204));
+            btnXemCTTB.setFont(new Font("Arial", Font.ITALIC, 13));
+            btnXemCTTB.setBorder(null);
+            btnXemCTTB.setContentAreaFilled(false);
+            btnXemCTTB.setFocusPainted(false);
             add(btnXemCTTB, gbc);
+
+            if (!trangThaiXem) {
+                setBackground(new Color(220, 220, 220));
+                btnXemCTTB.setForeground(new Color(220, 220, 220));
+                noiDungArea.setBackground(new Color(220, 220, 220));
+                btnXemCTTB.setEnabled(false);
+            } else {
+                setBackground(Color.WHITE);
+            }
+
+            btnXemCTTB.addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object o = e.getSource();
+            if (o == btnXemCTTB) {
+//                try {
+//                    thuocHetHan_dao.updateTrangThaiXemThuocHH(soHieuThuoc);
+//                    setBackground(new Color(220, 220, 220));
+//                    btnXemCTTB.setForeground(new Color(220, 220, 220));
+//                    noiDungArea.setBackground(new Color(220, 220, 220));
+//                    btnXemCTTB.setEnabled(false);
+//
+//                    try {
+//                        formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+//                    } catch (Exception ex) {
+//                        throw new RuntimeException(ex);
+//                    }
+//                    centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
+//                    formQuanLyLoThuoc.truyThongTinCTLoThuoc(soHieuThuoc);
+//                    centerPanel.revalidate();
+//                    centerPanel.repaint();
+//                    cardLayout.show(centerPanel, "formQuanLyLoThuoc");
+//                } catch (SQLException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+
+                try {
+                    formQuanLyLoThuoc = new Form_QuanLyLoThuoc();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                centerPanel.add(formQuanLyLoThuoc, "formQuanLyLoThuoc");
+                formQuanLyLoThuoc.truyThongTinCTLoThuoc(soHieuThuoc);
+                centerPanel.revalidate();
+                centerPanel.repaint();
+                cardLayout.show(centerPanel, "formQuanLyLoThuoc");
+            }
         }
     }
 
 
-    // Hàm tạo các nút menu chính
+    // hàm tạo các nút menu chính
     private RippleEffectButton createMenuButton(String text, ImageIcon imageIcon) {
         Image subImage = imageIcon.getImage();
         Image scaledImage = subImage.getScaledInstance(18, 18, Image.SCALE_SMOOTH);
