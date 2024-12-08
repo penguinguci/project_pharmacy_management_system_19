@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.util.HashMap;
 
@@ -161,7 +162,21 @@ public class Form_TaiKhoan extends JPanel implements ActionListener {
         btnDoiMatKhau.setOpaque(true);
         btnDoiMatKhau.setFocusPainted(false);
         btnDoiMatKhau.setBorderPainted(false);
+        btnDoiMatKhau.setFont(new Font("Arial", Font.BOLD, 13));
+        btnDoiMatKhau.setPreferredSize(new Dimension(150, 30));
         btnDoiMatKhau.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnDoiMatKhau.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnDoiMatKhau.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnDoiMatKhau.setBackground(new Color(0, 102, 204));
+            }
+        });
+
         buttonPanel.add(btnDoiMatKhau);
         add(buttonPanel, BorderLayout.SOUTH);
 

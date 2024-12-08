@@ -30,7 +30,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
             btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc, btnQLLoThuoc;
     public JButton btnDangXuat, btnThongBao, btnTroGiup;
-    public JPanel customButtonUser, buttonPanelUser;
+    public JPanel customButtonUser, customButtonUser_Left, customButtonUser_Right;
     public JLabel textVaiTro, textUser;
     public JLabel lbSoThongBao;
     public JPanel mainContentPanel;
@@ -58,7 +58,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TimKiemNhaCungCap formTimKiemNhaCungCap;
     public Form_TimKiemNhanVien formTimKiemNhanVien;
     public Form_TimKiemThuoc formTimKiemThuoc;
-    public Form_Thue formThue;
     public Form_QuanLyKhuyenMai formQuanLyKhuyenMai;
     public Form_TimKiemKhuyenMai formTimKiemKhuyenMai;
     public Form_QuanLyChucVu formQuanLyChucVu;
@@ -464,8 +463,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         ImageIcon scaledIconUser = new ImageIcon(scaledImageUser);
 
         JLabel iconUserLabel = new JLabel(scaledIconUser);
+        iconUserLabel.setBackground(new Color(65, 192, 201));
 
-        JPanel customButtonUser_Left = new JPanel();
+        customButtonUser_Left = new JPanel();
         customButtonUser_Left.setBackground(new Color(65, 192, 201));
         customButtonUser_Left.add(iconUserLabel, BorderLayout.CENTER);
 
@@ -488,7 +488,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         JLabel iconDownLabel = new JLabel(scaledIconDown);
 
-        JPanel customButtonUser_Right = new JPanel();
+        customButtonUser_Right = new JPanel();
         customButtonUser_Right.setBackground(new Color(65, 192, 201));
         customButtonUser_Right.add(iconDownLabel, BorderLayout.CENTER);
 
@@ -1326,6 +1326,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             showPopup();
         }
 
+        if (o == customButtonUser) {
+            customButtonUser.setBackground(new Color(72, 220, 230));
+            customButtonUser_Right.setBackground(new Color(72, 220, 230));
+            customButtonUser_Left.setBackground(new Color(72, 220, 230));
+        }
+
     }
 
     @Override
@@ -1341,6 +1347,11 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             if(outsideBtnTB  && outsidePopupTB) {
                 popupThongBao.setVisible(false);
             }
+        }
+        if (o == customButtonUser) {
+            customButtonUser.setBackground(new Color(65, 192, 201));
+            customButtonUser_Right.setBackground(new Color(65, 192, 201));
+            customButtonUser_Left.setBackground(new Color(65, 192, 201));
         }
     }
 

@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -143,13 +144,24 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelNut.setBackground(Color.WHITE);
         btnXemChiTiet = new JButton("Xem Chi Tiết");
-        btnXemChiTiet.setBackground(new Color(65, 192, 201));
+        btnXemChiTiet.setBackground(new Color(0, 102, 204));
         btnXemChiTiet.setForeground(Color.WHITE);
         btnXemChiTiet.setOpaque(true);
         btnXemChiTiet.setFocusPainted(false);
         btnXemChiTiet.setBorderPainted(false);
         btnXemChiTiet.setFont(new Font("Arial", Font.BOLD, 13));
         btnXemChiTiet.setPreferredSize(new Dimension(120, 30));
+        btnXemChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXemChiTiet.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXemChiTiet.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnInBaoCao = new JButton("In Báo Cáo");
         btnInBaoCao.setBackground(new Color(0, 102, 204));
@@ -159,6 +171,17 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         btnInBaoCao.setBorderPainted(false);
         btnInBaoCao.setFont(new Font("Arial", Font.BOLD, 13));
         btnInBaoCao.setPreferredSize(new Dimension(120, 30));
+        btnInBaoCao.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         panelNut.add(btnXemChiTiet);
         panelNut.add(Box.createHorizontalStrut(10));

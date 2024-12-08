@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.sql.SQLException;
 import java.text.NumberFormat;
@@ -208,6 +209,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnThem.setFocusPainted(false);
         btnThem.setBorderPainted(false);
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnXoa.setPreferredSize(btnInputSize);
         btnXoa.setBackground(new Color(0, 102, 204));
@@ -216,6 +228,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnXoa.setFocusPainted(false);
         btnXoa.setBorderPainted(false);
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
+        btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXoa.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXoa.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnCapNhat.setPreferredSize(btnInputSize);
         btnCapNhat.setBackground(new Color(0, 102, 204));
@@ -224,6 +247,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnCapNhat.setFocusPainted(false);
         btnCapNhat.setBorderPainted(false);
         btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnCapNhat.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnCapNhat.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnCapNhat.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoiInput.setPreferredSize(btnInputSize);
         btnLamMoiInput.setBackground(new Color(0, 102, 204));
@@ -232,6 +266,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnLamMoiInput.setFocusPainted(false);
         btnLamMoiInput.setBorderPainted(false);
         btnLamMoiInput.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoiInput.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoiInput.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoiInput.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         pnlInputButtons.add(btnThem);
         pnlInputButtons.add(Box.createHorizontalStrut(15));
@@ -291,6 +336,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnThemThuocMoi.setForeground(Color.WHITE);
         btnThemThuocMoi.setOpaque(true);
         btnThemThuocMoi.setBorderPainted(false);
+        btnThemThuocMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThemThuocMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThemThuocMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnNhapThuoc = new JButton("Nhập thuốc");
         btnNhapThuoc.setFont(new Font("Arial", Font.BOLD, 13));
@@ -299,6 +355,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnNhapThuoc.setForeground(Color.WHITE);
         btnNhapThuoc.setOpaque(true);
         btnNhapThuoc.setBorderPainted(false);
+        btnNhapThuoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnNhapThuoc.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnNhapThuoc.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnImportExcel = new JButton("Import Excel");
         btnImportExcel.setBackground(new Color(0, 102, 0));
@@ -307,6 +374,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnImportExcel.setFocusPainted(false);
         btnImportExcel.setBorderPainted(false);
         btnImportExcel.setFont(new Font("Arial", Font.BOLD, 12));
+        btnImportExcel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnImportExcel.setBackground(new Color(3, 149, 3));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnImportExcel.setBackground(new Color(0, 102, 0));
+            }
+        });
 
         btnExportExcel = new JButton("Export Excel");
         btnExportExcel.setBackground(new Color(0, 102, 0));
@@ -315,6 +393,17 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         btnExportExcel.setFocusPainted(false);
         btnExportExcel.setBorderPainted(false);
         btnExportExcel.setFont(new Font("Arial", Font.BOLD, 12));
+        btnExportExcel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnExportExcel.setBackground(new Color(3, 149, 3));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnExportExcel.setBackground(new Color(0, 102, 0));
+            }
+        });
 
         // Điều chỉnh kích thước các nút
         Dimension btnSize = new Dimension(140, 32);

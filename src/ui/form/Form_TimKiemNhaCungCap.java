@@ -75,6 +75,17 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         btnTimKiem.setPreferredSize(new Dimension(100, 30));
         btnTimKiem.setMaximumSize(new Dimension(100, 30));
         btnTimKiem.setMinimumSize(new Dimension(100, 30));
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
@@ -86,6 +97,17 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
         btnLamMoi.setMaximumSize(new Dimension(100, 30));
         btnLamMoi.setMinimumSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         //Table
         String[] colsNameNCC = {"Mã nhà cung cấp", "Tên nhà cung cấp", "Email", "Địa chỉ"};

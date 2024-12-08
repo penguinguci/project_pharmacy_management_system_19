@@ -65,12 +65,23 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
 
         timKiemPanel.add(btnTimKiem = new JButton("Tìm kiếm"));
         btnTimKiem.setPreferredSize(new Dimension(90, 27));
-        btnTimKiem.setBackground(new Color(65, 192, 201));
+        btnTimKiem.setBackground(new Color(0, 102, 204));
         btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
         btnTimKiem.setForeground(Color.WHITE);
         btnTimKiem.setOpaque(true);
         btnTimKiem.setFocusPainted(false);
         btnTimKiem.setBorderPainted(false);
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         // popup tìm kiếm và gợi ý tìm kiếm
         popupTimKiem = new JPopupMenu();
@@ -126,32 +137,81 @@ public class Form_ThemKhachHang extends JPanel implements ActionListener, MouseL
         btnThoat = new JButton("Thoát");
 
         btnThem.setBackground(new Color(65, 192, 201));
-        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setBackground(new Color(0, 102, 204));
         btnThem.setForeground(Color.WHITE);
         btnThem.setOpaque(true);
         btnThem.setFocusPainted(false);
         btnThem.setBorderPainted(false);
+        btnThem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThem.setPreferredSize(new Dimension(100, 30));
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThem.setBackground(new Color(24, 137, 251));
+            }
 
-        btnLamMoi.setBackground(new Color(212, 112, 236));
-        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThem.setBackground(new Color(0, 102, 204));
+            }
+        });
+
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
 
-        btnLuuDon.setBackground(new Color(25, 126, 181));
-        btnLuuDon.setFont(new Font("Arial", Font.BOLD, 13));
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
+
+        btnLuuDon.setBackground(new Color(0, 102, 204));
         btnLuuDon.setForeground(Color.WHITE);
         btnLuuDon.setOpaque(true);
         btnLuuDon.setFocusPainted(false);
         btnLuuDon.setBorderPainted(false);
+        btnLuuDon.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLuuDon.setPreferredSize(new Dimension(100, 30));
+        btnLuuDon.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLuuDon.setBackground(new Color(24, 137, 251));
+            }
 
-        btnThoat.setBackground(new Color(238, 156, 37));
-        btnThoat.setFont(new Font("Arial", Font.BOLD, 13));
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLuuDon.setBackground(new Color(0, 102, 204));
+            }
+        });
+
+        btnThoat.setBackground(new Color(0, 102, 204));
         btnThoat.setForeground(Color.WHITE);
         btnThoat.setOpaque(true);
         btnThoat.setFocusPainted(false);
         btnThoat.setBorderPainted(false);
+        btnThoat.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThoat.setPreferredSize(new Dimension(100, 30));
+        btnThoat.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThoat.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThoat.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnThem.setPreferredSize(new Dimension(100, 25));
         btnLamMoi.setPreferredSize(new Dimension(100, 25));
