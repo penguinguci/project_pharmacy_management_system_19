@@ -1,4 +1,4 @@
-﻿USE master
+USE master
 -- Tạo cơ sở dữ liệu
 CREATE DATABASE QuanLyNhaThuoc;
 GO
