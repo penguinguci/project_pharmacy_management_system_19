@@ -1852,8 +1852,8 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                     ct.getThuoc().getTenThuoc(),
                     donGiaThuoc.getDonViTinh(),
                     ct.getSoLuong(),
-                    donGiaThuoc.getDonGia(),
-                    ct.tinhThanhTien()
+                    String.format("%,.0f", donGiaThuoc.getDonGia()) + "đ",
+                    String.format("%,.0f", ct.tinhThanhTien()) + "đ"
             });
         }
     }
