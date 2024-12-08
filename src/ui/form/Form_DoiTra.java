@@ -16,6 +16,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -34,7 +35,6 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private JTable tabHoaDon, tabChiTiet;
     private DefaultTableModel dtmHoaDon, dtmChiTiet;
     private JScrollPane scrHoaDon, scrLyDo, getScrChiTiet, scrChiTiet;
-
     private SqlDateModel modelDate;
     private NhanVien NhanVienDN;
 
@@ -47,7 +47,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
     private ChiTietLoThuoc_DAO chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
-
+    public DonGiaThuoc_DAO donGiaThuoc_dao;
     private GUI_TrangChu trangChu;
 
     public Form_DoiTra() {
@@ -169,7 +169,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         tabHoaDon.setBackground(Color.WHITE);
         renderTable(colsNameHoaDon, tabHoaDon);
 
-        String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Tên thuốc","Số lượng", "Đơn vị tính", "Thành tiền"};
+        String[] colsNameChiTiet = {"STT", "Số hiệu thuốc", "Mã thuốc", "Tên thuốc", "Đơn vị tính","Số lượng", "Đơn giá", "Thành tiền"};
         dtmChiTiet = new DefaultTableModel(colsNameChiTiet, 0);
         tabChiTiet = new JTable(dtmChiTiet);
         tabChiTiet.setRowHeight(25);
@@ -363,25 +363,48 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
     }
 
     public void loadDataTableChiTiet(ArrayList<ChiTietHoaDon> newData){
+        donGiaThuoc_dao = new DonGiaThuoc_DAO();
         dtmChiTiet.setRowCount(0); //Xoá dữ liệu hiện tại
         int count = 1;
-        for(ChiTietHoaDon x: newData) {
-            double tien = 0;
-            try {
-                tien = chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(x.getHoaDon().getMaHD(), x.getThuoc().getMaThuoc());
-            } catch (Exception e) {
-                e.printStackTrace();
+//        for(ChiTietHoaDon x: newData) {
+//            double tien = 0;
+//            try {
+//                tien = chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(x.getHoaDon().getMaHD(), x.getThuoc().getMaThuoc());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            Object[] data = {count, x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(),x.getSoLuong(), x.getDonViTinh(), String.format("%,.0f", tien) + "đ"};
+//            dtmChiTiet.addRow(data);
+//            count++;
+//        }
+        for (ChiTietHoaDon ct: newData) {
+            if (newData != null) {
+                Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(ct.getThuoc().getMaThuoc());
+                DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(thuoc.getMaThuoc(), ct.getDonViTinh());
+                ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), thuoc.getMaThuoc());
+                try {
+                    dtmChiTiet.addRow(new Object[] {
+                            count,
+                            chiTietLoThuoc.getSoHieuThuoc(),
+                            thuoc.getMaThuoc(),
+                            thuoc.getTenThuoc(),
+                            ct.getDonViTinh(),
+                            ct.getSoLuong(),
+                            String.format("%,.0f", donGiaThuoc.getDonGia()) + "đ",
+                            String.format("%,.0f", chiTietHoaDon_dao.getThanhTienByMHDVaMaThuoc(ct.getHoaDon().getMaHD(), thuoc.getMaThuoc())) + "đ"
+                    });
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                count++;
             }
-            Object[] data = {count, x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(),x.getSoLuong(), x.getDonViTinh(), tien};
-            dtmChiTiet.addRow(data);
-            count++;
         }
     }
 
     public void loadDataTableHD(ArrayList<HoaDon> newData){
         dtmHoaDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(HoaDon x: newData) {
-            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap(), hd_dao.getTongTienFromDataBase(x.getMaHD())};
+            Object[] data = {x.getMaHD(), x.getKhachHang().getHoKH() + " " + x.getKhachHang().getTenKH(), x.getNhanVien().getHoNV() + " " + x.getNhanVien().getTenNV(), x.getNgayLap(), String.format("%,.0f", hd_dao.getTongTienFromDataBase(x.getMaHD())) + "đ"};
             dtmHoaDon.addRow(data);
         }
     }

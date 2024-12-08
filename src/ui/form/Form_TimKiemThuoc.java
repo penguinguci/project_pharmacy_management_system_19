@@ -449,7 +449,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         dtmThuoc.setRowCount(0);
         for(ChiTietLoThuoc x: newData) {
             Object[] data = {x.getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDanhMuc().getTenDanhMuc(), x.getThuoc().getNhaCungCap().getTenNCC(),
-                    x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), x.getNgaySX(), x.getHSD(), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+                    x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), x.getNgaySX(), x.getHSD(), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), String.format("%,.0f", x.getDonGiaThuoc().getDonGia())+"đ"};
             dtmThuoc.addRow(data);
         }
     }

@@ -430,16 +430,6 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         dsTBPanel = new JPanel();
         dsTBPanel.setLayout(new BoxLayout(dsTBPanel, BoxLayout.Y_AXIS));
 
-        JPanel tieuDePanel = new JPanel(new BorderLayout());
-        tieuDePanel.setPreferredSize(new Dimension(395, 20));
-        tieuDePanel.setMinimumSize(new Dimension(395, 20));
-        tieuDePanel.setMaximumSize(new Dimension(395, 20));
-        JLabel tieuDeTB = new JLabel("Thông báo", JLabel.LEFT);
-        tieuDeTB.setFont(new Font("Arial", Font.BOLD, 14));
-        tieuDeTB.setForeground(Color.GRAY);
-        tieuDePanel.add(tieuDeTB, BorderLayout.WEST);
-        dsTBPanel.add(tieuDePanel);
-
         JScrollPane scrollPaneThongBao = new JScrollPane(dsTBPanel);
         scrollPaneThongBao.setPreferredSize(new Dimension(380, 480));
         scrollPaneThongBao.getVerticalScrollBar().setUnitIncrement(12);
@@ -950,8 +940,22 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         thuocHetHan_dao = new ThuocHetHan_DAO();
         List<Map<String, Object>> dsTB = thuocHetHan_dao.getDSThongBaoThuocHetHan();
 
+        JPanel tieuDePanel = new JPanel(new BorderLayout());
+        tieuDePanel.setPreferredSize(new Dimension(395, 20));
+        tieuDePanel.setMinimumSize(new Dimension(395, 20));
+        tieuDePanel.setMaximumSize(new Dimension(395, 20));
+        JLabel tieuDeTB = new JLabel("Thông báo", JLabel.LEFT);
+        tieuDeTB.setFont(new Font("Arial", Font.BOLD, 14));
+        tieuDeTB.setForeground(Color.GRAY);
+        tieuDePanel.add(tieuDeTB, BorderLayout.WEST);
+        dsTBPanel.add(tieuDePanel);
+
         if (dsTB.isEmpty()) {
-//            dsTBPanel.add()
+            JPanel pnCenter = new JPanel(new BorderLayout());
+            JLabel tb = new JLabel("Chưa có thông báo mới ở đây!!");
+            tb.setFont(new Font("Arial", Font.ITALIC, 14));
+            pnCenter.add(tb, BorderLayout.CENTER);
+            dsTBPanel.add(tb);
         }
 
         int soTB = 0;
@@ -982,12 +986,14 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     }
 
     // lớp tạo khung thông báo
-    public class ThongBaoPanel extends JPanel implements ActionListener{
+    public class ThongBaoPanel extends JPanel implements ActionListener, MouseListener{
         public JButton btnXemCTTB;
         private String soHieuThuoc;
+        private boolean trangThaiXem;
 
         public ThongBaoPanel(String soHieuThuoc, String tieuDe, String hinhAnh, String thoiGian, String noiDung, boolean trangThaiXem) {
             this.soHieuThuoc = soHieuThuoc;
+            this.trangThaiXem = trangThaiXem;
 
             setLayout(new GridBagLayout());
 //            setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
@@ -1038,6 +1044,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             gbc.gridwidth = 1; // chiem 1 cot
             gbc.insets = new Insets(-80, 10, 5, 10);
             noiDungArea = new JTextArea(noiDung);
+            noiDungArea.setBackground(getBackground());
             noiDungArea.setFont(new Font("Arial", Font.PLAIN, 12));
             noiDungArea.setLineWrap(true);
             noiDungArea.setWrapStyleWord(true);
@@ -1057,6 +1064,17 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             btnXemCTTB.setFocusPainted(false);
             add(btnXemCTTB, gbc);
 
+            btnXemCTTB.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    btnXemCTTB.setForeground(new Color(68, 158, 248));
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    btnXemCTTB.setForeground(new Color(0, 102, 204));
+                }
+            });
+
             if (!trangThaiXem) {
                 setBackground(new Color(220, 220, 220));
                 btnXemCTTB.setForeground(new Color(220, 220, 220));
@@ -1064,9 +1082,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 btnXemCTTB.setEnabled(false);
             } else {
                 setBackground(Color.WHITE);
+                noiDungArea.setBackground(Color.WHITE);
             }
 
             btnXemCTTB.addActionListener(this);
+            addMouseListener(this);
+            noiDungArea.addMouseListener(this);
         }
 
         @Override
@@ -1090,11 +1111,45 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                     centerPanel.revalidate();
                     centerPanel.repaint();
                     cardLayout.show(centerPanel, "formQuanLyLoThuoc");
+
+                    popupThongBao.setVisible(false);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (trangThaiXem) {
+                setBackground(new Color(220, 220, 220));
+                noiDungArea.setBackground(new Color(220, 220, 220));
+            }
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            if (trangThaiXem) {
+                setBackground(Color.WHITE);
+                noiDungArea.setBackground(Color.WHITE);
+            }
+        }
+
     }
 
 

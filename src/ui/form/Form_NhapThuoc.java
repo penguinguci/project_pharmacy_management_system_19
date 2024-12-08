@@ -1204,9 +1204,9 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         LocalDate ngayHetHan = ngayHH.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate ngayHienTai = LocalDate.now();
 
-        if (!ngaySanXuat.isAfter(ngayHienTai)) {
+        if (ngaySanXuat.isAfter(ngayHienTai)) {
             JOptionPane.showMessageDialog(this,
-                    "Ngày sản xuất phải lớn hơn ngày hiện tại!",
+                    "Ngày sản xuất phải trước ngày hiện tại!",
                     "Thông báo",
                     JOptionPane.ERROR_MESSAGE);
             return false;
@@ -1214,7 +1214,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
         if (!ngayHetHan.isAfter(ngaySanXuat)) {
             JOptionPane.showMessageDialog(this,
-                    "Ngày hết hạn phải lớn hơn ngày sản xuất!",
+                    "Ngày hết hạn phải sau ngày sản xuất!",
                     "Thông báo",
                     JOptionPane.ERROR_MESSAGE);
             return false;
