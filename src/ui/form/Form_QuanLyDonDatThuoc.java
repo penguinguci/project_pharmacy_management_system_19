@@ -268,7 +268,16 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         dtmDon.setRowCount(0); //Xoá dữ liệu hiện tại
         for(DonDatThuoc x: newData) {
             String date = formatDate((Date) x.getThoiGianDat());
-            Object[] data = {x.getMaDon(), x.getKhachHang().getMaKH(), x.getKhachHang().getHoKH()+" "+x.getKhachHang().getTenKH(), x.getKhachHang().getSDT(), x.getKhachHang().getDiaChi(), donDatThuoc_dao.getTongTienFromDataBase(x.getMaDon()), date};
+            double tongTien = donDatThuoc_dao.getTongTienFromDataBase(x.getMaDon());
+            Object[] data = {
+                    x.getMaDon(),
+                    x.getKhachHang().getMaKH(),
+                    x.getKhachHang().getHoKH()+" "+x.getKhachHang().getTenKH(),
+                    x.getKhachHang().getSDT(),
+                    x.getKhachHang().getDiaChi(),
+                    String.format("%,.0f", tongTien) + "đ",
+                    date
+            };
             dtmDon.addRow(data);
         }
     }
@@ -278,6 +287,8 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         for(ChiTietDonDatThuoc x: newData) {
             DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(x.getThuoc().getMaThuoc(), x.getDonViTinh());
             ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), x.getThuoc().getMaThuoc());
+            double thanhTien = chiTietDonDatThuoc_dao.getThanhTienFromDataBase(x.getDonDatThuoc().getMaDon(),
+                    chiTietLoThuoc.getSoHieuThuoc());
             Object[] data = {
                     x.getDonDatThuoc().getMaDon(),
                     chiTietLoThuoc.getSoHieuThuoc(),
@@ -285,9 +296,9 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                     x.getThuoc().getTenThuoc(),
                     x.getDonViTinh(),
                     x.getSoLuong(),
-                    donGiaThuoc.getDonGia(),
-                    chiTietDonDatThuoc_dao.getThanhTienFromDataBase(x.getDonDatThuoc().getMaDon(),
-                            chiTietLoThuoc.getSoHieuThuoc())};
+                    String.format("%,.0f", donGiaThuoc.getDonGia()) + "đ",
+                    String.format("%,.0f", thanhTien) + "đ"
+            };
             dtmChiTietDon.addRow(data);
         }
     }
@@ -351,14 +362,13 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
                     ArrayList<ChiTietHoaDon> dsCTHD = new ArrayList<>();
                     for (int i = 0; i < tabChiTietDon.getRowCount(); i++) {
                         // Lấy giá trị của từng ô trong mỗi dòng
-                        String maDon = tabChiTietDon.getValueAt(i, 0).toString(); // Mã đơn
-                        String soHieuThuoc = tabChiTietDon.getValueAt(i, 1).toString(); // Số hiệu thuốc
-                        String maThuoc = tabChiTietDon.getValueAt(i, 2).toString(); // Mã thuốc
-                        String tenThuoc = tabChiTietDon.getValueAt(i, 3).toString(); // Tên thuốc
-                        String donViTinh = tabChiTietDon.getValueAt(i, 4).toString(); // Đơn vị tính
-                        int soLuong = Integer.parseInt(tabChiTietDon.getValueAt(i, 5).toString()); // Số lượng
-                        double donGia = Double.parseDouble(tabChiTietDon.getValueAt(i, 6).toString()); // Đơn giá
-                        double thanhTien = Double.parseDouble(tabChiTietDon.getValueAt(i, 7).toString()); // Thành tiền
+                        String maDon = tabChiTietDon.getValueAt(i, 0).toString();
+                        String soHieuThuoc = tabChiTietDon.getValueAt(i, 1).toString();
+                        String maThuoc = tabChiTietDon.getValueAt(i, 2).toString();
+                        String tenThuoc = tabChiTietDon.getValueAt(i, 3).toString();
+                        String donViTinh = tabChiTietDon.getValueAt(i, 4).toString();
+                        int soLuong = Integer.parseInt(tabChiTietDon.getValueAt(i, 5).toString());
+                        double donGia = Double.parseDouble(tabChiTietDon.getValueAt(i, 6).toString().replace(",", "").replace("đ", ""));
 
                         HoaDon hoaDon = new HoaDon();
 

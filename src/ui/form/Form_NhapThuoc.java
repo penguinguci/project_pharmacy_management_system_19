@@ -8,6 +8,13 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -15,6 +22,7 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -496,10 +504,123 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng thuốc nhập để cập nhật!",
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
             }
+        } else if (o == btnExportExcel) {
+            if (modelChiTietThuoc.getRowCount() > 0) {
+                exportExcel();
+                lamMoiAll();
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập thuốc để xuất file excel!",
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (o == btnImportExcel) {
+            importExcel();
         }
     }
 
 
+    // export excel
+    public void exportExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu file excel");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
+        int nguoiDungChon = fileChooser.showSaveDialog(this);
+
+        if (nguoiDungChon == JFileChooser.APPROVE_OPTION) {
+            File fileDuocLuu = fileChooser.getSelectedFile();
+            String duongDan = fileDuocLuu.getAbsolutePath();
+
+            if (!duongDan.endsWith(".xlsx")) {
+                duongDan += ".xlsx";
+            }
+
+            try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+                HSSFSheet sheet = workbook.createSheet("DanhSachThuocNhap");
+
+                HSSFRow headers = sheet.createRow(0);
+                for (int i = 0; i < modelChiTietThuoc.getColumnCount(); i++) {
+                    Cell cell = headers.createCell(i);
+                    cell.setCellValue(modelChiTietThuoc.getColumnName(i));
+                }
+
+                // ghi dl
+                for (int row = 0; row < modelChiTietThuoc.getRowCount(); row++) {
+                    HSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < modelChiTietThuoc.getColumnCount(); col++) {
+                        Cell cell = excelRow.createCell(col);
+                        Object value = modelChiTietThuoc.getValueAt(row, col);
+                        cell.setCellValue(value != null ? value.toString() : "");
+                    }
+                }
+
+                // điều chỉnh kích thước các cột
+                for (int i = 0; i < modelChiTietThuoc.getColumnCount(); i++) {
+                    sheet.autoSizeColumn(i);
+                }
+
+
+                // ghi file
+                try (FileOutputStream fos = new FileOutputStream(duongDan)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(this, "Xuất file Excel thành công!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+                // mở file excel vừa lưu
+                try {
+                    File file = new File(duongDan);
+                    if (file.exists()) {
+                        Desktop.getDesktop().open(file);
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Không thể mở file Excel: " + e.getMessage(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi ghi file Excel: " + ex.getMessage(),
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    // import excel
+    public void importExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn file Excel");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
+        int nguoiDungChon = fileChooser.showOpenDialog(this);
+
+        if (nguoiDungChon == JFileChooser.APPROVE_OPTION) {
+            File fileDuocChon = fileChooser.getSelectedFile();
+
+            try (HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(fileDuocChon))) {
+                HSSFSheet sheet = workbook.getSheetAt(0);
+
+                modelChiTietThuoc.setRowCount(0);
+
+                // duyệt qua từng dòng trong excel, bỏ qua dòng 0 - tiêu đề
+                for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                    HSSFRow excelRow = sheet.getRow(i);
+                    Vector<Object> rowData = new Vector<>();
+
+                    for (int j = 0; j < modelChiTietThuoc.getColumnCount(); j++) {
+                        Cell cell = excelRow.getCell(j);
+                        rowData.add(cell != null ? cell.toString() : "");
+                    }
+
+                    modelChiTietThuoc.addRow(rowData);
+                }
+                JOptionPane.showMessageDialog(this, "Nhập file Excel thành công!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi đọc file Excel: " + ex.getMessage(),
+                        "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
+    // nhập thuốc
     public void nhapThuoc() throws SQLException {
         String nhaCungCap = String.valueOf(cbbNhaCungCap.getSelectedItem());
         if (nhaCungCap.equals("Chọn nhà cung cấp")) {
@@ -1204,9 +1325,9 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         LocalDate ngayHetHan = ngayHH.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate ngayHienTai = LocalDate.now();
 
-        if (!ngaySanXuat.isAfter(ngayHienTai)) {
+        if (ngaySanXuat.isAfter(ngayHienTai)) {
             JOptionPane.showMessageDialog(this,
-                    "Ngày sản xuất phải lớn hơn ngày hiện tại!",
+                    "Ngày sản xuất phải trước ngày hiện tại!",
                     "Thông báo",
                     JOptionPane.ERROR_MESSAGE);
             return false;
@@ -1214,7 +1335,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
         if (!ngayHetHan.isAfter(ngaySanXuat)) {
             JOptionPane.showMessageDialog(this,
-                    "Ngày hết hạn phải lớn hơn ngày sản xuất!",
+                    "Ngày hết hạn phải sau ngày sản xuất!",
                     "Thông báo",
                     JOptionPane.ERROR_MESSAGE);
             return false;
@@ -1277,6 +1398,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         cbbDonViTinh.setSelectedIndex(0);
         txtSoLuong.setText("");
         txtGiaNhap.setText("");
+        txtGiaBan.setText("");
         tblChiTietThuoc.clearSelection();
         modelNgayHetHan.setSelected(false);
         modelNgaySanXuat.setSelected(false);

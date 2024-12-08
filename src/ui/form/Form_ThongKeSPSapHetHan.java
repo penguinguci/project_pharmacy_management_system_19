@@ -141,7 +141,7 @@ public class Form_ThongKeSPSapHetHan extends JPanel {
         tableModel.setRowCount(0);
         for(ChiTietLoThuoc x: list) {
             Object[] data = {x.getSoHieuThuoc(), x.getThuoc().getMaThuoc(), x.getThuoc().getTenThuoc(), x.getThuoc().getDanhMuc().getTenDanhMuc(), x.getThuoc().getNhaCungCap().getTenNCC(),
-                    x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), formatDate((Date) x.getNgaySX()), formatDate((Date) x.getHSD()), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), x.getDonGiaThuoc().getDonGia()+" VNĐ"};
+                    x.getThuoc().getNhaSanXuat().getTenNhaSX(), x.getThuoc().getNuocSanXuat().getTenNuoxSX(), formatDate((Date) x.getNgaySX()), formatDate((Date) x.getHSD()), x.getSoLuongCon(), x.getDonGiaThuoc().getDonViTinh(), String.format("%,.0f", x.getDonGiaThuoc().getDonGia()) +"đ"};
             tableModel.addRow(data);
         }
     }
