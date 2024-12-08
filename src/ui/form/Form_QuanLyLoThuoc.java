@@ -12,10 +12,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -188,6 +185,17 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         btnXemHD.setBorderPainted(false);
         btnXemHD.setFont(new Font("Arial", Font.BOLD, 13));
         btnXemHD.setPreferredSize(new Dimension(120, 35));
+        btnXemHD.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXemHD.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXemHD.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -202,6 +210,17 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         footerPanel.add(btnXemHD);
         footerPanel.add(Box.createHorizontalStrut(20));

@@ -8,10 +8,7 @@ import entity.TaiKhoan;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class GUI_DangNhap extends JFrame implements ActionListener, KeyListener {
@@ -143,19 +140,44 @@ public class GUI_DangNhap extends JFrame implements ActionListener, KeyListener 
         buttonPanel.setBackground(new Color(65, 192, 201));
         btn_Login = new RoundedButton("Đăng nhập");
         btn_Login.setFont(new Font("Tomato", Font.BOLD, 13));
+        btn_Login.setBackground(Color.white);
         btn_Login.setContentAreaFilled(false);
         btn_Login.setFocusPainted(false);
         btn_Login.setOpaque(false);
         btn_Login.setBorder(BorderFactory.createEmptyBorder());
         btn_Login.setPreferredSize(new Dimension(105, 35));
+        btn_Login.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn_Login.setBackground(new Color(209, 207, 207));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn_Login.setBackground(Color.white);
+            }
+        });
 
         btn_Thoat = new RoundedButton("Thoát");
         btn_Thoat.setFont(new Font("Tomato", Font.BOLD, 13));
+        btn_Thoat.setBackground(Color.white);
         btn_Thoat.setContentAreaFilled(false);
         btn_Thoat.setFocusPainted(false);
         btn_Thoat.setOpaque(false);
         btn_Thoat.setBorder(BorderFactory.createEmptyBorder());
         btn_Thoat.setPreferredSize(new Dimension(70, 35));
+        btn_Thoat.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn_Thoat.setBackground(new Color(209, 207, 207));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn_Thoat.setBackground(Color.white);
+            }
+        });
+
         buttonPanel.add(btn_Login);
         buttonPanel.add(btn_Thoat);
 

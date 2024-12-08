@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -96,6 +97,17 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         btnThem.setBorderPainted(false);
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
         btnThem.setPreferredSize(new Dimension(100, 30));
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnXoa = new JButton("Xóa");
         btnXoa.setBackground(new Color(0, 102, 204));
@@ -105,6 +117,17 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         btnXoa.setBorderPainted(false);
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
         btnXoa.setPreferredSize(new Dimension(100, 30));
+        btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXoa.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXoa.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnCapNhat = new JButton("Cập nhật");
         btnCapNhat.setBackground(new Color(0, 102, 204));
@@ -114,6 +137,17 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         btnCapNhat.setBorderPainted(false);
         btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
         btnCapNhat.setPreferredSize(new Dimension(100, 30));
+        btnCapNhat.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnCapNhat.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnCapNhat.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setBackground(new Color(0, 102, 204));
@@ -123,6 +157,17 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         btnLamMoi.setBorderPainted(false);
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         pnlButtons.add(btnThem);
         pnlButtons.add(Box.createHorizontalStrut(10));
@@ -149,6 +194,18 @@ public class Form_QuanLyDanhMuc  extends JPanel implements ListSelectionListener
         btnTimKiem.setOpaque(true);
         btnTimKiem.setFocusPainted(false);
         btnTimKiem.setBorderPainted(false);
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
+
         pnlTimKiem.add(btnTimKiem);
         pnlTable.add(pnlTimKiem, BorderLayout.NORTH);
 
