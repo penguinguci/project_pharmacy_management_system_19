@@ -234,6 +234,7 @@ CREATE TABLE ChiTietHoaDon (
 );
 GO
 
+
 -- Bảng DoiTra
 CREATE TABLE PhieuDoiTra (
 	maPhieu VARCHAR(20) NOT NULL PRIMARY KEY,
@@ -1768,5 +1769,32 @@ BEGIN
 	WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0 AND dg.trangThai = 1
 	ORDER BY thoiGianThongBao, trangThaiXem DESC
 END
+GO
+
+
+-- thống kê doanh thu của nhân viên theo tháng năm hiện tại
+CREATE PROCEDURE ThongKeDoanhThuTheoThang
+AS
+BEGIN
+    DECLARE @namHienTai INT = YEAR(GETDATE()); 
+    DECLARE @thangHienTai INT = MONTH(GETDATE()); 
+
+    SELECT 
+        NV.hoNV + ' ' + NV.tenNV  AS TenNhanVien,
+        SUM(HD.tongTien) AS TongDoanhThu,
+        AVG(HD.tongTien) AS DoanhThuTrungBinh
+    FROM 
+        HoaDon HD
+    JOIN 
+        NhanVien NV ON HD.maNhanVien = NV.maNV
+    WHERE 
+        YEAR(HD.ngayLap) = @namHienTai 
+        AND MONTH(HD.ngayLap) = @thangHienTai
+        AND HD.trangThai = 1 
+    GROUP BY 
+        NV.hoNV, NV.tenNV
+    ORDER BY 
+        TongDoanhThu DESC; 
+END;
 GO
 
