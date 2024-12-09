@@ -433,10 +433,10 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                 }
                 if(!txtTimKiem.getText().equalsIgnoreCase("")) {
                     if(dataSearch.isEmpty()) {
-                        dataSearch.addAll(hoaDon_dao.getDSHoaDonTheoSDTKhachHang(listAll, txtTimKiem.getText().trim()));
+                        dataSearch.addAll(hoaDon_dao.timKiemProMax(listAll, txtTimKiem.getText().trim()));
                     } else {
                         ArrayList<HoaDon> temp = new ArrayList<>();
-                        temp.addAll(hoaDon_dao.getDSHoaDonTheoSDTKhachHang(dataSearch, txtTimKiem.getText().trim()));
+                        temp.addAll(hoaDon_dao.timKiemProMax(dataSearch, txtTimKiem.getText().trim()));
                         dataSearch.clear();
                         dataSearch.addAll(temp);
                         temp.clear();
