@@ -19,7 +19,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_DoiTra  extends JPanel implements ActionListener, MouseListener {
@@ -85,7 +87,7 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         scrLyDo.setMaximumSize(new Dimension(300, 90));
 
 
-        txtTimKiem.setPreferredSize(new Dimension(200, 25));
+        txtTimKiem.setPreferredSize(new Dimension(200, 30));
         txtMaPhieu.setMaximumSize(maxSize);
         txtMaHoaDon.setMaximumSize(maxSize);
 //        txtThuTuThuoc.setMaximumSize(maxSize);
@@ -97,22 +99,44 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
 
         btnXacNhan = new JButton("Xác nhận");
-        btnXacNhan.setBackground(new Color(65, 192, 201));
+        btnXacNhan.setBackground(new Color(0, 102, 204));
         btnXacNhan.setForeground(Color.WHITE);
         btnXacNhan.setOpaque(true);
         btnXacNhan.setFocusPainted(false);
         btnXacNhan.setBorderPainted(false);
         btnXacNhan.setFont(new Font("Arial", Font.BOLD, 13));
-        btnXacNhan.setPreferredSize(new Dimension(100, 35));
+        btnXacNhan.setPreferredSize(new Dimension(100, 30));
+        btnXacNhan.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXacNhan.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXacNhan.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnHuy = new JButton("Hủy");
-        btnHuy.setBackground(new Color(204, 0, 0));
+        btnHuy.setBackground(new Color(0, 102, 204));
         btnHuy.setForeground(Color.WHITE);
         btnHuy.setOpaque(true);
         btnHuy.setFocusPainted(false);
         btnHuy.setBorderPainted(false);
         btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
-        btnHuy.setPreferredSize(new Dimension(100, 35));
+        btnHuy.setPreferredSize(new Dimension(100, 30));
+        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnHuy.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnHuy.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setBackground(new Color(0, 102, 204));
@@ -121,9 +145,38 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setPreferredSize(new Dimension(100, 35));
+        btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnTimKiem = new JButton("Tìm kiếm");
+        btnTimKiem.setBackground(new Color(0, 102, 204));
+        btnTimKiem.setForeground(Color.WHITE);
+        btnTimKiem.setOpaque(true);
+        btnTimKiem.setFocusPainted(false);
+        btnTimKiem.setBorderPainted(false);
+        btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
+        btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnQuayLai = new JButton("Quay lại", scaledIconBack);
         btnQuayLai.setFont(new Font("Arial", Font.BOLD, 17));
@@ -554,6 +607,9 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
 
         if (e.getSource() == btnQuayLai) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -19,10 +20,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -30,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class Form_BanThuoc extends JPanel implements ActionListener, DocumentListener {
     public JButton btnBack, btnLamMoi;
@@ -67,6 +67,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     private GUI_TrangChu trangChu;
     public static ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DiemTichLuy_DAO diemTichLuy_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -124,6 +125,17 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         // Thêm panelButton_left và panelButton_right vào boxTopButton
         boxTopButton.add(panelButton_left);
@@ -246,6 +258,17 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnTimKiemKH.setOpaque(true);
         btnTimKiemKH.setFocusPainted(false);
         btnTimKiemKH.setBorderPainted(false);
+        btnTimKiemKH.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiemKH.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiemKH.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         panelKhachHang.add(lblTimKiemKH);
         panelKhachHang.add(txtTimKiemKH);
@@ -452,6 +475,17 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnThanhToan.setBorderPainted(false);
         btnThanhToan.setFont(new Font("Arial", Font.BOLD, 13));
         btnThanhToan.setPreferredSize(new Dimension(105, 35));
+        btnThanhToan.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThanhToan.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThanhToan.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnHuy = new JButton("Hủy");
         btnHuy.setBackground(new Color(0, 102, 204));
@@ -461,6 +495,17 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnHuy.setBorderPainted(false);
         btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
         btnHuy.setPreferredSize(new Dimension(105, 35));
+        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnHuy.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnHuy.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLuuDonHang = new JButton("Lưu đơn");
         btnLuuDonHang.setBackground(new Color(0, 102, 204));
@@ -470,6 +515,17 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         btnLuuDonHang.setBorderPainted(false);
         btnLuuDonHang.setFont(new Font("Arial", Font.BOLD, 13));
         btnLuuDonHang.setPreferredSize(new Dimension(105, 35));
+        btnLuuDonHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLuuDonHang.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLuuDonHang.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         panelThanhToanButton.add(btnThanhToan);
         panelThanhToanButton.add(Box.createHorizontalStrut(10));
@@ -636,7 +692,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         JSpinner spinnerSoLuong;
         JComboBox<String> cboDonViThuoc;
         String[] donViTinh = {"Chọn"};
-        RoundedButton btnThemThuoc;
+        JButton btnThemThuoc;
         Thuoc thuoc;
 
         public ThuocPanel(Thuoc thuoc) {
@@ -652,7 +708,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.insets = new Insets(5, 5, 5, 5);
 
             // hình ảnh thuốc
-            // tạo ImageIcon từ mảng byte
             byte[] imageBytes = Base64.getDecoder().decode(thuoc.getHinhAnh());
 
             ImageIcon imageIcon = new ImageIcon(imageBytes);
@@ -677,7 +732,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             add(maThuocLabel, gbc);
 
             // tên thuốc
-            tenThuocLabel = new JLabel(thuoc.getTenThuoc());
+            tenThuocLabel = new JLabel(gioiHanTenThuoc(thuoc.getTenThuoc(), 20));
             tenThuocLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
             gbc.gridy = 1;
             gbc.insets = new Insets(5, 0, 10, 0);
@@ -723,16 +778,33 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             add(cboDonViThuoc, gbc);
 
             // button thêm
-            btnThemThuoc = new RoundedButton("+ Thêm");
-            btnThemThuoc.setFont(new Font("Tahoma", Font.BOLD, 14));
+            btnThemThuoc = new JButton("+ Thêm");
+            btnThemThuoc.setFont(new Font("Arial", Font.BOLD, 13));
             btnThemThuoc.setForeground(Color.WHITE);
             btnThemThuoc.setBackground(new Color(0, 102, 204));
-            btnThemThuoc.setOpaque(false);
-            btnThemThuoc.setBorderPainted(false);
+            btnThemThuoc.setOpaque(true);
             btnThemThuoc.setFocusPainted(false);
-            btnThemThuoc.setContentAreaFilled(false);
-            btnThemThuoc.setBorder(BorderFactory.createEmptyBorder());
-            btnThemThuoc.setPreferredSize(new Dimension(80, 35));
+            btnThemThuoc.setBorderPainted(false);
+            btnThemThuoc.setBorder(null);
+            btnThemThuoc.setPreferredSize(new Dimension(80, 30));
+            btnThemThuoc.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    Object o = e.getSource();
+                    if (o == btnThemThuoc) {
+                        btnThemThuoc.setBackground(new Color(24, 137, 251));
+                    }
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    Object o = e.getSource();
+                    if (o == btnThemThuoc) {
+                        btnThemThuoc.setBackground(new Color(0, 102, 204));
+                    }
+                }
+            });
+
             gbc.gridx = 2;
             gbc.gridy = 5;
             gbc.gridheight = 1;
@@ -747,6 +819,14 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
             // update data cho combobox đơn vị
             updateDataDonViTinhVaGia(thuoc.getMaThuoc());
+        }
+
+        // giới hạn ký tự bằng ...
+        public String gioiHanTenThuoc(String tenThuoc, int maxLength) {
+            if (tenThuoc.length() > maxLength) {
+                return tenThuoc.substring(0, maxLength - 3) + "...";
+            }
+            return tenThuoc;
         }
 
         // update data cho combobox đơn vị
@@ -822,6 +902,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 giaLabel.setText("Giá: " + String.format("%,.0f", giaThuoc) + "đ");
             }
         }
+
     }
 
     // hàm cập nhật tiền
@@ -926,11 +1007,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             text_TienThoi.setText("0đ");
         } else if(o == btnTimKiemKH) {
             String SDT = txtTimKiemKH.getText().trim();
-//            if (!SDT.matches("^0\d{9}$")) {
-//                JOptionPane.showMessageDialog(this, "Số điện thoại bắt đầu bằng 0 và có 10 số!!!");
-//                txtTimKiemKH.requestFocus();
-//                return;
-//            }
+            if (!SDT.matches("^0\\d{9}$")) {
+                JOptionPane.showMessageDialog(this, "Số điện thoại bắt đầu bằng 0 và có 10 số!!!");
+                txtTimKiemKH.requestFocus();
+                return;
+            }
             boolean khachHangTonTai = false;
             KhachHang khachHang = null;
 
@@ -1015,6 +1096,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             }
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == itemXoa) {
             int selectedRow = tbGioHang.getSelectedRow();
             if (selectedRow != -1) {
@@ -1035,6 +1119,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    public void setGui_trangChu(GUI_TrangChu gui_trangChu) {
+        this.gui_trangChu = gui_trangChu;
     }
 
 
@@ -1708,30 +1796,54 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
         }
     }
 
-    // Tạo viền bo tròn Text Field
-    public class RoundedTextField extends JTextField {
-        private int radius;
+    // lớp tạo hiệu ứng gợn sóng cho  button
+    public static class RippleEffectButton extends JButton {
+        private Point clickPoint = null;
+        private int rippleRadius = 0;
+        private int alpha = 120; // Độ mờ ban đầu
+        private Timer timer;
 
-        public RoundedTextField(int columns) {
-            super(columns);
-            radius = 15;
-            setOpaque(false);
+        public RippleEffectButton(String text, ImageIcon icon) {
+            super(text, icon);
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    clickPoint = e.getPoint();
+                    rippleRadius = 0;
+                    alpha = 120; // Đặt lại độ mờ ban đầu
+
+                    if (timer != null && timer.isRunning()) {
+                        timer.stop();
+                    }
+
+                    // Tạo hiệu ứng gợn sóng
+                    timer = new Timer(15, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            rippleRadius += 5;
+                            alpha -= 5; // giảm dần độ mờ
+                            if (rippleRadius > getWidth() || alpha <= 0) {
+                                timer.stop();
+                            }
+                            repaint();
+                        }
+                    });
+                    timer.start();
+                }
+            });
         }
 
         @Override
         protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(getBackground());
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
             super.paintComponent(g);
-            g2.dispose();
-        }
-
-        @Override
-        protected void paintBorder(Graphics g) {
-            g.setColor(getForeground());
-            g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            if (clickPoint != null && alpha > 0) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setColor(new Color(255, 255, 255, alpha)); // Đặt màu với độ mờ hiện tại
+                g2d.setClip(new Ellipse2D.Float(clickPoint.x - rippleRadius / 2, clickPoint.y - rippleRadius / 2, rippleRadius, rippleRadius));
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+                g2d.dispose();
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -31,6 +32,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
@@ -53,6 +56,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     public ChiTietHoaDon_DAO chiTietHoaDon_dao;
     public ChiTietPhieuNhap_DAO chiTietPhieuNhap_dao;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_ThongKeDoanhThu() throws Exception {
         setLayout(new BorderLayout());
@@ -83,15 +87,37 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         btnThongKe.setBorderPainted(false);
         btnThongKe.setFont(new Font("Arial", Font.BOLD, 13));
         btnThongKe.setPreferredSize(new Dimension(100, 30));
+        btnThongKe.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThongKe.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThongKe.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnInBaoCao = new JButton("In báo cáo");
-        btnInBaoCao.setBackground(new Color(65, 192, 201));
+        btnInBaoCao.setBackground(new Color(0, 102, 204));
         btnInBaoCao.setForeground(Color.WHITE);
         btnInBaoCao.setOpaque(true);
         btnInBaoCao.setFocusPainted(false);
         btnInBaoCao.setBorderPainted(false);
         btnInBaoCao.setFont(new Font("Arial", Font.BOLD, 13));
         btnInBaoCao.setPreferredSize(new Dimension(110, 30));
+        btnInBaoCao.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         // panel dưới: chứa combo box để chọn thời gian (tuần/tháng/năm) và bảng danh sách hóa đơn
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -112,6 +138,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         btnQuayLai.setBorderPainted(false);
         btnQuayLai.setFocusPainted(false);
         btnQuayLai.setHorizontalAlignment(SwingConstants.LEFT);
+
 
         topPanel.add(btnQuayLai, BorderLayout.NORTH);
 
@@ -490,6 +517,8 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
             }
         } else if (o == btnQuayLai) {
             setVisible(false);
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnInBaoCao) {
             String selectedOption = (String) cmbThoiGian.getSelectedItem();
             if("Theo năm".equals(selectedOption)) {
@@ -511,6 +540,10 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                 printer.printBaoCaoDoanhThuTheoNgayTrongThangNam();
             }
         }
+    }
+
+    public void setGui_trangChu(GUI_TrangChu gui_trangChu) {
+        this.gui_trangChu = gui_trangChu;
     }
 
     // in hóa đơn

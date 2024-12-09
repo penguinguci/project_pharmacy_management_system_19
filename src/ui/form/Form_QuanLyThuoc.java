@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.*;
 import entity.*;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -52,6 +53,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public JPanel imgPanel;
     private String danhMucSort, nccSort, nsxSort;
     public JPanel pnlMaThuoc, pnlThanhPhan, pnlCachDung, pnlBaoQuan, pnlCongDung, pnlChiDinh, pnlMoTa, pnlHamLuong, pnlDangBaoChe;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyThuoc() throws Exception {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -122,6 +124,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnAdd.setOpaque(true);
         btnAdd.setFocusPainted(false);
         btnAdd.setBorderPainted(false);
+        btnAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnAdd.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnAdd.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         // Update product
         ImageIcon iconUpdate = new ImageIcon("images/update.png");
@@ -133,6 +146,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnUpdate.setOpaque(true);
         btnUpdate.setFocusPainted(false);
         btnUpdate.setBorderPainted(false);
+        btnUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnUpdate.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnUpdate.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         // Delete product
         ImageIcon iconDelete = new ImageIcon("images/delete.png");
@@ -144,6 +168,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnDelete.setOpaque(true);
         btnDelete.setFocusPainted(false);
         btnDelete.setBorderPainted(false);
+        btnDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnDelete.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnDelete.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         // Delete product
         ImageIcon iconReload = new ImageIcon("images/reload.png");
@@ -155,6 +190,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnReload.setOpaque(true);
         btnReload.setFocusPainted(false);
         btnReload.setBorderPainted(false);
+        btnReload.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnReload.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnReload.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         pOption.add(lblSearch);
         pOption.add(txtSearch);
@@ -203,6 +249,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnFirst.setPreferredSize(new Dimension(50,25));
         btnFirst.setMaximumSize(new Dimension(50,25));
         btnFirst.setMinimumSize(new Dimension(50,25));
+        btnFirst.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnFirst.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnFirst.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnPrev = new JButton("<");
         btnPrev.setBackground(new Color(0, 102, 204));
@@ -214,6 +271,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnPrev.setPreferredSize(new Dimension(50,25));
         btnPrev.setMaximumSize(new Dimension(50,25));
         btnPrev.setMinimumSize(new Dimension(50,25));
+        btnPrev.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnPrev.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnPrev.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnNext = new JButton(">");
         btnNext.setBackground(new Color(0, 102, 204));
@@ -225,6 +293,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnNext.setPreferredSize(new Dimension(50,25));
         btnNext.setMaximumSize(new Dimension(50,25));
         btnNext.setMinimumSize(new Dimension(50,25));
+        btnNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnNext.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnNext.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLast = new JButton(">>");
         btnLast.setBackground(new Color(0, 102, 204));
@@ -236,6 +315,17 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         btnLast.setPreferredSize(new Dimension(50,25));
         btnLast.setMaximumSize(new Dimension(50,25));
         btnLast.setMinimumSize(new Dimension(50,25));
+        btnLast.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLast.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLast.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         pPag.setPreferredSize(new Dimension(widthScreen, btnFirst.getPreferredSize().height));
 
@@ -642,6 +732,9 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         }
         if (e.getSource().equals(btnBack)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
         if (e.getSource().equals(btnReload)) {
             clearData();
@@ -698,6 +791,10 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         });
 
 
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     private void clearData() {

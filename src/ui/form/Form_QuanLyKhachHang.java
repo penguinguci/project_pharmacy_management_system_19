@@ -1,11 +1,13 @@
 package ui.form;
 
 import dao.DiemTichLuy_DAO;
+import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -16,10 +18,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
+import java.util.List;
 
 public class Form_QuanLyKhachHang extends JPanel implements ActionListener, MouseListener {
     private JLabel lblTitle, lblMa, lblHo, lblTen, lblSDT, lblGioiTinh, lblXepHang, lblDiemTichLuy, lblDiaChi, lblEmail, lblNgaySinh;
@@ -39,6 +39,7 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
     private KhachHang_DAO kh_dao = new KhachHang_DAO();
     private ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
     private DiemTichLuy_DAO diemTichLuy_dao = new DiemTichLuy_DAO();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyKhachHang() {
         this.setLayout(new BorderLayout());
@@ -107,6 +108,17 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnTimKiem.setBorderPainted(false);
         btnTimKiem.setFont(new Font("Arial", Font.BOLD, 13));
         btnTimKiem.setPreferredSize(new Dimension(100, 30));
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setBackground(new Color(0, 102, 204));
@@ -116,6 +128,17 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnLamMoi.setBorderPainted(false);
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnThem.setBackground(new Color(0, 102, 204));
         btnThem.setForeground(Color.WHITE);
@@ -126,6 +149,17 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnThem.setPreferredSize(new Dimension(100, 30));
         btnThem.setMaximumSize(new Dimension(100, 30));
         btnThem.setMinimumSize(new Dimension(100, 30));
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnSua.setBackground(new Color(0, 102, 204));
         btnSua.setForeground(Color.WHITE);
@@ -136,6 +170,17 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnSua.setPreferredSize(new Dimension(100, 30));
         btnSua.setMaximumSize(new Dimension(100, 30));
         btnSua.setMinimumSize(new Dimension(100, 30));
+        btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnSua.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnSua.setBackground(new Color(0, 102, 204));
+            }
+        });
 
 
         btnXoa.setBackground(new Color(0, 102, 204));
@@ -148,6 +193,17 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
         btnXoa.setMaximumSize(new Dimension(100, 30));
         btnXoa.setMinimumSize(new Dimension(100, 30));
         btnXoa.setBackground(new Color(0, 102, 204));
+        btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXoa.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXoa.setBackground(new Color(0, 102, 204));
+            }
+        });
 
 
         //Table
@@ -519,7 +575,14 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
 
         if (e.getSource().equals(btnQuayLai)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     @Override

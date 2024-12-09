@@ -6,6 +6,7 @@ import entity.DonDatThuoc;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -13,11 +14,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
@@ -32,6 +36,7 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
     public UtilDateModel ngayBatDauModel, ngayKetThucModel;
 
     private ChuongTrinhKhuyenMai_DAO chuongTrinhKhuyenMai_dao = new ChuongTrinhKhuyenMai_DAO();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_TimKiemKhuyenMai() {
         setLayout(new BorderLayout());
@@ -138,10 +143,21 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         btnTimKiem.setPreferredSize(new Dimension(100, 30));
         btnTimKiem.setMaximumSize(new Dimension(100, 30));
         btnTimKiem.setMinimumSize(new Dimension(100, 30));
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
@@ -149,6 +165,17 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
         btnLamMoi.setMaximumSize(new Dimension(100, 30));
         btnLamMoi.setMinimumSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
 
         buttonPanel.add(btnTimKiem);
@@ -189,6 +216,7 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
 
         btnTimKiem.addActionListener(this);
         btnLamMoi.addActionListener(this);
+        btnBack.addActionListener(this);
 
         promoScrollPane.setPreferredSize(new Dimension(getWidth(), 390));
         panelSouth.add(promoScrollPane, BorderLayout.CENTER);
@@ -209,6 +237,10 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
             Object[] data = {x.getMaCTKM(), x.getLoaiKhuyenMai(), x.getMoTa(), dateStart, dateEnd};
             modelChuongTrinhKM.addRow(data);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     @Override
@@ -281,6 +313,13 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         }
         if(e.getSource().equals(btnLamMoi)) {
             clear();
+        }
+
+        if (e.getSource() == btnBack) {
+            setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

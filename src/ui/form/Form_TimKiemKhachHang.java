@@ -1,10 +1,12 @@
 package ui.form;
 
+import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -17,6 +19,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, MouseListener {
@@ -30,6 +34,7 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
     private DefaultTableModel dtmKhachHang;
     private JScrollPane scrKhachHang;
     private JButton btnTimKiem, btnSua, btnXoa, btnLamMoi, btnQuayLai;
+    public GUI_TrangChu gui_trangChu;
 
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
@@ -106,10 +111,22 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         btnTimKiem.setPreferredSize(new Dimension(100, 30));
         btnTimKiem.setMaximumSize(new Dimension(100, 30));
         btnTimKiem.setMinimumSize(new Dimension(100, 30));
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
+
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setBackground(new Color(65, 192, 201));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
@@ -117,6 +134,17 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
         btnLamMoi.setMaximumSize(new Dimension(100, 30));
         btnLamMoi.setMinimumSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         //Table
         String[] colsNameKhachHang = {"Mã khách hàng", "Họ và tên", "Ngày sinh", "Số điện thoại", "Giới tính", "Email", "Địa chỉ","Điểm tích luỹ", "Xếp hạng"};
@@ -312,6 +340,10 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(btnTimKiem)) {
@@ -371,6 +403,9 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         }
         if (e.getSource().equals(btnQuayLai)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

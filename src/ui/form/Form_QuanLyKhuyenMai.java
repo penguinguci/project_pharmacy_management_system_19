@@ -5,6 +5,7 @@ import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -16,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -28,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
@@ -44,6 +47,7 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
     public UtilDateModel ngayBatDauModel, ngayKetThucModel;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DonGiaThuoc_DAO donGiaThuoc_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyKhuyenMai() throws Exception {
         // khởi tạo
@@ -155,6 +159,17 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         btnThem.setBorderPainted(false);
         btnThem.setFont(new Font("Arial", Font.BOLD, 13));
         btnThem.setPreferredSize(new Dimension(100, 30));
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnXoa = new JButton("Xóa");
         btnXoa.setBackground(new Color(0, 102, 204));
@@ -164,6 +179,17 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         btnXoa.setBorderPainted(false);
         btnXoa.setFont(new Font("Arial", Font.BOLD, 13));
         btnXoa.setPreferredSize(new Dimension(100, 30));
+        btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnXoa.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnXoa.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnCapNhat = new JButton("Cập nhật");
         btnCapNhat.setBackground(new Color(0, 102, 204));
@@ -173,6 +199,17 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         btnCapNhat.setBorderPainted(false);
         btnCapNhat.setFont(new Font("Arial", Font.BOLD, 13));
         btnCapNhat.setPreferredSize(new Dimension(100, 30));
+        btnCapNhat.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnCapNhat.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnCapNhat.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setBackground(new Color(0, 102, 204));
@@ -182,6 +219,17 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         btnLamMoi.setBorderPainted(false);
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
 
         buttonPanel.add(btnThem);
@@ -312,6 +360,17 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         btnApDungKM.setForeground(Color.WHITE);
         btnApDungKM.setOpaque(true);
         btnApDungKM.setBorderPainted(false);
+        btnApDungKM.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnApDungKM.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnApDungKM.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btGoKMThuoc = new JButton("Gỡ khuyến mãi");
         btGoKMThuoc.setFont(new Font("Arial", Font.BOLD, 13));
@@ -321,6 +380,17 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         btGoKMThuoc.setOpaque(true);
         btGoKMThuoc.setFocusPainted(false);
         btGoKMThuoc.setBorderPainted(false);
+        btGoKMThuoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btGoKMThuoc.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btGoKMThuoc.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         detailButtonPanel.add(btnApDungKM);
         detailButtonPanel.add(btGoKMThuoc);
@@ -521,6 +591,10 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         txtSoLuongToiThieu.setText(modelCTKhuyenMai.getValueAt(row, 5).toString());
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -528,6 +602,9 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
             lamMoi();
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnThem) {
             if (valiDataKM()) {
                 String loaiKM = txtLoaiKhuyenMai.getText().trim();

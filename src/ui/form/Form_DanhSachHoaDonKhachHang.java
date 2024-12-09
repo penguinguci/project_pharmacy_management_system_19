@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.*;
 import entity.*;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -11,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -123,6 +125,17 @@ public class Form_DanhSachHoaDonKhachHang extends JPanel implements ActionListen
         btnThoat.setFocusPainted(false);
         btnThoat.setBorderPainted(false);
         btnThoat.setPreferredSize(new Dimension(100, 30));
+        btnThoat.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThoat.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThoat.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         JPanel exitPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         exitPanel.add(btnThoat);

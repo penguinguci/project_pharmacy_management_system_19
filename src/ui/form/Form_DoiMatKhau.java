@@ -9,6 +9,7 @@ import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 
 public class Form_DoiMatKhau extends JPanel implements ActionListener {
@@ -101,23 +102,68 @@ public class Form_DoiMatKhau extends JPanel implements ActionListener {
 
         // nút đổi mật khẩu
         btnDoiMatKhau = new JButton("Đổi mật khẩu");
-        btnDoiMatKhau.setPreferredSize(new Dimension(125, 30));
-        btnDoiMatKhau.setBackground(Color.decode("#4CAF50"));
+        btnDoiMatKhau.setFont(new Font("Arial", Font.BOLD, 13));
+        btnDoiMatKhau.setBackground(new Color(0, 102, 204));
         btnDoiMatKhau.setForeground(Color.WHITE);
+        btnDoiMatKhau.setOpaque(true);
+        btnDoiMatKhau.setFocusPainted(false);
+        btnDoiMatKhau.setBorderPainted(false);
+        btnDoiMatKhau.setPreferredSize(new Dimension(125, 30));
+        btnDoiMatKhau.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnDoiMatKhau.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnDoiMatKhau.setBackground(new Color(0, 102, 204));
+            }
+        });
         buttonPanel.add(btnDoiMatKhau);
 
         // nút làm mới
         btnLamMoi = new JButton("Làm mới");
-        btnLamMoi.setPreferredSize(new Dimension(125, 30));
-        btnLamMoi.setBackground(Color.decode("#2196F3"));
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
         btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setPreferredSize(new Dimension(125, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
         buttonPanel.add(btnLamMoi);
 
         // nút hủy
         btnHuy = new JButton("Hủy");
-        btnHuy.setPreferredSize(new Dimension(120, 30));
-        btnHuy.setBackground(Color.decode("#f44336"));
+        btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
+        btnHuy.setBackground(new Color(0, 102, 204));
         btnHuy.setForeground(Color.WHITE);
+        btnHuy.setOpaque(true);
+        btnHuy.setFocusPainted(false);
+        btnHuy.setBorderPainted(false);
+        btnHuy.setPreferredSize(new Dimension(125, 30));
+        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnHuy.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnHuy.setBackground(new Color(0, 102, 204));
+            }
+        });
         buttonPanel.add(btnHuy);
 
         // thêm buttonPanel vào layout chính

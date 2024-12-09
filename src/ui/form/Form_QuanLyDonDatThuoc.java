@@ -17,6 +17,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, ActionListener, MouseListener {
@@ -103,6 +105,17 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnTimKiemDon.setFocusPainted(false);
         btnTimKiemDon.setBorderPainted(false);
         btnTimKiemDon.setPreferredSize(new Dimension(100, 30));
+        btnTimKiemDon.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiemDon.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiemDon.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
         Image imageLamMoi = iconLamMoi.getImage();
@@ -116,6 +129,17 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnLamMoi.setOpaque(true);
         btnLamMoi.setFocusPainted(false);
         btnLamMoi.setBorderPainted(false);
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
 
         // thêm vào topPanel
@@ -198,6 +222,17 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnThanhToan.setBorderPainted(false);
         btnThanhToan.setFont(new Font("Arial", Font.BOLD, 13));
         btnThanhToan.setPreferredSize(new Dimension(120, 34));
+        btnThanhToan.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThanhToan.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThanhToan.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnChinhSua = new JButton("Chỉnh sửa");
         btnChinhSua.setBackground(new Color(0, 102, 204));
@@ -207,6 +242,17 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnChinhSua.setBorderPainted(false);
         btnChinhSua.setFont(new Font("Arial", Font.BOLD, 13));
         btnChinhSua.setPreferredSize(new Dimension(120, 34));
+        btnChinhSua.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnChinhSua.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnChinhSua.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnHuy = new JButton("Huỷ");
         btnHuy.setBackground(new Color(0, 102, 204));
@@ -216,6 +262,17 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
         btnHuy.setBorderPainted(false);
         btnHuy.setFont(new Font("Arial", Font.BOLD, 13));
         btnHuy.setPreferredSize(new Dimension(120, 34));
+        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnHuy.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnHuy.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         footerPanel.add(btnThanhToan);
         footerPanel.add(Box.createHorizontalStrut(10));
@@ -473,6 +530,9 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
         if (e.getSource() == btnQuayLai) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

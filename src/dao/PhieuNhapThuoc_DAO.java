@@ -3,10 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 import static connectDB.ConnectDB.getConnection;
@@ -135,5 +132,16 @@ public class PhieuNhapThuoc_DAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public ArrayList<PhieuNhapThuoc> timPhieuNhapThuocTheoNgay(ArrayList<PhieuNhapThuoc> list, Date date) {
+        ArrayList<PhieuNhapThuoc> resultList = new ArrayList<>();
+        for(PhieuNhapThuoc x : list ){
+            Date sqlDate = new Date(x.getNgayLapPhieu().getTime());
+            if(date.toLocalDate().equals(sqlDate.toLocalDate())) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
     }
 }

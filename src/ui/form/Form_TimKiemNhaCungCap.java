@@ -1,8 +1,10 @@
 package ui.form;
 
+import dao.HoaDon_DAO;
 import dao.NhaCungCap_DAO;
 import entity.KhachHang;
 import entity.NhaCungCap;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -17,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, MouseListener {
     private JLabel lblTitle, lblTen, lblEmail, lblDiaChi;
@@ -27,6 +31,7 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
     private JScrollPane scrNCC;
 
     private NhaCungCap_DAO nhaCungCap_dao = new NhaCungCap_DAO();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_TimKiemNhaCungCap() {
         this.setLayout(new BorderLayout());
@@ -75,6 +80,17 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         btnTimKiem.setPreferredSize(new Dimension(100, 30));
         btnTimKiem.setMaximumSize(new Dimension(100, 30));
         btnTimKiem.setMinimumSize(new Dimension(100, 30));
+        btnTimKiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnTimKiem.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         btnLamMoi = new JButton("Làm mới");
         btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
@@ -86,6 +102,17 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         btnLamMoi.setPreferredSize(new Dimension(100, 30));
         btnLamMoi.setMaximumSize(new Dimension(100, 30));
         btnLamMoi.setMinimumSize(new Dimension(100, 30));
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         //Table
         String[] colsNameNCC = {"Mã nhà cung cấp", "Tên nhà cung cấp", "Email", "Địa chỉ"};
@@ -259,8 +286,16 @@ public class Form_TimKiemNhaCungCap  extends JPanel implements ActionListener, M
         }
         if (e.getSource().equals(btnQuayLai)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
 
     @Override
     public void mouseClicked(MouseEvent e) {
