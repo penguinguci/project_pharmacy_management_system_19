@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DonGiaThuoc_DAO donGiaThuoc_dao;
     public LoThuoc_DAO loThuoc_dao;
+    private JDatePanelImpl datePanel;
+    private JDatePickerImpl datePicker;
 
     public Form_QuanLyLoThuoc() throws Exception {
         phieuNhapThuoc_dao = new PhieuNhapThuoc_DAO();
@@ -84,8 +87,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         p.put("text.month", "Month");
         p.put("text.year", "Year");
 
-        JDatePanelImpl datePanel = new JDatePanelImpl(ngayDatModel, p);
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateTimeLabelFormatter());
+        datePanel = new JDatePanelImpl(ngayDatModel, p);
+        datePicker = new JDatePickerImpl(datePanel, new DateTimeLabelFormatter());
 
         // placeholder cho datepicker
         textPlaceholder = datePicker.getJFormattedTextField();
@@ -113,8 +116,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         topPanel.add(cbxMaLT);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(datePicker);
-        topPanel.add(Box.createHorizontalStrut(10));
-        topPanel.add(txtTimKiem);
+//        topPanel.add(Box.createHorizontalStrut(10));
+//        topPanel.add(txtTimKiem);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(btnTimKiemDon);
 
@@ -226,6 +229,15 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         footerPanel.add(Box.createHorizontalStrut(20));
         footerPanel.add(btnLamMoi);
 
+        cbxMaLT.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(cbxMaLT.getSelectedIndex()!=0) {
+                    ngayDatModel.setSelected(false);
+                }
+            }
+        });
+
         // thêm vào this
         add(titlePanel_Center, BorderLayout.NORTH);
         add(topPanel, BorderLayout.BEFORE_FIRST_LINE);
@@ -238,9 +250,10 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         btnQuayLai.addActionListener(this);
         btnLamMoi.addActionListener(this);
         btnXemHD.addActionListener(this);
+        btnTimKiemDon.addActionListener(this);
 
         updateCBXMaLT();
-        updateTableLoThuoc();
+        updateTableLoThuoc(loThuoc_dao.getAll());
     }
 
     // update combobox mã hóa đơn
@@ -254,17 +267,21 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
 
 
     // update table phiếu nhập
-    public void updateTableLoThuoc() {
-        ArrayList<LoThuoc> dsLT = loThuoc_dao.getAll();
+    public void updateTableLoThuoc(ArrayList<LoThuoc> dsLT) {
         modelLT.setRowCount(0);
         for (LoThuoc lt : dsLT) {
             modelLT.addRow(new Object[] {
                     lt.getMaLoThuoc(),
                     lt.getPhieuNhapThuoc().getMaPhieuNhap(),
-                    lt.getNgayNhapThuoc(),
+                    formatDate(new Date(lt.getNgayNhapThuoc().getTime())),
                     String.format("%,.0f", loThuoc_dao.getTongTienLoThuoc(lt.getMaLoThuoc())) + "đ"
             });
         }
+    }
+
+    private String formatDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
     }
 
     // update chi tiết phiếu nhập sau khi chọn
@@ -279,8 +296,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
                     thuoc.getMaThuoc(),
                     ct.getSoHieuThuoc(),
                     thuoc.getTenThuoc(),
-                    ct.getNgaySX(),
-                    ct.getHSD(),
+                    formatDate(new Date(ct.getNgaySX().getTime())),
+                    formatDate(new Date(ct.getHSD().getTime())),
                     ct.getSoLuongCon(),
                     donGia != 0.0 ? String.format("%,.0f", donGia) + "đ" : ""
             });
@@ -335,6 +352,36 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn muốn xem!",
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        if(o==btnTimKiemDon) {
+            ArrayList<LoThuoc> listAll = loThuoc_dao.getAll();
+            ArrayList<LoThuoc> dataSearch = new ArrayList<>();
+            if(cbxMaLT.getSelectedIndex()!=0) {
+                LoThuoc lt = loThuoc_dao.timLoThuoc((String) cbxMaLT.getSelectedItem());
+                dataSearch.add(lt);
+            } else {
+                if(ngayDatModel.isSelected()) {
+                    Date sqlDate = new Date(ngayDatModel.getValue().getTime());
+                    System.out.println(formatDate(sqlDate));
+                    if(dataSearch.isEmpty()) {
+                        dataSearch.addAll(loThuoc_dao.timLoThuocTheoNgay(listAll, sqlDate));
+                    } else {
+                        ArrayList<LoThuoc> temp = new ArrayList<>();
+                        temp.addAll(loThuoc_dao.timLoThuocTheoNgay(dataSearch, sqlDate));
+                        dataSearch.clear();
+                        dataSearch.addAll(temp);
+                        temp.clear();
+                    }
+                }
+            }
+            if(dataSearch.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy lô thuốc phù hợp!");
+                cbxMaLT.setSelectedIndex(0);
+                ngayDatModel.setSelected(false);
+                updateTableLoThuoc(listAll);
+            } else {
+                updateTableLoThuoc(dataSearch);
             }
         }
     }

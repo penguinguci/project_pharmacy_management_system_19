@@ -3,10 +3,7 @@ package dao;
 import connectDB.ConnectDB;
 import entity.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 import static connectDB.ConnectDB.getConnection;
@@ -152,5 +149,16 @@ public class LoThuoc_DAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public ArrayList<LoThuoc> timLoThuocTheoNgay(ArrayList<LoThuoc> list, Date date) {
+        ArrayList<LoThuoc> resultList = new ArrayList<>();
+        for(LoThuoc x : list ){
+            Date sqlDate = new Date(x.getNgayNhapThuoc().getTime());
+            if(date.toLocalDate().equals(sqlDate.toLocalDate())) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
     }
 }
