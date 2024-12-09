@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -59,6 +60,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
     private JDatePickerImpl datePickerNgaySanXuat, datePickerNgayHetHan;
     private UtilDateModel modelNgaySanXuat, modelNgayHetHan;
     private List<Object[]> tempData = new ArrayList<>();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_NhapThuoc() throws Exception {
         // khởi tạo
@@ -474,6 +476,10 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -500,6 +506,9 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
             }
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnLamMoiInput) {
             lamMoiAll();
         } else if (o == btnThem) {

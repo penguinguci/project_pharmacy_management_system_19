@@ -1,10 +1,12 @@
 package ui.form;
 
+import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -17,6 +19,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, MouseListener {
@@ -30,6 +34,7 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
     private DefaultTableModel dtmKhachHang;
     private JScrollPane scrKhachHang;
     private JButton btnTimKiem, btnSua, btnXoa, btnLamMoi, btnQuayLai;
+    public GUI_TrangChu gui_trangChu;
 
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
@@ -335,6 +340,10 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(btnTimKiem)) {
@@ -394,6 +403,9 @@ public class Form_TimKiemKhachHang  extends JPanel implements ActionListener, Mo
         }
         if (e.getSource().equals(btnQuayLai)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.*;
 import entity.*;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -19,6 +20,8 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseListener {
     private JLabel lblTitle, lblTen, lblDanhMuc, lblNCC, lblNhaNSX, lblNuocSX, lblKhoangGia;
@@ -43,6 +46,7 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
 
     private BufferedImage image;
     private String path = "images/sample.png";
+    public GUI_TrangChu gui_trangChu;
 
     public Form_TimKiemThuoc() {
         this.setLayout(new BorderLayout());
@@ -429,7 +433,14 @@ public class Form_TimKiemThuoc  extends JPanel implements ActionListener, MouseL
         }
         if (e.getSource().equals(btnQuayLai)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     public void clearData() {

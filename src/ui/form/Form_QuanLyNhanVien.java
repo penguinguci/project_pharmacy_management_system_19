@@ -17,19 +17,19 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
+import java.util.List;
 
 import connectDB.ConnectDB;
 import dao.ChucVu_DAO;
+import dao.HoaDon_DAO;
 import dao.NhanVien_DAO;
 import entity.ChucVu;
 import entity.NhanVien;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
     private JTextField txtHoNV, txtTenNV, txtSoDienThoai, txtEmail, txtDiaChi;
@@ -43,6 +43,7 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
     private JButton btnTimKiem;
     public NhanVien_DAO nhanVien_dao;
     public ChucVu_DAO chucVu_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyNhanVien() throws Exception {
         setLayout(new BorderLayout());
@@ -622,7 +623,14 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
             lamMoi();
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
 

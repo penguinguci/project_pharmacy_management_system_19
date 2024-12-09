@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.*;
 import entity.*;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -52,6 +53,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
     public JPanel imgPanel;
     private String danhMucSort, nccSort, nsxSort;
     public JPanel pnlMaThuoc, pnlThanhPhan, pnlCachDung, pnlBaoQuan, pnlCongDung, pnlChiDinh, pnlMoTa, pnlHamLuong, pnlDangBaoChe;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyThuoc() throws Exception {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -730,6 +732,9 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         }
         if (e.getSource().equals(btnBack)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
         if (e.getSource().equals(btnReload)) {
             clearData();
@@ -786,6 +791,10 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         });
 
 
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     private void clearData() {

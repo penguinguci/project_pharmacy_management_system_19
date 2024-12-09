@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -24,6 +25,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSelectionListener, ActionListener {
     public JButton btnQuayLai, btnThanhToan, btnChinhSua, btnHuy, btnTimKiemDon, btnLamMoi, btnXemHD;
@@ -43,6 +45,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
     public DonGiaThuoc_DAO donGiaThuoc_dao;
     public ChiTietKhuyenMai_DAO chiTietKhuyenMai_dao;
     public ChuongTrinhKhuyenMai_DAO chuongTrinhKhuyenMai_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyHoaDon() throws Exception {
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
@@ -354,11 +357,19 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o == btnQuayLai) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnLamMoi) {
             modelChiTiet.setRowCount(0);
             tableHD.clearSelection();

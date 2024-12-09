@@ -17,6 +17,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, ActionListener, MouseListener {
@@ -528,6 +530,9 @@ public class Form_QuanLyDonDatThuoc extends JPanel implements FocusListener, Act
 
         if (e.getSource() == btnQuayLai) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

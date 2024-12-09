@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.ChucVu_DAO;
 import dao.DangNhap_DAO;
+import dao.HoaDon_DAO;
 import dao.NhanVien_DAO;
 import entity.ChucVu;
 import entity.NhanVien;
@@ -9,6 +10,7 @@ import entity.TaiKhoan;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,10 +27,8 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
+import java.util.List;
 
 public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
     private JTextField txtHoNV, txtTenNV, txtSoDienThoai, txtEmail, txtDiaChi;
@@ -45,6 +45,7 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
     public NhanVien_DAO nhanVien_dao;
     public ChucVu_DAO chucVu_dao;
     public DangNhap_DAO dangNhap_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyTaiKhoanNhanVien() throws Exception {
         setLayout(new BorderLayout());
@@ -442,6 +443,10 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -463,6 +468,9 @@ public class Form_QuanLyTaiKhoanNhanVien  extends JPanel implements ListSelectio
             }
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

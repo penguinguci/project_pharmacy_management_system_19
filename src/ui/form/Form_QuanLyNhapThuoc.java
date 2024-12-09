@@ -5,6 +5,7 @@ import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -20,6 +21,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListSelectionListener, ActionListener {
@@ -40,6 +43,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DonGiaThuoc_DAO donGiaThuoc_dao;
     public NhaCungCap_DAO nhaCungCap_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyNhapThuoc() throws Exception {
         phieuNhapThuoc_dao = new PhieuNhapThuoc_DAO();
@@ -330,11 +334,18 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o == btnQuayLai) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnLamMoi) {
             tablePN.clearSelection();
             modelChiTiet.setRowCount(0);

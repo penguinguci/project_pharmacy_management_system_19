@@ -1,10 +1,12 @@
 package ui.form;
 
 import dao.ChucVu_DAO;
+import dao.HoaDon_DAO;
 import dao.NhanVien_DAO;
 import entity.ChucVu;
 import entity.ChuongTrinhKhuyenMai;
 import entity.NhanVien;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -19,6 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
     private JTextField txtTenChucVu, txtTimKiem;
@@ -28,6 +32,7 @@ public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener, 
 
     public ChucVu_DAO chucVu_dao;
     public NhanVien_DAO nhanVien_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyChucVu() {
         setLayout(new BorderLayout());
@@ -309,11 +314,18 @@ public class Form_QuanLyChucVu extends JPanel implements ListSelectionListener, 
         txtTenChucVu.setText(model.getValueAt(row, 1).toString());
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnThem) {
             if (valiDataCV()) {
                 String tenCV = txtTenChucVu.getText().toString();

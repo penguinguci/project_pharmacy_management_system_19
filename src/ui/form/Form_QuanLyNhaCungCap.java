@@ -1,15 +1,13 @@
 package ui.form;
 
-import dao.ChucVu_DAO;
-import dao.NhaCungCap_DAO;
-import dao.NhanVien_DAO;
-import dao.Thuoc_DAO;
+import dao.*;
 import entity.NhaCungCap;
 import entity.NhaSanXuat;
 import entity.Thuoc;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -26,6 +24,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
@@ -40,6 +40,7 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
     private JButton btnTimKiem;
     public NhaCungCap_DAO nhaCungCap_dao;
     public Thuoc_DAO thuoc_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyNhaCungCap() throws Exception {
         setLayout(new BorderLayout());
@@ -355,11 +356,18 @@ public class Form_QuanLyNhaCungCap  extends JPanel implements ListSelectionListe
         }
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnLamMoi) {
             lamMoi();
         } else if (o == btnThem) {

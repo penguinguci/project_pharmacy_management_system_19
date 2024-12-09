@@ -775,4 +775,25 @@ public class HoaDon_DAO {
     }
 
 
+    public List<Map<String, Object>> thongKeDoanhThuTheoThangCuaNhanVien() {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        String sql = "{call ThongKeDoanhThuTheoThang}";
+
+        try (Connection conn = getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("TenNhanVien", rs.getString("TenNhanVien"));
+                    row.put("TongDoanhThu", rs.getDouble("TongDoanhThu"));
+                    row.put("DoanhThuTrungBinh", rs.getDouble("DoanhThuTrungBinh"));
+                    dsBaoCao.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dsBaoCao;
+    }
 }
