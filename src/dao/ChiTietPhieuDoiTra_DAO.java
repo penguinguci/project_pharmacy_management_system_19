@@ -29,12 +29,6 @@ public class ChiTietPhieuDoiTra_DAO {
     }
 
     public boolean themVaoCSDL(String maPhieu, ArrayList<ChiTietHoaDon> data) {
-        System.out.println(data.size());
-        if(data.size()>0) {
-            for(ChiTietHoaDon x : data) {
-                System.out.println(x.getChiTietLoThuoc().getSoHieuThuoc());
-            }
-        }
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();

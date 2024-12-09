@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -34,6 +35,8 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
     public JScrollPane scrollHD, scrollChiTiet;
     public DefaultTableModel modelHD, modelChiTiet;
     public DefaultComboBoxModel<String> dcbmMaDonDat, dcbmThoiGianDat;
+    private JDatePanelImpl datePanel;
+    private JDatePickerImpl datePicker;
     public UtilDateModel ngayDatModel;
     public JTextField textPlaceholder;
     public HoaDon_DAO hoaDon_dao;
@@ -85,8 +88,8 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         p.put("text.month", "Month");
         p.put("text.year", "Year");
 
-        JDatePanelImpl datePanel = new JDatePanelImpl(ngayDatModel, p);
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateTimeLabelFormatter());
+        datePanel = new JDatePanelImpl(ngayDatModel, p);
+        datePicker = new JDatePickerImpl(datePanel, new DateTimeLabelFormatter());
 
         // placeholder cho datepicker
         textPlaceholder = datePicker.getJFormattedTextField();
@@ -118,6 +121,23 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
             }
         });
 
+        btnTimKiemDon.addActionListener(this);
+
+        // Tắt txtTimKiem và datePicker khi chọn maHD
+        cbxMaHD.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(cbxMaHD.getSelectedIndex()!=0) {
+                    txtTimKiem.setEditable(false);
+                    datePicker.setEnabled(false);
+                    ngayDatModel.setSelected(false);
+                } else {
+                    txtTimKiem.setEditable(true);
+                    datePicker.setEnabled(true);
+                    ngayDatModel.setSelected(false);
+                }
+            }
+        });
 
         // thêm vào topPanel
         topPanel.add(btnQuayLai, BorderLayout.WEST);
@@ -250,7 +270,11 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         thuoc_dao = new Thuoc_DAO();
 
         // update table HD
-        updateDSHD();
+        try {
+            updateDSHD(hoaDon_dao.getAllHoaDon());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // update combobox mã hóa đơn
         updateCBXMaHD();
@@ -273,8 +297,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
     }
 
     // upate date table
-    public void updateDSHD() throws SQLException {
-        ArrayList<HoaDon> dsHD = hoaDon_dao.getAllHoaDon();
+    public void updateDSHD(ArrayList<HoaDon> dsHD) {
         modelHD.setRowCount(0);
         for (HoaDon hd : dsHD) {
             if (hd.getKhachHang() != null) {
@@ -283,7 +306,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                         hd.getNhanVien().getHoNV() + " " + hd.getNhanVien().getTenNV(),
                         hd.getKhachHang().getHoKH() + " " + hd.getKhachHang().getTenKH(),
                         hd.getKhachHang().getSDT(),
-                        hd.getNgayLap(),
+                        formatDate(new Date(hd.getNgayLap().getTime())),
                         hd.getThue().getLoaiThue(),
                         String.format("%,.0f", hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())) + "đ"
                 });
@@ -293,7 +316,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                         hd.getNhanVien().getHoNV() + " " + hd.getNhanVien().getTenNV(),
                         hd.getKhachHang().getTenKH(),
                         hd.getKhachHang().getSDT(),
-                        hd.getNgayLap(),
+                        formatDate(new Date(hd.getNgayLap().getTime())),
                         hd.getThue().getLoaiThue(),
                         String.format("%,.0f", hoaDon_dao.getTongTienFromDataBase(hd.getMaHD())) + "đ"
                 });
@@ -376,6 +399,50 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
             }
         }
+        if(o == btnTimKiemDon) {
+            ArrayList<HoaDon> listAll = hoaDon_dao.getAllHoaDon();
+            ArrayList<HoaDon> dataSearch = new ArrayList<>();
+            if(cbxMaHD.getSelectedIndex() != 0) {
+                HoaDon only = hoaDon_dao.timHoaDon((String) cbxMaHD.getSelectedItem());
+                dataSearch.clear();
+                dataSearch.add(only);
+            } else {
+                if(ngayDatModel.isSelected()) {
+                    Date sqlDate = new Date(ngayDatModel.getValue().getTime());
+                    System.out.println(formatDate(sqlDate));
+                    if(dataSearch.isEmpty()) {
+                        dataSearch.addAll(hoaDon_dao.timHoaDonTheoNgayThangNam(listAll, sqlDate));
+                    } else {
+                        ArrayList<HoaDon> temp = new ArrayList<>();
+                        temp.addAll(hoaDon_dao.timHoaDonTheoNgayThangNam(dataSearch, sqlDate));
+                        dataSearch.clear();
+                        dataSearch.addAll(temp);
+                        temp.clear();
+                    }
+                }
+                if(!txtTimKiem.getText().equalsIgnoreCase("")) {
+                    if(dataSearch.isEmpty()) {
+                        dataSearch.addAll(hoaDon_dao.getDSHoaDonTheoSDTKhachHang(listAll, txtTimKiem.getText().trim()));
+                    } else {
+                        ArrayList<HoaDon> temp = new ArrayList<>();
+                        temp.addAll(hoaDon_dao.getDSHoaDonTheoSDTKhachHang(dataSearch, txtTimKiem.getText().trim()));
+                        dataSearch.clear();
+                        dataSearch.addAll(temp);
+                        temp.clear();
+                    }
+                }
+
+            }
+            if(dataSearch.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn phù hợp!");
+                cbxMaHD.setSelectedIndex(0);
+                txtTimKiem.setText("");
+                ngayDatModel.setSelected(false);
+                updateDSHD(listAll);
+            } else {
+                updateDSHD(dataSearch);
+            }
+        }
     }
 
     private void openPDF(String filePath) {
@@ -387,6 +454,11 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String formatDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
     }
 
 

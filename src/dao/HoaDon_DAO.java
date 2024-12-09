@@ -28,49 +28,53 @@ public class HoaDon_DAO {
         }
     }
 
-    public ArrayList<HoaDon> getAllHoaDon() throws SQLException {
+    public ArrayList<HoaDon> getAllHoaDon(){
         ConnectDB con  = new ConnectDB();
         con.connect();
         getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from HoaDon where trangThai = 1 order by ngayLap";
-        ps = getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()){
-            HoaDon hd = new HoaDon();
-            hd.setMaHD(rs.getString("maHD"));
+       try {
+           String sql = "select * from HoaDon where trangThai = 1 order by ngayLap";
+           ps = getConnection().prepareStatement(sql);
+           rs = ps.executeQuery();
+           while(rs.next()){
+               HoaDon hd = new HoaDon();
+               hd.setMaHD(rs.getString("maHD"));
 
-            khachHang_dao = new KhachHang_DAO();
-            KhachHang kh = new KhachHang();
-            if(rs.getString("maKhachHang") == null) {
-                kh.setHoKH("");
-                kh.setTenKH("Khách hàng lẻ");
-            } else {
-                kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
-            }
-            hd.setKhachHang(kh);
+               khachHang_dao = new KhachHang_DAO();
+               KhachHang kh = new KhachHang();
+               if(rs.getString("maKhachHang") == null) {
+                   kh.setHoKH("");
+                   kh.setTenKH("Khách hàng lẻ");
+               } else {
+                   kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+               }
+               hd.setKhachHang(kh);
 
-            nhanVien_dao = new NhanVien_DAO();
-            NhanVien nv = new NhanVien();
-            nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
-            hd.setNhanVien(nv);
+               nhanVien_dao = new NhanVien_DAO();
+               NhanVien nv = new NhanVien();
+               nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
+               hd.setNhanVien(nv);
 
-            thue_dao = new Thue_DAO();
-            Thue thue = new Thue();
-            thue = thue_dao.timThue(rs.getString("maThue"));
-            hd.setThue(thue);
+               thue_dao = new Thue_DAO();
+               Thue thue = new Thue();
+               thue = thue_dao.timThue(rs.getString("maThue"));
+               hd.setThue(thue);
 
-            hd.setNgayLap(rs.getDate("ngayLap"));
-            hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
-            hd.setTrangThai(rs.getBoolean("trangThai"));
+               hd.setNgayLap(rs.getDate("ngayLap"));
+               hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
+               hd.setTrangThai(rs.getBoolean("trangThai"));
 
-            if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
-                if(timHoaDon(hd.getMaHD()) == null) {
-                    this.list.add(hd);
-                }
-            }
-        }
+               if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
+                   if(timHoaDon(hd.getMaHD()) == null) {
+                       this.list.add(hd);
+                   }
+               }
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
         return this.list;
     }
 
@@ -774,5 +778,25 @@ public class HoaDon_DAO {
         return hoaDonList;
     }
 
+    public ArrayList<HoaDon> timHoaDonTheoNgayThangNam(ArrayList<HoaDon> list, Date date) {
+        ArrayList<HoaDon> resultList = new ArrayList<>();
+        for(HoaDon x : list ){
+            Date sqlDate = new Date(x.getNgayLap().getTime());
+            if(date.toLocalDate().equals(sqlDate.toLocalDate())) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
+    }
+
+    public ArrayList<HoaDon> getDSHoaDonTheoSDTKhachHang(ArrayList<HoaDon> list, String sdt) {
+        ArrayList<HoaDon> resultList = new ArrayList<>();
+        for(HoaDon x : list ){
+            if(x.getKhachHang().getSDT().equalsIgnoreCase(sdt)) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
+    }
 
 }
