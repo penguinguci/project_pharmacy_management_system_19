@@ -1,8 +1,10 @@
 package ui.form;
 
+import dao.HoaDon_DAO;
 import dao.NhanVien_DAO;
 import entity.KhachHang;
 import entity.NhanVien;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -20,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, MouseListener {
     private JLabel lblTitle, lblTen, lblNamSinh, lblGioiTinh, lblSDT, lblVaiTro;
@@ -36,6 +40,7 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
     private JScrollPane scrNhanVien;
 
     private NhanVien_DAO nhanVien_dao = new NhanVien_DAO();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_TimKiemNhanVien() {
         this.setLayout(new BorderLayout());
@@ -399,7 +404,14 @@ public class Form_TimKiemNhanVien  extends JPanel implements ActionListener, Mou
         }
         if (e.getSource().equals(btnQuayLai)) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     public void clearData() {

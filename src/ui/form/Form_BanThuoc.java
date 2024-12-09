@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class Form_BanThuoc extends JPanel implements ActionListener, DocumentListener {
     public JButton btnBack, btnLamMoi;
@@ -66,6 +67,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
     private GUI_TrangChu trangChu;
     public static ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DiemTichLuy_DAO diemTichLuy_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_BanThuoc() throws Exception {
         setLayout(new BorderLayout());
@@ -706,7 +708,6 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             gbc.insets = new Insets(5, 5, 5, 5);
 
             // hình ảnh thuốc
-            // tạo ImageIcon từ mảng byte
             byte[] imageBytes = Base64.getDecoder().decode(thuoc.getHinhAnh());
 
             ImageIcon imageIcon = new ImageIcon(imageBytes);
@@ -1006,11 +1007,11 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             text_TienThoi.setText("0đ");
         } else if(o == btnTimKiemKH) {
             String SDT = txtTimKiemKH.getText().trim();
-//            if (!SDT.matches("^0\d{9}$")) {
-//                JOptionPane.showMessageDialog(this, "Số điện thoại bắt đầu bằng 0 và có 10 số!!!");
-//                txtTimKiemKH.requestFocus();
-//                return;
-//            }
+            if (!SDT.matches("^0\\d{9}$")) {
+                JOptionPane.showMessageDialog(this, "Số điện thoại bắt đầu bằng 0 và có 10 số!!!");
+                txtTimKiemKH.requestFocus();
+                return;
+            }
             boolean khachHangTonTai = false;
             KhachHang khachHang = null;
 
@@ -1095,6 +1096,9 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             }
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == itemXoa) {
             int selectedRow = tbGioHang.getSelectedRow();
             if (selectedRow != -1) {
@@ -1115,6 +1119,10 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    public void setGui_trangChu(GUI_TrangChu gui_trangChu) {
+        this.gui_trangChu = gui_trangChu;
     }
 
 

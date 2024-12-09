@@ -1,15 +1,21 @@
 package ui.form;
 
+import dao.HoaDon_DAO;
+import ui.gui.GUI_TrangChu;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
 
 public class Form_TroGiup extends JPanel implements ActionListener {
 
     private CardLayout cardLayout;
     private JPanel contentPanel;
     private JButton btnBack;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_TroGiup() {
         setLayout(new BorderLayout());
@@ -206,6 +212,13 @@ public class Form_TroGiup extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 }

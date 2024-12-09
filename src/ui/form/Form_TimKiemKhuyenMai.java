@@ -6,6 +6,7 @@ import entity.DonDatThuoc;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -19,6 +20,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
@@ -33,6 +36,7 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
     public UtilDateModel ngayBatDauModel, ngayKetThucModel;
 
     private ChuongTrinhKhuyenMai_DAO chuongTrinhKhuyenMai_dao = new ChuongTrinhKhuyenMai_DAO();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_TimKiemKhuyenMai() {
         setLayout(new BorderLayout());
@@ -212,6 +216,7 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
 
         btnTimKiem.addActionListener(this);
         btnLamMoi.addActionListener(this);
+        btnBack.addActionListener(this);
 
         promoScrollPane.setPreferredSize(new Dimension(getWidth(), 390));
         panelSouth.add(promoScrollPane, BorderLayout.CENTER);
@@ -232,6 +237,10 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
             Object[] data = {x.getMaCTKM(), x.getLoaiKhuyenMai(), x.getMoTa(), dateStart, dateEnd};
             modelChuongTrinhKM.addRow(data);
         }
+    }
+
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
     }
 
     @Override
@@ -304,6 +313,13 @@ public class Form_TimKiemKhuyenMai extends JPanel implements ActionListener {
         }
         if(e.getSource().equals(btnLamMoi)) {
             clear();
+        }
+
+        if (e.getSource() == btnBack) {
+            setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         }
     }
 

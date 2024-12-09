@@ -24,6 +24,7 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -55,6 +56,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
     public ChiTietHoaDon_DAO chiTietHoaDon_dao;
     public ChiTietPhieuNhap_DAO chiTietPhieuNhap_dao;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_ThongKeDoanhThu() throws Exception {
         setLayout(new BorderLayout());
@@ -515,6 +517,8 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
             }
         } else if (o == btnQuayLai) {
             setVisible(false);
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnInBaoCao) {
             String selectedOption = (String) cmbThoiGian.getSelectedItem();
             if("Theo năm".equals(selectedOption)) {
@@ -536,6 +540,10 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
                 printer.printBaoCaoDoanhThuTheoNgayTrongThangNam();
             }
         }
+    }
+
+    public void setGui_trangChu(GUI_TrangChu gui_trangChu) {
+        this.gui_trangChu = gui_trangChu;
     }
 
     // in hóa đơn

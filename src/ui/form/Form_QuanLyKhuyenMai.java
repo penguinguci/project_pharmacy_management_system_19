@@ -5,6 +5,7 @@ import entity.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -29,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListener, ActionListener, DocumentListener {
@@ -45,6 +47,7 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
     public UtilDateModel ngayBatDauModel, ngayKetThucModel;
     public ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     public DonGiaThuoc_DAO donGiaThuoc_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_QuanLyKhuyenMai() throws Exception {
         // khởi tạo
@@ -588,6 +591,10 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         txtSoLuongToiThieu.setText(modelCTKhuyenMai.getValueAt(row, 5).toString());
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
@@ -595,6 +602,9 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
             lamMoi();
         } else if (o == btnBack) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnThem) {
             if (valiDataKM()) {
                 String loaiKM = txtLoaiKhuyenMai.getText().trim();

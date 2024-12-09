@@ -1,5 +1,6 @@
 package ui.form;
 
+import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,6 +22,7 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -45,6 +47,7 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
     private DefaultTableModel tableModel;
     private JButton btnXemChiTiet, btnInBaoCao, btnQuayLai;
     private KhachHang_DAO khachHang_dao;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_ThongKeKhachHangThuongXuyen() throws Exception {
         setLayout(new BorderLayout());
@@ -194,11 +197,18 @@ public class Form_ThongKeKhachHangThuongXuyen extends JPanel implements ActionLi
         btnInBaoCao.addActionListener(this);
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o == btnQuayLai) {
             setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (o == btnXemChiTiet) {
             int row = table.getSelectedRow();
             if (row >= 0) {
