@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -128,8 +129,8 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         topPanel.add(cbxMaPN);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(datePicker);
-        topPanel.add(Box.createHorizontalStrut(10));
-        topPanel.add(txtTimKiem);
+//        topPanel.add(Box.createHorizontalStrut(10));
+//        topPanel.add(txtTimKiem);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(btnTimKiemDon);
 
@@ -247,15 +248,25 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         add(listPanel, BorderLayout.CENTER);
         add(footerPanel, BorderLayout.SOUTH);
 
+        cbxMaPN.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(cbxMaPN.getSelectedIndex()!=0) {
+                    ngayDatModel.setSelected(false);
+                }
+            }
+        });
+
         // thêm sự kiện
         textPlaceholder.addFocusListener(this);
         tablePN.getSelectionModel().addListSelectionListener(this);
         btnQuayLai.addActionListener(this);
         btnLamMoi.addActionListener(this);
         btnXemHD.addActionListener(this);
+        btnTimKiemDon.addActionListener(this);
 
         updateCBXMaPN();
-        updateTablePhieuNhap();
+        updateTablePhieuNhap(phieuNhapThuoc_dao.getAll());
     }
 
     // update combobox mã hóa đơn
@@ -267,17 +278,21 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
         }
     }
 
+    private String formatDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
+    }
+
 
     // update table phiếu nhập
-    public void updateTablePhieuNhap() {
-        ArrayList<PhieuNhapThuoc> dsPN = phieuNhapThuoc_dao.getAll();
+    public void updateTablePhieuNhap(ArrayList<PhieuNhapThuoc> dsPN) {
         modelPN.setRowCount(0);
         for (PhieuNhapThuoc pn : dsPN) {
             modelPN.addRow(new Object[] {
                     pn.getMaPhieuNhap(),
                     pn.getNhanVien().getTenNV(),
                     pn.getNhaCungCap().getTenNCC(),
-                    pn.getNgayLapPhieu(),
+                    formatDate(new Date(pn.getNgayLapPhieu().getTime())),
                     String.format("%,.0f", phieuNhapThuoc_dao.getTongTienPhieuNhap(pn.getMaPhieuNhap())) + "đ"
             });
         }
@@ -295,8 +310,8 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
                     thuoc.getMaThuoc(),
                     thuoc.getTenThuoc(),
                     ncc.getTenNCC(),
-                    ct.getNgaySX(),
-                    ct.getHSD(),
+                    formatDate(new Date(ct.getNgaySX().getTime())),
+                    formatDate(new Date(ct.getHSD().getTime())),
                     ct.getDonViTinh(),
                     ct.getSoLuongNhap(),
                     String.format("%,.0f", ct.getDonGiaNhap()) + "đ",
@@ -360,6 +375,37 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn muốn xem!",
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        if(o==btnTimKiemDon) {
+            ArrayList<PhieuNhapThuoc> listAll = phieuNhapThuoc_dao.getAll();
+            ArrayList<PhieuNhapThuoc> dataSearch = new ArrayList<>();
+            if(cbxMaPN.getSelectedIndex()!=0) {
+                PhieuNhapThuoc phieuNhapThuoc = phieuNhapThuoc_dao.timPhieuNhap((String) cbxMaPN.getSelectedItem());
+                dataSearch.add(phieuNhapThuoc);
+            } else {
+                if(ngayDatModel.isSelected()) {
+                    Date sqlDate = new Date(ngayDatModel.getValue().getTime());
+                    System.out.println(formatDate(sqlDate));
+                    if(dataSearch.isEmpty()) {
+                        dataSearch.addAll(phieuNhapThuoc_dao.timPhieuNhapThuocTheoNgay(listAll, sqlDate));
+                    } else {
+                        ArrayList<PhieuNhapThuoc> temp = new ArrayList<>();
+                        temp.addAll(phieuNhapThuoc_dao.timPhieuNhapThuocTheoNgay(dataSearch, sqlDate));
+                        dataSearch.clear();
+                        dataSearch.addAll(temp);
+                        temp.clear();
+                    }
+                }
+            }
+            if(dataSearch.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu nhập phù hợp!");
+                cbxMaPN.setSelectedIndex(0);
+                txtTimKiem.setText("");
+                ngayDatModel.setSelected(false);
+                updateTablePhieuNhap(listAll);
+            } else {
+                updateTablePhieuNhap(dataSearch);
             }
         }
     }

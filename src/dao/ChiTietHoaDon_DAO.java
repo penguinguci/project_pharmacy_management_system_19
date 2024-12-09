@@ -203,14 +203,25 @@ public class ChiTietHoaDon_DAO {
                 cthd.setDonViTinh(rs.getString("donViTinh"));
                 cthd.setSoLuong(rs.getInt("soLuong"));
 
-                ChiTietLoThuoc ctlt = chiTietLoThuoc_dao.getCTLoThuocTheoSoHieuThuoc(rs.getString("soHieuThuoc"));
+                ChiTietLoThuoc ctlt = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(rs.getString("maDonGia"), rs.getString("maThuoc"));
                 cthd.setChiTietLoThuoc(ctlt);
 
                 listCTHD.add(cthd);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (cstmt != null) {
+                cstmt.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
+
         return listCTHD;
     }
 
