@@ -17,10 +17,12 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -74,7 +76,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         pnlTitle = new JPanel(new BorderLayout());
         pnlTitle.setPreferredSize(new Dimension(widthScreen - 6, 60));
 
-        JLabel lblTitle = new JLabel("THỐNG KÊ THUỐC BÁN NHANH", JLabel.CENTER);
+        JLabel lblTitle = new JLabel("THỐNG KÊ THUỐC BÁN CHẠY", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setForeground(new Color(54, 69, 79));
 
@@ -115,6 +117,24 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         datePickerNgayKetThuc = new JDatePickerImpl(datePanelNHH, new DateTimeLabelFormatter());
 
         btnThongKe = new JButton("Thống kê");
+        btnThongKe.setBackground(new Color(0, 102, 204));
+        btnThongKe.setForeground(Color.WHITE);
+        btnThongKe.setOpaque(true);
+        btnThongKe.setFocusPainted(false);
+        btnThongKe.setBorderPainted(false);
+        btnThongKe.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThongKe.setPreferredSize(new Dimension(100, 30));
+        btnThongKe.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThongKe.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThongKe.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -143,6 +163,20 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         loadTop10ThuocBanChay();
         srcTable = new JScrollPane(tableBanNhanh);
         srcTable.setPreferredSize(new Dimension(0,200));
+
+        srcTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        srcTable.getVerticalScrollBar().setUnitIncrement(12);
+        JScrollBar verticalScrollBar1 = srcTable.getVerticalScrollBar();
+        verticalScrollBar1.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
+
+        verticalScrollBar1.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104);
+                this.trackColor = Color.WHITE;
+            }
+        });
+
         pnlTableThuoc.add(srcTable, BorderLayout.CENTER);
     }
 
@@ -186,8 +220,13 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
                 false
         );
         ChartPanel chartPanel = new ChartPanel(barChart);
+
         // màu săcs
         CategoryPlot plot = barChart.getCategoryPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.LIGHT_GRAY); // đường lưới ngang
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY); // đường lưới dọc
+
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, new Color(51, 153, 255));
         // thêm giá trị cụ thể lên cột
