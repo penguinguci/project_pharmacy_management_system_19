@@ -4,12 +4,10 @@ import connectDB.ConnectDB;
 import entity.*;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static connectDB.ConnectDB.getConnection;
 
@@ -794,6 +792,33 @@ public class HoaDon_DAO {
         for(HoaDon x : list ){
             if(x.getKhachHang().getSDT().equalsIgnoreCase(sdt)) {
                 resultList.add(x);
+            }
+        }
+        return resultList;
+    }
+
+    public ArrayList<HoaDon> timKiemProMax(ArrayList<HoaDon> list, String data) {
+        ArrayList<HoaDon> resultList = new ArrayList<>();
+        for(HoaDon x : list) {
+            String sdt = null;
+            if(x.getKhachHang().getSDT() != null) {
+                sdt = x.getKhachHang().getSDT();
+            }
+
+            if(sdt!=null) {
+                if(x.getMaHD().indexOf(data) != -1) {
+                    resultList.add(x);
+                } else if(x.getNhanVien().getTenNV().indexOf(data) != -1) {
+                    resultList.add(x);
+                } else if(x.getKhachHang().getSDT().indexOf(data) != -1) {
+                    resultList.add(x);
+                }
+            } else {
+                if(x.getMaHD().indexOf(data) != -1) {
+                    resultList.add(x);
+                } else if(x.getNhanVien().getTenNV().indexOf(data) != -1) {
+                    resultList.add(x);
+                }
             }
         }
         return resultList;
