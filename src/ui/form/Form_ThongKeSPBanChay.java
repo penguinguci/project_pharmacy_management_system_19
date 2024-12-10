@@ -2,8 +2,14 @@ package ui.form;
 
 import dao.ChiTietHoaDon_DAO;
 import dao.DonGiaThuoc_DAO;
+import dao.HoaDon_DAO;
 import entity.ChiTietHoaDon;
 import entity.DonGiaThuoc;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -15,14 +21,19 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,8 +51,9 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
     private JTable tableBanNhanh;
     private DefaultTableModel modelBanNhanh;
     private JComboBox<String> cmbThoiGian;
-    private JButton btnThongKe, btnBack;
+    private JButton btnThongKe, btnBack, btnInBaoCao;
     private JScrollPane srcTable;
+    public GUI_TrangChu gui_trangChu;
 
     public Form_ThongKeSPBanChay() {
         // Kích thước màn hình
@@ -70,6 +82,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         // Xử lý sự kiện
         btnBack.addActionListener(this);
         btnThongKe.addActionListener(this);
+        btnInBaoCao.addActionListener(this);
     }
 
     private void createTitlePanel() {
@@ -80,10 +93,17 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setForeground(new Color(54, 69, 79));
 
-        btnBack = new JButton("Quay lại");
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+
+        btnBack = new JButton("Quay lại", scaledIconBack);
         btnBack.setFont(new Font("Arial", Font.BOLD, 17));
         btnBack.setContentAreaFilled(false);
         btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
+        btnBack.setHorizontalAlignment(SwingConstants.LEFT);
 
         pnlTitle.add(btnBack, BorderLayout.WEST);
         pnlTitle.add(lblTitle, BorderLayout.CENTER);
@@ -136,6 +156,26 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
             }
         });
 
+        btnInBaoCao = new JButton("In Báo Cáo");
+        btnInBaoCao.setBackground(new Color(0, 102, 204));
+        btnInBaoCao.setForeground(Color.WHITE);
+        btnInBaoCao.setOpaque(true);
+        btnInBaoCao.setFocusPainted(false);
+        btnInBaoCao.setBorderPainted(false);
+        btnInBaoCao.setFont(new Font("Arial", Font.BOLD, 13));
+        btnInBaoCao.setPreferredSize(new Dimension(120, 30));
+        btnInBaoCao.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(0, 102, 204));
+            }
+        });
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         pnlOption.add(new JLabel("Ngày bắt đầu:"), gbc);
@@ -149,6 +189,8 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
 
         gbc.gridx = 4;
         pnlOption.add(btnThongKe, gbc);
+        gbc.gridx = 5;
+        pnlOption.add(btnInBaoCao, gbc);
     }
 
 
@@ -201,7 +243,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         Map<String, Integer> tongHoaDonMap = new HashMap<>();
         // Lấy dữ liệu từ DAO
         ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
-        List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+        List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getThuocBanNoiBat(sqlStartDate, sqlEndDate,tongHoaDonMap, true);
 
         // Tạo dataset cho biểu đồ
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -236,10 +278,17 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         panelBieuDo.add(chartPanel);
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnBack) {
-            JOptionPane.showMessageDialog(this, "Quay lại trang trước!");
+            setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
         } else if (e.getSource() == btnThongKe) {
             java.util.Date utilStartDate = (java.util.Date) datePickerNgayBatDau.getModel().getValue();
             java.util.Date utilEndDate = (java.util.Date) datePickerNgayKetThuc.getModel().getValue();
@@ -253,13 +302,103 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
             java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
             Map<String, Integer> tongHoaDonMap = new HashMap<>();
             ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
-            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getThuocBanNoiBat(sqlStartDate, sqlEndDate,tongHoaDonMap,true);
 
             // Cập nhật bảng
             fillTable(top10Thuoc,tongHoaDonMap);
 
             // Cập nhật biểu đồ
             updateChart(top10Thuoc);
+        }else if(e.getSource() == btnInBaoCao){
+            inBaoCao();
+        }
+    }
+
+    private List<Object[]> getDataForReport() {
+        List<Object[]> dsBaoCao = new ArrayList<>();
+        for (int i = 0; i < modelBanNhanh.getRowCount(); i++) {
+            Object[] row = new Object[modelBanNhanh.getColumnCount()];
+            for (int j = 0; j < modelBanNhanh.getColumnCount(); j++) {
+                row[j] = modelBanNhanh.getValueAt(i, j);
+            }
+            dsBaoCao.add(row);
+        }
+        return dsBaoCao;
+    }
+    public void inBaoCao() {
+        List<Object[]> dsBaoCao = getDataForReport();
+        if (dsBaoCao.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu để xuất báo cáo!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu báo cáo");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx"));
+        int nguoDungChon = fileChooser.showSaveDialog(this);
+
+        if(nguoDungChon == JFileChooser.APPROVE_OPTION) {
+            File fileDuocLuu = fileChooser.getSelectedFile();
+            String duongDan = fileDuocLuu.getAbsolutePath();
+
+            if (!duongDan.endsWith(".xlsx")) {
+                duongDan += ".xlsx";
+            }
+
+            try (Workbook workbook = new HSSFWorkbook()) {
+                Sheet sheet = workbook.createSheet("Báo cáo thuốc bán chạy");
+                String[] headers = {"STT", "Mã", "Tên thuốc", "Số lượng bán", "Tổng tiền", "Tổng hóa đơn"};
+                Row headerRow = sheet.createRow(0);
+
+                for (int i = 0; i < headers.length; i++) {
+                    Cell cell = headerRow.createCell(i);
+                    cell.setCellValue(headers[i]);
+                }
+
+                // điền dữ liệu
+                int rowNum = 1;
+                for (Object[] banGhi : dsBaoCao) {
+                    Row row = sheet.createRow(rowNum++);
+                    for (int i = 0; i < banGhi.length; i++) {
+                        Cell cell = row.createCell(i);
+                        if (banGhi[i] instanceof String) {
+                            cell.setCellValue((String) banGhi[i]);
+                        } else if (banGhi[i] instanceof Integer) {
+                            cell.setCellValue((Integer) banGhi[i]);
+                        } else if (banGhi[i] instanceof Double) {
+                            cell.setCellValue((Double) banGhi[i]);
+                        }
+                    }
+                }
+
+                // điều chỉnh kích thước các cột
+                for (int i = 0; i < headers.length; i++) {
+                    sheet.autoSizeColumn(i);
+                }
+
+                // ghi excel
+                try (FileOutputStream fos = new FileOutputStream(duongDan)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(this, "Báo cáo đã được lưu thành công tại: " + duongDan,
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+
+                // mở file excel vừa lưu
+                try {
+                    File file = new File(duongDan);
+                    if (file.exists()) {
+                        Desktop.getDesktop().open(file);
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Không thể mở file Excel: " + e.getMessage(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tạo file Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
         }
     }
     public class DateTimeLabelFormatter extends JFormattedTextField.AbstractFormatter {
@@ -365,10 +504,10 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
             java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
             java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
             Map<String, Integer> tongHoaDonMap = new HashMap<>();
-            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+            List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getThuocBanNoiBat(sqlStartDate, sqlEndDate,tongHoaDonMap, true);
 
-            if (top10Thuoc != null && !top10Thuoc.isEmpty()) {
-                fillTable(top10Thuoc,tongHoaDonMap);
+            if (listTop10ThuocBanChay != null && !listTop10ThuocBanChay.isEmpty()) {
+                fillTable(listTop10ThuocBanChay,tongHoaDonMap);
             } else {
                 JOptionPane.showMessageDialog(this, "Không có dữ liệu phù hợp trong khoảng thời gian đã chọn.");
             }

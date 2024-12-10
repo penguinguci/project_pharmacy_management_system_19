@@ -579,12 +579,19 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         // Thêm sự kiện cho các nút
         btnNhanVien.addActionListener(this);
+        themPhimTatBtn(btnNhanVien, KeyEvent.VK_F1, KeyEvent.CTRL_DOWN_MASK);
         btnKhachHang.addActionListener(this);
+        themPhimTatBtn(btnKhachHang, KeyEvent.VK_F2, KeyEvent.CTRL_DOWN_MASK);
         btnThuoc.addActionListener(this);
+        themPhimTatBtn(btnThuoc, KeyEvent.VK_F3, KeyEvent.CTRL_DOWN_MASK);
         btnNhaCungCap.addActionListener(this);
+        themPhimTatBtn(btnNhaCungCap, KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK);
         btnKhuyenMai.addActionListener(this);
+        themPhimTatBtn(btnKhuyenMai, KeyEvent.VK_F5, KeyEvent.CTRL_DOWN_MASK);
         btnHoaDon.addActionListener(this);
+        themPhimTatBtn(btnHoaDon, KeyEvent.VK_F6, KeyEvent.CTRL_DOWN_MASK);
         btnThongKe.addActionListener(this);
+        themPhimTatBtn(btnThongKe, KeyEvent.VK_F7, KeyEvent.CTRL_DOWN_MASK);
         btnDangXuat.addActionListener(this);
         themPhimTatBtn(btnDangXuat, KeyEvent.VK_ESCAPE, 0);
 
@@ -1134,14 +1141,14 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         } else if(o == btnTKThuocBanChay) {
             formThongKeSPBanChay = new Form_ThongKeSPBanChay();
             centerPanel.add(formThongKeSPBanChay, "formThongKeSPBanChay");
-//            formThongKeSPBanChay.setTrangChu(this);
+            formThongKeSPBanChay.setTrangChu(this);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPBanChay");
         } else if(o == btnTKThuocBanCham) {
             formThongKeSPBanCham = new Form_ThongKeSPBanCham();
             centerPanel.add(formThongKeSPBanCham, "formThongKeSPBanCham");
-//            formThongKeSPBanCham.setTrangChu(this);
+            formThongKeSPBanCham.setTrangChu(this);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPBanCham");

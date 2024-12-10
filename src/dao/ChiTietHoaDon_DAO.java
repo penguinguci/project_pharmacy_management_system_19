@@ -315,16 +315,14 @@ public class ChiTietHoaDon_DAO {
 
 
 
-    public List<ChiTietHoaDon> getTop10ThuocBanChay(Date ngayBatDau, Date ngayKetThuc, Map<String, Integer> tongHoaDonMap) {
+    public List<ChiTietHoaDon> getThuocBanNoiBat(Date ngayBatDau, Date ngayKetThuc, Map<String, Integer> tongHoaDonMap, boolean isBanChay) {
         ConnectDB con = new ConnectDB();
         con.connect();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<ChiTietHoaDon> topThuocBanChay = new ArrayList<>();
+        List<ChiTietHoaDon> thuocNoiBat = new ArrayList<>();
         try {
             Thuoc_DAO thuoc_dao = new Thuoc_DAO();
-
-            // SQL query chỉnh sửa
             String sql = "SELECT maThuoc, donViTinh, SUM(soLuong) AS tongSoLuong, COUNT(cthd.maHD) AS tongHoaDon " +
                     "FROM ChiTietHoaDon cthd JOIN HoaDon hd ON cthd.maHD = hd.maHD " +
                     "WHERE maThuoc IS NOT NULL AND ngayLap BETWEEN ? AND ? " +
@@ -334,27 +332,31 @@ public class ChiTietHoaDon_DAO {
             ps.setDate(1, new java.sql.Date(ngayBatDau.getTime()));
             ps.setDate(2, new java.sql.Date(ngayKetThuc.getTime()));
             rs = ps.executeQuery();
+
             Map<String, ChiTietHoaDon> thuocMap = new HashMap<>();
             while (rs.next()) {
                 String maThuoc = rs.getString("maThuoc");
                 String donViTinh = rs.getString("donViTinh");
                 int tongSoLuong = rs.getInt("tongSoLuong");
                 int tongHoaDon = rs.getInt("tongHoaDon");
-                // Lấy hoặc khởi tạo đối tượng ChiTietHoaDon
-                ChiTietHoaDon cthd = thuocMap.getOrDefault(maThuoc, new ChiTietHoaDon());
-                if (cthd.getThuoc() == null) {
-                    Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
-                    cthd.setThuoc(thuoc);
-                }
-                cthd.setDonViTinh(donViTinh);
-                cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
 
-                thuocMap.put(maThuoc, cthd);
-                tongHoaDonMap.put(maThuoc, tongHoaDon);
+                Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
+                if (thuoc == null) continue;
+
+                int soLuongTon = thuoc.getTongSoLuong();
+                double tyLePhanTram = (double) tongSoLuong / soLuongTon;
+
+                if ((isBanChay && tyLePhanTram >= 0.3) || (!isBanChay && tyLePhanTram < 0.3)) {
+                    ChiTietHoaDon cthd = thuocMap.getOrDefault(maThuoc, new ChiTietHoaDon());
+                    cthd.setThuoc(thuoc);
+                    cthd.setDonViTinh(donViTinh);
+                    cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
+                    thuocMap.put(maThuoc, cthd);
+                    tongHoaDonMap.put(maThuoc, tongHoaDon);
+                }
             }
 
-            // Chuyển danh sách từ Map sang List và sắp xếp
-            topThuocBanChay = thuocMap.values().stream()
+            thuocNoiBat = thuocMap.values().stream()
                     .sorted((o1, o2) -> {
                         int compareDonViTinh = o1.getDonViTinh().equals("Hộp") ?
                                 (o2.getDonViTinh().equals("Hộp") ? 0 : -1) :
@@ -374,8 +376,9 @@ public class ChiTietHoaDon_DAO {
                 e.printStackTrace();
             }
         }
-        return topThuocBanChay;
+        return thuocNoiBat;
     }
+
 
 }
 
