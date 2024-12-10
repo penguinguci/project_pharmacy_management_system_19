@@ -464,7 +464,7 @@ public class Thuoc_DAO {
         List<Object[]> rowsDataList = new ArrayList<>();
         try{
             // Note: OFFSET ? ROWS : Bỏ n dòng - FETCH NEXT ? ROWS ONLY: Chỉ lấy n dòng
-            String query = "Select * from ( select * from Thuoc where trangThai = 1 ) as FilteredThuoc order by MaThuoc offset ? rows fetch next ? rows only";
+            String query = "Select * from Thuoc where trangThai = 1 order by MaThuoc offset ? rows fetch next ? rows only";
             con = ConnectDB.getConnection();
             statement = con.prepareStatement(query);
             statement.setInt(1, (currentPage - 1) * rowsPerPage);

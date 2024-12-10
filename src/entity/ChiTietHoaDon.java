@@ -9,6 +9,12 @@ public class ChiTietHoaDon {
 
     public ChiTietHoaDon() {}
 
+    public ChiTietHoaDon(Thuoc thuoc, String donViTinh, int soLuong) {
+        this.thuoc = thuoc;
+        this.donViTinh = donViTinh;
+        this.soLuong = soLuong;
+    }
+
     public ChiTietHoaDon(HoaDon hoaDon, Thuoc thuoc, String donViTinh, int soLuong, ChiTietLoThuoc chiTietLoThuoc) {
         this.hoaDon = hoaDon;
         this.thuoc = thuoc;
@@ -60,4 +66,18 @@ public class ChiTietHoaDon {
     public void setChiTietLoThuoc(ChiTietLoThuoc chiTietLoThuoc) {
         this.chiTietLoThuoc = chiTietLoThuoc;
     }
+
+    public String getSoLuongHienThi() {
+        if ("Hộp".equalsIgnoreCase(donViTinh)) {
+            return soLuong + " Hộp";
+        } else if ("Viên".equalsIgnoreCase(donViTinh)) {
+            return soLuong + " Viên";
+        } else {
+            return soLuong + " Đơn vị không xác định";
+        }
+    }
+
+
+
+
 }

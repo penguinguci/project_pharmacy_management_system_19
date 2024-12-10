@@ -4,8 +4,8 @@ import connectDB.ConnectDB;
 import entity.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.sql.Date;
+import java.util.*;
 
 public class ChiTietLoThuoc_DAO {
     private ArrayList<ChiTietLoThuoc> list;
@@ -414,6 +414,26 @@ public class ChiTietLoThuoc_DAO {
         return result;
     }
 
+    public List<Map<String, Object>> thongKeThuocSapHetHan() {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        for(ChiTietLoThuoc x : thuocSapHetHan()) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("soHieuThuoc", x.getSoHieuThuoc());
+            row.put("maThuoc", x.getThuoc().getMaThuoc());
+            row.put("tenThuoc", x.getThuoc().getTenThuoc());
+            row.put("danhMuc", x.getThuoc().getDanhMuc().getTenDanhMuc());
+            row.put("nhaCungCap", x.getLoThuoc().getPhieuNhapThuoc().getNhaCungCap().getTenNCC());
+            row.put("nhaSanXuat", x.getThuoc().getNhaSanXuat().getTenNhaSX());
+            row.put("nuocSanXuat", x.getThuoc().getNuocSanXuat().getTenNuoxSX());
+            row.put("ngaySanXuat", x.getNgaySX());
+            row.put("HSD", x.getHSD());
+            row.put("soLuongCon", x.getSoLuongCon());
+            row.put("donViTinh", x.getDonGiaThuoc().getDonViTinh());
+            row.put("donGia", x.getDonGiaThuoc().getDonGia());
+            dsBaoCao.add(row);
+        }
+        return dsBaoCao;
+    }
 
     public ArrayList<ChiTietLoThuoc> thuocSapHetHan() {
         ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
@@ -537,5 +557,41 @@ public class ChiTietLoThuoc_DAO {
 
         return n > 0;
     }
+
+    public List<Object[]> getThuocBanCham(int khoangCachNgay) {
+        ConnectDB con = new ConnectDB();
+        List<Object[]> result = new ArrayList<>();
+        String sql = "SELECT TOP 10 ctlt.maThuoc, ctlt.maDonGia, ctlt.soLuongCon, " +
+                "DATEDIFF(day, ctlt.ngaySX, ctlt.HSD) AS khoangNgay " +
+                "FROM ChiTietLoThuoc ctlt " +
+                "WHERE ctlt.maThuoc NOT IN (SELECT maThuoc FROM ChiTietHoaDon) " +
+                "AND DATEDIFF(day, ctlt.ngaySX, ctlt.HSD) > ? " +
+                "ORDER BY khoangNgay DESC";
+
+        try (PreparedStatement ps = con.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, khoangCachNgay);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Lấy thông tin từ DAO
+                    Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(rs.getString("maThuoc"));
+                    DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaThuocTheoMaDG(rs.getString("maDonGia"));
+
+                    Object[] row = {
+                            rs.getString("maThuoc"),
+                            thuoc.getTenThuoc(),
+                            donGiaThuoc.getDonViTinh(),
+                            rs.getInt("soLuongCon"),
+                            rs.getInt("khoangNgay")
+                    };
+                    result.add(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 
 }
