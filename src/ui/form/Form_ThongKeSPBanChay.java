@@ -1,25 +1,31 @@
 package ui.form;
 
 import dao.ChiTietHoaDon_DAO;
+import dao.DonGiaThuoc_DAO;
 import entity.ChiTietHoaDon;
-import entity.KhachHang;
+import entity.DonGiaThuoc;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 
@@ -27,12 +33,13 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
 
     private final int widthScreen, heightScreen;
     private JPanel pnlTitle, pnlOption, pnlTableThuoc, panelBieuDo;
-    private UtilDateModel modelNgaySanXuat, modelNgayHetHan;
-    private JDatePickerImpl datePickerNgaySanXuat, datePickerNgayHetHan;
+    private UtilDateModel modelNgayBatDau, modelNgayKetThuc;
+    private JDatePickerImpl datePickerNgayBatDau, datePickerNgayKetThuc;
     private JTable tableBanNhanh;
     private DefaultTableModel modelBanNhanh;
     private JComboBox<String> cmbThoiGian;
     private JButton btnThongKe, btnBack;
+    private JScrollPane srcTable;
 
     public Form_ThongKeSPBanChay() {
         // Kích thước màn hình
@@ -67,7 +74,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         pnlTitle = new JPanel(new BorderLayout());
         pnlTitle.setPreferredSize(new Dimension(widthScreen - 6, 60));
 
-        JLabel lblTitle = new JLabel("THỐNG KÊ THUỐC BÁN NHANH CHẬM", JLabel.CENTER);
+        JLabel lblTitle = new JLabel("THỐNG KÊ THUỐC BÁN NHANH", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setForeground(new Color(54, 69, 79));
 
@@ -82,7 +89,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
 
     private void createOptionPanel() {
         pnlOption = new JPanel(new GridBagLayout());
-        pnlOption.setBorder(BorderFactory.createTitledBorder("Thông tin thống kê"));
+        pnlOption.setBorder(BorderFactory.createTitledBorder("Thời gian"));
         pnlOption.setBackground(new Color(245, 245, 245));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -94,65 +101,78 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         p.put("text.month", "Tháng");
         p.put("text.year", "Năm");
 
-        modelNgaySanXuat = new UtilDateModel();
-        JDatePanelImpl datePanelNSX = new JDatePanelImpl(modelNgaySanXuat, p);
-        datePickerNgaySanXuat = new JDatePickerImpl(datePanelNSX, new DateTimeLabelFormatter());
+        // Khởi tạo model ngày bắt đầu và kết thúc với LocalDate
+        modelNgayBatDau = new UtilDateModel();
+        modelNgayBatDau.setValue(Date.from(LocalDate.of(2022, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())); // Đặt ngày bắt đầu là 1/1/2022
+        modelNgayBatDau.setSelected(true);
+        JDatePanelImpl datePanelNSX = new JDatePanelImpl(modelNgayBatDau, p);
+        datePickerNgayBatDau = new JDatePickerImpl(datePanelNSX, new DateTimeLabelFormatter());
 
-        modelNgayHetHan = new UtilDateModel();
-        JDatePanelImpl datePanelNHH = new JDatePanelImpl(modelNgayHetHan, p);
-        datePickerNgayHetHan = new JDatePickerImpl(datePanelNHH, new DateTimeLabelFormatter());
+        modelNgayKetThuc = new UtilDateModel();
+        modelNgayKetThuc.setValue(Date.from(LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())); // Đặt ngày kết thúc là ngày hiện tại
+        modelNgayKetThuc.setSelected(true);
+        JDatePanelImpl datePanelNHH = new JDatePanelImpl(modelNgayKetThuc, p);
+        datePickerNgayKetThuc = new JDatePickerImpl(datePanelNHH, new DateTimeLabelFormatter());
 
-        cmbThoiGian = new JComboBox<>(new String[]{"7 ngày", "30 ngày", "90 ngày", "Tất cả"});
         btnThongKe = new JButton("Thống kê");
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        pnlOption.add(new JLabel("Ngày sản xuất:"), gbc);
+        pnlOption.add(new JLabel("Ngày bắt đầu:"), gbc);
         gbc.gridx = 1;
-        pnlOption.add(datePickerNgaySanXuat, gbc);
+        pnlOption.add(datePickerNgayBatDau, gbc);
 
         gbc.gridx = 2;
-        pnlOption.add(new JLabel("Ngày hết hạn:"), gbc);
+        pnlOption.add(new JLabel("Ngày kết thúc:"), gbc);
         gbc.gridx = 3;
-        pnlOption.add(datePickerNgayHetHan, gbc);
+        pnlOption.add(datePickerNgayKetThuc, gbc);
 
         gbc.gridx = 4;
-        pnlOption.add(createOptionPanelFooter(), gbc);
+        pnlOption.add(btnThongKe, gbc);
     }
 
-    private JPanel createOptionPanelFooter() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 30, 10));
-        panel.add(new JLabel("Thời gian:"));
-        panel.add(cmbThoiGian);
-        panel.add(btnThongKe);
-        return panel;
-    }
 
     private void createTablePanel() {
         pnlTableThuoc = new JPanel(new BorderLayout());
         pnlTableThuoc.setBorder(BorderFactory.createTitledBorder("Thuốc bán chạy"));
 
-        modelBanNhanh = new DefaultTableModel(new String[]{"STT", "Mã", "Tên thuốc", "Số lượng bán"}, 0);
+        modelBanNhanh = new DefaultTableModel(new String[]{"STT", "Mã", "Tên thuốc", "Số lượng bán", "Tổng tiền", "Tổng hóa đơn"}, 0);
         tableBanNhanh = new JTable(modelBanNhanh);
         tableBanNhanh.setRowHeight(30);
 
         loadTop10ThuocBanChay();
-
-        pnlTableThuoc.add(new JScrollPane(tableBanNhanh), BorderLayout.CENTER);
+        srcTable = new JScrollPane(tableBanNhanh);
+        srcTable.setPreferredSize(new Dimension(0,200));
+        pnlTableThuoc.add(srcTable, BorderLayout.CENTER);
     }
 
     private void createChartPanel() {
         panelBieuDo = new JPanel(new GridLayout(1, 2, 20, 20));
         panelBieuDo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panelBieuDo.setBackground(Color.WHITE);
+        panelBieuDo.setPreferredSize(new Dimension(0, 400));
+        java.util.Date utilStartDate = (java.util.Date) datePickerNgayBatDau.getModel().getValue();
+        java.util.Date utilEndDate = (java.util.Date) datePickerNgayKetThuc.getModel().getValue();
+
+        if (utilStartDate == null && utilEndDate == null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2022, Calendar.JANUARY, 1);
+            utilStartDate = calendar.getTime();
+            utilEndDate = new java.util.Date();
+        }
+
+        // Chuyển đổi java.util.Date sang java.sql.Date
+        java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
+        java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
+        Map<String, Integer> tongHoaDonMap = new HashMap<>();
         // Lấy dữ liệu từ DAO
         ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
-        List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getTop10ThuocBanChay();
+        List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
 
         // Tạo dataset cho biểu đồ
-        DefaultCategoryDataset  dataset = new DefaultCategoryDataset();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (ChiTietHoaDon cthd : listTop10ThuocBanChay) {
-            dataset.setValue(Integer.parseInt(cthd.getSoLuongHienThi().split(" ")[0]) , "Số lượng", cthd.getThuoc().getTenThuoc());
+            dataset.setValue(Integer.parseInt(cthd.getSoLuongHienThi().split(" ")[0]), "Số lượng", cthd.getThuoc().getTenThuoc());
         }
 
         JFreeChart barChart = ChartFactory.createBarChart(
@@ -166,7 +186,14 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
                 false
         );
         ChartPanel chartPanel = new ChartPanel(barChart);
-
+        // màu săcs
+        CategoryPlot plot = barChart.getCategoryPlot();
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, new Color(51, 153, 255));
+        // thêm giá trị cụ thể lên cột
+        renderer.setDefaultItemLabelsVisible(true);
+        renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        renderer.setDefaultItemLabelFont(new Font("SansSerif", Font.PLAIN, 12));
         panelBieuDo.add(chartPanel);
     }
 
@@ -175,10 +202,27 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         if (e.getSource() == btnBack) {
             JOptionPane.showMessageDialog(this, "Quay lại trang trước!");
         } else if (e.getSource() == btnThongKe) {
-            JOptionPane.showMessageDialog(this, "Thống kê dữ liệu!");
+            java.util.Date utilStartDate = (java.util.Date) datePickerNgayBatDau.getModel().getValue();
+            java.util.Date utilEndDate = (java.util.Date) datePickerNgayKetThuc.getModel().getValue();
+
+            if (utilStartDate == null || utilEndDate == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn khoảng thời gian hợp lệ!");
+                return;
+            }
+
+            java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
+            java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
+            Map<String, Integer> tongHoaDonMap = new HashMap<>();
+            ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
+            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+
+            // Cập nhật bảng
+            fillTable(top10Thuoc,tongHoaDonMap);
+
+            // Cập nhật biểu đồ
+            updateChart(top10Thuoc);
         }
     }
-
     public class DateTimeLabelFormatter extends JFormattedTextField.AbstractFormatter {
         private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -197,31 +241,101 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         }
     }
 
+    private void updateChart(List<ChiTietHoaDon> listTop10ThuocBanChay) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (ChiTietHoaDon cthd : listTop10ThuocBanChay) {
+            dataset.setValue(cthd.getSoLuong(), "Số lượng", cthd.getThuoc().getTenThuoc());
+        }
 
-    private void fillTable(List<ChiTietHoaDon> dsChiTietHoaDon) {
-        modelBanNhanh.setRowCount(0); // Xóa các hàng cũ trong bảng
+        JFreeChart barChart = ChartFactory.createBarChart(
+                "Top 10 Thuốc Bán Chạy",
+                "Tên thuốc",
+                "Số lượng",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+        CategoryPlot plot = barChart.getCategoryPlot();
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, new Color(51, 153, 255));
+
+        // thêm giá trị cụ thể lên cột
+        renderer.setDefaultItemLabelsVisible(true);
+        renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        renderer.setDefaultItemLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+        panelBieuDo.removeAll();
+        panelBieuDo.add(new ChartPanel(barChart));
+        panelBieuDo.revalidate();
+        panelBieuDo.repaint();
+    }
+
+    private void fillTable(List<ChiTietHoaDon> dsChiTietHoaDon, Map<String, Integer> tongHoaDonMap) {
+        modelBanNhanh.setRowCount(0);
 
         if (dsChiTietHoaDon == null || dsChiTietHoaDon.isEmpty()) {
             System.out.println("Danh sách chi tiết hóa đơn rỗng!");
             return;
         }
-
+        DonGiaThuoc_DAO donGiaThuoc_dao = new DonGiaThuoc_DAO();
         int x = 1; // Biến số thứ tự
         for (ChiTietHoaDon cthd : dsChiTietHoaDon) {
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(cthd.getThuoc().getMaThuoc(), cthd.getDonViTinh());
+            double donGia = (donGiaThuoc != null) ? donGiaThuoc.getDonGia() : 0.0;
+            double tongThanhTien = donGia * cthd.getSoLuong();
+            int tongHoaDon = tongHoaDonMap.getOrDefault(cthd.getThuoc().getMaThuoc(), 0);
             modelBanNhanh.addRow(new Object[]{
                     x++,  // STT
-                    cthd.getThuoc() != null ? cthd.getThuoc().getMaThuoc() : "Không xác định",  // Mã thuốc
-                    cthd.getThuoc() != null ? cthd.getThuoc().getTenThuoc() : "Không xác định",  // Tên thuốc
-                    cthd.getSoLuongHienThi()  // Số lượng hiển thị đã được định dạng
+                    cthd.getThuoc() != null ? cthd.getThuoc().getMaThuoc() : "Không xác định",
+                    cthd.getThuoc() != null ? cthd.getThuoc().getTenThuoc() : "Không xác định",
+                    cthd.getSoLuongHienThi(),
+                    tongThanhTien,
+                    tongHoaDon
             });
+            System.out.println("Đơn giá: " + (donGia != 0 ? donGia : "null"));
+            System.out.println("Số lượng: " + cthd.getSoLuongHienThi());
+            System.out.println("Số lượng: " + donGia * cthd.getSoLuong());
         }
     }
 
-
     private void loadTop10ThuocBanChay() {
         ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
-        List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay();
-        fillTable(top10Thuoc);
-    }
 
+        java.util.Date utilStartDate = (java.util.Date) datePickerNgayBatDau.getModel().getValue();
+        java.util.Date utilEndDate = (java.util.Date) datePickerNgayKetThuc.getModel().getValue();
+
+        if (utilStartDate == null && utilEndDate == null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2022, Calendar.JANUARY, 1); // Đặt ngày bắt đầu là 1/1/2022
+            utilStartDate = calendar.getTime();
+            utilEndDate = new java.util.Date(); // Ngày kết thúc là hiện tại
+        }
+
+        if (utilStartDate == null || utilEndDate == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc!");
+            return;
+        }
+
+        if (utilStartDate.after(utilEndDate)) {
+            JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc!");
+            return;
+        }
+
+        try {
+            java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
+            java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
+            Map<String, Integer> tongHoaDonMap = new HashMap<>();
+            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+
+            if (top10Thuoc != null && !top10Thuoc.isEmpty()) {
+                fillTable(top10Thuoc,tongHoaDonMap);
+            } else {
+                JOptionPane.showMessageDialog(this, "Không có dữ liệu phù hợp trong khoảng thời gian đã chọn.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi lấy dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

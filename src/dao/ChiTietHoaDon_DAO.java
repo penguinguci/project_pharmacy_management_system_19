@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static connectDB.ConnectDB.getConnection;
-
 public class ChiTietHoaDon_DAO {
     private ArrayList<ChiTietHoaDon> list;
     private Thuoc_DAO thuoc_dao;
@@ -19,6 +17,7 @@ public class ChiTietHoaDon_DAO {
     private HoaDon_DAO hoaDon_dao;
     private ArrayList<HoaDon> listHD;
     private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
+    private DonGiaThuoc_DAO donGiaThuoc_dao;
 
     public ChiTietHoaDon_DAO() {
         list = new ArrayList<ChiTietHoaDon>();
@@ -316,74 +315,70 @@ public class ChiTietHoaDon_DAO {
 
 
 
-
-
-    public List<ChiTietHoaDon> getTop10ThuocBanChay() {
-        ConnectDB con = new ConnectDB();
-        con.connect();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        List<ChiTietHoaDon> topThuocBanChay = new ArrayList<>();
-        try {
-            Thuoc_DAO thuoc_dao = new Thuoc_DAO();
-
-            // SQL query chỉnh sửa
-            String sql = "SELECT maThuoc, donViTinh, SUM(soLuong) AS tongSoLuong " +
-                    "FROM ChiTietHoaDon " +
-                    "WHERE maThuoc IS NOT NULL " +
-                    "GROUP BY maThuoc, donViTinh " +
-                    "ORDER BY SUM(soLuong) DESC";
-            ps = con.getConnection().prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            Map<String, ChiTietHoaDon> thuocMap = new HashMap<>();
-
-            while (rs.next()) {
-                String maThuoc = rs.getString("maThuoc");
-                String donViTinh = rs.getString("donViTinh");
-                int tongSoLuong = rs.getInt("tongSoLuong");
-
-                // Lấy hoặc khởi tạo đối tượng ChiTietHoaDon
-                ChiTietHoaDon cthd = thuocMap.getOrDefault(maThuoc, new ChiTietHoaDon());
-                if (cthd.getThuoc() == null) {
-                    Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
-                    cthd.setThuoc(thuoc);
-                }
-                cthd.setDonViTinh(donViTinh);
-                cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
-
-//                // Quy đổi nếu cần
-//                if ("Viên".equals(donViTinh)) {
-//                    cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
-//                } else {
-//                }
-
-                thuocMap.put(maThuoc, cthd);
-            }
-
-            // Chuyển danh sách từ Map sang List và sắp xếp
-            topThuocBanChay = thuocMap.values().stream()
-                    .sorted((o1, o2) -> {
-                        int compareDonViTinh = o1.getDonViTinh().equals("Hộp") ?
-                                (o2.getDonViTinh().equals("Hộp") ? 0 : -1) :
-                                (o2.getDonViTinh().equals("Hộp") ? 1 : 0);
-                        return compareDonViTinh != 0 ? compareDonViTinh : Integer.compare(o2.getSoLuong(), o1.getSoLuong());
-                    })
-                    .limit(10)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+        public List<ChiTietHoaDon> getTop10ThuocBanChay(Date ngayBatDau, Date ngayKetThuc, Map<String, Integer> tongHoaDonMap) {
+            ConnectDB con = new ConnectDB();
+            con.connect();
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            List<ChiTietHoaDon> topThuocBanChay = new ArrayList<>();
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                con.disconnect();
-            } catch (SQLException e) {
+                Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+
+                // SQL query chỉnh sửa
+                String sql = "SELECT maThuoc, donViTinh, SUM(soLuong) AS tongSoLuong, COUNT(cthd.maHD) AS tongHoaDon " +
+                        "FROM ChiTietHoaDon cthd JOIN HoaDon hd ON cthd.maHD = hd.maHD " +
+                        "WHERE maThuoc IS NOT NULL AND ngayLap BETWEEN ? AND ? " +
+                        "GROUP BY maThuoc, donViTinh " +
+                        "ORDER BY SUM(soLuong) DESC";
+                ps = con.getConnection().prepareStatement(sql);
+                ps.setDate(1, new java.sql.Date(ngayBatDau.getTime()));
+                ps.setDate(2, new java.sql.Date(ngayKetThuc.getTime()));
+                rs = ps.executeQuery();
+                Map<String, ChiTietHoaDon> thuocMap = new HashMap<>();
+                while (rs.next()) {
+                    String maThuoc = rs.getString("maThuoc");
+                    String donViTinh = rs.getString("donViTinh");
+                    int tongSoLuong = rs.getInt("tongSoLuong");
+                    int tongHoaDon = rs.getInt("tongHoaDon");
+                    // Lấy hoặc khởi tạo đối tượng ChiTietHoaDon
+                    ChiTietHoaDon cthd = thuocMap.getOrDefault(maThuoc, new ChiTietHoaDon());
+                    if (cthd.getThuoc() == null) {
+                        Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
+                        cthd.setThuoc(thuoc);
+                    }
+                    cthd.setDonViTinh(donViTinh);
+                    cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
+
+                    thuocMap.put(maThuoc, cthd);
+                    tongHoaDonMap.put(maThuoc, tongHoaDon);
+                }
+
+                // Chuyển danh sách từ Map sang List và sắp xếp
+                topThuocBanChay = thuocMap.values().stream()
+                        .sorted((o1, o2) -> {
+                            int compareDonViTinh = o1.getDonViTinh().equals("Hộp") ?
+                                    (o2.getDonViTinh().equals("Hộp") ? 0 : -1) :
+                                    (o2.getDonViTinh().equals("Hộp") ? 1 : 0);
+                            return compareDonViTinh != 0 ? compareDonViTinh : Integer.compare(o2.getSoLuong(), o1.getSoLuong());
+                        })
+                        .limit(10)
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (rs != null) rs.close();
+                    if (ps != null) ps.close();
+                    con.disconnect();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
+            return topThuocBanChay;
         }
-        return topThuocBanChay;
-    }
+
+
+
 
 }
 
