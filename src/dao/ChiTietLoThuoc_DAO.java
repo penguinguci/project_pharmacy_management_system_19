@@ -558,4 +558,40 @@ public class ChiTietLoThuoc_DAO {
         return n > 0;
     }
 
+    public List<Object[]> getThuocBanCham(int khoangCachNgay) {
+        ConnectDB con = new ConnectDB();
+        List<Object[]> result = new ArrayList<>();
+        String sql = "SELECT TOP 10 ctlt.maThuoc, ctlt.maDonGia, ctlt.soLuongCon, " +
+                "DATEDIFF(day, ctlt.ngaySX, ctlt.HSD) AS khoangNgay " +
+                "FROM ChiTietLoThuoc ctlt " +
+                "WHERE ctlt.maThuoc NOT IN (SELECT maThuoc FROM ChiTietHoaDon) " +
+                "AND DATEDIFF(day, ctlt.ngaySX, ctlt.HSD) > ? " +
+                "ORDER BY khoangNgay DESC";
+
+        try (PreparedStatement ps = con.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, khoangCachNgay);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Lấy thông tin từ DAO
+                    Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(rs.getString("maThuoc"));
+                    DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaThuocTheoMaDG(rs.getString("maDonGia"));
+
+                    Object[] row = {
+                            rs.getString("maThuoc"),
+                            thuoc.getTenThuoc(),
+                            donGiaThuoc.getDonViTinh(),
+                            rs.getInt("soLuongCon"),
+                            rs.getInt("khoangNgay")
+                    };
+                    result.add(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
 }
