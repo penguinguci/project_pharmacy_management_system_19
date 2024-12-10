@@ -4,6 +4,11 @@ import dao.ChiTietHoaDon_DAO;
 import dao.DonGiaThuoc_DAO;
 import entity.ChiTietHoaDon;
 import entity.DonGiaThuoc;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -17,10 +22,15 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,8 +48,9 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
     private JTable tableBanNhanh;
     private DefaultTableModel modelBanNhanh;
     private JComboBox<String> cmbThoiGian;
-    private JButton btnThongKe, btnBack;
+    private JButton btnThongKe, btnBack, btnInBaoCao;
     private JScrollPane srcTable;
+    private ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
 
     public Form_ThongKeSPBanChay() {
         // Kích thước màn hình
@@ -68,13 +79,14 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         // Xử lý sự kiện
         btnBack.addActionListener(this);
         btnThongKe.addActionListener(this);
+        btnInBaoCao.addActionListener(this);
     }
 
     private void createTitlePanel() {
         pnlTitle = new JPanel(new BorderLayout());
         pnlTitle.setPreferredSize(new Dimension(widthScreen - 6, 60));
 
-        JLabel lblTitle = new JLabel("THỐNG KÊ THUỐC BÁN NHANH", JLabel.CENTER);
+        JLabel lblTitle = new JLabel("THỐNG KÊ THUỐC BÁN CHẠY", JLabel.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setForeground(new Color(54, 69, 79));
 
@@ -115,20 +127,61 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         datePickerNgayKetThuc = new JDatePickerImpl(datePanelNHH, new DateTimeLabelFormatter());
 
         btnThongKe = new JButton("Thống kê");
+        btnThongKe.setBackground(new Color(0, 102, 204));
+        btnThongKe.setForeground(Color.WHITE);
+        btnThongKe.setOpaque(true);
+        btnThongKe.setFocusPainted(false);
+        btnThongKe.setBorderPainted(false);
+        btnThongKe.setFont(new Font("Arial", Font.BOLD, 13));
+        btnThongKe.setPreferredSize(new Dimension(120, 30));
+        btnThongKe.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnThongKe.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnThongKe.setBackground(new Color(0, 102, 204));
+            }
+        });
+
+
+        btnInBaoCao = new JButton("In Báo Cáo");
+        btnInBaoCao.setBackground(new Color(0, 102, 204));
+        btnInBaoCao.setForeground(Color.WHITE);
+        btnInBaoCao.setOpaque(true);
+        btnInBaoCao.setFocusPainted(false);
+        btnInBaoCao.setBorderPainted(false);
+        btnInBaoCao.setFont(new Font("Arial", Font.BOLD, 13));
+        btnInBaoCao.setPreferredSize(new Dimension(120, 30));
+        btnInBaoCao.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(0, 102, 204));
+            }
+        });
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        pnlOption.add(new JLabel("Ngày bắt đầu:"), gbc);
+        pnlOption.add(new JLabel("Từ ngày:"), gbc);
         gbc.gridx = 1;
         pnlOption.add(datePickerNgayBatDau, gbc);
 
         gbc.gridx = 2;
-        pnlOption.add(new JLabel("Ngày kết thúc:"), gbc);
+        pnlOption.add(new JLabel("Đến ngày:"), gbc);
         gbc.gridx = 3;
         pnlOption.add(datePickerNgayKetThuc, gbc);
 
         gbc.gridx = 4;
         pnlOption.add(btnThongKe, gbc);
+        gbc.gridx = 5;
+        pnlOption.add(btnInBaoCao, gbc);
     }
 
 
@@ -176,7 +229,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         }
 
         JFreeChart barChart = ChartFactory.createBarChart(
-                "Top 10 Thuốc Bán Chạy",
+                "Thuốc Bán Chạy",
                 "Tên thuốc",
                 "Số lượng",
                 dataset,
@@ -221,6 +274,96 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
 
             // Cập nhật biểu đồ
             updateChart(top10Thuoc);
+        }else if(e.getSource() == btnInBaoCao){
+            inBaoCao();
+        }
+    }
+
+    private List<Object[]> getDataForReport() {
+        List<Object[]> dsBaoCao = new ArrayList<>();
+        for (int i = 0; i < modelBanNhanh.getRowCount(); i++) {
+            Object[] row = new Object[modelBanNhanh.getColumnCount()];
+            for (int j = 0; j < modelBanNhanh.getColumnCount(); j++) {
+                row[j] = modelBanNhanh.getValueAt(i, j);
+            }
+            dsBaoCao.add(row);
+        }
+        return dsBaoCao;
+    }
+    public void inBaoCao() {
+        List<Object[]> dsBaoCao = getDataForReport();
+        if (dsBaoCao.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu để xuất báo cáo!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu báo cáo");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx"));
+        int nguoDungChon = fileChooser.showSaveDialog(this);
+
+        if(nguoDungChon == JFileChooser.APPROVE_OPTION) {
+            File fileDuocLuu = fileChooser.getSelectedFile();
+            String duongDan = fileDuocLuu.getAbsolutePath();
+
+            if (!duongDan.endsWith(".xlsx")) {
+                duongDan += ".xlsx";
+            }
+
+            try (Workbook workbook = new HSSFWorkbook()) {
+                Sheet sheet = workbook.createSheet("Báo cáo thuốc bán chạy");
+                String[] headers = {"STT", "Mã", "Tên thuốc", "Số lượng bán", "Tổng tiền", "Tổng hóa đơn"};
+                Row headerRow = sheet.createRow(0);
+
+                for (int i = 0; i < headers.length; i++) {
+                    Cell cell = headerRow.createCell(i);
+                    cell.setCellValue(headers[i]);
+                }
+
+                // điền dữ liệu
+                int rowNum = 1;
+                for (Object[] banGhi : dsBaoCao) {
+                    Row row = sheet.createRow(rowNum++);
+                    for (int i = 0; i < banGhi.length; i++) {
+                        Cell cell = row.createCell(i);
+                        if (banGhi[i] instanceof String) {
+                            cell.setCellValue((String) banGhi[i]);
+                        } else if (banGhi[i] instanceof Integer) {
+                            cell.setCellValue((Integer) banGhi[i]);
+                        } else if (banGhi[i] instanceof Double) {
+                            cell.setCellValue((Double) banGhi[i]);
+                        }
+                    }
+                }
+
+                // điều chỉnh kích thước các cột
+                for (int i = 0; i < headers.length; i++) {
+                    sheet.autoSizeColumn(i);
+                }
+
+                // ghi excel
+                try (FileOutputStream fos = new FileOutputStream(duongDan)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(this, "Báo cáo đã được lưu thành công tại: " + duongDan,
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+
+                // mở file excel vừa lưu
+                try {
+                    File file = new File(duongDan);
+                    if (file.exists()) {
+                        Desktop.getDesktop().open(file);
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Không thể mở file Excel: " + e.getMessage(),
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tạo file Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
         }
     }
     public class DateTimeLabelFormatter extends JFormattedTextField.AbstractFormatter {
@@ -248,7 +391,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         }
 
         JFreeChart barChart = ChartFactory.createBarChart(
-                "Top 10 Thuốc Bán Chạy",
+                "Thuốc Bán Chạy",
                 "Tên thuốc",
                 "Số lượng",
                 dataset,
