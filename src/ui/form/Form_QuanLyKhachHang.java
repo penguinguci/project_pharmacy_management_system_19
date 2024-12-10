@@ -18,6 +18,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.List;
 
@@ -650,6 +652,15 @@ public class Form_QuanLyKhachHang extends JPanel implements ActionListener, Mous
             JOptionPane.showMessageDialog(this, "Số điện thoại phải là 10 số và phải là số 0 đứng đầu!",
                     "Thông báo", JOptionPane.ERROR_MESSAGE);
             txtSDT.requestFocus();
+            return false;
+        }
+        if(!model.isSelected()) {
+            JOptionPane.showMessageDialog(this, "Chưa chọn ngày sinh!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else if(Period.between(model.getValue().toLocalDate(), LocalDate.now()).getYears() < 18){
+            JOptionPane.showMessageDialog(this, "Khách hàng chưa đủ 18 tuổi!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 

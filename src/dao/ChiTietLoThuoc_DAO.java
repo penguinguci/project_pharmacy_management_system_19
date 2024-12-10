@@ -4,8 +4,8 @@ import connectDB.ConnectDB;
 import entity.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.sql.Date;
+import java.util.*;
 
 public class ChiTietLoThuoc_DAO {
     private ArrayList<ChiTietLoThuoc> list;
@@ -414,6 +414,26 @@ public class ChiTietLoThuoc_DAO {
         return result;
     }
 
+    public List<Map<String, Object>> thongKeThuocSapHetHan() {
+        List<Map<String, Object>> dsBaoCao = new ArrayList<>();
+        for(ChiTietLoThuoc x : thuocSapHetHan()) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("soHieuThuoc", x.getSoHieuThuoc());
+            row.put("maThuoc", x.getThuoc().getMaThuoc());
+            row.put("tenThuoc", x.getThuoc().getTenThuoc());
+            row.put("danhMuc", x.getThuoc().getDanhMuc().getTenDanhMuc());
+            row.put("nhaCungCap", x.getLoThuoc().getPhieuNhapThuoc().getNhaCungCap().getTenNCC());
+            row.put("nhaSanXuat", x.getThuoc().getNhaSanXuat().getTenNhaSX());
+            row.put("nuocSanXuat", x.getThuoc().getNuocSanXuat().getTenNuoxSX());
+            row.put("ngaySanXuat", x.getNgaySX());
+            row.put("HSD", x.getHSD());
+            row.put("soLuongCon", x.getSoLuongCon());
+            row.put("donViTinh", x.getDonGiaThuoc().getDonViTinh());
+            row.put("donGia", x.getDonGiaThuoc().getDonGia());
+            dsBaoCao.add(row);
+        }
+        return dsBaoCao;
+    }
 
     public ArrayList<ChiTietLoThuoc> thuocSapHetHan() {
         ArrayList<ChiTietLoThuoc> result = new ArrayList<>();
