@@ -220,7 +220,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
         Map<String, Integer> tongHoaDonMap = new HashMap<>();
         // Lấy dữ liệu từ DAO
         ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
-        List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+        List<ChiTietHoaDon> listTop10ThuocBanChay = chiTietHoaDonDao.getThuocBanNoiBat(sqlStartDate, sqlEndDate,tongHoaDonMap, true);
 
         // Tạo dataset cho biểu đồ
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -267,7 +267,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
             java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
             Map<String, Integer> tongHoaDonMap = new HashMap<>();
             ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
-            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getThuocBanNoiBat(sqlStartDate, sqlEndDate,tongHoaDonMap,true);
 
             // Cập nhật bảng
             fillTable(top10Thuoc,tongHoaDonMap);
@@ -469,7 +469,7 @@ public class Form_ThongKeSPBanChay extends JPanel implements ActionListener {
             java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
             java.sql.Date sqlEndDate = new java.sql.Date(utilEndDate.getTime());
             Map<String, Integer> tongHoaDonMap = new HashMap<>();
-            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getTop10ThuocBanChay(sqlStartDate, sqlEndDate,tongHoaDonMap);
+            List<ChiTietHoaDon> top10Thuoc = chiTietHoaDonDao.getThuocBanNoiBat(sqlStartDate, sqlEndDate,tongHoaDonMap,true);
 
             if (top10Thuoc != null && !top10Thuoc.isEmpty()) {
                 fillTable(top10Thuoc,tongHoaDonMap);
