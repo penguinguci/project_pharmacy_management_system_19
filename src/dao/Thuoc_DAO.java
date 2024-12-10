@@ -983,6 +983,37 @@ public class Thuoc_DAO {
         }
     }
 
+    public ArrayList<Thuoc> timThuocTheoDM(ArrayList<Thuoc> list, String danhMuc) {
+        ArrayList<Thuoc> listThuoc = new ArrayList<>();
+        for(Thuoc x : list) {
+            if(x.getDanhMuc().getTenDanhMuc().equalsIgnoreCase(danhMuc)) {
+                listThuoc.add(x);
+            }
+        }
+        return listThuoc;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoNCC(ArrayList<Thuoc> list, String ncc) {
+        ArrayList<Thuoc> listThuoc = new ArrayList<>();
+        for(Thuoc x : list) {
+            if(x.getNhaCungCap().getTenNCC().equalsIgnoreCase(ncc)) {
+                listThuoc.add(x);
+            }
+        }
+        return listThuoc;
+    }
+
+    public ArrayList<Thuoc> timThuocTheoNSX(ArrayList<Thuoc> list, String nsx) {
+        ArrayList<Thuoc> listThuoc = new ArrayList<>();
+        for(Thuoc x : list) {
+            if(x.getNhaSanXuat().getTenNhaSX().equalsIgnoreCase(nsx)) {
+                listThuoc.add(x);
+            }
+        }
+        return listThuoc;
+    }
+
+
     public boolean deleteThuoc(String maThuoc){
         Connection con;
         con = ConnectDB.getConnection();
