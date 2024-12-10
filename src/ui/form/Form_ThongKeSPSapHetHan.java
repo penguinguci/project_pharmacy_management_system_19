@@ -2,6 +2,7 @@ package ui.form;
 
 import dao.ChiTietLoThuoc_DAO;
 import dao.DanhMuc_DAO;
+import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
 import entity.ChiTietLoThuoc;
 import entity.DanhMuc;
@@ -14,8 +15,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import ui.gui.GUI_TrangChu;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,10 +30,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,18 +45,37 @@ import java.util.Map;
 public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
     private JTable table;
     private DefaultTableModel tableModel;
-    private JButton btnXemChiTiet, btnInBaoCao;
+    private JButton btnXemChiTiet, btnInBaoCao, btnBack;
     private ChiTietLoThuoc_DAO chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
+    public GUI_TrangChu gui_trangChu;
 
     public Form_ThongKeSPSapHetHan() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
         // panel chứa tiêu đề
+        JPanel panelTieuDe = new JPanel(new BorderLayout());
+
+        JPanel panelButton_left = new JPanel();
+        ImageIcon iconBack = new ImageIcon("images\\back.png");
+        Image imageBack = iconBack.getImage();
+        Image scaledImageBack = imageBack.getScaledInstance(13, 17, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconBack = new ImageIcon(scaledImageBack);
+        panelButton_left.add(btnBack = new JButton("Quay lại", scaledIconBack));
+        btnBack.setFont(new Font("Arial", Font.BOLD, 17));
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
+
+
         JLabel lblTitle = new JLabel("Thống Kê Thuốc Sắp Hết Hạn Sử Dụng", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-        this.add(lblTitle, BorderLayout.NORTH);
+
+        panelTieuDe.add(btnBack, BorderLayout.WEST);
+        panelTieuDe.add(lblTitle, BorderLayout.CENTER);
+
+        add(panelTieuDe, BorderLayout.NORTH);
 
         //panel center
         JPanel panelCenter = new JPanel();
@@ -59,13 +86,13 @@ public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
         panelBieuDo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panelBieuDo.setBackground(Color.WHITE);
 
-        // biểu đồ tương quan giữa các hạng khách hàng
-        JFreeChart chartXepHang = createChartXepHang(chiTietLoThuoc_dao.thuocSapHetHan());
-        ChartPanel chartPanelHang = new ChartPanel(chartXepHang);
-        chartPanelHang.setBorder(BorderFactory.createTitledBorder("Phân bố thuốc sắp hết hạn theo danh mục"));
+        // biểu đồ tương quan giữa các thuốc hết hạn theo danh mục
+        JFreeChart chartThuocHH = createChartThuocSapHH(chiTietLoThuoc_dao.thuocSapHetHan());
+        ChartPanel chartPanelHH = new ChartPanel(chartThuocHH);
+        chartPanelHH.setBorder(BorderFactory.createTitledBorder("Phân bố thuốc sắp hết hạn theo danh mục"));
 
         // Thêm các biểu đồ vào panel
-        panelBieuDo.add(chartPanelHang);
+        panelBieuDo.add(chartPanelHH);
         panelCenter.add(panelBieuDo, BorderLayout.CENTER);
 
         // Tạo bảng danh sách khách hàng
@@ -80,6 +107,8 @@ public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
         table.getTableHeader().setReorderingAllowed(false);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Danh Sách Thuốc Sắp Hết Hạn"));
+
+        scrollPane.setPreferredSize(new Dimension(getWidth(), 400));
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getVerticalScrollBar().setUnitIncrement(12);
@@ -103,31 +132,36 @@ public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
         //Panel chứa các nút
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelNut.setBackground(Color.WHITE);
-        //btnXemChiTiet = new JButton("Xem Chi Tiết");
         btnInBaoCao = new JButton("In Báo Cáo");
-        //panelNut.add(btnXemChiTiet);
+        btnInBaoCao.setBackground(new Color(0, 102, 204));
+        btnInBaoCao.setForeground(Color.WHITE);
+        btnInBaoCao.setOpaque(true);
+        btnInBaoCao.setFocusPainted(false);
+        btnInBaoCao.setBorderPainted(false);
+        btnInBaoCao.setFont(new Font("Arial", Font.BOLD, 13));
+        btnInBaoCao.setPreferredSize(new Dimension(120, 30));
+        btnInBaoCao.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnInBaoCao.setBackground(new Color(0, 102, 204));
+            }
+        });
         panelNut.add(btnInBaoCao);
         this.add(panelNut, BorderLayout.SOUTH);
 
         btnInBaoCao.addActionListener(this);
+
+        btnBack.addActionListener(this);
     }
 
-    // Hàm tạo biểu đồ top khách hàng mua hàng nhiều nhất
-    private JFreeChart createChartTopKhachHang(List<KhachHang> dsKhachHang) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (KhachHang kh : dsKhachHang) {
-            dataset.addValue(kh.getDiemTichLuy().getDiemTong(), kh.getHoKH() + " " + kh.getTenKH(), "Khách Hàng");
-        }
-        return ChartFactory.createBarChart(
-                "Top Khách Hàng Dựa Trên Tổng Điểm Tích Lũy",
-                "Khách Hàng",
-                "Tổng Điểm",
-                dataset
-        );
-    }
 
-    // Hàm tạo biểu đồ phân bố các hạng khách hàng
-    private JFreeChart createChartXepHang(List<ChiTietLoThuoc> list) {
+    // hạm tạo biểu đồ
+    private JFreeChart createChartThuocSapHH(List<ChiTietLoThuoc> list) {
         DefaultPieDataset dataset = new DefaultPieDataset();
         DanhMuc_DAO danhMuc_dao = new DanhMuc_DAO();
         ArrayList<DanhMuc> listDanhMuc = danhMuc_dao.getAllDanhMuc();
@@ -147,11 +181,43 @@ public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
             dataset.setValue(x.getThuoc().getDanhMuc().getTenDanhMuc(), mapDanhMuc.get(x.getThuoc().getDanhMuc().getTenDanhMuc()));
         }
 
-        return ChartFactory.createPieChart(
+        JFreeChart chart = ChartFactory.createPieChart(
                 "Phân Bố Thuốc Theo Danh Mục",
                 dataset,
-                true, true, false
+                false, true, false
         );
+
+
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+
+        // màu sắc
+        Color[] modernColors = {
+                new Color(243, 11, 106),
+                new Color(153, 204, 255),
+                new Color(255, 153, 204),
+                new Color(153, 255, 153),
+                new Color(255, 255, 102)
+        };
+
+        for (int i = 0; i < dataset.getItemCount(); i++) {
+            plot.setSectionPaint(dataset.getKey(i), modernColors[i % modernColors.length]);
+        }
+
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+                "{0}: {2}",
+                new DecimalFormat("0"),
+                new DecimalFormat("0.00%")
+        ));
+        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+        plot.setCircular(true);
+
+        // thêm chú thích
+        LegendTitle chuThich = new LegendTitle(plot);
+        chuThich.setPosition(RectangleEdge.RIGHT);
+        chart.addSubtitle(chuThich);
+
+        return chart;
     }
 
     // Hàm điền dữ liệu vào bảng
@@ -187,7 +253,7 @@ public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
             try (Workbook workbook = new HSSFWorkbook()) {
                 Sheet sheet = workbook.createSheet("Báo cáo thuốc sắp hết hạn");
                 String[] headers = {"Số hiệu thuốc", "Mã thuốc", "Tên thuốc", "Danh mục", "Nhà cung cấp", "Nhà sản xuất", "Nước sản xuất",
-                "Ngày sản xuất", "Hạn sử dụng", "Số lượng còn", "Đơn vị tính", "Đơn giá"};
+                        "Ngày sản xuất", "Hạn sử dụng", "Số lượng còn", "Đơn vị tính", "Đơn giá"};
                 Row headerRow = sheet.createRow(0);
                 for (int i = 0; i < headers.length; i++) {
                     Cell cell = headerRow.createCell(i);
@@ -248,9 +314,19 @@ public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
         return formatter.format(date);
     }
 
+    public void setTrangChu(GUI_TrangChu trangChu) {
+        this.gui_trangChu = trangChu;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource().equals(btnInBaoCao)) {
+        Object o = e.getSource();
+        if (o == btnBack) {
+            setVisible(false);
+            HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
+            List<Map<String, Object>> dsBaoCao = hoaDon_dao.thongKeDoanhThuTheoThangCuaNhanVien();
+            gui_trangChu.updateBieuDoThongKe(dsBaoCao);
+        } else if(o == btnInBaoCao) {
             inBaoCao();
         }
     }

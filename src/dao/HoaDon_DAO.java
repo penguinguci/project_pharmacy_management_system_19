@@ -32,47 +32,47 @@ public class HoaDon_DAO {
         getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-       try {
-           String sql = "select * from HoaDon where trangThai = 1 order by ngayLap";
-           ps = getConnection().prepareStatement(sql);
-           rs = ps.executeQuery();
-           while(rs.next()){
-               HoaDon hd = new HoaDon();
-               hd.setMaHD(rs.getString("maHD"));
+        try {
+            String sql = "select * from HoaDon where trangThai = 1 order by ngayLap";
+            ps = getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                HoaDon hd = new HoaDon();
+                hd.setMaHD(rs.getString("maHD"));
 
-               khachHang_dao = new KhachHang_DAO();
-               KhachHang kh = new KhachHang();
-               if(rs.getString("maKhachHang") == null) {
-                   kh.setHoKH("");
-                   kh.setTenKH("Khách hàng lẻ");
-               } else {
-                   kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
-               }
-               hd.setKhachHang(kh);
+                khachHang_dao = new KhachHang_DAO();
+                KhachHang kh = new KhachHang();
+                if(rs.getString("maKhachHang") == null) {
+                    kh.setHoKH("");
+                    kh.setTenKH("Khách hàng lẻ");
+                } else {
+                    kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+                }
+                hd.setKhachHang(kh);
 
-               nhanVien_dao = new NhanVien_DAO();
-               NhanVien nv = new NhanVien();
-               nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
-               hd.setNhanVien(nv);
+                nhanVien_dao = new NhanVien_DAO();
+                NhanVien nv = new NhanVien();
+                nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
+                hd.setNhanVien(nv);
 
-               thue_dao = new Thue_DAO();
-               Thue thue = new Thue();
-               thue = thue_dao.timThue(rs.getString("maThue"));
-               hd.setThue(thue);
+                thue_dao = new Thue_DAO();
+                Thue thue = new Thue();
+                thue = thue_dao.timThue(rs.getString("maThue"));
+                hd.setThue(thue);
 
-               hd.setNgayLap(rs.getDate("ngayLap"));
-               hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
-               hd.setTrangThai(rs.getBoolean("trangThai"));
+                hd.setNgayLap(rs.getDate("ngayLap"));
+                hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
+                hd.setTrangThai(rs.getBoolean("trangThai"));
 
-               if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
-                   if(timHoaDon(hd.getMaHD()) == null) {
-                       this.list.add(hd);
-                   }
-               }
-           }
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
+                if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
+                    if(timHoaDon(hd.getMaHD()) == null) {
+                        this.list.add(hd);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return this.list;
     }
 
@@ -645,7 +645,7 @@ public class HoaDon_DAO {
         String sql = "{CALL sp_BaoCaoDoanhThuTheoNgayTrongThang(?, ?)}";
 
         try (Connection conn = getConnection();
-            CallableStatement stmt = conn.prepareCall(sql)) {
+             CallableStatement stmt = conn.prepareCall(sql)) {
             stmt.setInt(1, nam);
             stmt.setInt(2, thang);
 

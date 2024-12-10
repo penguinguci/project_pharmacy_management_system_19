@@ -201,7 +201,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnBanThuoc = createSubMenuButton("Bán Thuốc");
         btnNhapThuocTuNCC  = createSubMenuButton("Nhập Thuốc");
         btnCapNhatNV = createSubMenuButton("Cập Nhật");
-        btnChucVu = createSubMenuButton("Chức vụ");
+        btnChucVu = createSubMenuButton("Chức Vụ");
         btnTimKiemNV = createSubMenuButton("Tìm Kiếm");
         btnTaiKhoan = createSubMenuButton("Tài Khoản");
 
@@ -254,7 +254,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnNhaSanXuat = createSubMenuButton("Nhà Sản Xuất");
         btnNuocSanXuat = createSubMenuButton("Nước Sản Xuất");
         btnDanhMuc = createSubMenuButton("Danh Mục");
-        btnQLLoThuoc = createSubMenuButton("Lô thuốc");
+        btnQLLoThuoc = createSubMenuButton("Lô Thuốc");
 
 
         submenuThuoc.add(btnCapNhatThuoc);
@@ -284,8 +284,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuKhuyenMai.setBackground(new Color(65, 192, 201));
         submenuKhuyenMai.setVisible(false);
 
-        btnCapNhatKhuyenmai = createSubMenuButton("Cập nhật");
-        btnTimKiemKhuyenMai = createSubMenuButton("Tìm kiếm");
+        btnCapNhatKhuyenmai = createSubMenuButton("Cập Nhật");
+        btnTimKiemKhuyenMai = createSubMenuButton("Tìm Kiếm");
 
         //Phân quyền
         if(nhanVienDN != null) {
@@ -307,7 +307,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuHoaDon.setVisible(false);
 
         btnHDBanThuoc = createSubMenuButton("Bán Thuốc");
-        btnQLNhapThuoc = createSubMenuButton("Nhập thuốc");
+        btnQLNhapThuoc = createSubMenuButton("Nhập Thuốc");
         btnPhieuDoiTra  = createSubMenuButton("Đổi Trả");
 
         submenuHoaDon.add(btnHDBanThuoc);
@@ -325,7 +325,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnTKKhachHang  = createSubMenuButton("Khách Hàng");
         btnTKThuocBanChay  = createSubMenuButton("Bán Chạy");
         btnTKThuocBanCham  = createSubMenuButton("Bán Chậm");
-        btnTKThuocSapHH  = createSubMenuButton("Thuốc Sắp Hết Hạn");
+        btnTKThuocSapHH  = createSubMenuButton("Sắp Hết Hạn");
 
         submenuThongKe.add(btnTKDoanhThu);
         submenuThongKe.add(btnTKKhachHang);
@@ -586,42 +586,71 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnHoaDon.addActionListener(this);
         btnThongKe.addActionListener(this);
         btnDangXuat.addActionListener(this);
+        themPhimTatBtn(btnDangXuat, KeyEvent.VK_ESCAPE, 0);
 
         btnBanThuoc.addActionListener(this);
+        themPhimTatBtn(btnBanThuoc, KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK);
         btnNhapThuocTuNCC.addActionListener(this);
+        themPhimTatBtn(btnNhapThuocTuNCC, KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK);
         btnCapNhatNV.addActionListener(this);
+        themPhimTatBtn(btnCapNhatNV, KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK);
         btnChucVu.addActionListener(this);
+        themPhimTatBtn(btnChucVu, KeyEvent.VK_4, KeyEvent.CTRL_DOWN_MASK);
         btnTimKiemNV.addActionListener(this);
+        themPhimTatBtn(btnTimKiemNV, KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK);
         btnTaiKhoan.addActionListener(this);
+        themPhimTatBtn(btnTaiKhoan, KeyEvent.VK_6, KeyEvent.CTRL_DOWN_MASK);
 
         btnCapNhatKH.addActionListener(this);
+        themPhimTatBtn(btnCapNhatKH, KeyEvent.VK_7, KeyEvent.CTRL_DOWN_MASK);
         btnDatThuoc.addActionListener(this);
+        themPhimTatBtn(btnDatThuoc, KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK);
         btnTimKiemKH.addActionListener(this);
+        themPhimTatBtn(btnTimKiemKH, KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK);
 
         btnCapNhatThuoc.addActionListener(this);
+        themPhimTatBtn(btnCapNhatThuoc, KeyEvent.VK_0, KeyEvent.CTRL_DOWN_MASK);
         btnNhaSanXuat.addActionListener(this);
+        themPhimTatBtn(btnNhaSanXuat, KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK);
         btnNuocSanXuat.addActionListener(this);
+        themPhimTatBtn(btnNuocSanXuat, KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK);
         btnDanhMuc.addActionListener(this);
+        themPhimTatBtn(btnDanhMuc, KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
         btnTimKiemThuoc.addActionListener(this);
+        themPhimTatBtn(btnTimKiemThuoc, KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK);
         btnQLLoThuoc.addActionListener(this);
+        themPhimTatBtn(btnQLLoThuoc, KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK);
 
         btnCapNhatNCC.addActionListener(this);
+        themPhimTatBtn(btnCapNhatNCC, KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK);
         btnTimKiemNCC.addActionListener(this);
+        themPhimTatBtn(btnTimKiemNCC, KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK);
 
         btnCapNhatKhuyenmai.addActionListener(this);
+        themPhimTatBtn(btnCapNhatKhuyenmai, KeyEvent.VK_H, KeyEvent.CTRL_DOWN_MASK);
         btnTimKiemKhuyenMai.addActionListener(this);
+        themPhimTatBtn(btnTimKiemKhuyenMai, KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK);
 
         btnHDBanThuoc.addActionListener(this);
+        themPhimTatBtn(btnHDBanThuoc, KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK);
         btnQLNhapThuoc.addActionListener(this);
+        themPhimTatBtn(btnQLNhapThuoc, KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK);
         btnPhieuDoiTra.addActionListener(this);
+        themPhimTatBtn(btnPhieuDoiTra, KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK);
 
         btnTKDoanhThu.addActionListener(this);
+        themPhimTatBtn(btnTKDoanhThu, KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK);
         btnTKKhachHang.addActionListener(this);
+        themPhimTatBtn(btnTKKhachHang, KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK);
         btnTKThuocBanChay.addActionListener(this);
+        themPhimTatBtn(btnTKThuocBanChay, KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
         btnTKThuocBanCham.addActionListener(this);
+        themPhimTatBtn(btnTKThuocBanCham, KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK);
         btnTKThuocSapHH.addActionListener(this);
+        themPhimTatBtn(btnTKThuocSapHH, KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK);
 
         customButtonUser.addMouseListener(this);
+        themPhimTatPanel(customButtonUser, KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK);
 
         btnThongBao.addMouseListener(this);
         popupThongBao.addMouseListener(this);
@@ -629,7 +658,48 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         mainContentPanel.addMouseListener(this);
 
         btnTroGiup.addActionListener(this);
+        themPhimTatBtn(btnTroGiup, KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK);
     }
+
+    // tạo phím tắt btn
+    public void themPhimTatBtn(JButton btn, int keyEvent, int modifier) {
+        btn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(keyEvent, modifier), btn.getText()
+        );
+        btn.getActionMap().put(btn.getText(), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btn.doClick();
+            }
+        });
+    }
+
+    // tạo phím tắt btn
+    public void themPhimTatPanel(JPanel panel, int keyEvent, int modifier) {
+        panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(keyEvent, modifier), "clickPanel"
+        );
+        panel.getActionMap().put("clickPanel", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Mô phỏng sự kiện click vào panel
+                for (java.awt.event.MouseListener listener : panel.getMouseListeners()) {
+                    listener.mouseClicked(new java.awt.event.MouseEvent(
+                            panel,
+                            java.awt.event.MouseEvent.MOUSE_CLICKED,
+                            System.currentTimeMillis(),
+                            0,
+                            panel.getWidth() / 2,
+                            panel.getHeight() / 2,
+                            1,
+                            false
+                    ));
+                }
+            }
+        });
+    }
+
+
 
     public void updateBieuDoThongKe(List<Map<String, Object>> dsBaoCao) {
 //        thongKe_DongHoPanel = new JPanel(new BorderLayout());
@@ -1078,7 +1148,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         } else if(o == btnTKThuocSapHH) {
             formThongKeSPSapHetHan = new Form_ThongKeSPSapHetHan();
             centerPanel.add(formThongKeSPSapHetHan, "formThongKeSPSapHetHan");
-//            formThongKeSPSapHetHan.setTrangChu(this);
+            formThongKeSPSapHetHan.setTrangChu(this);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThongKeSPSapHetHan");

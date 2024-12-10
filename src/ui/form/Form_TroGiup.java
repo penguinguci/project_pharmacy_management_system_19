@@ -103,13 +103,53 @@ public class Form_TroGiup extends JPanel implements ActionListener {
         JPanel panel = createStyledPanel();
         panel.add(createTitleLabel("Hướng Dẫn Sử Dụng Hệ Thống"));
         JTextArea textArea = createTextArea(
-                "1. Đăng nhập vào hệ thống với tài khoản của bạn.\n" +
+                "1. Đăng nhập vào hệ thống tới tài khoản của nhân viên hoặc tài khoản của quản lý.\n" +
+                        "\n" +
                         "2. Truy cập các chức năng:\n" +
-                        "   - Quản lý thuốc: Thêm, sửa, xóa thuốc.\n" +
-                        "   - Bán hàng: Lập hóa đơn nhanh chóng.\n" +
-                        "   - Khách hàng: Quản lý thông tin khách hàng thân thiết.\n" +
-                        "3. Sử dụng tính năng sao lưu dữ liệu định kỳ.\n" +
-                        "4. Truy cập mục 'Trợ giúp' để nhận thêm hướng dẫn chi tiết."
+                        "   A. Menu Nhân Viên: \n" +
+                        "       + Bán Thuốc (CTRL + 1): Thêm sản phẩm thuốc vào giỏ, thanh toán hóa đơn.\n" +
+                        "       + Nhập Thuốc (CTRL + 2): Nhập thuốc từ nhà cung cấp, in hóa đơn nhập thuốc, import file Excel, export file Excel.\n" +
+                        "       + Cập Nhật (CTRL + 3): Thêm, xóa, cập nhật thông tin của nhân viên.\n" +
+                        "       + Chức Vụ (CTRL + 4): Thêm, xóa, cập nhật thông tin chức vụ.\n" +
+                        "       + Tìm Kiếm (CTRL + 5): Tìm kiếm nhân viên nâng cao theo tên nhân viên, số điện thoại, giới tính, năm sinh, vai trò.\n" +
+                        "       + Tài Khoản (CTRL + 6): Thêm, xóa tài khoản nhân viên, tìm kiếm nhanh nhân viên.\n" +
+                        "\n" +
+                        "   B. Menu Khách Hàng: \n" +
+                        "       + Cập Nhật (CTRL + 7): Thêm, xóa, cập nhật thông tin của khách hàng.\n" +
+                        "       + Đặt Thuốc (CTRL + 8): Thanh toán, chỉnh sửa thông tin đơn đặt thuốc của khách hàng.\n" +
+                        "       + Tìm Kiếm (CTRL + 9): Tìm kiếm khách hàng nâng cao theo tên khách hàng, số điện thoại, giới tính, xếp hạng.\n" +
+                        "\n" +
+                        "   C. Menu Thuốc: \n" +
+                        "       + Cập Nhật (CTRL + 0): Thêm, xóa, cập nhật thông tin của thuốc.\n" +
+                        "       + Tìm Kiếm (CTRL + A): Tìm kiếm thuốc nâng cao theo tên thuốc, danh mục, nhà cung cấp, nhà sản xuất, nước sản xuất, khoảng giá thuốc.\n" +
+                        "       + Nhà Sản Xuất (CTRL + B): Thêm, xóa, cập nhật thông tin của khách hàng.\n" +
+                        "       + Nước Sản Xuất (CTRL + C): Thanh toán, chỉnh sửa thông tin đơn đặt thuốc của khách hàng.\n" +
+                        "       + Danh Mục (CTRL + D): Tìm kiếm khách hàng nâng cao theo tên khách hàng, số điện thoại, giới tính, xếp hạng.\n" +
+                        "       + Lô Thuốc (CTRL + E): Xem lô thuốc, chi tiết lô thuốc.\n" +
+                        "\n" +
+                        "   D. Menu Nhà Cung Cấp: \n" +
+                        "       + Cập Nhật (CTRL + F): Thêm, xóa, cập nhật thông tin của nhà cung cấp.\n" +
+                        "       + Tìm Kiếm (CTRL + G): Tìm kiếm nhà cung cấp nâng cao theo tên nhà cung cấp, email, địa chỉ.\n" +
+                        "\n" +
+                        "   E Menu Khuyến Mãi: \n" +
+                        "       + Cập Nhật (CTRL + H): Thêm, xóa, cập nhật thông tin của chương trình khuyến mãi, áp dụng khuyến mãi cho thuốc, gỡ khuyến mãi của thuốc.\n" +
+                        "       + Tìm Kiếm (CTRL + I): Tìm kiếm khuyến mãi nâng cao theo loại khuyến mãi, mô tả, ngày bắt đầu, ngày kết thúc.\n" +
+                        "\n" +
+                        "   F. Menu Hóa Đơn: \n" +
+                        "       + Bán Hàng (CTRL + J): Xem hóa đơn, chi tiết hóa đơn.\n" +
+                        "       + Nhập Thuốc (CTRL + K): Xem phiếu nhập thuốc, chi tiết phiếu nhập thuốc.\n" +
+                        "       + Đổi Trả (CTRL + L): Đổi, trả thuốc cho khách hàng.\n" +
+                        "\n" +
+                        "   G. Menu Thống Kê: \n" +
+                        "       + Doanh Thu (CTRL + M): Xem thống kê doanh thu theo tuần, tháng, năm, in báo cáo doanh thu.\n" +
+                        "       + Khách Hàng (CTRL + N): Xem chi tiết các hóa đơn của khách hàng, in báo cáo thống kê khách hàng thường xuyên và sản phẩm yêu thích.\n" +
+                        "       + Bán Chạy (CTRL + O): Xem thống kê thuốc bán chạy, in cáo cáo các thuốc bán chạy.\n" +
+                        "       + Bán Chậm (CTRL + Q): Xem thống kê thuốc bán chậm, in cáo cáo các thuốc bán chậm.\n" +
+                        "       + Sắp Hết Hạn (CTRL + X): Xem thống kê thuốc sắp hết hạn, in báo cáo các thuốc sắp hết hạn.\n" +
+                        "\n" +
+                        "3. Truy cập mục 'Trợ giúp' góc phải trên cùng của giao diện (CTRL + P) để nhận thêm hướng dẫn chi tiết." +
+                        "4. Tài khoản cá nhân (CTRL + U)." +
+                        "5. Đăng xuất (Esc)."
         );
         panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
         return panel;
@@ -164,9 +204,12 @@ public class Form_TroGiup extends JPanel implements ActionListener {
         JPanel panel = createStyledPanel();
         panel.add(createTitleLabel("Về Chúng Tôi"));
         JTextArea textArea = createTextArea(
-                "Chúng tôi là đội ngũ phát triển phần mềm chuyên nghiệp\n" +
-                        "với sứ mệnh mang đến giải pháp tối ưu cho các nhà thuốc\n" +
-                        "trong việc quản lý bán hàng và chăm sóc khách hàng."
+                "Chúng tôi là đội ngũ phát triển phần mềm chuyên nghiệp với sứ mệnh mang đến giải pháp tối ưu cho các nhà thuốc trong việc quản lý bán hàng và chăm sóc khách hàng.\n" +
+                        "\n" +
+                        "Thành viên của đội ngũ nhóm 19:\n" +
+                        "   - Trần Long Vũ - 22717471 - Nhóm trưởng.\n" +
+                        "   - Đặng Gia Bão - 22709051.\n" +
+                        "   - Nguyễn Văn Đủ - 22716021."
         );
         panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
         return panel;
