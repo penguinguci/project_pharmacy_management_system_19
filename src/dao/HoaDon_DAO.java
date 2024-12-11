@@ -64,16 +64,63 @@ public class HoaDon_DAO {
                 hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
                 hd.setTrangThai(rs.getBoolean("trangThai"));
 
-                if(hd.isTrangThai()){ //Chỉ lấy hoá đơn active
-                    if(timHoaDon(hd.getMaHD()) == null) {
-                        this.list.add(hd);
-                    }
+                if(timHoaDon(hd.getMaHD()) == null) {
+                    this.list.add(hd);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return this.list;
+    }
+
+    public ArrayList<HoaDon> getAllHoaDonAdmin(){
+        ArrayList<HoaDon> hoaDonAdmin = new ArrayList<>();
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select * from HoaDon";
+            ps = getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                HoaDon hd = new HoaDon();
+                hd.setMaHD(rs.getString("maHD"));
+
+                khachHang_dao = new KhachHang_DAO();
+                KhachHang kh = new KhachHang();
+                if(rs.getString("maKhachHang") == null) {
+                    kh.setHoKH("");
+                    kh.setTenKH("Khách hàng lẻ");
+                } else {
+                    kh = khachHang_dao.timKhachHang(rs.getString("maKhachHang"));
+                }
+                hd.setKhachHang(kh);
+
+                nhanVien_dao = new NhanVien_DAO();
+                NhanVien nv = new NhanVien();
+                nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNhanVien"));
+                hd.setNhanVien(nv);
+
+                thue_dao = new Thue_DAO();
+                Thue thue = new Thue();
+                thue = thue_dao.timThue(rs.getString("maThue"));
+                hd.setThue(thue);
+
+                hd.setNgayLap(rs.getDate("ngayLap"));
+                hd.setHinhThucThanhToan(rs.getString("hinhThucThanhToan"));
+                hd.setTrangThai(rs.getBoolean("trangThai"));
+
+                if(hash(hoaDonAdmin, hd.getMaHD())) {
+                    hoaDonAdmin.add(hd);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return hoaDonAdmin;
     }
 
     public boolean create(HoaDon hoaDon, ArrayList<ChiTietHoaDon> dsChiTietHoaDon, ArrayList<ChiTietKhuyenMai> dsChiTietKhuyenMai) throws SQLException {
@@ -143,6 +190,25 @@ public class HoaDon_DAO {
             }
         }
         return null;
+    }
+
+    public HoaDon timAllHoaDon(String maHD) {
+        ArrayList<HoaDon> listFullHD = getAllHoaDonAdmin();
+        for(HoaDon x : listFullHD) {
+            if(x.getMaHD().equals(maHD)) {
+                return x;
+            }
+        }
+        return null;
+    }
+
+    private boolean hash(ArrayList<HoaDon> list, String maHD) {
+        for(HoaDon x : list) {
+            if(x.getMaHD().equalsIgnoreCase(maHD)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public ArrayList<HoaDon> timHoaDonTheoNgayLap(Date date) {
@@ -844,5 +910,15 @@ public class HoaDon_DAO {
             e.printStackTrace();
         }
         return dsBaoCao;
+    }
+
+    public HoaDon timHoaDonDoiTra(String maHD) {
+        ArrayList<HoaDon> listFullHD = getAllHoaDonAdmin();
+        for(HoaDon x : listFullHD) {
+            if(x.getMaHD().equals(maHD)) {
+                return x;
+            }
+        }
+        return null;
     }
 }
