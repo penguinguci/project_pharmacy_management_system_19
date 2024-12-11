@@ -1,6 +1,6 @@
 USE master
 -- Tạo cơ sở dữ liệu
-CREATE DATABASE QuanLyNhaThuoc;
+CREATE DATABASE QuanLyNhaThuoc
 GO
 
 USE QuanLyNhaThuoc
@@ -115,7 +115,7 @@ CREATE TABLE DonGiaThuoc (
 	maDonGia VARCHAR(20) PRIMARY KEY NOT NULL,
 	maThuoc VARCHAR(20) NOT NULL,
 	donViTinh NVARCHAR(50) NOT NULL,
-	donGia FLOAT(10), 
+	donGia FLOAT(10),
 	trangThai BIT
 );
 GO
@@ -305,7 +305,9 @@ CREATE TABLE ChiTietPhieuDoiTra (
 	maPhieu VARCHAR(20) NOT NULL,
 	soHieuThuoc VARCHAR(20) NOT NULL,
 	maThuoc VARCHAR(20) NOT NULL,
-	ghiChu NVARCHAR(255),
+	tenThuoc NVARCHAR(50) NOT NULL,
+	soLuong int NOT NULL,
+	donViTinh NVARCHAR(50) NOT NULL,
 	PRIMARY KEY (maPhieu, soHieuThuoc),
 	FOREIGN KEY (maPhieu) REFERENCES PhieuDoiTra(maPhieu),
     FOREIGN KEY (soHieuThuoc) REFERENCES ChiTietLoThuoc(soHieuThuoc),
@@ -1099,7 +1101,7 @@ BEGIN
 	SELECT ct.maCTKM, ct.loaiKhuyenMai, t.maThuoc, t.tenThuoc, ctkm.tyLeKhuyenMai, ctkm.soLuongToiThieu, dg.maDonGia, ctlt.soHieuThuoc
 	FROM Thuoc t
 	JOIN DonGiaThuoc dg ON t.maThuoc = dg.maThuoc
-	LEFT JOIN ChiTietLoThuoc ctlt ON dg.maDonGia = ctlt.maDonGia 
+	LEFT JOIN ChiTietLoThuoc ctlt ON dg.maDonGia = ctlt.maDonGia
 	LEFT JOIN ChiTietKhuyenMai ctkm ON ctkm.soHieuThuoc = ctlt.soHieuThuoc
 	LEFT JOIN ChuongTrinhKhuyenMai ct ON ctkm.maCTKM = ct.maCTKM
 	WHERE dg.trangThai = 1
@@ -1395,7 +1397,7 @@ BEGIN
 END
 GO
 
--- lấy DS chi tiết lô thuốc 
+-- lấy DS chi tiết lô thuốc
 CREATE PROCEDURE getDSChiTietLoThuoc @maLT VARCHAR(20)
 AS
 BEGIN
@@ -1403,13 +1405,13 @@ BEGIN
 	FROM ChiTietLoThuoc lt
 	LEFT JOIN DonGiaThuoc dg ON lt.maDonGia = dg.maDonGia
 	WHERE lt.maLoThuoc = @maLT
-END 
+END
 GO
 
 
 
 -- lấy chi tiết phiếu nhập theo mã thuốc, đơn vị tính, ngày sản xuất, hạn sử dụng
-CREATE PROCEDURE getCTPNTheoMaThuocVaDonViTinh 
+CREATE PROCEDURE getCTPNTheoMaThuocVaDonViTinh
 @maThuoc VARCHAR(20),
 @donViTinh NVARCHAR(20),
 @ngaySX DATE,
@@ -1417,10 +1419,10 @@ CREATE PROCEDURE getCTPNTheoMaThuocVaDonViTinh
 AS
 BEGIN
 	SELECT *
-	FROM ChiTietPhieuNhap 
-	WHERE maThuoc = @maThuoc AND 
-		donViTinh = @donViTinh AND 
-		ngaySanXuat = @ngaySX AND 
+	FROM ChiTietPhieuNhap
+	WHERE maThuoc = @maThuoc AND
+		donViTinh = @donViTinh AND
+		ngaySanXuat = @ngaySX AND
 		HSD = @HSD
 END
 GO
@@ -1428,7 +1430,7 @@ GO
 
 -- tính tổng chi tiêu của khách hàng
 CREATE PROCEDURE tinhTongChiTieuKhachHang @maKH VARCHAR(20)
-AS 
+AS
 BEGIN
 	SELECT tongChiTieu = SUM(hd.tongTien)
 	FROM HoaDon hd
@@ -1455,78 +1457,78 @@ END
 GO
 
 -- lấy đơn giá thuốc theo mã thuốc, đơn vị tính
-CREATE PROCEDURE getDGThuocTheoMaThuocVaDVT 
+CREATE PROCEDURE getDGThuocTheoMaThuocVaDVT
 @maThuoc VARCHAR(20),
 @donViTinh NVARCHAR(50)
 AS
 BEGIN
-	SELECT * 
-	FROM DonGiaThuoc dg 
-	JOIN Thuoc t ON dg.maThuoc = t.maThuoc 
+	SELECT *
+	FROM DonGiaThuoc dg
+	JOIN Thuoc t ON dg.maThuoc = t.maThuoc
 	WHERE dg.maThuoc = @maThuoc AND dg.donViTinh = @donViTinh AND dg.trangThai = 1
 END
 GO
 
 
 -- lấy DS đơn giá thuốc theo mã thuốc, đơn vị tính
-CREATE PROCEDURE getDanhSachDGThuocTheoMaThuocVaDVT 
+CREATE PROCEDURE getDanhSachDGThuocTheoMaThuocVaDVT
 @maThuoc VARCHAR(20),
 @donViTinh NVARCHAR(50)
 AS
 BEGIN
-	SELECT * 
-	FROM DonGiaThuoc 
-	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh 
+	SELECT *
+	FROM DonGiaThuoc
+	WHERE maThuoc = @maThuoc AND donViTinh = @donViTinh
 END
 GO
 
 
--- báo cáo doanh thu theo ngày trong năm  
+-- báo cáo doanh thu theo ngày trong năm
 CREATE PROCEDURE sp_BaoCaoDoanhThuTheoNgayTrongThang @nam INT, @thang INT
 AS
 BEGIN
     WITH DoanhThuTheoNgay AS (
-        SELECT 
+        SELECT
             CAST(ngayLap AS DATE) AS Ngay,
             COUNT(maHD) AS SoHoaDon,
             SUM(tongTien) AS TongDoanhThu
-        FROM 
+        FROM
             HoaDon
-        WHERE 
+        WHERE
             YEAR(ngayLap) = @nam AND MONTH(ngayLap) = @thang
-        GROUP BY 
+        GROUP BY
             CAST(ngayLap AS DATE)
     )
 	-- Lay du lieu cho all cac ngay trong thang va muc tang giam so voi ngay truoc va ngay sau
-    SELECT 
+    SELECT
         dt1.Ngay,
         dt1.SoHoaDon,
         dt1.TongDoanhThu,
-        CASE 
+        CASE
             WHEN dt2.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu ngay truoc
-            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN 
+            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN
                 CONCAT('+', ROUND((dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc tang ngay sau
-            ELSE 
+            ELSE
                 CONCAT('-', ROUND(ABS(dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc giam ngay truoc
         END AS MucTangNgayTruoc,
-        CASE 
+        CASE
             WHEN dt3.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu ngay sau
-            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN 
+            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN
                 CONCAT('+', ROUND((dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') --  muc tang ngay sau
-            ELSE 
+            ELSE
                 CONCAT('-', ROUND(ABS(dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') -- muc giam ngay truoc
         END AS MucTangNgaySau
-    FROM 
+    FROM
         DoanhThuTheoNgay dt1
-    LEFT JOIN 
+    LEFT JOIN
         DoanhThuTheoNgay dt2
-    ON 
+    ON
         dt1.Ngay = DATEADD(DAY, 1, dt2.Ngay) -- ngay truoc
-    LEFT JOIN 
+    LEFT JOIN
         DoanhThuTheoNgay dt3
-    ON 
+    ON
         dt1.Ngay = DATEADD(DAY, -1, dt3.Ngay) -- ngay sau
-    ORDER BY 
+    ORDER BY
         dt1.Ngay;
 END
 GO
@@ -1534,73 +1536,73 @@ GO
 
 
 -- báo cáo doanh thu theo tháng trong năm (có tính tăng/giảm so với tháng trước)
-CREATE PROCEDURE sp_BaoCaoDoanhThuTheoThangTrongNam 
-    @nam INT, 
+CREATE PROCEDURE sp_BaoCaoDoanhThuTheoThangTrongNam
+    @nam INT,
     @thang INT
 AS
 BEGIN
     WITH DoanhThuTheoThang AS (
-        SELECT 
+        SELECT
             YEAR(ngayLap) AS Nam,
             MONTH(ngayLap) AS Thang,
             COUNT(maHD) AS SoHoaDon,
             SUM(tongTien) AS TongDoanhThu
-        FROM 
+        FROM
             HoaDon
-        GROUP BY 
+        GROUP BY
             YEAR(ngayLap), MONTH(ngayLap)
     ),
     -- them du lieu cua thang truoc va thang sau
     DoanhThuLiênQuan AS (
-        SELECT 
+        SELECT
             dt1.Nam,
             dt1.Thang,
             dt1.TongDoanhThu,
             dt1.SoHoaDon,
             dt2.TongDoanhThu AS DoanhThuThangTruoc,
             dt3.TongDoanhThu AS DoanhThuThangSau
-        FROM 
+        FROM
             DoanhThuTheoThang dt1
-        LEFT JOIN 
+        LEFT JOIN
             DoanhThuTheoThang dt2
-        ON 
+        ON
             (dt1.Nam = dt2.Nam AND dt1.Thang = dt2.Thang + 1) -- cung nam, thang sau
             OR (dt1.Nam = dt2.Nam + 1 AND dt1.Thang = 1 AND dt2.Thang = 12) -- chuyen nam
-        LEFT JOIN 
+        LEFT JOIN
             DoanhThuTheoThang dt3
-        ON 
+        ON
             (dt1.Nam = dt3.Nam AND dt1.Thang = dt3.Thang - 1) -- cung nam, thang sau
             OR (dt1.Nam = dt3.Nam - 1 AND dt1.Thang = 12 AND dt3.Thang = 1) -- chuyen nam
     )
     -- hien thi du lieu muc giam
-    SELECT 
+    SELECT
         Nam,
         Thang,
         TongDoanhThu,
         SoHoaDon,
-        CASE 
+        CASE
             WHEN DoanhThuThangTruoc IS NULL THEN 'N/A'
-            WHEN (TongDoanhThu - DoanhThuThangTruoc) >= 0 THEN 
+            WHEN (TongDoanhThu - DoanhThuThangTruoc) >= 0 THEN
                 CONCAT('+', ROUND((TongDoanhThu - DoanhThuThangTruoc) * 100.0 / DoanhThuThangTruoc, 2), '%')
-            ELSE 
+            ELSE
                 CONCAT('-', ROUND(ABS(TongDoanhThu - DoanhThuThangTruoc) * 100.0 / DoanhThuThangTruoc, 2), '%')
         END AS MucTangGiamThangTruoc,
-        CASE 
+        CASE
             WHEN DoanhThuThangSau IS NULL THEN 'N/A'
-            WHEN (DoanhThuThangSau - TongDoanhThu) >= 0 THEN 
+            WHEN (DoanhThuThangSau - TongDoanhThu) >= 0 THEN
                 CONCAT('+', ROUND((DoanhThuThangSau - TongDoanhThu) * 100.0 / TongDoanhThu, 2), '%')
-            ELSE 
+            ELSE
                 CONCAT('-', ROUND(ABS(DoanhThuThangSau - TongDoanhThu) * 100.0 / TongDoanhThu, 2), '%')
         END AS MucTangGiamThangSau
-    FROM 
+    FROM
         DoanhThuLiênQuan
-    WHERE 
+    WHERE
         (Nam = @nam AND Thang = @thang) -- thang hien tai
         OR (Nam = @nam AND Thang = @thang - 1) -- thang truoc
         OR (Nam = @nam AND Thang = @thang + 1) -- thang sau
         OR (Nam = @nam - 1 AND @thang = 1 AND Thang = 12) -- thang truoc chuyen nam
         OR (Nam = @nam + 1 AND @thang = 12 AND Thang = 1) -- thang sau chuyen nam
-    ORDER BY 
+    ORDER BY
         Nam, Thang;
 END
 GO
@@ -1611,47 +1613,47 @@ CREATE PROCEDURE sp_BaoCaoDoanhThuTheoNam @nam INT
 AS
 BEGIN
     WITH DoanhThuTheoNam AS (
-        SELECT 
+        SELECT
             YEAR(ngayLap) AS Nam,
             COUNT(maHD) AS SoHoaDon,
             SUM(tongTien) AS TongDoanhThu
-        FROM 
+        FROM
             HoaDon
-        GROUP BY 
+        GROUP BY
             YEAR(ngayLap)
     )
     -- lay du lieu nam hien tai, nam truoc va nam sau
-    SELECT 
+    SELECT
         dt1.Nam,
         dt1.TongDoanhThu,
         dt1.SoHoaDon,
-        CASE 
+        CASE
             WHEN dt2.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu nam truoc
-            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN 
+            WHEN (dt1.TongDoanhThu - dt2.TongDoanhThu) > 0 THEN
                 CONCAT('+', ROUND((dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc tang nam truoc
-            ELSE 
+            ELSE
                 CONCAT('-', ROUND(ABS(dt1.TongDoanhThu - dt2.TongDoanhThu) * 100.0 / dt2.TongDoanhThu, 2), '%') -- muc giam nam sau
         END AS MucTangNamTruoc,
-        CASE 
+        CASE
             WHEN dt3.TongDoanhThu IS NULL THEN 'N/A' -- neu ko co du lieu nam sau
-            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN 
+            WHEN (dt3.TongDoanhThu - dt1.TongDoanhThu) > 0 THEN
                 CONCAT('+', ROUND((dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') --  muc tang nam truoc
-            ELSE 
+            ELSE
                 CONCAT('-', ROUND(ABS(dt3.TongDoanhThu - dt1.TongDoanhThu) * 100.0 / dt1.TongDoanhThu, 2), '%') -- muc giam nam sau
         END AS MucTangNamSau
-    FROM 
+    FROM
         DoanhThuTheoNam dt1
-    LEFT JOIN 
+    LEFT JOIN
         DoanhThuTheoNam dt2
-    ON 
+    ON
         dt1.Nam = dt2.Nam + 1 -- nam truoc
-    LEFT JOIN 
+    LEFT JOIN
         DoanhThuTheoNam dt3
-    ON 
+    ON
         dt1.Nam = dt3.Nam - 1 -- nam sau
-    WHERE 
+    WHERE
         dt1.Nam = @nam OR dt1.Nam = @nam - 1 OR dt1.Nam = @nam + 1 -- lay nam hien tai, nam truoc va nam sau
-    ORDER BY 
+    ORDER BY
         dt1.Nam;
 END
 GO
@@ -1662,7 +1664,7 @@ GO
 CREATE PROCEDURE ThongKeKhachHangThuongXuyen
 AS
 BEGIN
-    SELECT 
+    SELECT
         kh.maKH AS maKhachHang,
         CONCAT(kh.hoKH, ' ', kh.tenKH) AS hoTen,
         dtl.xepHang AS hangKhachHang,
@@ -1679,15 +1681,15 @@ BEGIN
             GROUP BY t.tenThuoc
             ORDER BY SUM(cthd.soLuong) DESC
         ) AS SanPhamYeuThich
-    FROM 
+    FROM
         KhachHang kh
-    JOIN 
+    JOIN
         DiemTichLuy dtl ON kh.maDTL = dtl.maDTL
-    LEFT JOIN 
+    LEFT JOIN
         HoaDon hd ON kh.maKH = hd.maKhachHang
-    GROUP BY 
+    GROUP BY
         kh.maKH, kh.hoKH, kh.tenKH, dtl.xepHang, dtl.diemTong
-    ORDER BY 
+    ORDER BY
         SUM(hd.tongTien) DESC;
 END
 GO
@@ -1749,8 +1751,8 @@ GO
 
 -- danh sách thông báo thuốc hết hạn
 CREATE PROCEDURE getDSThongBaoThuocHetHan
-AS 
-BEGIN 
+AS
+BEGIN
 	SELECT
 		c.soHieuThuoc,
 		t.tenThuoc,
@@ -1761,7 +1763,7 @@ BEGIN
 		dg.donGia,
 		N'Thuốc sắp hết hạn' AS thongBaoTieuDe,
 		N'Thuốc ' + t.tenThuoc + N' sắp hết hạn sử dụng, (còn ' + CAST(DATEDIFF(DAY, GETDATE(), c.HSD) AS NVARCHAR) + N' ngày)' AS thongBaoNoiDung,
-		c.HSD AS thoiGianThongBao, 
+		c.HSD AS thoiGianThongBao,
 		c.trangThaiXem
 	FROM ChiTietLoThuoc c
 	JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
@@ -1776,25 +1778,24 @@ GO
 CREATE PROCEDURE ThongKeDoanhThuTheoThang
 AS
 BEGIN
-    DECLARE @namHienTai INT = YEAR(GETDATE()); 
-    DECLARE @thangHienTai INT = MONTH(GETDATE()); 
+    DECLARE @namHienTai INT = YEAR(GETDATE());
+    DECLARE @thangHienTai INT = MONTH(GETDATE());
 
-    SELECT 
+    SELECT
         NV.hoNV + ' ' + NV.tenNV  AS TenNhanVien,
         SUM(HD.tongTien) AS TongDoanhThu,
         AVG(HD.tongTien) AS DoanhThuTrungBinh
-    FROM 
+    FROM
         HoaDon HD
-    JOIN 
+    JOIN
         NhanVien NV ON HD.maNhanVien = NV.maNV
-    WHERE 
-        YEAR(HD.ngayLap) = @namHienTai 
+    WHERE
+        YEAR(HD.ngayLap) = @namHienTai
         AND MONTH(HD.ngayLap) = @thangHienTai
-        AND HD.trangThai = 1 
-    GROUP BY 
+        AND HD.trangThai = 1
+    GROUP BY
         NV.hoNV, NV.tenNV
-    ORDER BY 
-        TongDoanhThu DESC; 
+    ORDER BY
+        TongDoanhThu DESC;
 END;
 GO
-

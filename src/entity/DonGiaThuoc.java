@@ -58,4 +58,15 @@ public class DonGiaThuoc {
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
+
+    public double tinhGiaBan(double giaNhap) {
+        if(giaNhap >= 5000 && giaNhap <= 100000) {
+            return giaNhap + giaNhap*0.1;
+        } else if(giaNhap > 100000 && giaNhap <= 1000000) {
+            return giaNhap + giaNhap*0.07;
+        } else if(giaNhap > 1000000) {
+            return giaNhap + giaNhap*0.05;
+        }
+        return 0;
+    }
 }

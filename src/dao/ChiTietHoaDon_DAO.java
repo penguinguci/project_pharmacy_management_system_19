@@ -13,9 +13,7 @@ import java.util.stream.Collectors;
 public class ChiTietHoaDon_DAO {
     private ArrayList<ChiTietHoaDon> list;
     private Thuoc_DAO thuoc_dao;
-    private ArrayList<Thuoc> listThuoc;
     private HoaDon_DAO hoaDon_dao;
-    private ArrayList<HoaDon> listHD;
     private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     private DonGiaThuoc_DAO donGiaThuoc_dao;
 
@@ -37,8 +35,6 @@ public class ChiTietHoaDon_DAO {
         try {
             thuoc_dao = new Thuoc_DAO();
             hoaDon_dao = new HoaDon_DAO();
-            listThuoc = thuoc_dao.getAllThuoc();
-            listHD = hoaDon_dao.getAllHoaDon();
             chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
             String sql = "select * from ChiTietHoaDon";
             ps = con.getConnection().prepareStatement(sql);
@@ -47,7 +43,7 @@ public class ChiTietHoaDon_DAO {
                 ChiTietHoaDon cthd = new ChiTietHoaDon();
 
                 HoaDon hd = new HoaDon();
-                hd = hoaDon_dao.timHoaDon(rs.getString("maHD"));
+                hd = hoaDon_dao.timAllHoaDon(rs.getString("maHD"));
                 cthd.setHoaDon(hd);
 
                 Thuoc t = new Thuoc();
@@ -88,8 +84,6 @@ public class ChiTietHoaDon_DAO {
         ps.setString(1, maHD);
         rs = ps.executeQuery();
         thuoc_dao = new Thuoc_DAO();
-        listThuoc = thuoc_dao.getAllThuoc();
-        listHD = hoaDon_dao.getAllHoaDon();
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<ChiTietHoaDon>();
         while(rs.next()) {
@@ -285,8 +279,6 @@ public class ChiTietHoaDon_DAO {
         try {
             thuoc_dao = new Thuoc_DAO();
             hoaDon_dao = new HoaDon_DAO();
-            listThuoc = thuoc_dao.getAllThuoc();
-            listHD = hoaDon_dao.getAllHoaDon();
             chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
             String sql = "select * from ChiTietHoaDon where maHD = ? and soHieuThuoc = ?";
             ps = con.getConnection().prepareStatement(sql);
@@ -315,16 +307,15 @@ public class ChiTietHoaDon_DAO {
 
 
 
-    public List<ChiTietHoaDon> getTop10ThuocBanChay(Date ngayBatDau, Date ngayKetThuc, Map<String, Integer> tongHoaDonMap) {
+    public List<ChiTietHoaDon> getThuocBanNoiBat(Date ngayBatDau, Date ngayKetThuc, Map<String, Integer> tongHoaDonMap, boolean isBanChay) {
         ConnectDB con = new ConnectDB();
         con.connect();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<ChiTietHoaDon> topThuocBanChay = new ArrayList<>();
+        List<ChiTietHoaDon> thuocNoiBatHop = new ArrayList<>();
+        List<ChiTietHoaDon> thuocNoiBatVien = new ArrayList<>();
         try {
             Thuoc_DAO thuoc_dao = new Thuoc_DAO();
-
-            // SQL query chỉnh sửa
             String sql = "SELECT maThuoc, donViTinh, SUM(soLuong) AS tongSoLuong, COUNT(cthd.maHD) AS tongHoaDon " +
                     "FROM ChiTietHoaDon cthd JOIN HoaDon hd ON cthd.maHD = hd.maHD " +
                     "WHERE maThuoc IS NOT NULL AND ngayLap BETWEEN ? AND ? " +
@@ -334,35 +325,55 @@ public class ChiTietHoaDon_DAO {
             ps.setDate(1, new java.sql.Date(ngayBatDau.getTime()));
             ps.setDate(2, new java.sql.Date(ngayKetThuc.getTime()));
             rs = ps.executeQuery();
-            Map<String, ChiTietHoaDon> thuocMap = new HashMap<>();
+
+            Map<String, ChiTietHoaDon> thuocMapHop = new HashMap<>();
+            Map<String, ChiTietHoaDon> thuocMapVien = new HashMap<>();
             while (rs.next()) {
                 String maThuoc = rs.getString("maThuoc");
                 String donViTinh = rs.getString("donViTinh");
                 int tongSoLuong = rs.getInt("tongSoLuong");
                 int tongHoaDon = rs.getInt("tongHoaDon");
-                // Lấy hoặc khởi tạo đối tượng ChiTietHoaDon
-                ChiTietHoaDon cthd = thuocMap.getOrDefault(maThuoc, new ChiTietHoaDon());
-                if (cthd.getThuoc() == null) {
-                    Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
+
+                // Debug statements
+                System.out.println("maThuoc: " + maThuoc);
+                System.out.println("donViTinh: " + donViTinh);
+                System.out.println("tongSoLuong: " + tongSoLuong);
+                System.out.println("tongHoaDon: " + tongHoaDon);
+
+                Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
+                if (thuoc == null) continue;
+
+                int soLuongTon = thuoc.getTongSoLuong();
+                double tyLePhanTram = (double) tongSoLuong / soLuongTon;
+
+                if ((isBanChay && tyLePhanTram >= 0) || (!isBanChay && tyLePhanTram < 0.3)) {
+                    ChiTietHoaDon cthd = new ChiTietHoaDon();
                     cthd.setThuoc(thuoc);
+                    cthd.setDonViTinh(donViTinh);
+                    cthd.setSoLuong(tongSoLuong);
+
+                    String key = maThuoc + "-" + donViTinh;
+                    if (donViTinh.equals("Hộp")) {
+                        thuocMapHop.put(key, cthd);
+                    } else if (donViTinh.equals("Viên")) {
+                        thuocMapVien.put(key, cthd);
+                    }
+                    tongHoaDonMap.put(key, tongHoaDon);
                 }
-                cthd.setDonViTinh(donViTinh);
-                cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
-
-                thuocMap.put(maThuoc, cthd);
-                tongHoaDonMap.put(maThuoc, tongHoaDon);
             }
-
-            // Chuyển danh sách từ Map sang List và sắp xếp
-            topThuocBanChay = thuocMap.values().stream()
-                    .sorted((o1, o2) -> {
-                        int compareDonViTinh = o1.getDonViTinh().equals("Hộp") ?
-                                (o2.getDonViTinh().equals("Hộp") ? 0 : -1) :
-                                (o2.getDonViTinh().equals("Hộp") ? 1 : 0);
-                        return compareDonViTinh != 0 ? compareDonViTinh : Integer.compare(o2.getSoLuong(), o1.getSoLuong());
-                    })
+            for (Map.Entry<String, Integer> entry : tongHoaDonMap.entrySet()) {
+                System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+            }
+            thuocNoiBatHop = thuocMapHop.values().stream()
+                    .sorted((o1, o2) -> Integer.compare(o2.getSoLuong(), o1.getSoLuong()))
                     .limit(10)
                     .collect(Collectors.toList());
+
+            thuocNoiBatVien = thuocMapVien.values().stream()
+                    .sorted((o1, o2) -> Integer.compare(o2.getSoLuong(), o1.getSoLuong()))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -374,10 +385,28 @@ public class ChiTietHoaDon_DAO {
                 e.printStackTrace();
             }
         }
-        return topThuocBanChay;
+        List<ChiTietHoaDon> thuocNoiBat = new ArrayList<>();
+        thuocNoiBat.addAll(thuocNoiBatHop);
+        thuocNoiBat.addAll(thuocNoiBatVien);
+        // Debug statement to check the final combined list
+        System.out.println("thuocNoiBat:");
+        for (ChiTietHoaDon cthd : thuocNoiBat) {
+            System.out.println(cthd.getThuoc().getMaThuoc() + " - " + cthd.getDonViTinh() + " - " + cthd.getSoLuong());
+        }
+
+        return thuocNoiBat;
     }
 
-}
+    public ChiTietHoaDon timCTHD(String maHD, String soHieuThuoc) {
+        for(ChiTietHoaDon x : list) {
+            if(x.getHoaDon().getMaHD().equals(maHD) && x.getChiTietLoThuoc().getSoHieuThuoc().equals(soHieuThuoc)) {
+                return x;
+            }
+        }
+        return null;
+    }
 
+
+}
 
 
