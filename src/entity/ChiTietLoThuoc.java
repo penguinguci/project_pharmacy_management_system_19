@@ -10,6 +10,8 @@ public class ChiTietLoThuoc {
     private DonGiaThuoc donGiaThuoc;
     private Date ngaySX;
     private Date HSD;
+    private int trangThaiXem;
+    private int trangThai;
 
     public ChiTietLoThuoc() {};
 
@@ -77,5 +79,21 @@ public class ChiTietLoThuoc {
 
     public void setHSD(Date HSD) {
         this.HSD = HSD;
+    }
+
+    public int getTrangThaiXem() {
+        return trangThaiXem;
+    }
+
+    public void setTrangThaiXem(int trangThaiXem) {
+        this.trangThaiXem = trangThaiXem;
+    }
+
+    public int getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
 }

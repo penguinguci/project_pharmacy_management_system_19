@@ -41,8 +41,9 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             , btnCapNhatThuoc, btnNhapThuocTuNCC, btnNhaSanXuat, btnNuocSanXuat, btnDanhMuc,
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
-            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc, btnQLLoThuoc;
+            btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc, btnQLLoThuoc, btnThuocHH;
     public JButton btnDangXuat, btnThongBao, btnTroGiup, btnQuanLyDoiTra;
+
     public JPanel customButtonUser, customButtonUser_Left, customButtonUser_Right, thongKe_DongHoPanel, dongHoPanel, topPanel;
     public JLabel textVaiTro, textUser;
     public JLabel lbSoThongBao;
@@ -78,6 +79,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_TroGiup formTroGiup;
     public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
     public Form_QuanLyLoThuoc formQuanLyLoThuoc;
+    public Form_ThuocHetHan formThuocHetHan;
     public Form_QuanLyPhieuDoiTra formQuanLyPhieuDoiTra;
     private static NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
@@ -256,6 +258,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnNuocSanXuat = createSubMenuButton("Nước Sản Xuất");
         btnDanhMuc = createSubMenuButton("Danh Mục");
         btnQLLoThuoc = createSubMenuButton("Lô Thuốc");
+        btnThuocHH = createSubMenuButton("Thuốc Hết Hạn");
 
 
         submenuThuoc.add(btnCapNhatThuoc);
@@ -264,6 +267,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuThuoc.add(btnNuocSanXuat);
         submenuThuoc.add(btnDanhMuc);
         submenuThuoc.add(btnQLLoThuoc);
+        submenuThuoc.add(btnThuocHH);
 
 
         // Submenu Nhà cung cấp
@@ -630,6 +634,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         themPhimTatBtn(btnTimKiemThuoc, KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK);
         btnQLLoThuoc.addActionListener(this);
         themPhimTatBtn(btnQLLoThuoc, KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK);
+        btnThuocHH.addActionListener(this);
 
         btnCapNhatNCC.addActionListener(this);
         themPhimTatBtn(btnCapNhatNCC, KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK);
@@ -1193,6 +1198,17 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyLoThuoc");
+        } else if (o == btnThuocHH) {
+            try {
+                formThuocHetHan = new Form_ThuocHetHan();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            centerPanel.add(formThuocHetHan, "formThuocHetHan");
+            formThuocHetHan.setTrangChu(this);
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formThuocHetHan");
         } else if (o == btnQuanLyDoiTra) {
             try {
                 formQuanLyPhieuDoiTra = new Form_QuanLyPhieuDoiTra();
