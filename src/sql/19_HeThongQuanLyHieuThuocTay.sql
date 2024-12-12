@@ -351,11 +351,11 @@ VALUES
 -- Bảng DiemTichLuy
 INSERT INTO DiemTichLuy(maDTL, xepHang, diemTong, diemHienTai)
 VALUES
-('DTL001', N'Vàng', 90000, 90000),
-('DTL002', N'Đồng', 9000, 9000),
-('DTL003', N'Bạc', 30000, 30000),
-('DTL004', N'Kim cương', 5000000, 500000),
-('DTL005', N'Bạch kim', 2000000, 200000)
+('DTL001', N'Vàng', 35000, 35000),
+('DTL002', N'Đồng', 3000, 3000),
+('DTL003', N'Bạc', 9000, 9000),
+('DTL004', N'Kim cương', 100000, 100000),
+('DTL005', N'Bạch kim', 70000, 70000)
 
 -- Bảng KhachHang
 INSERT INTO KhachHang (maKH, hoKH, tenKH, ngaySinh, gioiTinh, diaChi, SDT, trangThai, maDTL)
