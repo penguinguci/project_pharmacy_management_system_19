@@ -114,6 +114,31 @@ public class Form_QuanLyPhieuDoiTra extends JPanel implements ActionListener, Mo
             }
         });
 
+        ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
+        Image imageLamMoi = iconLamMoi.getImage();
+        Image scaledImageLamMoi = imageLamMoi.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconLamMoi = new ImageIcon(scaledImageLamMoi);
+
+        btnLamMoi = new JButton("Làm mới", scaledIconLamMoi);
+        btnLamMoi.setPreferredSize(new Dimension(120, 35));
+        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
+        btnLamMoi.setBackground(new Color(0, 102, 204));
+        btnLamMoi.setForeground(Color.WHITE);
+        btnLamMoi.setOpaque(true);
+        btnLamMoi.setFocusPainted(false);
+        btnLamMoi.setBorderPainted(false);
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(24, 137, 251));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLamMoi.setBackground(new Color(0, 102, 204));
+            }
+        });
+
         btnTimKiemDon.addActionListener(this);
 
         // Tắt txtTimKiem và datePicker khi chọn maHD
@@ -142,6 +167,8 @@ public class Form_QuanLyPhieuDoiTra extends JPanel implements ActionListener, Mo
         topPanel.add(txtTimKiem);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(btnTimKiemDon);
+        topPanel.add(Box.createHorizontalStrut(10));
+        topPanel.add(btnLamMoi);
 
 
         // Table
@@ -222,34 +249,9 @@ public class Form_QuanLyPhieuDoiTra extends JPanel implements ActionListener, Mo
             }
         });
 
-        ImageIcon iconLamMoi = new ImageIcon("images\\lamMoi.png");
-        Image imageLamMoi = iconLamMoi.getImage();
-        Image scaledImageLamMoi = imageLamMoi.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        ImageIcon scaledIconLamMoi = new ImageIcon(scaledImageLamMoi);
-
-        btnLamMoi = new JButton("Làm mới", scaledIconLamMoi);
-        btnLamMoi.setPreferredSize(new Dimension(120, 35));
-        btnLamMoi.setFont(new Font("Arial", Font.BOLD, 13));
-        btnLamMoi.setBackground(new Color(0, 102, 204));
-        btnLamMoi.setForeground(Color.WHITE);
-        btnLamMoi.setOpaque(true);
-        btnLamMoi.setFocusPainted(false);
-        btnLamMoi.setBorderPainted(false);
-        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnLamMoi.setBackground(new Color(24, 137, 251));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnLamMoi.setBackground(new Color(0, 102, 204));
-            }
-        });
-
         footerPanel.add(btnXemHD);
-        footerPanel.add(Box.createHorizontalStrut(20));
-        footerPanel.add(btnLamMoi);
+//        footerPanel.add(Box.createHorizontalStrut(20));
+//        footerPanel.add(btnLamMoi);
 
         // thêm vào this
         add(titlePanel_Center, BorderLayout.NORTH);
@@ -321,9 +323,17 @@ public class Form_QuanLyPhieuDoiTra extends JPanel implements ActionListener, Mo
                 modelChiTiet.setRowCount(0);
             }
         }
+        if(e.getSource().equals(btnLamMoi)) {
+            reload();
+        }
     }
 
-
+    private void reload() {
+        loadDataTablePhieu(phieuDoiTra_dao.getAllPhieuDoiTra());
+        modelChiTiet.setRowCount(0);
+        ngayDatModel.setSelected(false);
+        txtTimKiem.setText("");
+    }
 
     private void loadDataTablePhieu(ArrayList<PhieuDoiTra> newData) {
         modelPhieu.setRowCount(0);

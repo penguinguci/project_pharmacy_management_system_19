@@ -18,6 +18,7 @@ import java.awt.event.*;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -559,43 +560,48 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
                     }
                     pdt.setLoai(type);
                     HoaDon hd = hd_dao.timHoaDon(txtMaHoaDon.getText().trim());
+                    Date sqlDateNgayLap = null;
                     if(hd!=null) {
                         pdt.setHoaDon(hd);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn!");
-                    }
-                    pdt.setLyDo(txtLyDo.getText().trim());
-
-                    try {
-                        if(!phieuDoiTra_dao.create(pdt)) {
-                            JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả!");
-                        } else {
-                            if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
-                                JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả!");
-                            } else {
-                                if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
-                                    JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
+                        sqlDateNgayLap = new Date(hd.getNgayLap().getTime());
+                        if(areDatesSevenDaysApart(currentDate.toLocalDate(), sqlDateNgayLap.toLocalDate())) {
+                            pdt.setLyDo(txtLyDo.getText().trim());
+                            try {
+                                if(!phieuDoiTra_dao.create(pdt)) {
+                                    JOptionPane.showMessageDialog(this, "Không tạo được phiếu đổi trả!");
                                 } else {
-                                    if(!chiTietLoThuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
-                                        JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
+                                    if(!chiTietPhieuDoiTra_dao.themVaoCSDL(pdt.getMaPhieu(), chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                        JOptionPane.showMessageDialog(this, "Không tạo được các chi tiết phiếu đổi trả!");
                                     } else {
-                                        JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
-                                        int result = JOptionPane.showConfirmDialog(
-                                                null, // Không có thành phần cha
-                                                "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
-                                                "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
-                                                JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
-                                        );
-                                        if (result == JOptionPane.YES_OPTION) {
-                                            trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
+                                        if(!hd_dao.capNhatHoaDonBiDoiTra(txtMaHoaDon.getText().trim())) {
+                                            JOptionPane.showMessageDialog(this, "Không ẩn được hoá đơn bị đổi trả!");
+                                        } else {
+                                            if(!chiTietLoThuoc_dao.traThuocVeKho(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()))) {
+                                                JOptionPane.showMessageDialog(this, "Không trả được thuốc về kho!");
+                                            } else {
+                                                JOptionPane.showMessageDialog(this, "Tạo phiếu thành công!");
+                                                int result = JOptionPane.showConfirmDialog(
+                                                        null, // Không có thành phần cha
+                                                        "Có muốn chuyển thông tin hoá đơn này sang trang bán thuốc để tạo lại hoá đơn khác không?", // Nội dung thông báo
+                                                        "Xác nhận tạo hoá đơn mới", // Tiêu đề cửa sổ
+                                                        JOptionPane.YES_NO_OPTION // Hiển thị các nút Yes và No
+                                                );
+                                                if (result == JOptionPane.YES_OPTION) {
+                                                    trangChu.openFormBanThuoc(chiTietHoaDon_dao.getCTHDForHD(pdt.getHoaDon().getMaHD()), null, pdt.getHoaDon().getKhachHang());
+                                                }
+                                                clear();
+                                            }
                                         }
-                                        clear();
                                     }
                                 }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
                             }
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Hoá đơn đã quá 7 ngày, không thể đổi/trả");
                         }
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Không tìm thấy hoá đơn!");
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Chưa chọn loại phiếu!");
@@ -613,35 +619,22 @@ public class Form_DoiTra  extends JPanel implements ActionListener, MouseListene
         }
     }
 
-//    public ArrayList<ChiTietHoaDon> taoListCTHDDeThemVaoPhieuDoiTra() {
-//        ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>();
-//        if(txtThuTuThuoc.getText().trim().equals("Nhập STT thuốc ở bảng CTHD, cách nhau khoảng trắng") || txtThuTuThuoc.getText().trim().equals("")){
-//            try {
-//                listCTHD = chiTietHoaDon_dao.getCTHDForHD(txtMaHoaDon.getText().trim());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            String[] listThuocDoiTra = txtThuTuThuoc.getText().trim().split("\\s+");
-//            if(listThuocDoiTra.length > 0) {
-//                for(String x : listThuocDoiTra) {
-//                    int STT = Integer.parseInt(x);
-//                    if(STT > dtmChiTiet.getRowCount()) {
-//                        return listCTHD;
-//                    }
-//                    if(STT == (int)dtmChiTiet.getValueAt(STT-1, 0)) {
-//                        String soHieuThuoc = (String) dtmChiTiet.getValueAt(STT-1, 1);
-//                        System.out.println(soHieuThuoc);
-//                        ChiTietHoaDon cthd = new ChiTietHoaDon();
-//                        cthd = chiTietHoaDon_dao.getOne(txtMaHoaDon.getText().trim(), soHieuThuoc);
-//                        listCTHD.add(cthd);
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println(listCTHD.size());
-//        return listCTHD;
-//    }
+    private boolean areDatesSevenDaysApart(LocalDate date1, LocalDate date2) {
+        try {
+            // Tính khoảng cách giữa hai ngày
+            long daysBetween = ChronoUnit.DAYS.between(date1, date2);
+
+            // Kiểm tra nếu khoảng cách là 7 ngày
+            if(Math.abs(daysBetween) > 7) {
+                return false;
+            }
+        } catch (Exception e) {
+            // Trường hợp lỗi bất thường
+            System.out.println("Lỗi khi xử lý ngày: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {

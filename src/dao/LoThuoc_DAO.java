@@ -161,4 +161,19 @@ public class LoThuoc_DAO {
         }
         return resultList;
     }
+
+    public ArrayList<LoThuoc> timKiemProMax(ArrayList<LoThuoc> list, String data) {
+        ArrayList<LoThuoc> resultList = new ArrayList<>();
+        for(LoThuoc x : list) {
+            String tenNV = x.getPhieuNhapThuoc().getNhanVien().getHoNV()+" "+x.getPhieuNhapThuoc().getNhanVien().getTenNV();
+            if(x.getMaLoThuoc().indexOf(data) != -1) {
+                resultList.add(x);
+            } else if(x.getPhieuNhapThuoc().getMaPhieuNhap().indexOf(data) != -1){
+                resultList.add(x);
+            } else if(tenNV.indexOf(data) != -1) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
+    }
 }
