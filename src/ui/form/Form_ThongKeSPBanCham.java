@@ -444,7 +444,8 @@ public class Form_ThongKeSPBanCham extends JPanel implements ActionListener {
             DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(cthd.getThuoc().getMaThuoc(), cthd.getDonViTinh());
             double donGia = (donGiaThuoc != null) ? donGiaThuoc.getDonGia() : 0.0;
             double tongThanhTien = donGia * cthd.getSoLuong();
-            int tongHoaDon = tongHoaDonMap.getOrDefault(cthd.getThuoc().getMaThuoc(), 0);
+            String key = cthd.getThuoc().getMaThuoc() + "-" + cthd.getDonViTinh();
+            int tongHoaDon = tongHoaDonMap.getOrDefault(key, 0);
             modelBanNhanh.addRow(new Object[]{
                     x++,  // STT
                     cthd.getThuoc() != null ? cthd.getThuoc().getMaThuoc() : "Không xác định",

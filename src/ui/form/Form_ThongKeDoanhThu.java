@@ -546,7 +546,7 @@ public class Form_ThongKeDoanhThu extends JPanel implements ActionListener {
         this.gui_trangChu = gui_trangChu;
     }
 
-    // in hóa đơn
+    // in
     public class BaoCaoPrinter {
         private List<Map<String, Object>> dsBaoCao;
 

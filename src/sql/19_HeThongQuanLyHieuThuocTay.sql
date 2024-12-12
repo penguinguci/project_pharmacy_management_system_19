@@ -196,12 +196,15 @@ CREATE TABLE ChiTietLoThuoc (
 	HSD DATE not null,
 	soLuongCon INT not null,
 	maDonGia VARCHAR(20),
-	trangThaiXem INT DEFAULT 1
+	trangThaiXem INT DEFAULT 1,
+	trangThai INT DEFAULT 1
 	FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc),
 	FOREIGN KEY (maDonGia) REFERENCES DonGiaThuoc(maDonGia),
 	FOREIGN KEY (maLoThuoc) REFERENCES LoThuoc(maLoThuoc)
 )
 GO
+
+
 
 -- Bảng HoaDon
 CREATE TABLE HoaDon (
@@ -534,6 +537,23 @@ VALUES
 ('SH040', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-30'),
 ('SH041', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
 
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH042', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2025-12-30'),
+('SH043', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH044', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH045', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-1'),
+('SH046', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
+
+
+INSERT INTO ChiTietLoThuoc(soHieuThuoc, maThuoc, maLoThuoc, soLuongCon, maDonGia, ngaySX, HSD)
+VALUES
+('SH047', 'T006', 'LO001', 50, 'DG007', '2024-1-1', '2024-12-30'),
+('SH048', 'T007', 'LO001', 40, 'DG008', '2024-1-1', '2025-12-1'),
+('SH049', 'T008', 'LO003', 50, 'DG009', '2024-1-1', '2025-12-1'),
+('SH050', 'T009', 'LO002', 50, 'DG010', '2024-1-1', '2024-12-30'),
+('SH051', 'T010', 'LO002', 300, 'DG011', '2024-1-1', '2024-12-1')
 
 -- Bảng HoaDon
 INSERT INTO HoaDon (maHD, maKhachHang, maNhanVien, maThue, ngayLap, hinhThucThanhToan, tongTien, trangThai)
@@ -1693,60 +1713,6 @@ END
 GO
 
 
--- bảng view Thuoc Het Han
-CREATE TABLE ThuocHetHan (
-    soHieuThuoc NVARCHAR(50) PRIMARY KEY,
-    tenThuoc NVARCHAR(255),
-    hinhAnh VARCHAR(MAX),
-    ngaySX DATE,
-    HSD DATE,
-    soLuongCon INT,
-    donGia FLOAT,
-    thongBaoTieuDe NVARCHAR(255),
-    thongBaoNoiDung NVARCHAR(MAX),
-    thoiGianThongBao DATE,
-    trangThaiXem BIT DEFAULT 1
-);
-GO
-
-
-CREATE TRIGGER trg_InsertThuocHetHan
-ON ThuocHetHan
-AFTER INSERT
-AS
-BEGIN
-    BEGIN TRY
-        -- Chèn dữ liệu vào bảng ThuocHetHan nếu thỏa mãn điều kiện "sắp hết hạn"
-        INSERT INTO ThuocHetHan (soHieuThuoc, tenThuoc, hinhAnh, ngaySX, HSD, soLuongCon, donGia, thongBaoTieuDe, thongBaoNoiDung, thoiGianThongBao, trangThaiXem)
-        SELECT
-            c.soHieuThuoc,
-            t.tenThuoc,
-            t.hinhAnh,
-            c.ngaySX,
-            c.HSD,
-            c.soLuongCon,
-            dg.donGia,
-            N'Thuốc sắp hết hạn',
-            N'Thuốc ' + t.tenThuoc + N' sắp hết hạn sử dụng, (còn ' + CAST(DATEDIFF(DAY, GETDATE(), c.HSD) AS NVARCHAR) + N' ngày)',
-            c.HSD,
-            1
-        FROM ChiTietLoThuoc c
-        JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
-        JOIN Thuoc t ON dg.maThuoc = t.maThuoc
-        WHERE DATEDIFF(DAY, GETDATE(), c.HSD) <= 30 AND DATEDIFF(DAY, GETDATE(), c.HSD) >= 0
-        AND NOT EXISTS (
-            SELECT 1
-            FROM ThuocHetHan th
-            WHERE th.soHieuThuoc = c.soHieuThuoc
-        );
-
-    END TRY
-    BEGIN CATCH
-        PRINT 'Error: ' + ERROR_MESSAGE();
-    END CATCH
-END;
-GO
-
 -- danh sách thông báo thuốc hết hạn
 CREATE PROCEDURE getDSThongBaoThuocHetHan
 AS 
@@ -1797,4 +1763,17 @@ BEGIN
         TongDoanhThu DESC; 
 END;
 GO
+
+-- danh sách thuốc hết hạn
+CREATE PROCEDURE getDSThuocHetHan
+AS 
+BEGIN 
+	SELECT *
+	FROM ChiTietLoThuoc c
+	JOIN DonGiaThuoc dg ON c.maDonGia = dg.maDonGia
+	JOIN Thuoc t ON dg.maThuoc = t.maThuoc
+	WHERE DATEDIFF(DAY, GETDATE(), c.HSD) < 0 AND c.trangThai = 1
+END
+GO
+
 

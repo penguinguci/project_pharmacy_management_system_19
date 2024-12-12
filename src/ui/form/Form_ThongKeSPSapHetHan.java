@@ -7,6 +7,10 @@ import dao.KhachHang_DAO;
 import entity.ChiTietLoThuoc;
 import entity.DanhMuc;
 import entity.KhachHang;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,11 +40,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class Form_ThongKeSPSapHetHan extends JPanel implements ActionListener {
     private JTable table;

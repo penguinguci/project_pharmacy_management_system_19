@@ -320,7 +320,8 @@ public class ChiTietHoaDon_DAO {
         con.connect();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<ChiTietHoaDon> thuocNoiBat = new ArrayList<>();
+        List<ChiTietHoaDon> thuocNoiBatHop = new ArrayList<>();
+        List<ChiTietHoaDon> thuocNoiBatVien = new ArrayList<>();
         try {
             Thuoc_DAO thuoc_dao = new Thuoc_DAO();
             String sql = "SELECT maThuoc, donViTinh, SUM(soLuong) AS tongSoLuong, COUNT(cthd.maHD) AS tongHoaDon " +
@@ -333,12 +334,19 @@ public class ChiTietHoaDon_DAO {
             ps.setDate(2, new java.sql.Date(ngayKetThuc.getTime()));
             rs = ps.executeQuery();
 
-            Map<String, ChiTietHoaDon> thuocMap = new HashMap<>();
+            Map<String, ChiTietHoaDon> thuocMapHop = new HashMap<>();
+            Map<String, ChiTietHoaDon> thuocMapVien = new HashMap<>();
             while (rs.next()) {
                 String maThuoc = rs.getString("maThuoc");
                 String donViTinh = rs.getString("donViTinh");
                 int tongSoLuong = rs.getInt("tongSoLuong");
                 int tongHoaDon = rs.getInt("tongHoaDon");
+
+                // Debug statements
+                System.out.println("maThuoc: " + maThuoc);
+                System.out.println("donViTinh: " + donViTinh);
+                System.out.println("tongSoLuong: " + tongSoLuong);
+                System.out.println("tongHoaDon: " + tongHoaDon);
 
                 Thuoc thuoc = thuoc_dao.getThuocByMaThuoc(maThuoc);
                 if (thuoc == null) continue;
@@ -346,25 +354,34 @@ public class ChiTietHoaDon_DAO {
                 int soLuongTon = thuoc.getTongSoLuong();
                 double tyLePhanTram = (double) tongSoLuong / soLuongTon;
 
-                if ((isBanChay && tyLePhanTram >= 0.3) || (!isBanChay && tyLePhanTram < 0.3)) {
-                    ChiTietHoaDon cthd = thuocMap.getOrDefault(maThuoc, new ChiTietHoaDon());
+                if ((isBanChay && tyLePhanTram >= 0) || (!isBanChay && tyLePhanTram < 0.3)) {
+                    ChiTietHoaDon cthd = new ChiTietHoaDon();
                     cthd.setThuoc(thuoc);
                     cthd.setDonViTinh(donViTinh);
-                    cthd.setSoLuong(cthd.getSoLuong() + tongSoLuong);
-                    thuocMap.put(maThuoc, cthd);
-                    tongHoaDonMap.put(maThuoc, tongHoaDon);
+                    cthd.setSoLuong(tongSoLuong);
+
+                    String key = maThuoc + "-" + donViTinh;
+                    if (donViTinh.equals("Hộp")) {
+                        thuocMapHop.put(key, cthd);
+                    } else if (donViTinh.equals("Viên")) {
+                        thuocMapVien.put(key, cthd);
+                    }
+                    tongHoaDonMap.put(key, tongHoaDon);
                 }
             }
-
-            thuocNoiBat = thuocMap.values().stream()
-                    .sorted((o1, o2) -> {
-                        int compareDonViTinh = o1.getDonViTinh().equals("Hộp") ?
-                                (o2.getDonViTinh().equals("Hộp") ? 0 : -1) :
-                                (o2.getDonViTinh().equals("Hộp") ? 1 : 0);
-                        return compareDonViTinh != 0 ? compareDonViTinh : Integer.compare(o2.getSoLuong(), o1.getSoLuong());
-                    })
+            for (Map.Entry<String, Integer> entry : tongHoaDonMap.entrySet()) {
+                System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+            }
+            thuocNoiBatHop = thuocMapHop.values().stream()
+                    .sorted((o1, o2) -> Integer.compare(o2.getSoLuong(), o1.getSoLuong()))
                     .limit(10)
                     .collect(Collectors.toList());
+
+            thuocNoiBatVien = thuocMapVien.values().stream()
+                    .sorted((o1, o2) -> Integer.compare(o2.getSoLuong(), o1.getSoLuong()))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -376,11 +393,19 @@ public class ChiTietHoaDon_DAO {
                 e.printStackTrace();
             }
         }
+        List<ChiTietHoaDon> thuocNoiBat = new ArrayList<>();
+        thuocNoiBat.addAll(thuocNoiBatHop);
+        thuocNoiBat.addAll(thuocNoiBatVien);
+        // Debug statement to check the final combined list
+        System.out.println("thuocNoiBat:");
+        for (ChiTietHoaDon cthd : thuocNoiBat) {
+            System.out.println(cthd.getThuoc().getMaThuoc() + " - " + cthd.getDonViTinh() + " - " + cthd.getSoLuong());
+        }
+
         return thuocNoiBat;
     }
 
 
 }
-
 
 
