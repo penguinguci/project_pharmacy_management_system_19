@@ -379,7 +379,9 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
     public void updateVaiTro() {
         ArrayList<ChucVu> dsCV = chucVu_dao.getAllChucVu();
         for(ChucVu cv : dsCV) {
-            cbVaiTro.addItem(cv.getTenChucVu());
+            if(cv.getMaChucVu()!=0) {
+                cbVaiTro.addItem(cv.getTenChucVu());
+            }
         }
     }
 
@@ -641,7 +643,7 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         } else if (vaiTro.getTenChucVu().equalsIgnoreCase("Nhân viên bán thuốc")) {
             prefix = "NV";
         } else {
-            throw new IllegalArgumentException("Vai trò không hợp lệ.");
+            JOptionPane.showMessageDialog(this, "Không thể thêm vai trò lớn hơn bạn!");
         }
 
         int currentCount = getCurrentEmployeeCount(prefix);

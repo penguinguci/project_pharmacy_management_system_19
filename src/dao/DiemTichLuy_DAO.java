@@ -8,27 +8,32 @@ import java.util.ArrayList;
 
 public class DiemTichLuy_DAO {
     private ArrayList<DiemTichLuy> list;
+    private KhachHang_DAO khachHang_dao;
 
     public DiemTichLuy_DAO() {
         list = new ArrayList<DiemTichLuy>();
     }
 
-    public ArrayList<DiemTichLuy> getAllDiemTichLuy() throws Exception{
+    public ArrayList<DiemTichLuy> getAllDiemTichLuy(){
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from DiemTichLuy";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()){
-            DiemTichLuy dtl = new DiemTichLuy();
-            dtl.setMaDTL(rs.getString(1));
-            dtl.setXepHang(rs.getString(2));
-            dtl.setDiemTong(rs.getDouble(3));
-            dtl.setDiemHienTai(rs.getDouble(4));
-            list.add(dtl);
+        try {
+            String sql = "select * from DiemTichLuy";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                DiemTichLuy dtl = new DiemTichLuy();
+                dtl.setMaDTL(rs.getString(1));
+                dtl.setXepHang(rs.getString(2));
+                dtl.setDiemTong(rs.getDouble(3));
+                dtl.setDiemHienTai(rs.getDouble(4));
+                list.add(dtl);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return this.list;
     }
@@ -197,15 +202,15 @@ public class DiemTichLuy_DAO {
             }
 
             String xepHang = null;
-            if (diemTong < 30000){
+            if (diemTong < 5000){
                 xepHang = "Đồng";
-            } else if (diemTong < 50000) {
+            } else if (diemTong < 10000) {
                 xepHang = "Bạc";
-            } else if (diemTong < 100000) {
+            } else if (diemTong < 40000) {
                 xepHang = "Vàng";
-            } else if (diemTong < 300000) {
+            } else if (diemTong < 80000) {
                 xepHang = "Bạch kim";
-            } else if (diemTong >= 500000) {
+            } else if (diemTong >= 80000) {
                 xepHang = "Kim cương";
             } else {
                 xepHang = diemTichLuy.getXepHang();
@@ -227,5 +232,31 @@ public class DiemTichLuy_DAO {
             }
         }
         return n > 0;
+    }
+
+    public void xoaDiemTichLuyCuaKhachHangKhongHoatDong() {
+        khachHang_dao = new KhachHang_DAO();
+        ArrayList<KhachHang> listKHKhongHoatDong = new ArrayList<>();
+        for(KhachHang x : khachHang_dao.getAllKhachHang()) {
+            if(!khachHang_dao.kiemTraKhachHangHoatDong(x.getMaKH())) {
+                listKHKhongHoatDong.add(x);
+            }
+        }
+        if(!listKHKhongHoatDong.isEmpty()) {
+            ConnectDB con = new ConnectDB();
+            con.connect();
+            con.getConnection();
+            PreparedStatement ps = null;
+            for (KhachHang x : listKHKhongHoatDong) {
+                try {
+                    String sql = "update DiemTichLuy set xepHang = 'Đồng', diemTong = 0, diemHienTai = 0 where maDTL = ?";
+                    ps = con.getConnection().prepareStatement(sql);
+                    ps.setString(1, x.getDiemTichLuy().getMaDTL());
+                    ps.executeUpdate();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

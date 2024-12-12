@@ -921,4 +921,14 @@ public class HoaDon_DAO {
         }
         return null;
     }
-}
+
+    public ArrayList<HoaDon> timAllHoaDonChoKhachHang(String maKH) {
+        ArrayList<HoaDon> resultList = new ArrayList<>();
+        for(HoaDon x : list) {
+            if(x.getKhachHang().getMaKH().equalsIgnoreCase(maKH)) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
+    }
+ }

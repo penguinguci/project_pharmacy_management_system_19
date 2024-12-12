@@ -4,6 +4,8 @@ import connectDB.ConnectDB;
 import entity.*;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import static connectDB.ConnectDB.getConnection;
 
 public class KhachHang_DAO {
     private ArrayList<KhachHang> list;
+    private HoaDon_DAO hoaDon_dao;
 
     public KhachHang_DAO(){
         list = new ArrayList<KhachHang>();
@@ -23,45 +26,49 @@ public class KhachHang_DAO {
         }
     }
 
-    public ArrayList<KhachHang> getAllKhachHang() throws Exception{
+    public ArrayList<KhachHang> getAllKhachHang(){
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        //Gọi bảng Khách hàng
-        String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, trangThai, d.maDTL, d.xepHang, d.diemTong, d.diemHienTai \n" +
-                "from KhachHang kh join DiemTichLuy d on kh.maDTL = d.maDTL";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while(rs.next()){
-            KhachHang kh = new KhachHang();
-            kh.setMaKH(rs.getString("maKH"));
-            kh.setHoKH(rs.getString("hoKH"));
-            kh.setTenKH(rs.getString("tenKH"));
-            kh.setNgaySinh(rs.getDate("ngaySinh"));
-            kh.setGioiTinh(rs.getBoolean("gioiTinh"));
-            if(rs.getString("email") == null || rs.getString("email") == ""){
-                kh.setEmail("Chưa có");
-            } else {
-                kh.setEmail(rs.getString("email"));
+        try {
+            //Gọi bảng Khách hàng
+            String sql = "select kh.maKH, hoKH, tenKH, ngaySinh, gioiTinh, email, diaChi, SDT, trangThai, d.maDTL, d.xepHang, d.diemTong, d.diemHienTai \n" +
+                    "from KhachHang kh join DiemTichLuy d on kh.maDTL = d.maDTL";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                KhachHang kh = new KhachHang();
+                kh.setMaKH(rs.getString("maKH"));
+                kh.setHoKH(rs.getString("hoKH"));
+                kh.setTenKH(rs.getString("tenKH"));
+                kh.setNgaySinh(rs.getDate("ngaySinh"));
+                kh.setGioiTinh(rs.getBoolean("gioiTinh"));
+                if(rs.getString("email") == null || rs.getString("email") == ""){
+                    kh.setEmail("Chưa có");
+                } else {
+                    kh.setEmail(rs.getString("email"));
+                }
+                if(rs.getString("diaChi") == null || rs.getString("diaChi") == ""){
+                    kh.setDiaChi("Chưa có");
+                } else {
+                    kh.setDiaChi(rs.getString("diaChi"));
+                }
+                kh.setSDT(rs.getString("SDT"));
+                kh.setTrangThai(rs.getBoolean("trangThai"));
+                DiemTichLuy dtl = new DiemTichLuy();
+                dtl.setMaDTL(rs.getString("maDTL"));
+                dtl.setXepHang(rs.getString("xepHang"));
+                dtl.setDiemTong(rs.getDouble("diemTong"));
+                dtl.setDiemHienTai(rs.getDouble("diemHienTai"));
+                kh.setDiemTichLuy(dtl);
+                if(getOneKhachHang(list ,kh.getMaKH()) == null && kh.isTrangThai()) {
+                    list.add(kh);
+                }
             }
-            if(rs.getString("diaChi") == null || rs.getString("diaChi") == ""){
-                kh.setDiaChi("Chưa có");
-            } else {
-                kh.setDiaChi(rs.getString("diaChi"));
-            }
-            kh.setSDT(rs.getString("SDT"));
-            kh.setTrangThai(rs.getBoolean("trangThai"));
-            DiemTichLuy dtl = new DiemTichLuy();
-            dtl.setMaDTL(rs.getString("maDTL"));
-            dtl.setXepHang(rs.getString("xepHang"));
-            dtl.setDiemTong(rs.getDouble("diemTong"));
-            dtl.setDiemHienTai(rs.getDouble("diemHienTai"));
-            kh.setDiemTichLuy(dtl);
-            if(getOneKhachHang(list ,kh.getMaKH()) == null && kh.isTrangThai()) {
-                list.add(kh);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return this.list;
     }
@@ -550,5 +557,31 @@ public class KhachHang_DAO {
             e.printStackTrace();
         }
         return dsBaoCao;
+    }
+
+    //Kiểm tra hoạt động của khách hàng trong 6 tháng
+    public boolean kiemTraKhachHangHoatDong(String maKH) {
+        hoaDon_dao = new HoaDon_DAO();
+        ArrayList<HoaDon> listHDcuaKH = hoaDon_dao.timAllHoaDonChoKhachHang(maKH);
+        Date currentDate = new Date(System.currentTimeMillis());
+        for(HoaDon x : listHDcuaKH) {
+            Date sqlDateHoaDon = new Date(x.getNgayLap().getTime());
+            if(isNotSixMonthsApart(currentDate.toLocalDate(), sqlDateHoaDon.toLocalDate())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isNotSixMonthsApart(LocalDate date1, LocalDate date2) {
+        // Tính khoảng cách tháng giữa hai ngày
+        long monthsBetween = ChronoUnit.MONTHS.between(date1, date2);
+
+        // Kiểm tra nếu khoảng cách là 6 tháng
+        if(monthsBetween <= 6) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
