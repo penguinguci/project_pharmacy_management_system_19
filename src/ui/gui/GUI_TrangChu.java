@@ -474,7 +474,21 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         JScrollPane scrollPaneThongBao = new JScrollPane(dsTBPanel);
         scrollPaneThongBao.setPreferredSize(new Dimension(380, 480));
         scrollPaneThongBao.getVerticalScrollBar().setUnitIncrement(12);
+        scrollPaneThongBao.getHorizontalScrollBar().setUnitIncrement(12);
         scrollPaneThongBao.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPaneThongBao.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        JScrollBar horizontalScrollBarThongBao = scrollPaneThongBao.getHorizontalScrollBar();
+        horizontalScrollBarThongBao.setPreferredSize(new Dimension(Integer.MAX_VALUE, 5));
+        horizontalScrollBarThongBao.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(2, 98, 104); // Đặt màu của thanh trượt
+                this.trackColor = Color.WHITE; // Đặt màu nền của thanh cuộn
+            }
+        });
+
+
         JScrollBar verticalScrollBarThongBao = scrollPaneThongBao.getVerticalScrollBar();
         verticalScrollBarThongBao.setPreferredSize(new Dimension(5, Integer.MAX_VALUE));
 
@@ -1367,12 +1381,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             gbc.gridwidth = 1; // chiem 1 cot
             gbc.insets = new Insets(-80, 10, 5, 10);
             noiDungArea = new JTextArea(noiDung);
-            noiDungArea.setBackground(getBackground());
             noiDungArea.setFont(new Font("Arial", Font.PLAIN, 12));
             noiDungArea.setLineWrap(true);
             noiDungArea.setWrapStyleWord(true);
             noiDungArea.setEditable(false);
             add(noiDungArea, gbc);
+
 
             // btn xem chi tiet
             gbc.gridx = 1;
@@ -1387,28 +1401,16 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             btnXemCTTB.setFocusPainted(false);
             add(btnXemCTTB, gbc);
 
-            btnXemCTTB.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    btnXemCTTB.setForeground(new Color(68, 158, 248));
-                }
-
-                @Override
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    btnXemCTTB.setForeground(new Color(0, 102, 204));
-                }
-            });
 
             if (!trangThaiXem) {
                 setBackground(new Color(220, 220, 220));
                 btnXemCTTB.setForeground(new Color(220, 220, 220));
                 noiDungArea.setBackground(new Color(220, 220, 220));
                 btnXemCTTB.setEnabled(false);
-            } else {
-                setBackground(Color.WHITE);
-                noiDungArea.setBackground(Color.WHITE);
             }
 
             btnXemCTTB.addActionListener(this);
+            btnXemCTTB.addMouseListener(this);
             addMouseListener(this);
             noiDungArea.addMouseListener(this);
         }
@@ -1459,19 +1461,40 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            if (trangThaiXem) {
-                setBackground(new Color(220, 220, 220));
-                noiDungArea.setBackground(new Color(220, 220, 220));
-            }
+           Component c = e.getComponent();
+           if (trangThaiXem) {
+               if (c == this) {
+                   setBackground(new Color(220, 220, 220));
+                   noiDungArea.setBackground(new Color(220, 220, 220));
+               } else  if (c == btnXemCTTB) {
+                   btnXemCTTB.setForeground(new Color(68, 158, 248));
+                   setBackground(new Color(220, 220, 220));
+                   noiDungArea.setBackground(new Color(220, 220, 220));
+               } else if (c == noiDungArea) {
+                   setBackground(new Color(220, 220, 220));
+                   noiDungArea.setBackground(new Color(220, 220, 220));
+               }
+           }
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
+            Component c = e.getComponent();
             if (trangThaiXem) {
-                setBackground(Color.WHITE);
-                noiDungArea.setBackground(Color.WHITE);
+                if (c == this) {
+                    setBackground(Color.WHITE);
+                } else  if (c == btnXemCTTB) {
+                    btnXemCTTB.setForeground(new Color(0, 102, 204));
+                    setBackground(Color.WHITE);
+                    noiDungArea.setBackground(Color.WHITE);
+                } else if (c == noiDungArea) {
+                    noiDungArea.setBackground(Color.WHITE);
+                }
+            } else {
+                setBackground(new Color(220, 220, 220));
             }
         }
+
 
     }
 
