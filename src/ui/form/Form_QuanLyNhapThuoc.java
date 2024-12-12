@@ -365,6 +365,7 @@ public class Form_QuanLyNhapThuoc extends JPanel implements FocusListener, ListS
             tablePN.clearSelection();
             modelChiTiet.setRowCount(0);
             txtTimKiem.setText("");
+            updateTablePhieuNhap(phieuNhapThuoc_dao.getAll());
         } else if (o == btnXemHD) {
             int row = tablePN.getSelectedRow();
             if (row >= 0) {

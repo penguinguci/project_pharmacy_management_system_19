@@ -1,5 +1,6 @@
 package ui.gui;
 
+import dao.DiemTichLuy_DAO;
 import dao.HoaDon_DAO;
 import dao.ThuocHetHan_DAO;
 import entity.ChiTietHoaDon;
@@ -88,8 +89,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public ThuocHetHan_DAO thuocHetHan_dao;
     public JPanel dsTBPanel;
     public HoaDon_DAO hoaDon_dao;
+    private DiemTichLuy_DAO diemTichLuy_dao = new DiemTichLuy_DAO();
 
     public GUI_TrangChu() throws Exception {
+        diemTichLuy_dao.xoaDiemTichLuyCuaKhachHangKhongHoatDong();
         setTitle("Pharmacy Management System");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -260,15 +263,26 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnQLLoThuoc = createSubMenuButton("Lô Thuốc");
         btnThuocHH = createSubMenuButton("Thuốc Hết Hạn");
 
-
-        submenuThuoc.add(btnCapNhatThuoc);
-        submenuThuoc.add(btnTimKiemThuoc);
-        submenuThuoc.add(btnNhaSanXuat);
-        submenuThuoc.add(btnNuocSanXuat);
-        submenuThuoc.add(btnDanhMuc);
-        submenuThuoc.add(btnQLLoThuoc);
-        submenuThuoc.add(btnThuocHH);
-
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){ //Nhân viên bán thuốc
+                submenuThuoc.add(btnTimKiemThuoc);
+                submenuThuoc.add(btnQLLoThuoc);
+            } else {
+                submenuThuoc.add(btnCapNhatThuoc);
+                submenuThuoc.add(btnTimKiemThuoc);
+                submenuThuoc.add(btnNhaSanXuat);
+                submenuThuoc.add(btnNuocSanXuat);
+                submenuThuoc.add(btnDanhMuc);
+                submenuThuoc.add(btnQLLoThuoc);
+            }
+        } else {
+            submenuThuoc.add(btnCapNhatThuoc);
+            submenuThuoc.add(btnTimKiemThuoc);
+            submenuThuoc.add(btnNhaSanXuat);
+            submenuThuoc.add(btnNuocSanXuat);
+            submenuThuoc.add(btnDanhMuc);
+            submenuThuoc.add(btnQLLoThuoc);
+        }
 
         // Submenu Nhà cung cấp
         submenuNhaCungCap = new JPanel();
@@ -279,9 +293,17 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnCapNhatNCC = createSubMenuButton("Cập Nhật");
         btnTimKiemNCC = createSubMenuButton("Tìm Kiếm");
 
-        submenuNhaCungCap.add(btnCapNhatNCC);
-        submenuNhaCungCap.add(btnTimKiemNCC);
-
+        if(nhanVienDN != null) {
+            if(nhanVienDN.getVaiTro().getMaChucVu() == 1){ //Nhân viên bán thuốc
+                submenuNhaCungCap.add(btnTimKiemNCC);
+            } else {
+                submenuNhaCungCap.add(btnCapNhatNCC);
+                submenuNhaCungCap.add(btnTimKiemNCC);
+            }
+        } else {
+            submenuNhaCungCap.add(btnCapNhatNCC);
+            submenuNhaCungCap.add(btnTimKiemNCC);
+        }
 
         // Submenu khuyến mãi
         submenuKhuyenMai = new JPanel();
@@ -969,7 +991,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 throw new RuntimeException(ex);
             }
             centerPanel.add(formQuanLyNhanVien, "formQuanLyNhanVien");
-            formNhapThuoc.setTrangChu(this);
+            formQuanLyNhanVien.setTrangChu(this);
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formQuanLyNhanVien");

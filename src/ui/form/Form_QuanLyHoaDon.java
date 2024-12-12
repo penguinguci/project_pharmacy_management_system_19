@@ -398,6 +398,7 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
             tableHD.clearSelection();
             txtTimKiem.setText("");
             cbxMaHD.setSelectedIndex(0);
+            updateDSHD(hoaDon_dao.getAllHoaDon());
         } else if (o == btnXemHD) {
             int row = tableHD.getSelectedRow();
             if (row >= 0) {
