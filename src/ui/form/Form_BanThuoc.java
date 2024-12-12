@@ -900,8 +900,12 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 String donViTinh = cboDonViThuoc.getSelectedItem().toString();
                 double giaThuoc = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(maThuoc, donViTinh);
                 giaLabel.setText("Giá: " + String.format("%,.0f", giaThuoc) + "đ");
+            } else if (o == spinnerSoLuong) {
+                int soLuong = Integer.parseInt((String) spinnerSoLuong.getValue());
+                System.out.println(soLuong);
             }
         }
+
 
     }
 

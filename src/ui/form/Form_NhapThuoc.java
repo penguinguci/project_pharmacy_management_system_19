@@ -1492,9 +1492,11 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         txtGiaNhap.setText("");
         modelNgayHetHan.setSelected(false);
         modelNgaySanXuat.setSelected(false);
+        cbbNhaCungCap.setEnabled(true);
     }
 
     public void lamMoiThongTinNhap() {
+        cbbNhaCungCap.setEnabled(false);
         cbbThuoc.setSelectedIndex(0);
         cbbDonViTinh.setSelectedIndex(0);
         txtSoLuong.setText("");

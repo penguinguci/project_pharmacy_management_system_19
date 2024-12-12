@@ -276,6 +276,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
                 submenuThuoc.add(btnNuocSanXuat);
                 submenuThuoc.add(btnDanhMuc);
                 submenuThuoc.add(btnQLLoThuoc);
+                submenuThuoc.add(btnThuocHH);
             }
         } else {
             submenuThuoc.add(btnCapNhatThuoc);
@@ -284,6 +285,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             submenuThuoc.add(btnNuocSanXuat);
             submenuThuoc.add(btnDanhMuc);
             submenuThuoc.add(btnQLLoThuoc);
+            submenuThuoc.add(btnThuocHH);
         }
 
         // Submenu Nhà cung cấp
