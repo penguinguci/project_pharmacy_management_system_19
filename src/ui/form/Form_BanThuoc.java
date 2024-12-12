@@ -12,6 +12,8 @@ import ui.gui.GUI_TrangChu;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -687,7 +689,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
 
 
     // Lớp để tạo giao diện cho mỗi thuốc
-    private static class ThuocPanel extends JPanel implements ActionListener {
+    private static class ThuocPanel extends JPanel implements ActionListener, ChangeListener {
         JLabel imageLabel, maThuocLabel, tenThuocLabel, giaLabel;
         JSpinner spinnerSoLuong;
         JComboBox<String> cboDonViThuoc;
@@ -816,6 +818,7 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
             // add sự kiện
             btnThemThuoc.addActionListener(this);
             cboDonViThuoc.addActionListener(this);
+            spinnerSoLuong.addChangeListener(this);
 
             // update data cho combobox đơn vị
             updateDataDonViTinhVaGia(thuoc.getMaThuoc());
@@ -900,13 +903,34 @@ public class Form_BanThuoc extends JPanel implements ActionListener, DocumentLis
                 String donViTinh = cboDonViThuoc.getSelectedItem().toString();
                 double giaThuoc = donGiaThuoc_dao.layGiaThuocTheoMaVaDV(maThuoc, donViTinh);
                 giaLabel.setText("Giá: " + String.format("%,.0f", giaThuoc) + "đ");
-            } else if (o == spinnerSoLuong) {
-                int soLuong = Integer.parseInt((String) spinnerSoLuong.getValue());
-                System.out.println(soLuong);
             }
         }
 
+        // sự kiện cho spinner
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            String donViTinh = cboDonViThuoc.getSelectedItem().toString();
+            String maThuoc = thuoc.getMaThuoc();
+            DonGiaThuoc donGiaThuoc = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(maThuoc, donViTinh);
+            ChiTietLoThuoc chiTietLoThuoc = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuoc.getMaDonGia(), maThuoc);
+            int soLuongHienTai = (int) spinnerSoLuong.getValue();
+            if (soLuongHienTai > chiTietLoThuoc.getSoLuongCon()) {
+                JOptionPane optionPane = new JOptionPane(
+                        "Số lượng thuốc trong lổ không đủ!", JOptionPane.WARNING_MESSAGE
+                );
 
+                JDialog dialog = optionPane.createDialog(null, "Thông báo");
+
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                int x = (screenSize.width - dialog.getWidth()) / 2;
+                int y = (screenSize.height - dialog.getHeight()) / 2;
+                dialog.setLocation(x, y);
+
+                dialog.setVisible(true);
+
+                spinnerSoLuong.setValue(chiTietLoThuoc.getSoLuongCon());
+            }
+        }
     }
 
     // hàm cập nhật tiền
