@@ -1023,10 +1023,8 @@ public class Thuoc_DAO {
             String sql = "update Thuoc set trangThai = 0 where maThuoc = ? ";
             ps = con.prepareStatement(sql);
             ps.setString(1, maThuoc);
-            ps.executeUpdate();
-            con.commit();
-            flag = true;
-
+            int n =  ps.executeUpdate();
+            flag = n >0;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {

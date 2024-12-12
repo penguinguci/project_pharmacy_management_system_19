@@ -202,14 +202,6 @@ public class ChiTietLoThuoc_DAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return n > 0;
     }

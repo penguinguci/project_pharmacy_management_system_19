@@ -733,7 +733,7 @@ public class Form_QuanLyNhanVien extends JPanel implements ListSelectionListener
         }
 
         // Kiểm tra số điện thoại
-        if (!(SDT.length() > 0 && SDT.matches("0[3|5|7|8|9]\\d{8}"))) {
+        if (!(SDT.length() > 0 && SDT.matches("^0\\d{9}$"))) {
             txtSoDienThoai.requestFocus();
             JOptionPane.showMessageDialog(this,
                     "Số điện thoại không hợp lệ. Số điện thoại Việt Nam phải bắt đầu bằng 0 và có 10 chữ số!",
