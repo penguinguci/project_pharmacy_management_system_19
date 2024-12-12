@@ -137,7 +137,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         // Đơn vị tính
         gbc.gridx = 2;
         pnlInput.add(new JLabel("Đơn vị tính:"), gbc);
-        cbbDonViTinh = new JComboBox<>(new String[]{"Chọn đơn vị tính", "Viên", "Vỉ", "Hộp"});
+        cbbDonViTinh = new JComboBox<>(new String[]{"Chọn đơn vị tính", "Viên", "Vỉ", "Hộp", "Tuýp", "Gói", "Chai"});
         cbbDonViTinh.setPreferredSize(new Dimension(200, 30));
         gbc.gridx = 3;
         pnlInput.add(cbbDonViTinh, gbc);
@@ -153,20 +153,21 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
 
         // Giá nhập, giá bán
-        gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridx = 2;
+//        gbc.gridy = 3;
         pnlInput.add(new JLabel("Giá nhập:"), gbc);
         txtGiaNhap = new JTextField(15);
         txtGiaNhap.setPreferredSize(new Dimension(200, 30));
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         pnlInput.add(txtGiaNhap, gbc);
 
-        gbc.gridx = 2;
-        pnlInput.add(new JLabel("Giá bán:"), gbc);
-        txtGiaBan = new JTextField(15);
-        txtGiaBan.setPreferredSize(new Dimension(200, 30));
-        gbc.gridx = 3;
-        pnlInput.add(txtGiaBan, gbc);
+//        gbc.gridx = 2;
+//        pnlInput.add(new JLabel("Giá bán:"), gbc);
+//        txtGiaBan = new JTextField(15);
+//        txtGiaBan.setPreferredSize(new Dimension(200, 30));
+//        txtGiaBan.setEditable(false);
+//        gbc.gridx = 3;
+//        pnlInput.add(txtGiaBan, gbc);
 
 
         // ngày sản xuất và ngày hết hạn
@@ -299,7 +300,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         pnlCenter.add(pnlInput, BorderLayout.NORTH);
 
         // Table Chi tiết thuốc
-        String[] columnNames = {"Mã thuốc", "Tên thuốc", "Nhà cung cấp", "Ngày sản xuất", "Ngày hết hạn", "Đơn vị tính", "Số lượng", "Giá nhập", "Giá bán", "Thành tiền"};
+        String[] columnNames = {"Mã thuốc", "Tên thuốc", "Nhà cung cấp", "Ngày sản xuất", "Ngày hết hạn", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"};
         modelChiTietThuoc = new DefaultTableModel(columnNames,  0);
         tblChiTietThuoc = new JTable(modelChiTietThuoc);
         tblChiTietThuoc.setRowHeight(25);
@@ -457,7 +458,6 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         cbbDonViTinh.setSelectedItem(modelChiTietThuoc.getValueAt(row, 5));
         txtSoLuong.setText(modelChiTietThuoc.getValueAt(row, 6).toString());
         txtGiaNhap.setText(modelChiTietThuoc.getValueAt(row, 7).toString().replace("đ", "").replace(",", ""));
-        txtGiaBan.setText(modelChiTietThuoc.getValueAt(row, 8).toString().replace("đ", "").replace(",", ""));
 
         String ngaySXStr = modelChiTietThuoc.getValueAt(row, 3).toString();
         String ngayHHStr = modelChiTietThuoc.getValueAt(row, 4).toString();
@@ -518,7 +518,9 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 String donViTinh = cbbDonViTinh.getSelectedItem().toString();
                 int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
                 double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
-                double giaBan = Double.parseDouble(txtGiaBan.getText().trim());
+
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                double giaBan = donGiaThuoc.tinhGiaBan(giaNhap);
                 Date ngaySX = (Date) datePickerNgaySanXuat.getModel().getValue();
                 Date ngayHH = (Date) datePickerNgayHetHan.getModel().getValue();
 
@@ -538,7 +540,6 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                         donViTinh,
                         soLuong,
                         String.format("%,.0f", giaNhap) + "đ",
-                        String.format("%,.0f", giaBan) + "đ",
                         String.format("%,.0f", thanhTien) + "đ"
                 };
                 modelChiTietThuoc.addRow(row);
@@ -572,7 +573,9 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                     String donViTinh = cbbDonViTinh.getSelectedItem().toString();
                     int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
                     double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
-                    double giaBan = Double.parseDouble(txtGiaBan.getText().trim());
+
+                    DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                    double giaBan = donGiaThuoc.tinhGiaBan(giaNhap);
                     Date ngaySX = (Date) datePickerNgaySanXuat.getModel().getValue();
                     Date ngayHH = (Date) datePickerNgayHetHan.getModel().getValue();
 
@@ -592,8 +595,8 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                     modelChiTietThuoc.setValueAt(donViTinh, row, 5);
                     modelChiTietThuoc.setValueAt(soLuong, row, 6);
                     modelChiTietThuoc.setValueAt(String.format("%,.0f", giaNhap) + "đ", row, 7);
-                    modelChiTietThuoc.setValueAt(String.format("%,.0f", giaBan) + "đ", row, 8);
-                    modelChiTietThuoc.setValueAt(String.format("%,.0f", thanhTien) + "đ", row, 9);
+//                    modelChiTietThuoc.setValueAt(String.format("%,.0f", giaBan) + "đ", row, 8);
+                    modelChiTietThuoc.setValueAt(String.format("%,.0f", thanhTien) + "đ", row, 8);
 
                     JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công!");
                     lamMoiThongTinNhap();
@@ -782,19 +785,19 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 String donViTinh = modelChiTietThuoc.getValueAt(i, 5).toString();
                 int soLuong = Integer.parseInt(modelChiTietThuoc.getValueAt(i, 6).toString());
                 double giaNhap = Double.parseDouble(modelChiTietThuoc.getValueAt(i, 7).toString().replace("đ", "").replace(",", ""));
-                double giaBan = Double.parseDouble(modelChiTietThuoc.getValueAt(i, 8).toString().replace("đ", "").replace(",", ""));
+//                double giaBan = Double.parseDouble(modelChiTietThuoc.getValueAt(i, 8).toString().replace("đ", "").replace(",", ""));
 
                 ChiTietPhieuNhap chiTietPhieuNhap = new ChiTietPhieuNhap(phieuNhapThuoc, thuoc, soLuong, donViTinh, giaNhap, ngaySX, ngayHH);
                 dsCTPN.add(chiTietPhieuNhap);
 
-                tongThanhTien += Double.parseDouble(modelChiTietThuoc.getValueAt(i, 9).toString().replace("đ", "").replace(",", ""));
+                tongThanhTien += Double.parseDouble(modelChiTietThuoc.getValueAt(i, 8).toString().replace("đ", "").replace(",", ""));
 
                 // chi tiết lô thuốc
                 String soHieuThuoc = generateSoHieuThuoc();
 
                 DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
                 donGiaThuoc.setDonViTinh(donViTinh);
-                donGiaThuoc.setDonGia(giaBan);
+                donGiaThuoc.setDonGia(donGiaThuoc.tinhGiaBan(giaNhap));
                 donGiaThuoc.setThuoc(thuoc);
                 donGiaThuoc.setTrangThai(true);
 
@@ -1327,7 +1330,7 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         String donViTinh = String.valueOf(cbbDonViTinh.getSelectedItem());
         String soLuong = txtSoLuong.getText().trim();
         String giaNhap = txtGiaNhap.getText().trim();
-        String giaBan = txtGiaBan.getText().trim();
+//        String giaBan = txtGiaBan.getText().trim();
 
         if (nhaCungCap.equals("Chọn nhà cung cấp")) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp!",
@@ -1384,20 +1387,20 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
             return false;
         }
 
-        if (!(giaBan.length() > 0)) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá bán!",
-                    "Thông báo", JOptionPane.ERROR_MESSAGE);
-            txtGiaBan.requestFocus();
-            return false;
-        }
-
-        double giaBanDouble = Double.parseDouble(giaNhap);
-        if (giaBanDouble <= 0) {
-            JOptionPane.showMessageDialog(this, "Giá bán phải lớn hơn 0!",
-                    "Thông báo", JOptionPane.ERROR_MESSAGE);
-            txtGiaBan.requestFocus();
-            return false;
-        }
+//        if (!(giaBan.length() > 0)) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá bán!",
+//                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+//            txtGiaBan.requestFocus();
+//            return false;
+//        }
+//
+//        double giaBanDouble = Double.parseDouble(giaNhap);
+//        if (giaBanDouble <= 0) {
+//            JOptionPane.showMessageDialog(this, "Giá bán phải lớn hơn 0!",
+//                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+//            txtGiaBan.requestFocus();
+//            return false;
+//        }
 
         Date ngaySX = (Date) datePickerNgaySanXuat.getModel().getValue();
         Date ngayHH = (Date) datePickerNgayHetHan.getModel().getValue();
@@ -1496,7 +1499,6 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
         cbbDonViTinh.setSelectedIndex(0);
         txtSoLuong.setText("");
         txtGiaNhap.setText("");
-        txtGiaBan.setText("");
         tblChiTietThuoc.clearSelection();
         modelNgayHetHan.setSelected(false);
         modelNgaySanXuat.setSelected(false);

@@ -45,6 +45,7 @@ public class ChiTietLoThuoc_DAO {
                 ctLo.setLoThuoc(loThuoc_dao.timLoThuoc(rs.getString("maLoThuoc")));
                 ctLo.setNgaySX(rs.getDate("ngaySX"));
                 ctLo.setHSD(rs.getDate("HSD"));
+                ctLo.setTrangThai(rs.getInt("trangThai"));
                 if(checkTrung(this.list, ctLo.getSoHieuThuoc())) {
                     list.add(ctLo);
                 }
@@ -116,7 +117,6 @@ public class ChiTietLoThuoc_DAO {
 
         return chiTietLoThuoc;
     }
-
 
 
     public ChiTietLoThuoc getCTLoThuocTheoSoHieuThuoc(String sht) {
@@ -593,5 +593,124 @@ public class ChiTietLoThuoc_DAO {
         return result;
     }
 
+
+    // lấy danh sách chi tiết lô thuốc theo mã lô thuốc
+    public ArrayList<ChiTietLoThuoc> getDSThuocHetHan() throws SQLException {
+        ConnectDB con = new ConnectDB();
+        con.connect();
+        Connection connection = null;
+        CallableStatement cstmt = null;
+        ResultSet rs = null;
+        ArrayList<ChiTietLoThuoc> dsCTLT = new ArrayList<>();
+
+        try {
+            connection = con.getConnection();
+
+            if (connection == null || connection.isClosed()) {
+                System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return dsCTLT;
+            }
+
+            String sql = "{call getDSThuocHetHan}";
+            cstmt = connection.prepareCall(sql);
+
+            rs = cstmt.executeQuery();
+
+            while (rs.next()) {
+                String soHieuThuoc = rs.getString("soHieuThuoc");
+                Thuoc thuoc = thuoc_dao.timThuoc(rs.getString("maThuoc"));
+
+                LoThuoc loThuoc = new LoThuoc();
+                loThuoc.setMaLoThuoc(rs.getString("maLoThuoc"));
+
+                int soLuongCon = rs.getInt("soLuongCon");
+
+                DonGiaThuoc donGiaThuoc = new DonGiaThuoc();
+                donGiaThuoc.setMaDonGia(rs.getString("maDonGia"));
+                donGiaThuoc.setDonViTinh(rs.getString("donViTinh"));
+                donGiaThuoc.setDonGia(rs.getDouble("donGia"));
+
+                Date ngaySX = rs.getDate("ngaySX");
+                Date HSD = rs.getDate("HSD");
+
+                ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuongCon, donGiaThuoc, ngaySX, HSD);
+                chiTietLoThuoc.setTrangThai(rs.getInt("trangThai"));
+                dsCTLT.add(chiTietLoThuoc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return dsCTLT;
+    }
+
+
+    public boolean updateTrangThaiChiTietLoThuoc(ChiTietLoThuoc chiTietLoThuoc) throws SQLException {
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+
+        if (con == null || con.isClosed()) {
+            System.out.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+            return false;
+        }
+
+        PreparedStatement statement = null;
+        int n = 0;
+
+        try {
+            String sql = "UPDATE ChiTietLoThuoc SET trangThai = 0 WHERE soHieuThuoc = ?" ;
+            statement = con.prepareStatement(sql);
+
+            statement.setString(1, chiTietLoThuoc.getSoHieuThuoc());
+
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return n > 0;
+    }
+
+    public ArrayList<ChiTietLoThuoc> getAllDSThuocGomThuocHH() {
+        loThuoc_dao = new LoThuoc_DAO();
+        thuoc_dao = new Thuoc_DAO();
+        donGiaThuoc_dao = new DonGiaThuoc_DAO();
+        ConnectDB con  = new ConnectDB();
+        con.connect();
+        con.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        thuoc_dao = new Thuoc_DAO();
+        try {
+            String sql = "select * from ChiTietLoThuoc";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ChiTietLoThuoc ctLo = new ChiTietLoThuoc();
+                ctLo.setSoHieuThuoc(rs.getString("soHieuThuoc"));
+                ctLo.setSoLuongCon(rs.getInt("soLuongCon"));
+                ctLo.setThuoc(thuoc_dao.timThuoc(rs.getString("maThuoc")));
+                ctLo.setDonGiaThuoc(donGiaThuoc_dao.timBangGia(rs.getString("maDonGia")));
+                ctLo.setLoThuoc(loThuoc_dao.timLoThuoc(rs.getString("maLoThuoc")));
+                ctLo.setNgaySX(rs.getDate("ngaySX"));
+                ctLo.setHSD(rs.getDate("HSD"));
+                ctLo.setTrangThai(rs.getInt("trangThai"));
+                if(checkTrung(this.list, ctLo.getSoHieuThuoc())) {
+                    list.add(ctLo);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this.list;
+    }
 
 }
