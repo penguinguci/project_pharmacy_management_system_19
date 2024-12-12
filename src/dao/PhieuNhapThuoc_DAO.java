@@ -102,14 +102,6 @@ public class PhieuNhapThuoc_DAO {
             n = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return n > 0;
     }

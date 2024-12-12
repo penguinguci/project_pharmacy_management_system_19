@@ -469,18 +469,20 @@ public class Form_QuanLyKhuyenMai extends JPanel implements ListSelectionListene
         ArrayList<ChiTietKhuyenMai> dsCTKM = chiTietKhuyenMai_dao.getAllChiTietKM();
         modelCTKhuyenMai.setRowCount(0);
         for (ChiTietKhuyenMai ct : dsCTKM) {
-            String loaiKM = ct.getChuongTrinhKhuyenMai().getLoaiKhuyenMai();
-            String tyLeKM = String.format("%.2f", ct.getTyLeKhuyenMai());
-            String soLuongTT = String.valueOf(ct.getSoLuongToiThieu());
+            if (ct.getChiTietLoThuoc() != null) {
+                String loaiKM = ct.getChuongTrinhKhuyenMai().getLoaiKhuyenMai();
+                String tyLeKM = String.format("%.2f", ct.getTyLeKhuyenMai());
+                String soLuongTT = String.valueOf(ct.getSoLuongToiThieu());
 
-            modelCTKhuyenMai.addRow(new Object[] {
-                    ct.getThuoc().getMaThuoc(),
-                    ct.getChiTietLoThuoc().getSoHieuThuoc(),
-                    ct.getThuoc().getTenThuoc(),
-                    loaiKM == null ? "" : loaiKM,
-                    Double.parseDouble(tyLeKM) == 0.0 ? "" : tyLeKM,
-                    Integer.parseInt(soLuongTT) == 0 ? "" : soLuongTT
-            });
+                modelCTKhuyenMai.addRow(new Object[] {
+                        ct.getThuoc().getMaThuoc(),
+                        ct.getChiTietLoThuoc().getSoHieuThuoc(),
+                        ct.getThuoc().getTenThuoc(),
+                        loaiKM == null ? "" : loaiKM,
+                        Double.parseDouble(tyLeKM) == 0.0 ? "" : tyLeKM,
+                        Integer.parseInt(soLuongTT) == 0 ? "" : soLuongTT
+                });
+            }
         }
     }
 

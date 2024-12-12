@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -759,17 +760,19 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
             ArrayList<ChiTietPhieuNhap> dsCTPN = new ArrayList<>();
             ArrayList<ChiTietLoThuoc> dsCTLoThuoc = new ArrayList<>();
+            ArrayList<Thuoc> dsThuoc = new ArrayList<>();
+            ArrayList<DonGiaThuoc> dsDonGiaCheck = new ArrayList<>();
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-            DonGiaThuoc donGiaThuocCheck = new DonGiaThuoc();
-            Thuoc thuoc = new Thuoc();
-            ChiTietLoThuoc chiTietLoThuoc = new ChiTietLoThuoc();
             for (int i = 0; i < modelChiTietThuoc.getRowCount(); i++) {
                 // chi tiết phiếu nhập
+                Thuoc thuoc = new Thuoc();
                 String maThuoc = modelChiTietThuoc.getValueAt(i, 0).toString();
                 thuoc.setMaThuoc(maThuoc);
                 thuoc.setTenThuoc(modelChiTietThuoc.getValueAt(i, 1).toString());
                 thuoc.setNhaCungCap(ncc);
+
+                dsThuoc.add(thuoc);
 
                 Date ngaySX = null;
                 Date ngayHH = null;
@@ -801,8 +804,9 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                 donGiaThuoc.setThuoc(thuoc);
                 donGiaThuoc.setTrangThai(true);
 
+
                 // thêm đơn giá
-                donGiaThuocCheck = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(maThuoc, donViTinh);
+                DonGiaThuoc donGiaThuocCheck = donGiaThuoc_dao.getDonGiaByMaThuocVaDonViTinh(maThuoc, donViTinh);
                 if (donGiaThuocCheck == null) {
                     donGiaThuoc.setMaDonGia(generateDonGiaID());
                     donGiaThuoc_dao.create(donGiaThuoc);
@@ -814,8 +818,10 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
 
                     donGiaThuocCheck.setTrangThai(false);
                     donGiaThuoc_dao.updateTrangThai(donGiaThuocCheck);
+
+                    dsDonGiaCheck.add(donGiaThuocCheck);
                 }
-                chiTietLoThuoc = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuong, donGiaThuoc, ngaySX, ngayHH);
+                ChiTietLoThuoc chiTietLoThuoc  = new ChiTietLoThuoc(soHieuThuoc, thuoc, loThuoc, soLuong, donGiaThuoc, ngaySX, ngayHH);
                 dsCTLoThuoc.add(chiTietLoThuoc);
             }
 
@@ -838,22 +844,27 @@ public class Form_NhapThuoc extends JPanel implements ActionListener, ListSelect
                     printer.printLoThuoc();
 
                     // cập nhật số lượng lô cũ vào lô mới nếu lô cũ chưa hết hạn
-                    if (donGiaThuocCheck != null) {
-                        ChiTietLoThuoc chiTietLoThuocCu = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(donGiaThuocCheck.getMaDonGia(), thuoc.getMaThuoc());
-                        ArrayList<ChiTietLoThuoc> dsThuocHH = chiTietLoThuoc_dao.thuocSapHetHan();
-                        boolean found = false;
-                        for (ChiTietLoThuoc ct : dsThuocHH) {
-                            if (ct.getDonGiaThuoc().getMaDonGia().equals(donGiaThuocCheck.getMaDonGia())) {
-                                found = true;
-                                break;
+                    for (ChiTietLoThuoc ct : dsCTLoThuoc) {
+                        for (DonGiaThuoc dt : dsDonGiaCheck) {
+                            if (dt != null) {
+                                for (Thuoc t : dsThuoc) {
+                                    ChiTietLoThuoc chiTietLoThuocCu = chiTietLoThuoc_dao.getCTLoThuocTheoMaDGVaMaThuoc(dt.getMaDonGia(), t.getMaThuoc());
+                                    ArrayList<ChiTietLoThuoc> dsThuocHH = chiTietLoThuoc_dao.thuocSapHetHan();
+                                    boolean found = false;
+                                    for (ChiTietLoThuoc ctlt : dsThuocHH) {
+                                        if (ctlt.getDonGiaThuoc().getMaDonGia().equals(dt.getMaDonGia())) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!found) {
+                                        chiTietLoThuoc_dao.updateTongSoLuongConCuaCTThuoc(chiTietLoThuocCu, ct);
+                                    }
+                                }
                             }
                         }
-
-                        if (!found) {
-                            chiTietLoThuoc_dao.updateTongSoLuongConCuaCTThuoc(chiTietLoThuocCu, chiTietLoThuoc);
-                        }
                     }
-
                     lamMoiAll();
                 } else {
                     JOptionPane.showMessageDialog(this, "Nhập thuốc từ nhà cung cấp thất bại",

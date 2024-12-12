@@ -96,8 +96,8 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
         JPanel pOption = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         // Search
         lblSearch = new JLabel("Tìm kiếm:");
-        txtSearch = new JTextField(25);
-        txtSearch.setPreferredSize(new Dimension(30, 25));
+        txtSearch = new JTextField(20);
+        txtSearch.setPreferredSize(new Dimension(20, 25));
 
         // ComboBox Nhà sản xuất
         cmbNhaSanXuat = new JComboBox<>();
@@ -438,6 +438,14 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
 
     }
 
+    // giới hạn ký tự
+    public String gioiHanTen(String str, int maxLength) {
+        if (str.length() > maxLength) {
+            return str.substring(0, maxLength - 3) + "...";
+        }
+        return str;
+    }
+
     // hàm tiện ích tạo các ô thông tin
     private JPanel createInfoPanel(String labelText, JComponent inputComponent, int inputWidth) {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
@@ -552,7 +560,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             nsx_DAO = new NhaSanXuat_DAO();
             ArrayList<NhaSanXuat> listNhaSX = nsx_DAO.getAllNhaSanXuat();
             for(NhaSanXuat nsx : listNhaSX){
-                cmbNhaSanXuat.addItem(nsx.getTenNhaSX());
+                cmbNhaSanXuat.addItem(gioiHanTen(nsx.getTenNhaSX(), 25));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -564,7 +572,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             ncc_DAO = new NhaCungCap_DAO();
             ArrayList<NhaCungCap> listNCC = ncc_DAO.getAllNhaCungCap();
             for(NhaCungCap ncc : listNCC){
-                cmbNhaCungCap.addItem(ncc.getTenNCC());
+                cmbNhaCungCap.addItem(gioiHanTen(ncc.getTenNCC(), 25));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -575,7 +583,7 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             dm_DAO = new DanhMuc_DAO();
             ArrayList<DanhMuc> listDanhMuc = dm_DAO.getAllDanhMuc();
             for(DanhMuc dm : listDanhMuc){
-                cmbDanhMuc.addItem(dm.getTenDanhMuc());
+                cmbDanhMuc.addItem(gioiHanTen(dm.getTenDanhMuc(), 25));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -694,10 +702,10 @@ public class Form_QuanLyThuoc extends JPanel implements ActionListener, MouseLis
             int row = tProduct.getSelectedRow();
             if (row < 0) JOptionPane.showMessageDialog(this, "Chưa chọn dòng cần xóa");
             else {
-                String maThuoc = String.valueOf(tProduct.getValueAt(row, 0));
-                if (thuocDao.deleteThuoc(maThuoc)) {
-                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa không?", "Lưu ý", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa không?", "Lưu ý", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    String maThuoc = String.valueOf(tProduct.getValueAt(row, 0));
+                    if (thuocDao.deleteThuoc(maThuoc)) {
                         JOptionPane.showMessageDialog(this, "Đã xóa thuốc thành công");
                         lblTenSanPham.setText("");
                         txtMaThuoc.setText("");
