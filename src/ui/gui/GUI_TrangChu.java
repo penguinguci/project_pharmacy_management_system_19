@@ -241,10 +241,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         submenuKhachHang.setVisible(false);
 
         btnDatThuoc  = createSubMenuButton("Đặt Thuốc");
+        btnPhieuDoiTra  = createSubMenuButton("Đổi/Trả");
         btnCapNhatKH = createSubMenuButton("Cập Nhật");
         btnTimKiemKH = createSubMenuButton("Tìm Kiếm");
 
         submenuKhachHang.add(btnCapNhatKH);
+        submenuKhachHang.add(btnPhieuDoiTra);
         submenuKhachHang.add(btnDatThuoc);
         submenuKhachHang.add(btnTimKiemKH);
 
@@ -335,12 +337,10 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         btnHDBanThuoc = createSubMenuButton("Bán Thuốc");
         btnQLNhapThuoc = createSubMenuButton("Nhập Thuốc");
-        btnPhieuDoiTra  = createSubMenuButton("Đổi Trả");
-        btnQuanLyDoiTra = createSubMenuButton("Quản lý đổi trả");
+        btnQuanLyDoiTra = createSubMenuButton("Đổi/trả");
 
         submenuHoaDon.add(btnHDBanThuoc);
         submenuHoaDon.add(btnQLNhapThuoc);
-        submenuHoaDon.add(btnPhieuDoiTra);
         submenuHoaDon.add(btnQuanLyDoiTra);
 
 
