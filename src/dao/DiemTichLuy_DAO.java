@@ -249,7 +249,7 @@ public class DiemTichLuy_DAO {
             PreparedStatement ps = null;
             for (KhachHang x : listKHKhongHoatDong) {
                 try {
-                    String sql = "update DiemTichLuy set xepHang = 'Đồng', diemTong = 0, diemHienTai = 0 where maDTL = ?";
+                    String sql = "update DiemTichLuy set xepHang = N'Đồng', diemTong = 0, diemHienTai = 0 where maDTL = ?";
                     ps = con.getConnection().prepareStatement(sql);
                     ps.setString(1, x.getDiemTichLuy().getMaDTL());
                     ps.executeUpdate();
