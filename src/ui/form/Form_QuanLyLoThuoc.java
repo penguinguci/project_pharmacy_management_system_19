@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,8 +115,8 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         // thêm vào topPanel
         topPanel.add(btnQuayLai, BorderLayout.WEST);
         topPanel.add(Box.createHorizontalStrut(120));
-        topPanel.add(cbxMaLT);
-        topPanel.add(Box.createHorizontalStrut(10));
+//        topPanel.add(cbxMaLT);
+//        topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(datePicker);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(txtTimKiem);
@@ -124,7 +125,7 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
 
 
         // Table
-        String[] colsnameHoaDon = {"Mã lô thuốc", "Mã phiếu nhập", "Ngày nhập", "Tổng tiền"};
+        String[] colsnameHoaDon = {"Mã lô thuốc", "Mã phiếu nhập", "Người nhập", "Ngày nhập", "Tổng tiền"};
         modelLT = new DefaultTableModel(colsnameHoaDon, 0);
         tableLT = new JTable(modelLT);
         tableLT.setRowHeight(30);
@@ -242,9 +243,10 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
         btnQuayLai.addActionListener(this);
         btnLamMoi.addActionListener(this);
         btnXemHD.addActionListener(this);
+        btnTimKiemDon.addActionListener(this);
 
         updateCBXMaLT();
-        updateTableLoThuoc();
+        updateTableLoThuoc(loThuoc_dao.getAll());
     }
 
     // update combobox mã hóa đơn
@@ -258,13 +260,13 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
 
 
     // update table phiếu nhập
-    public void updateTableLoThuoc() {
-        ArrayList<LoThuoc> dsLT = loThuoc_dao.getAll();
+    public void updateTableLoThuoc(ArrayList<LoThuoc> dsLT) {
         modelLT.setRowCount(0);
         for (LoThuoc lt : dsLT) {
             modelLT.addRow(new Object[] {
                     lt.getMaLoThuoc(),
                     lt.getPhieuNhapThuoc().getMaPhieuNhap(),
+                    lt.getPhieuNhapThuoc().getNhanVien().getHoNV()+" "+lt.getPhieuNhapThuoc().getNhanVien().getTenNV(),
                     lt.getNgayNhapThuoc(),
                     String.format("%,.0f", loThuoc_dao.getTongTienLoThuoc(lt.getMaLoThuoc())) + "đ"
             });
@@ -337,6 +339,7 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
             tableLT.clearSelection();
             modelChiTiet.setRowCount(0);
             txtTimKiem.setText("");
+            updateTableLoThuoc(loThuoc_dao.getAll());
         } else if (o == btnXemHD) {
             int row = tableLT.getSelectedRow();
             if (row >= 0) {
@@ -347,6 +350,43 @@ public class  Form_QuanLyLoThuoc extends JPanel implements FocusListener, ListSe
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn muốn xem!",
                         "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        if (e.getSource().equals(btnTimKiemDon)) {
+            ArrayList<LoThuoc> listAll = loThuoc_dao.getAll();
+            ArrayList<LoThuoc> dataSearch = new ArrayList<>();
+            if (ngayDatModel.isSelected()) {
+                Date sqlDate = new Date(ngayDatModel.getValue().getTime());
+                if (dataSearch.isEmpty()) {
+                    dataSearch.addAll(loThuoc_dao.timLoThuocTheoNgay(listAll, sqlDate));
+                } else {
+                    ArrayList<LoThuoc> temp = new ArrayList<>();
+                    temp.addAll(loThuoc_dao.timLoThuocTheoNgay(dataSearch, sqlDate));
+                    dataSearch.clear();
+                    dataSearch.addAll(temp);
+                    temp.clear();
+                }
+            }
+            if (!txtTimKiem.getText().equalsIgnoreCase("")) {
+                if (dataSearch.isEmpty()) {
+                    dataSearch.addAll(loThuoc_dao.timKiemProMax(listAll, txtTimKiem.getText().trim()));
+                } else {
+                    ArrayList<LoThuoc> temp = new ArrayList<>();
+                    temp.addAll(loThuoc_dao.timKiemProMax(dataSearch, txtTimKiem.getText().trim()));
+                    dataSearch.clear();
+                    dataSearch.addAll(temp);
+                    temp.clear();
+                }
+            }
+            if(dataSearch.isEmpty()) {
+                txtTimKiem.setText("");
+                ngayDatModel.setSelected(false);
+                JOptionPane.showMessageDialog(this, "Không tìm thấy lô thuốc phù hợp!");
+                updateTableLoThuoc(listAll);
+                modelChiTiet.setRowCount(0);
+            } else {
+                updateTableLoThuoc(dataSearch);
+                modelChiTiet.setRowCount(0);
             }
         }
     }

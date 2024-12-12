@@ -2,17 +2,15 @@ package entity;
 
 public class ChiTietPhieuDoiTra {
     private PhieuDoiTra phieuDoiTra;
-    private Thuoc thuoc;
     private ChiTietLoThuoc chiTietLoThuoc;
-    private String ghiChu;
+    private ChiTietHoaDon chiTietHoaDon;
 
     public ChiTietPhieuDoiTra() {}
 
-    public ChiTietPhieuDoiTra(PhieuDoiTra phieuDoiTra, Thuoc thuoc, String ghiChu, ChiTietLoThuoc chiTietLoThuoc) {
+    public ChiTietPhieuDoiTra(PhieuDoiTra phieuDoiTra, ChiTietLoThuoc chiTietLoThuoc, ChiTietHoaDon chiTietHoaDon) {
         this.phieuDoiTra = phieuDoiTra;
-        this.thuoc = thuoc;
-        this.ghiChu = ghiChu;
         this.chiTietLoThuoc = chiTietLoThuoc;
+        this.chiTietHoaDon = chiTietHoaDon;
     }
 
     public PhieuDoiTra getPhieuDoiTra() {
@@ -23,27 +21,19 @@ public class ChiTietPhieuDoiTra {
         this.phieuDoiTra = phieuDoiTra;
     }
 
-    public Thuoc getThuoc() {
-        return thuoc;
-    }
-
-    public void setThuoc(Thuoc thuoc) {
-        this.thuoc = thuoc;
-    }
-
-    public String getGhiChu() {
-        return ghiChu;
-    }
-
-    public void setGhiChu(String ghiChu) {
-        this.ghiChu = ghiChu;
-    }
-
     public ChiTietLoThuoc getChiTietLoThuoc() {
         return chiTietLoThuoc;
     }
 
     public void setChiTietLoThuoc(ChiTietLoThuoc chiTietLoThuoc) {
         this.chiTietLoThuoc = chiTietLoThuoc;
+    }
+
+    public ChiTietHoaDon getChiTietHoaDon() {
+        return chiTietHoaDon;
+    }
+
+    public void setChiTietHoaDon(ChiTietHoaDon chiTietHoaDon) {
+        this.chiTietHoaDon = chiTietHoaDon;
     }
 }

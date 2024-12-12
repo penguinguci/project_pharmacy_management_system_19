@@ -420,7 +420,6 @@ public class Form_QuanLyHoaDon  extends JPanel implements FocusListener, ListSel
             } else {
                 if(ngayDatModel.isSelected()) {
                     Date sqlDate = new Date(ngayDatModel.getValue().getTime());
-                    System.out.println(formatDate(sqlDate));
                     if(dataSearch.isEmpty()) {
                         dataSearch.addAll(hoaDon_dao.timHoaDonTheoNgayThangNam(listAll, sqlDate));
                     } else {

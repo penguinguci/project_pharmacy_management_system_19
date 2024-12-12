@@ -42,7 +42,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             btnTimKiemThuoc, btnCapNhatNCC, btnTimKiemNCC, btnHDBanThuoc, btnPhieuDoiTra,
             btnTKDoanhThu, btnTKKhachHang, btnTKThuocBanCham, btnTKThuocBanChay, btnTKThuocSapHH, btnThue, btnKhuyenMai, btnChucVu,
             btnCapNhatKhuyenmai, btnTimKiemKhuyenMai, btnQLNhapThuoc, btnQLLoThuoc, btnThuocHH;
-    public JButton btnDangXuat, btnThongBao, btnTroGiup;
+    public JButton btnDangXuat, btnThongBao, btnTroGiup, btnQuanLyDoiTra;
+
     public JPanel customButtonUser, customButtonUser_Left, customButtonUser_Right, thongKe_DongHoPanel, dongHoPanel, topPanel;
     public JLabel textVaiTro, textUser;
     public JLabel lbSoThongBao;
@@ -79,6 +80,7 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
     public Form_QuanLyNhapThuoc formQuanLyNhapThuoc;
     public Form_QuanLyLoThuoc formQuanLyLoThuoc;
     public Form_ThuocHetHan formThuocHetHan;
+    public Form_QuanLyPhieuDoiTra formQuanLyPhieuDoiTra;
     private static NhanVien nhanVienDN;
     public JPopupMenu popupThongBao;
     public JLabel lblTieuDe, lblHinhAnh, lblThoiGian;
@@ -312,10 +314,12 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
         btnHDBanThuoc = createSubMenuButton("Bán Thuốc");
         btnQLNhapThuoc = createSubMenuButton("Nhập Thuốc");
         btnPhieuDoiTra  = createSubMenuButton("Đổi Trả");
+        btnQuanLyDoiTra = createSubMenuButton("Quản lý đổi trả");
 
         submenuHoaDon.add(btnHDBanThuoc);
         submenuHoaDon.add(btnQLNhapThuoc);
         submenuHoaDon.add(btnPhieuDoiTra);
+        submenuHoaDon.add(btnQuanLyDoiTra);
 
 
         // Submenu Thống kê
@@ -670,6 +674,8 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
 
         btnTroGiup.addActionListener(this);
         themPhimTatBtn(btnTroGiup, KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK);
+
+        btnQuanLyDoiTra.addActionListener(this);
     }
 
     // tạo phím tắt btn
@@ -1203,6 +1209,17 @@ public class GUI_TrangChu extends JFrame implements ActionListener, MouseListene
             centerPanel.revalidate();
             centerPanel.repaint();
             cardLayout.show(centerPanel, "formThuocHetHan");
+        } else if (o == btnQuanLyDoiTra) {
+            try {
+                formQuanLyPhieuDoiTra = new Form_QuanLyPhieuDoiTra();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            centerPanel.add(formQuanLyPhieuDoiTra, "formQuanLyPhieuDoiTra");
+            formQuanLyPhieuDoiTra.setTrangChu(this);
+            centerPanel.revalidate();
+            centerPanel.repaint();
+            cardLayout.show(centerPanel, "formQuanLyPhieuDoiTra");
         }
     }
 

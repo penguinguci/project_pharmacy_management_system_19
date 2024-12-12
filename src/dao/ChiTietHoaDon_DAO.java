@@ -13,9 +13,7 @@ import java.util.stream.Collectors;
 public class ChiTietHoaDon_DAO {
     private ArrayList<ChiTietHoaDon> list;
     private Thuoc_DAO thuoc_dao;
-    private ArrayList<Thuoc> listThuoc;
     private HoaDon_DAO hoaDon_dao;
-    private ArrayList<HoaDon> listHD;
     private ChiTietLoThuoc_DAO chiTietLoThuoc_dao;
     private DonGiaThuoc_DAO donGiaThuoc_dao;
 
@@ -37,8 +35,6 @@ public class ChiTietHoaDon_DAO {
         try {
             thuoc_dao = new Thuoc_DAO();
             hoaDon_dao = new HoaDon_DAO();
-            listThuoc = thuoc_dao.getAllThuoc();
-            listHD = hoaDon_dao.getAllHoaDon();
             chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
             String sql = "select * from ChiTietHoaDon";
             ps = con.getConnection().prepareStatement(sql);
@@ -47,7 +43,7 @@ public class ChiTietHoaDon_DAO {
                 ChiTietHoaDon cthd = new ChiTietHoaDon();
 
                 HoaDon hd = new HoaDon();
-                hd = hoaDon_dao.timHoaDon(rs.getString("maHD"));
+                hd = hoaDon_dao.timAllHoaDon(rs.getString("maHD"));
                 cthd.setHoaDon(hd);
 
                 Thuoc t = new Thuoc();
@@ -88,8 +84,6 @@ public class ChiTietHoaDon_DAO {
         ps.setString(1, maHD);
         rs = ps.executeQuery();
         thuoc_dao = new Thuoc_DAO();
-        listThuoc = thuoc_dao.getAllThuoc();
-        listHD = hoaDon_dao.getAllHoaDon();
         chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
         ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<ChiTietHoaDon>();
         while(rs.next()) {
@@ -285,8 +279,6 @@ public class ChiTietHoaDon_DAO {
         try {
             thuoc_dao = new Thuoc_DAO();
             hoaDon_dao = new HoaDon_DAO();
-            listThuoc = thuoc_dao.getAllThuoc();
-            listHD = hoaDon_dao.getAllHoaDon();
             chiTietLoThuoc_dao = new ChiTietLoThuoc_DAO();
             String sql = "select * from ChiTietHoaDon where maHD = ? and soHieuThuoc = ?";
             ps = con.getConnection().prepareStatement(sql);
@@ -403,6 +395,15 @@ public class ChiTietHoaDon_DAO {
         }
 
         return thuocNoiBat;
+    }
+
+    public ChiTietHoaDon timCTHD(String maHD, String soHieuThuoc) {
+        for(ChiTietHoaDon x : list) {
+            if(x.getHoaDon().getMaHD().equals(maHD) && x.getChiTietLoThuoc().getSoHieuThuoc().equals(soHieuThuoc)) {
+                return x;
+            }
+        }
+        return null;
     }
 
 

@@ -1,11 +1,10 @@
 package dao;
 
 import connectDB.ConnectDB;
-import entity.HoaDon;
-import entity.KhachHang;
-import entity.NhanVien;
-import entity.PhieuDoiTra;
+import entity.*;
 
+import java.awt.print.PrinterJob;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,45 +16,49 @@ public class PhieuDoiTra_DAO {
     private HoaDon_DAO hoaDon_dao;
 
     public PhieuDoiTra_DAO() {
+        list = new ArrayList<>();
         try {
-            list = new ArrayList<PhieuDoiTra>();
             list = getAllPhieuDoiTra();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<PhieuDoiTra> getAllPhieuDoiTra() throws SQLException {
+    public ArrayList<PhieuDoiTra> getAllPhieuDoiTra() {
         ConnectDB con  = new ConnectDB();
         con.connect();
         con.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "select * from PhieuDoiTra";
-        ps = con.getConnection().prepareStatement(sql);
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            PhieuDoiTra pdt = new PhieuDoiTra();
-            pdt.setMaPhieu(rs.getString("maPhieu"));
+        nhanVien_dao = new NhanVien_DAO();
+        hoaDon_dao = new HoaDon_DAO();
+        try {
+            String sql = "select * from PhieuDoiTra";
+            ps = con.getConnection().prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                PhieuDoiTra pdt = new PhieuDoiTra();
+                pdt.setMaPhieu(rs.getString("maPhieu"));
 
-            nhanVien_dao = new NhanVien_DAO();
-            NhanVien nv = new NhanVien();
-            nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNV"));
-            pdt.setNhanVien(nv);
+                NhanVien nv = new NhanVien();
+                nv = nhanVien_dao.getNVTheoMaNV(rs.getString("maNV"));
+                pdt.setNhanVien(nv);
 
-            pdt.setLoai(rs.getBoolean("loai"));
+                pdt.setLoai(rs.getBoolean("loai"));
 
-            hoaDon_dao = new HoaDon_DAO();
-            HoaDon hd = new HoaDon();
-            hd = hoaDon_dao.timHoaDon(rs.getString("maHD"));
-            pdt.setHoaDon(hd);
+                HoaDon hd = new HoaDon();
+                hd = hoaDon_dao.timHoaDonDoiTra(rs.getString("maHD"));
+                pdt.setHoaDon(hd);
 
-            pdt.setLyDo(rs.getString("lyDo"));
-            pdt.setNgayDoiTra(rs.getDate("ngayDoiTra"));
+                pdt.setLyDo(rs.getString("lyDo"));
+                pdt.setNgayDoiTra(rs.getDate("ngayDoiTra"));
 
-            if(timPhieu(pdt.getMaPhieu()) == null) {
-                this.list.add(pdt);
+                if(timPhieu(pdt.getMaPhieu()) == null) {
+                    this.list.add(pdt);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return this.list;
     }
@@ -132,5 +135,38 @@ public class PhieuDoiTra_DAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public ArrayList<PhieuDoiTra> timPhieuDoiTraTheoNgay(ArrayList<PhieuDoiTra> list, Date date) {
+        ArrayList<PhieuDoiTra> resultList = new ArrayList<>();
+        for(PhieuDoiTra x : list ){
+            Date sqlDate = new Date(x.getNgayDoiTra().getTime());
+            if(date.toLocalDate().equals(sqlDate.toLocalDate())) {
+                resultList.add(x);
+            }
+        }
+        return resultList;
+    }
+
+    public ArrayList<PhieuDoiTra> timKiemProMax(ArrayList<PhieuDoiTra> list, String data) {
+        ArrayList<PhieuDoiTra> resultList = new ArrayList<>();
+        for(PhieuDoiTra x : list) {
+            String tenKH = "Khách hàng lẻ";
+            if(x.getHoaDon().getKhachHang()!= null) {
+                tenKH = x.getHoaDon().getKhachHang().getHoKH() + " " + x.getHoaDon().getKhachHang().getTenKH();
+            }
+            if(tenKH.equalsIgnoreCase("Khách hàng lẻ")) {
+                if(x.getMaPhieu().indexOf(data) != -1) {
+                    resultList.add(x);
+                }
+            } else {
+                if(x.getMaPhieu().indexOf(data) != -1) {
+                    resultList.add(x);
+                } else if(tenKH.indexOf(data) != -1) {
+                    resultList.add(x);
+                }
+            }
+        }
+        return resultList;
     }
 }
