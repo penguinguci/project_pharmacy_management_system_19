@@ -5,3 +5,4 @@ Welcome to Pharmacy Management System project written in Java.
 The workspace contains two folders by default, where:
 - src: the folder to maintain sources.
 - lib: the folder to maintain dependencies.
+- images: contains image data.
